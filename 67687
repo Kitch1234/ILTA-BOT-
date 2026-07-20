@@ -1,30 +1,131 @@
-import asyncpg
+import discord
+from discord.ext import commands
 import os
+import asyncio
+
 from dotenv import load_dotenv
+
+from core.database import connect_db, close_db
+
 
 load_dotenv()
 
-db = None
+TOKEN = os.getenv("TOKEN")
 
 
-async def connect_db():
+intents = discord.Intents.default()
+intents.message_content = True
 
-    global db
 
-    db = await asyncpg.create_pool(
-        host=os.getenv("DB_HOST"),
-        port=int(os.getenv("DB_PORT")),
-        user=os.getenv("DB_USER"),
-        password=os.getenv("DB_PASSWORD"),
-        database=os.getenv("DB_NAME")
+class QuantumBot(commands.Bot):
+
+    def __init__(self):
+
+        super().__init__(
+            command_prefix="!",
+            intents=intents
+        )
+
+
+    async def setup_hook(self):
+
+        # подключение базы
+        await connect_db()
+
+        # загрузка модулей
+        cogs = [
+            "auction",
+            "balance",
+            "contract",
+            "daily",
+            "inventory",
+            "profile",
+            "quest",
+            "shop",
+            "work"
+        ]
+
+
+        for cog in cogs:
+
+            try:
+                await self.load_extension(
+                    f"cogs.{cog}"
+                )
+
+                print(
+                    f"✅ Загружен модуль: {cog}.py"
+                )
+
+            except Exception as e:
+
+                print(
+                    f"❌ Ошибка {cog}.py:",
+                    e
+                )
+
+
+        # синхронизация команд Discord
+        try:
+
+            synced = await self.tree.sync()
+
+            print(
+                f"✅ Синхронизировано команд: {len(synced)}"
+            )
+
+        except Exception as e:
+
+            print(
+                "❌ Ошибка синхронизации:",
+                e
+            )
+
+
+    async def close(self):
+
+        await close_db()
+
+        await super().close()
+
+
+
+bot = QuantumBot()
+
+
+
+@bot.event
+async def on_ready():
+
+    print(
+        f"🟢 Бот запущен: {bot.user}"
     )
 
-    print("✅ База данных подключена")
 
 
-async def close_db():
+async def main():
 
-    global db
+    if not TOKEN:
 
-    if db:
-        await db.close()
+        print(
+            "❌ TOKEN не найден в .env"
+        )
+
+        return
+
+
+    await bot.start(TOKEN)
+
+
+
+if __name__ == "__main__":
+
+    try:
+
+        asyncio.run(main())
+
+    except KeyboardInterrupt:
+
+        print(
+            "Бот остановлен"
+        )
