@@ -1,19 +1,92 @@
-CREATE TABLE users (
-    id SERIAL PRIMARY KEY,
+import discord
+from discord.ext import commands
 
-    discord_id BIGINT UNIQUE NOT NULL,
-    username TEXT NOT NULL,
+from core.player import create_player, get_player
 
-    level INTEGER DEFAULT 1,
-    xp INTEGER DEFAULT 0,
 
-    coins INTEGER DEFAULT 100,
+class Profile(commands.Cog):
 
-    region TEXT DEFAULT 'Начальная деревня',
-    class TEXT DEFAULT 'Новичок',
+    def __init__(self, bot):
+        self.bot = bot
 
-    hp INTEGER DEFAULT 100,
-    energy INTEGER DEFAULT 100,
 
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+    @discord.app_commands.command(
+        name="profile",
+        description="Показать профиль игрока"
+    )
+    async def profile(self, interaction: discord.Interaction):
+
+        try:
+            await interaction.response.defer()
+
+            print("PROFILE START")
+
+            await create_player(
+                interaction.user.id,
+                interaction.user.name
+            )
+
+            print("PLAYER CREATED")
+
+            player = await get_player(
+                interaction.user.id
+            )
+
+            print("PLAYER RECEIVED")
+
+
+            if not player:
+                await interaction.followup.send(
+                    "❌ Профиль не найден"
+                )
+                return
+
+
+            embed = discord.Embed(
+                title=f"👤 {player['username']}",
+                color=discord.Color.blue()
+            )
+
+            embed.add_field(
+                name="⭐ Уровень",
+                value=str(player["level"]),
+                inline=True
+            )
+
+            embed.add_field(
+                name="✨ Опыт",
+                value=str(player["xp"]),
+                inline=True
+            )
+
+            embed.add_field(
+                name="💰 Монеты",
+                value=str(player["coins"]),
+                inline=True
+            )
+
+
+            await interaction.followup.send(
+                embed=embed
+            )
+
+
+            print("PROFILE SENT")
+
+
+        except Exception as e:
+
+            print("PROFILE ERROR:", e)
+
+            if not interaction.response.is_done():
+                await interaction.response.send_message(
+                    f"Ошибка: {e}"
+                )
+            else:
+                await interaction.followup.send(
+                    f"Ошибка: {e}"
+                )
+
+
+async def setup(bot):
+    await bot.add_cog(Profile(bot))
