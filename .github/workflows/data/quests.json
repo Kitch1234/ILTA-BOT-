@@ -1,1 +1,22 @@
+{
+    "daily": [
+        {
+            "id": "kill_monsters",
+            "name": "Охота на монстров",
+            "description": "Победите 5 существ",
+            "target": 5,
+            "reward_xp": 500,
+            "reward_gold": 200
+        }
+    ],
 
+    "regions": [
+        {
+            "id": "demacia_start",
+            "name": "Защитник Демасии",
+            "description": "Победите врагов Демасии",
+            "target": 10,
+            "reward_xp": 1000
+        }
+    ]
+}
