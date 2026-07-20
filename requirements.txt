@@ -1,5 +1,2 @@
-lol-lor-card-generator/
-├── card_generator.py          # основной скрипт
-├── requirements.txt
-├── README.md
-└── examples/                  # папка для примеров карточек
+pillow
+requests
