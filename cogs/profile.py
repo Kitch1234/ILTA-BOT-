@@ -16,8 +16,17 @@ class Profile(commands.Cog):
 
         embed = discord.Embed(
             title="👤 Профиль игрока",
-            description=f"{interaction.user.mention}",
             color=discord.Color.blue()
+        )
+
+        embed.set_thumbnail(
+            url=interaction.user.display_avatar.url
+        )
+
+        embed.add_field(
+            name="Игрок",
+            value=interaction.user.mention,
+            inline=False
         )
 
         embed.add_field(
@@ -42,10 +51,6 @@ class Profile(commands.Cog):
             name="🎒 Предметы",
             value="0",
             inline=True
-        )
-
-        embed.set_thumbnail(
-            url=interaction.user.display_avatar.url
         )
 
         embed.set_footer(
