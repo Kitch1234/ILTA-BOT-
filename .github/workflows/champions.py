@@ -1,178 +1,33 @@
 # champions.py
 
-"""
-База чемпионов League of Legends
-для RPG карточной системы ILTA BOT
-"""
+import json
+import os
 
 
-CHAMPIONS = {
+CHAMPIONS_FILE = "data/champions.json"
 
 
-    "Aatrox": {
+def load_champions():
+    """
+    Загружает всех чемпионов из базы
+    """
 
-        "name": "Атрокс",
-        "title": "Клинок Даркинов",
+    if not os.path.exists(CHAMPIONS_FILE):
+        return {}
 
-        "region": [
-            "Ноксус",
-            "Шурима"
-        ],
-
-        "role": [
-            "Fighter",
-            "Darkin"
-        ],
-
-
-        "card_type": "champion",
-
-
-        "stats": {
-
-            "attack": 95,
-            "health": 100,
-
-            "defense": 70,
-
-            "magic_resist": 50
-        },
-
-
-        "difficulty": 3,
-
-
-        "abilities": [
-            "Q",
-            "W",
-            "E",
-            "R"
-        ],
-
-
-        "skins": [
-
-            {
-                "name": "Base Aatrox",
-                "rarity": "Обычный",
-                "image":
-                "aatrox/skins/base/aatroxloadscreen.jpg"
-            },
-
-
-            {
-                "name": "Mecha Aatrox",
-                "rarity": "Легендарный",
-                "image":
-                "aatrox/skins/skin1/aatroxloadscreen.jpg"
-            },
-
-
-            {
-                "name": "Odyssey Aatrox",
-                "rarity": "Эпический",
-                "image":
-                "aatrox/skins/skin2/aatroxloadscreen.jpg"
-            },
-
-
-            {
-                "name": "Prestige Blood Moon Aatrox",
-                "rarity": "Престижный",
-                "image":
-                "aatrox/skins/skin3/aatroxloadscreen.jpg"
-            }
-
-        ]
-
-    },
-
-
-
-    "Ryze": {
-
-        "name": "Райз",
-
-        "title": "Мастер рун",
-
-
-        "region": [
-            "Рунтерра"
-        ],
-
-
-        "role": [
-            "Mage"
-        ],
-
-
-        "card_type": "champion",
-
-
-        "stats": {
-
-            "attack": 55,
-
-            "health": 70,
-
-            "defense": 45,
-
-            "magic_power": 100
-
-        },
-
-
-        "difficulty": 3,
-
-
-        "abilities": [
-            "Q",
-            "W",
-            "E",
-            "R"
-        ],
-
-
-        "skins": [
-
-            {
-                "name": "Base Ryze",
-                "rarity": "Обычный",
-                "image":
-                "ryze/skins/base/ryzeloadscreen.jpg"
-            },
-
-
-            {
-                "name": "Zombie Ryze",
-                "rarity": "Эпический",
-                "image":
-                "ryze/skins/skin3/ryzeloadscreen.jpg"
-            },
-
-
-            {
-                "name": "Arcade Ryze",
-                "rarity": "Эпический",
-                "image":
-                "ryze/skins/skin8/ryzeloadscreen.jpg"
-            }
-
-        ]
-
-    }
-
-}
-
+    with open(CHAMPIONS_FILE, "r", encoding="utf-8") as file:
+        return json.load(file)
 
 
 
 def get_champion(name):
     """
-    Получить чемпиона
+    Получить одного чемпиона
     """
 
-    return CHAMPIONS.get(name)
+    champions = load_champions()
+
+    return champions.get(name)
 
 
 
@@ -181,20 +36,22 @@ def get_all_champions():
     Получить всех чемпионов
     """
 
-    return CHAMPIONS
+    return load_champions()
 
 
 
-def get_champion_skins(name):
+def search_champion(text):
     """
-    Получить скины чемпиона
+    Поиск чемпиона
     """
 
-    champion = CHAMPIONS.get(name)
+    champions = load_champions()
 
+    result = {}
 
-    if champion:
-        return champion["skins"]
+    for name, data in champions.items():
 
+        if text.lower() in name.lower():
+            result[name] = data
 
-    return []
+    return result
