@@ -1,136 +1,144 @@
 # map.py
 
+"""
+Карта мира ILTA RPG
+"""
+
+
 import discord
 
 from discord.ext import commands
 
-from data.maps import get_location
 
-from game.movement import move_player
+from game.world import (
 
-from database.queries import (
-    get_player,
-    update_location
+    get_regions,
+
+    get_region,
+
+    get_neighbors
+
 )
+
+
+from game.movement import (
+
+    move_player,
+
+    get_player_location
+
+)
+
+
+
 
 
 
 class Map(commands.Cog):
 
-    def __init__(self, bot):
+
+    def __init__(
+
+            self,
+
+            bot
+
+    ):
+
         self.bot = bot
 
 
 
+
+
+
     @commands.slash_command(
+
         name="map",
-        description="Показать текущую локацию"
+
+        description="Показать карту мира"
+
     )
     async def map(
-        self,
-        ctx
+
+            self,
+
+            ctx
+
     ):
 
-        pool = self.bot.db
 
+        regions = get_regions()
 
-        player = await get_player(
-            pool,
-            ctx.author.id
-        )
-
-
-        if not player:
-
-            await ctx.respond(
-                "❌ Сначала создай персонажа."
-            )
-
-            return
-
-
-
-        location = get_location(
-            player["location"]
-        )
 
 
         embed = discord.Embed(
 
-            title=f"🌍 {player['location']}",
-
-            description=
-            location["description"],
+            title="🗺 Карта Рунтерры",
 
             color=0x3498DB
-        )
-
-
-
-        neighbors = "\n".join(
-
-            [
-                f"➡ {x}"
-                for x in location["neighbors"]
-            ]
 
         )
+
+
+
+        text = ""
+
+
+
+        for region in regions:
+
+
+            text += (
+
+                f"🌍 **{region['name']}**\n"
+
+                f"Уровень: {region['level']}\n"
+
+                f"Опасность: {region['danger']}\n\n"
+
+            )
+
 
 
         embed.add_field(
 
-            name="Доступные направления",
+            name="Регионы",
 
-            value=neighbors,
+            value=text,
 
             inline=False
-        )
 
-
-        embed.add_field(
-
-            name="Уровень региона",
-
-            value=
-            str(location["level_required"]),
-
-            inline=True
-        )
-
-
-        monsters = "\n".join(
-
-            location["monsters"]
-
-        )
-
-
-        embed.add_field(
-
-            name="👹 Опасности",
-
-            value=monsters,
-
-            inline=True
         )
 
 
         await ctx.respond(
+
             embed=embed
+
         )
+
+
+
+
 
 
 
 
 
     @commands.slash_command(
-        name="move",
-        description="Перейти в другой регион"
+
+        name="location",
+
+        description="Твоя текущая локация"
+
     )
-    async def move(
-        self,
-        ctx,
-        region: str
+    async def location(
+
+            self,
+
+            ctx
+
     ):
 
 
@@ -138,17 +146,23 @@ class Map(commands.Cog):
 
 
 
-        player = await get_player(
+        position = await get_player_location(
+
             pool,
+
             ctx.author.id
+
         )
 
 
 
-        if not player:
+        if not position:
+
 
             await ctx.respond(
-                "❌ Нет персонажа."
+
+                "❌ Персонаж не создан."
+
             )
 
             return
@@ -157,42 +171,103 @@ class Map(commands.Cog):
 
 
 
-        data = {
+        region = get_region(
 
-            "location":
-            player["location"],
+            position["region_id"]
 
-            "level":
-            player["level"]
-
-        }
-
-
-
-
-
-        result = move_player(
-            data,
-            region
         )
 
 
 
-        if not result["success"]:
+        embed = discord.Embed(
 
-            await ctx.respond(
-                "❌ "
-                +
-                result["message"]
-            )
+            title=
 
-            return
+            f"📍 {region['name']}",
+
+            description=
+
+            region["description"],
+
+            color=0x2ECC71
+
+        )
+
+
+
+        embed.add_field(
+
+            name="🐺 Мобы",
+
+            value=
+
+            "\n".join(
+
+                region["monsters"]
+
+            ),
+
+            inline=False
+
+        )
+
+
+
+        embed.add_field(
+
+            name="⛏ Ресурсы",
+
+            value=
+
+            "\n".join(
+
+                region["resources"]
+
+            ),
+
+            inline=False
+
+        )
+
+
+
+        await ctx.respond(
+
+            embed=embed
+
+        )
 
 
 
 
 
-        await update_location(
+
+
+
+
+    @commands.slash_command(
+
+        name="move",
+
+        description="Перейти в регион"
+
+    )
+    async def move(
+
+            self,
+
+            ctx,
+
+            region: str
+
+    ):
+
+
+        pool = self.bot.db
+
+
+
+        result = await move_player(
 
             pool,
 
@@ -204,41 +279,64 @@ class Map(commands.Cog):
 
 
 
+        if not result["success"]:
+
+
+            await ctx.respond(
+
+                "❌ "
+
+                + result["message"]
+
+            )
+
+            return
+
+
+
+
+
 
         embed = discord.Embed(
 
-            title="🚶 Путешествие",
+            title="🚶 Переход выполнен",
 
-            description=
-            result["message"],
-
-            color=0x2ECC71
+            color=0x1ABC9C
 
         )
 
 
-        event = result.get(
-            "event"
+        embed.add_field(
+
+            name="Новая локация",
+
+            value=
+
+            result["region"]
+
         )
 
 
-        if event:
+        embed.add_field(
 
+            name="Описание",
 
-            embed.add_field(
+            value=
 
-                name="Событие",
+            result["description"],
 
-                value=
-                event["message"],
+            inline=False
 
-                inline=False
-            )
+        )
 
 
         await ctx.respond(
+
             embed=embed
+
         )
+
+
 
 
 
@@ -247,5 +345,7 @@ class Map(commands.Cog):
 async def setup(bot):
 
     await bot.add_cog(
+
         Map(bot)
-      )
+
+    )
