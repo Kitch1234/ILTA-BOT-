@@ -1,0 +1,26 @@
+{
+    "items": [
+
+        {
+            "id": "basic_chest",
+            "name": "Обычный сундук",
+            "price": 500,
+            "type": "chest"
+        },
+
+        {
+            "id": "rare_chest",
+            "name": "Редкий сундук",
+            "price": 2000,
+            "type": "chest"
+        },
+
+        {
+            "id": "health_potion",
+            "name": "Зелье лечения",
+            "price": 100,
+            "type": "item"
+        }
+
+    ]
+}
