@@ -1,14 +1,16 @@
 # card_generator.py
 
 """
-Генератор игровых карт ILTA RPG
+Генератор карт ILTA RPG
 """
 
 from PIL import Image, ImageDraw, ImageFont
 import os
 
 
+
 CARD_SIZE = (600, 900)
+
 
 
 FRAMES = {
@@ -38,81 +40,126 @@ FRAMES = {
 
 
 
-def load_font(size):
+def get_font(size):
 
-    return ImageFont.truetype(
-        "assets/fonts/arial.ttf",
-        size
+    font = "assets/fonts/arial.ttf"
+
+    if os.path.exists(font):
+
+        return ImageFont.truetype(
+            font,
+            size
+        )
+
+    return ImageFont.load_default()
+
+
+
+
+
+def load_frame(rarity):
+
+    path = FRAMES.get(
+        rarity
     )
+
+
+    if path and os.path.exists(path):
+
+        frame = Image.open(
+            path
+        ).convert("RGBA")
+
+
+        return frame.resize(
+            CARD_SIZE
+        )
+
+
+    return None
 
 
 
 
 
 def create_card(
-        champion,
+
+        champion_name,
+
         image_path,
+
         rarity,
+
         attack,
+
+        defense,
+
         health,
+
         description
+
 ):
 
-    """
-    Создание карты
-    """
 
-    # фон карты
-
-    card = Image.new(
-        "RGBA",
-        CARD_SIZE,
-        (0,0,0,0)
+    os.makedirs(
+        "generated/cards",
+        exist_ok=True
     )
 
 
-    draw = ImageDraw.Draw(card)
+
+    # основа карты
+
+    card = Image.new(
+
+        "RGBA",
+
+        CARD_SIZE,
+
+        (0,0,0,0)
+
+    )
 
 
 
     # арт чемпиона
 
-    champion_img = Image.open(
+    image = Image.open(
         image_path
     ).convert("RGBA")
 
 
-    champion_img.thumbnail(
-        (500,500)
+
+    image.thumbnail(
+        (540,540)
     )
+
 
 
     card.paste(
-        champion_img,
-        (50,120),
-        champion_img
+
+        image,
+
+        (
+            30,
+            120
+        ),
+
+        image
+
     )
+
 
 
 
     # рамка
 
-    frame_path = FRAMES.get(
+    frame = load_frame(
         rarity
     )
 
 
-    if frame_path and os.path.exists(frame_path):
-
-        frame = Image.open(
-            frame_path
-        ).convert("RGBA")
-
-
-        frame = frame.resize(
-            CARD_SIZE
-        )
-
+    if frame:
 
         card.alpha_composite(
             frame
@@ -120,50 +167,92 @@ def create_card(
 
 
 
-    # текст
-
-    title_font = load_font(45)
-
-    text_font = load_font(28)
-
-
-
-    draw.text(
-        (50,40),
-        champion,
-        font=title_font,
-        fill="white"
+    draw = ImageDraw.Draw(
+        card
     )
 
 
 
+    title_font = get_font(45)
+
+    text_font = get_font(28)
+
+    stat_font = get_font(40)
+
+
+
+    # название
+
     draw.text(
-        (50,650),
+
+        (40,40),
+
+        champion_name,
+
+        font=title_font,
+
+        fill="white"
+
+    )
+
+
+
+    # описание
+
+    draw.text(
+
+        (40,650),
+
         description,
+
         font=text_font,
+
         fill="white"
+
     )
 
 
 
-    # атака
+    # характеристики
 
     draw.text(
-        (80,780),
+
+        (50,800),
+
         f"⚔ {attack}",
-        font=title_font,
+
+        font=stat_font,
+
         fill="white"
+
     )
 
 
 
-    # здоровье
+    draw.text(
+
+        (250,800),
+
+        f"🛡 {defense}",
+
+        font=stat_font,
+
+        fill="white"
+
+    )
+
+
 
     draw.text(
-        (400,780),
+
+        (430,800),
+
         f"❤ {health}",
-        font=title_font,
+
+        font=stat_font,
+
         fill="white"
+
     )
 
 
@@ -171,13 +260,10 @@ def create_card(
     # сохранить
 
     filename = (
-        f"generated/{champion}.png"
-    )
 
+        f"generated/cards/"
+        f"{champion_name}.png"
 
-    os.makedirs(
-        "generated",
-        exist_ok=True
     )
 
 
