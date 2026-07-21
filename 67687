@@ -1,11 +1,2 @@
-CREATE TABLE deck_slots (
-
-id SERIAL PRIMARY KEY,
-
-deck_id INTEGER REFERENCES decks(id),
-
-slot INTEGER NOT NULL,
-
-card_id INTEGER REFERENCES cards(id)
-
-);
+ALTER TABLE cards
+ADD COLUMN IF NOT EXISTS region VARCHAR(50);
