@@ -1,23 +1,42 @@
-
-C:\Users\Ketek'\Desktop\qantum_universe>python main.py
-✅ База данных подключена
-✅ Загружен: auction
-✅ Загружен: balance
-✅ Загружен: contract
-✅ Загружен: daily
-✅ Загружен: inventory
-✅ Загружен: profile
-✅ Загружен: quest
-✅ Загружен: shop
-✅ Загружен: work
-✅ Загружен: travel
-✅ Загружен: quest_reward
-✅ Загружен: cards
-✅ Загружен: test_event
-✅ Загружен: deck
-✅ Загружен: battle
-❌ Ошибка загрузки pack: Extension 'cogs.pack' raised an error: ModuleNotFoundError: No module named 'game.loot'
-✅ Загружен: collection
-✅ Загружен: map
-✅ Синхронизировано команд: 23
-🟢 Бот запущен как ILTA BOT#7827
+{
+  "Ahri": {
+    "name": "Ари",
+    "role": "Mage",
+    "skins": ["Classic", "Popstar", "K/DA", "Prestige K/DA"]
+  },
+  "Yasuo": {
+    "name": "Ясуо",
+    "role": "Fighter",
+    "skins": ["Classic", "Nightbringer", "True Damage", "Battle Boss"]
+  },
+  "Jinx": {
+    "name": "Джинкс",
+    "role": "Marksman",
+    "skins": ["Classic", "Star Guardian", "PROJECT", "Crime City"]
+  },
+  "Zed": {
+    "name": "Зед",
+    "role": "Assassin",
+    "skins": ["Classic", "Death Sworn", "Galaxy Slayer", "Prestige"]
+  },
+  "Lux": {
+    "name": "Люкс",
+    "role": "Mage",
+    "skins": ["Classic", "Elementalist", "Cosmic", "Lunar Empress"]
+  },
+  "Darius": {
+    "name": "Дариус",
+    "role": "Fighter",
+    "skins": ["Classic", "Dunkmaster", "God-King"]
+  },
+  "Miss Fortune": {
+    "name": "Мисс Фортуна",
+    "role": "Marksman",
+    "skins": ["Classic", "Gun Goddess", "Bewitching"]
+  },
+  "Lee Sin": {
+    "name": "Ли Син",
+    "role": "Fighter",
+    "skins": ["Classic", "Dragon Fist", "Nightbringer"]
+  }
+}
