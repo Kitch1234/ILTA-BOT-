@@ -1,27 +1,44 @@
-async def get_deck_cards(deck_id):
+    @app_commands.command(
+        name="deck_view",
+        description="Посмотреть карты в колоде"
+    )
+    async def deck_view(
+        self,
+        interaction: discord.Interaction,
+        deck_id: int
+    ):
 
-    query = """
-    SELECT 
-        cards.id,
-        cards.champion,
-        cards.skin,
-        cards.rarity,
-        cards.attack,
-        cards.defense,
-        cards.health
-
-    FROM deck_cards
-
-    JOIN cards
-    ON cards.id = deck_cards.card_id
-
-    WHERE deck_cards.deck_id = $1;
-    """
-
-
-    async with database.db.acquire() as conn:
-
-        return await conn.fetch(
-            query,
+        cards = await deck_db.get_deck_cards(
             deck_id
+        )
+
+
+        if not cards:
+
+            await interaction.response.send_message(
+                "🃏 В колоде нет карт."
+            )
+
+            return
+
+
+        text = f"🃏 Колода #{deck_id}\n\n"
+
+
+        for card in cards:
+
+            text += (
+                f"🃏 {card['champion']}\n"
+                f"⭐ {card['rarity']}\n"
+                f"⚔️ {card['attack']} "
+                f"🛡️ {card['defense']} "
+                f"❤️ {card['health']}\n\n"
+            )
+
+
+        text += f"Всего карт: {len(cards)}/40"
+
+
+        await interaction.response.send_message(
+            text
         )
