@@ -1,3 +1,36 @@
-SELECT column_name
-FROM information_schema.columns
-WHERE table_name='users';
+from core.database import db
+
+
+async def create_player(discord_id, username):
+
+    query = """
+    INSERT INTO users (
+        discord_id,
+        username
+    )
+    VALUES ($1, $2)
+    ON CONFLICT (discord_id)
+    DO NOTHING;
+    """
+
+    async with db.acquire() as conn:
+        await conn.execute(
+            query,
+            discord_id,
+            username
+        )
+
+
+async def get_player(discord_id):
+
+    query = """
+    SELECT *
+    FROM users
+    WHERE discord_id=$1;
+    """
+
+    async with db.acquire() as conn:
+        return await conn.fetchrow(
+            query,
+            discord_id
+        )
