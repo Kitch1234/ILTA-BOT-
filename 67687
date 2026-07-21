@@ -1,18 +1,140 @@
+import discord
+from discord.ext import commands
+from discord import app_commands
 
-C:\Users\Ketek'\Desktop\qantum_universe>python main.py
-✅ База данных подключена
-✅ Загружен модуль: auction.py
-✅ Загружен модуль: balance.py
-✅ Загружен модуль: contract.py
-✅ Загружен модуль: daily.py
-✅ Загружен модуль: inventory.py
-✅ Загружен модуль: profile.py
-❌ Ошибка quest.py: Extension 'cogs.quest' raised an error: SyntaxError: unterminated triple-quoted string literal (detected at line 121) (quest.py, line 119)
-✅ Загружен модуль: shop.py
-✅ Загружен модуль: work.py
-✅ Загружен модуль: travel.py
-✅ Загружен модуль: map.py
-✅ Синхронизировано команд: 10
-🟢 Бот запущен: ILTA BOT#7827
+from database import quest as quest_db
 
 
+class Quest(commands.Cog):
+
+    def __init__(self, bot):
+        self.bot = bot
+
+
+    # Показать доступные квесты
+    @app_commands.command(
+        name="quest",
+        description="Показать доступные квесты"
+    )
+    async def quest(
+        self,
+        interaction: discord.Interaction
+    ):
+
+        quests = await quest_db.get_quests("start")
+
+        if not quests:
+
+            await interaction.response.send_message(
+                "📜 В этом регионе нет квестов."
+            )
+            return
+
+
+        text = "📜 Доступные квесты:\n\n"
+
+        for q in quests:
+
+            text += (
+                f"№{q['id']} — {q['name']}\n"
+                f"{q['description']}\n"
+                f"Награда: {q['reward']} монет\n\n"
+            )
+
+
+        await interaction.response.send_message(text)
+
+
+
+    # Принять квест
+    @app_commands.command(
+        name="quest_accept",
+        description="Принять квест"
+    )
+    @app_commands.describe(
+        quest_id="ID квеста"
+    )
+    async def quest_accept(
+        self,
+        interaction: discord.Interaction,
+        quest_id: int
+    ):
+
+        user_id = interaction.user.id
+
+
+        result = await quest_db.accept_quest(
+            user_id,
+            quest_id
+        )
+
+
+        if result:
+
+            await interaction.response.send_message(
+                f"✅ Квест №{quest_id} принят!"
+            )
+
+        else:
+
+            await interaction.response.send_message(
+                "❌ Не удалось принять квест."
+            )
+
+
+
+    # Активные квесты игрока
+    @app_commands.command(
+        name="quest_active",
+        description="Показать активные квесты"
+    )
+    async def quest_active(
+        self,
+        interaction: discord.Interaction
+    ):
+
+        user_id = interaction.user.id
+
+
+        quests = await quest_db.get_player_quests(
+            user_id
+        )
+
+
+        if not quests:
+
+            await interaction.response.send_message(
+                "📜 У вас нет активных квестов."
+            )
+            return
+
+
+        text = "📜 Ваши активные квесты:\n\n"
+
+
+        for q in quests:
+
+            if q["completed"]:
+                status = "✅ Выполнен"
+            else:
+                status = "🔄 В процессе"
+
+
+            text += (
+                f"Квест №{q['quest_id']}\n"
+                f"Прогресс: {q['progress']}/{q['target']}\n"
+                f"Статус: {status}\n\n"
+            )
+
+
+        await interaction.response.send_message(
+            text
+        )
+
+
+
+async def setup(bot):
+
+    await bot.add_cog(
+        Quest(bot)
+    )
