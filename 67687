@@ -1,180 +1,78 @@
 import discord
 from discord.ext import commands
 from discord import app_commands
+import random
 
-# ==================== ИСПРАВЛЕННЫЕ ИМПОРТЫ ====================
-from database.decks import create_deck, get_decks
-from database.deck_slots import add_card_slot, get_deck_slots
-from database.player import set_active_deck
-# ===========================================================
+from database.cards import add_card
+from game.loot import get_random_rarity  # будем использовать твою систему лута
 
-class Deck(commands.Cog):
 
+class Pack(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    # ==========================
-    # Создать боевой отряд
-    # ==========================
     @app_commands.command(
-        name="deck_create",
-        description="Создать боевой отряд из 3 карт"
+        name="open_pack",
+        description="Открыть пак из 10 карт"
     )
-    @app_commands.describe(
-        name="Название отряда"
-    )
-    async def deck_create(
-        self,
-        interaction: discord.Interaction,
-        name: str
-    ):
-        deck_id = await create_deck(
-            interaction.user.id,
-            name
-        )
+    async def open_pack(self, interaction: discord.Interaction):
+        await interaction.response.defer()  # чтобы не было таймаута
 
-        await interaction.response.send_message(
-            f"🃏 Отряд создан!\n"
-            f"Название: **{name}**\n"
-            f"ID: {deck_id}\n\n"
-            f"1️⃣ Пусто\n"
-            f"2️⃣ Пусто\n"
-            f"3️⃣ Пусто"
-        )
+        cards_opened = []
+        text = f"🎁 **{interaction.user.name} открыл пак из 10 карт!**\n\n"
 
-    # ==========================
-    # Список отрядов
-    # ==========================
-    @app_commands.command(
-        name="decks",
-        description="Показать свои отряды"
-    )
-    async def decks(
-        self,
-        interaction: discord.Interaction
-    ):
-        decks_list = await get_decks(interaction.user.id)
+        for i in range(10):
+            # Здесь будет логика выбора чемпиона + скина
+            champion = random.choice(list(CHAMPIONS.keys()))  # нужно загрузить чемпионов
+            skin = random.choice(CHAMPIONS[champion]["skins"]) if CHAMPIONS[champion]["skins"] else "Classic"
 
-        if not decks_list:
-            await interaction.response.send_message(
-                "🃏 У вас нет отрядов."
-            )
-            return
+            rarity = get_random_rarity()  # из loot.py
 
-        text = "🃏 Ваши отряды:\n\n"
+            # Базовые характеристики зависят от редкости
+            attack = random.randint(20, 80) + RARITY_BONUS[rarity]["attack"]
+            health = random.randint(30, 100) + RARITY_BONUS[rarity]["health"]
 
-        for deck in decks_list:
-            text += f"#{deck['id']} — {deck['name']}\n"
-
-        await interaction.response.send_message(text)
-
-    # ==========================
-    # Добавить карту в слот отряда
-    # ==========================
-    @app_commands.command(
-        name="deck_add",
-        description="Добавить карту в слот отряда"
-    )
-    @app_commands.describe(
-        deck_id="ID отряда",
-        card_id="ID карты",
-        slot="Слот 1-3"
-    )
-    async def deck_add(
-        self,
-        interaction: discord.Interaction,
-        deck_id: int,
-        card_id: int,
-        slot: int
-    ):
-        if slot not in [1, 2, 3]:
-            await interaction.response.send_message(
-                "❌ Слот может быть только 1, 2 или 3"
-            )
-            return
-
-        try:
-            await add_card_slot(
-                interaction.user.id,
-                deck_id,
-                card_id,
-                slot
+            await add_card(
+                owner_id=interaction.user.id,
+                champion=champion,
+                skin=skin,
+                rarity=rarity,
+                attack=attack,
+                defense=random.randint(5, 40),
+                health=health
             )
 
-            await interaction.response.send_message(
-                f"✅ Карта #{card_id} добавлена в слот {slot}"
-            )
+            cards_opened.append({
+                "champion": champion,
+                "skin": skin,
+                "rarity": rarity,
+                "attack": attack,
+                "health": health
+            })
 
-        except Exception as e:
-            await interaction.response.send_message(
-                f"❌ Ошибка:\n{e}"
-            )
+            emoji = RARITY_EMOJI.get(rarity, "🃏")
+            text += f"{emoji} **{champion}** — {skin} ({rarity})\n"
 
-    # ==========================
-    # Посмотреть отряд
-    # ==========================
-    @app_commands.command(
-        name="deck_view",
-        description="Посмотреть боевой отряд"
-    )
-    @app_commands.describe(
-        deck_id="ID отряда"
-    )
-    async def deck_view(
-        self,
-        interaction: discord.Interaction,
-        deck_id: int
-    ):
-        cards = await get_deck_slots(deck_id)
+        await interaction.followup.send(text)
 
-        text = f"🃏 Отряд #{deck_id}\n\n"
 
-        slots = {1: "1️⃣", 2: "2️⃣", 3: "3️⃣"}
-        used = []
+# Константы (можно вынести в data/)
+RARITY_EMOJI = {
+    "Обычный": "⚪",
+    "Эпический": "🔵",
+    "Легендарный": "🟡",
+    "Мифический": "💎",
+    "Престижный": "🌟"
+}
 
-        for card in cards:
-            used.append(card["slot"])
-            text += (
-                f"{slots[card['slot']]} **{card['champion']}**\n"
-                f"⭐ {card['rarity']}\n"
-                f"⚔️ Атака: {card['attack']}\n"
-                f"❤️ Здоровье: {card['health']}\n\n"
-            )
-
-        for slot in [1, 2, 3]:
-            if slot not in used:
-                text += f"{slots[slot]} Пусто\n\n"
-
-        await interaction.response.send_message(text)
-
-    # ==========================
-    # Выбрать активный отряд
-    # ==========================
-    @app_commands.command(
-        name="deck_select",
-        description="Выбрать активный боевой отряд"
-    )
-    @app_commands.describe(
-        deck_id="ID отряда"
-    )
-    async def deck_select(
-        self,
-        interaction: discord.Interaction,
-        deck_id: int
-    ):
-        try:
-            await set_active_deck(
-                interaction.user.id,
-                deck_id
-            )
-            await interaction.response.send_message(
-                f"⚔️ Активный отряд выбран: #{deck_id}"
-            )
-        except Exception as e:
-            await interaction.response.send_message(
-                f"❌ Ошибка:\n{e}"
-            )
+RARITY_BONUS = {
+    "Обычный": {"attack": 0, "health": 0},
+    "Эпический": {"attack": 10, "health": 15},
+    "Легендарный": {"attack": 25, "health": 30},
+    "Мифический": {"attack": 40, "health": 50},
+    "Престижный": {"attack": 60, "health": 70}
+}
 
 
 async def setup(bot):
-    await bot.add_cog(Deck(bot))
+    await bot.add_cog(Pack(bot))
