@@ -33,21 +33,35 @@ async def get_quest(quest_id):
 
 async def accept_quest(user_id, quest_id):
 
+    quest = await get_quest(quest_id)
+
+    if quest is None:
+        return False
+
+
     query = """
     INSERT INTO player_quests (
         user_id,
         quest_id,
-        status
+        progress,
+        target,
+        completed,
+        claimed
     )
-    VALUES ($1, $2, 'active');
+    VALUES ($1, $2, 0, $3, FALSE, FALSE);
     """
+
 
     async with db.acquire() as conn:
         await conn.execute(
             query,
             user_id,
-            quest_id
+            quest_id,
+            quest["target"]
         )
+
+    return True
+
 
 
 async def get_player_quests(user_id):
