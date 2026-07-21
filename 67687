@@ -1,11 +1,24 @@
-CREATE TABLE battle_cards (
+INSERT INTO monsters
+(
+name,
+region,
+level,
+health,
+attack,
+defense,
+reward_xp,
+reward_gold
+)
 
-id SERIAL PRIMARY KEY,
+VALUES
 
-battle_id INTEGER REFERENCES battles(id),
-
-card_id INTEGER REFERENCES cards(id),
-
-current_health INTEGER
-
+(
+'Лесной волк',
+'Start',
+1,
+200,
+30,
+5,
+25,
+50
 );
