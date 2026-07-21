@@ -1,20 +1,6 @@
-INSERT INTO cards
-(
-owner_id,
-champion,
-skin,
-rarity,
-attack,
-defense,
-health
-)
-VALUES
-(
-123456789,
-'Ahri',
-'Classic',
-'Rare',
-5,
-2,
-6
+CREATE TABLE decks (
+    id SERIAL PRIMARY KEY,
+    owner_id BIGINT NOT NULL,
+    name TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW()
 );
