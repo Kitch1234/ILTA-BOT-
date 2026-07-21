@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 from discord import app_commands
 import random
+import urllib.parse
 
 from database.cards import add_card
 from data.champion_loader import load_champions
@@ -13,50 +14,115 @@ class Pack(commands.Cog):
         self.bot = bot
         self.champions = load_champions()
 
-    @app_commands.command(name="open_pack", description="Открыть пак из 10 карт")
+    @app_commands.command(
+        name="open_pack",
+        description="Открыть пак из 10 карт"
+    )
     async def open_pack(self, interaction: discord.Interaction):
         await interaction.response.defer()
 
         try:
             if not self.champions:
-                await interaction.followup.send("❌ champions.json не найден!")
+                await interaction.followup.send(
+                    "❌ champions.json не найден!"
+                )
                 return
 
-            await interaction.followup.send(f"🎁 **{interaction.user.name} открыл пак из 10 карт!**")
+            await interaction.followup.send(
+                f"🎁 **{interaction.user.name} открыл пак из 10 карт!**"
+            )
 
             for i in range(10):
-                champion_name = random.choice(list(self.champions.keys()))
-                champion = self.champions[champion_name]
-                skin = random.choice(champion.get("skins", ["Classic"]))
+
+                # Выбор чемпиона
+                champion_id = random.choice(
+                    list(self.champions.keys())
+                )
+
+                champion = self.champions[champion_id]
+
+                # Скин
+                skin = random.choice(
+                    champion.get("skins", ["Classic"])
+                )
+
+                # Редкость
                 rarity = get_random_rarity()
 
+                # Характеристики карты
                 attack = random.randint(20, 70)
                 health = random.randint(30, 100)
                 defense = random.randint(5, 35)
 
+
+                # Сохраняем карту
                 await add_card(
-                    interaction.user.id, champion_name, skin, rarity,
-                    attack, defense, health
+                    interaction.user.id,
+                    champion_id,
+                    skin,
+                    rarity,
+                    attack,
+                    defense,
+                    health
                 )
 
-                # Отправляем каждую карту отдельным сообщением с картинкой
+
+                # Создание Embed
                 embed = discord.Embed(
-                    title=f"{rarity} — {champion_name}",
-                    description=f"Скин: **{skin}**",
+                    title=f"🎴 {rarity} — {champion_id}",
+                    description=f"✨ Скин: **{skin}**",
                     color=0xFFD700
                 )
-                embed.add_field(name="⚔️ Атака", value=attack, inline=True)
-                embed.add_field(name="❤️ Здоровье", value=health, inline=True)
-                embed.add_field(name="🛡️ Защита", value=defense, inline=True)
 
-                # Картинка чемпиона
-                image_url = f"https://ddragon.leagueoflegends.com/cdn/14.20.1/img/champion/{champion_name}.png"
-                embed.set_image(url=image_url)
 
-                await interaction.followup.send(embed=embed)
+                embed.add_field(
+                    name="⚔️ Атака",
+                    value=str(attack),
+                    inline=True
+                )
+
+                embed.add_field(
+                    name="❤️ Здоровье",
+                    value=str(health),
+                    inline=True
+                )
+
+                embed.add_field(
+                    name="🛡️ Защита",
+                    value=str(defense),
+                    inline=True
+                )
+
+
+                # Исправленный URL картинки
+                safe_id = urllib.parse.quote(champion_id)
+
+                image_url = (
+                    "https://ddragon.leagueoflegends.com/"
+                    "cdn/img/champion/splash/"
+                    f"{safe_id}_0.jpg"
+                )
+
+
+                # Проверка URL
+                if image_url.startswith("https://"):
+                    embed.set_image(url=image_url)
+
+
+                embed.set_footer(
+                    text=f"Карта {i + 1}/10"
+                )
+
+
+                await interaction.followup.send(
+                    embed=embed
+                )
+
 
         except Exception as e:
-            await interaction.followup.send(f"❌ Ошибка: {e}")
+            await interaction.followup.send(
+                f"❌ Ошибка: {e}"
+            )
 
 
 async def setup(bot):
