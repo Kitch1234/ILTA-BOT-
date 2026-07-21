@@ -1,9 +1,171 @@
-SELECT 
-    pid,
-    usename,
-    state,
-    query,
-    wait_event_type,
-    wait_event
-FROM pg_stat_activity
-WHERE datname = 'ИМЯ_ТВОЕЙ_БАЗЫ';
+from core import database
+
+
+async def get_quests(region):
+
+    query = """
+    SELECT *
+    FROM quests
+    WHERE region = $1;
+    """
+
+    async with database.db.acquire() as conn:
+        return await conn.fetch(query, region)
+
+
+
+async def get_quest(quest_id):
+
+    query = """
+    SELECT *
+    FROM quests
+    WHERE id = $1;
+    """
+
+    async with database.db.acquire() as conn:
+        return await conn.fetchrow(query, quest_id)
+
+
+
+async def accept_quest(user_id, quest_id):
+
+    print("1. START")
+
+    print("POOL:", database.db)
+
+
+    query = """
+    INSERT INTO player_quests
+    (
+        user_id,
+        quest_id,
+        progress,
+        target,
+        completed,
+        claimed
+    )
+    VALUES
+    (
+        $1,
+        $2,
+        0,
+        1,
+        FALSE,
+        FALSE
+    );
+    """
+
+
+    print("2. BEFORE ACQUIRE")
+
+
+    async with database.db.acquire() as conn:
+
+        print("3. GOT CONNECTION")
+
+
+        try:
+
+            test = await conn.fetchval(
+                "SELECT 1"
+            )
+
+            print(
+                "TEST DB:",
+                test
+            )
+
+
+            print(
+                "4. BEFORE INSERT"
+            )
+
+
+            result = await conn.execute(
+                query,
+                user_id,
+                quest_id
+            )
+
+
+            print(
+                "5. INSERT RESULT:",
+                result
+            )
+
+
+        except Exception as e:
+
+            print(
+                "DB ERROR:",
+                e
+            )
+
+            return False
+
+
+    print(
+        "6. FINISHED"
+    )
+
+    return True
+
+
+
+
+async def get_player_quests(user_id):
+
+    query = """
+    SELECT *
+    FROM player_quests
+    WHERE user_id = $1;
+    """
+
+
+    async with database.db.acquire() as conn:
+        return await conn.fetch(
+            query,
+            user_id
+        )
+
+
+
+
+async def complete_quest(user_id, quest_id):
+
+    query = """
+    UPDATE player_quests
+    SET completed = TRUE
+    WHERE user_id = $1
+    AND quest_id = $2;
+    """
+
+
+    async with database.db.acquire() as conn:
+
+        await conn.execute(
+            query,
+            user_id,
+            quest_id
+        )
+
+
+
+
+async def claim_quest(user_id, quest_id):
+
+    query = """
+    UPDATE player_quests
+    SET claimed = TRUE
+    WHERE user_id = $1
+    AND quest_id = $2;
+    """
+
+
+    async with database.db.acquire() as conn:
+
+        await conn.execute(
+            query,
+            user_id,
+            quest_id
+        )
