@@ -2,71 +2,73 @@ import discord
 from discord.ext import commands
 from discord import app_commands
 
+from database import deck_slots
 from database import monsters
-from game.quest_events import monster_killed
+
+from game import combat
+
 
 
 class Battle(commands.Cog):
 
+
     def __init__(self, bot):
+
         self.bot = bot
+
 
 
     @app_commands.command(
         name="battle",
-        description="Сразиться с монстром"
+        description="Начать бой"
     )
     async def battle(
         self,
         interaction: discord.Interaction
     ):
 
-        user_id = interaction.user.id
+
+        cards = await deck_slots.get_deck_slots(1)
 
 
-        # Берём монстров стартового региона
-        mobs = await monsters.get_monsters(
-            "start"
-        )
-
-
-        if not mobs:
+        if not cards:
 
             await interaction.response.send_message(
-                "❌ В этом регионе нет монстров."
+                "❌ У вас нет активного отряда."
             )
 
             return
 
 
-        mob = mobs[0]
+
+        monster = {
+
+            "name": "Лесной волк",
+            "health": 200,
+            "attack": 30,
+            "defense": 5
+
+        }
 
 
-        player_damage = 15
+
+        card = dict(cards[0])
 
 
-        damage = player_damage - mob["defense"]
-
-
-        if damage < 1:
-            damage = 1
-
-
-        hits = mob["health"] // damage + 1
-
-
-        await monster_killed(
-            user_id
+        result = combat.card_attack(
+            card,
+            monster
         )
 
 
+
         await interaction.response.send_message(
-            f"⚔️ Вы победили!\n\n"
-            f"🐺 Монстр: {mob['name']}\n"
-            f"💥 Ударов нанесено: {hits}\n\n"
-            f"💰 Золото: +{mob['reward_gold']}\n"
-            f"⭐ Опыт: +{mob['reward_xp']}\n\n"
-            f"📜 Прогресс квестов обновлён."
+
+            f"⚔️ {card['champion']} атакует!\n\n"
+            f"🐺 {monster['name']}\n"
+            f"Получено урона: {result['damage']}\n"
+            f"❤️ HP монстра: {result['monster_hp']}"
+
         )
 
 
