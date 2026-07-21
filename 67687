@@ -1,33 +1,27 @@
-    @app_commands.command(
-        name="deck_add",
-        description="Добавить карту в колоду"
-    )
-    @app_commands.describe(
-        deck_id="ID колоды",
-        card_id="ID карты"
-    )
-    async def deck_add(
-        self,
-        interaction: discord.Interaction,
-        deck_id: int,
-        card_id: int
-    ):
+async def get_deck_cards(deck_id):
 
-        try:
+    query = """
+    SELECT 
+        cards.id,
+        cards.champion,
+        cards.skin,
+        cards.rarity,
+        cards.attack,
+        cards.defense,
+        cards.health
 
-            await deck_db.add_card_to_deck(
-                deck_id,
-                card_id
-            )
+    FROM deck_cards
+
+    JOIN cards
+    ON cards.id = deck_cards.card_id
+
+    WHERE deck_cards.deck_id = $1;
+    """
 
 
-            await interaction.response.send_message(
-                f"✅ Карта #{card_id} добавлена в колоду #{deck_id}"
-            )
+    async with database.db.acquire() as conn:
 
-
-        except Exception as e:
-
-            await interaction.response.send_message(
-                f"❌ Ошибка:\n{e}"
-            )
+        return await conn.fetch(
+            query,
+            deck_id
+        )
