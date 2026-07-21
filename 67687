@@ -1,16 +1,105 @@
-INSERT INTO player_quests (
-    user_id,
-    quest_id,
-    progress,
-    target,
-    completed,
-    claimed
-)
-VALUES (
-    123456789,
-    1,
-    0,
-    1,
-    FALSE,
-    FALSE
-);
+from core.database import db
+
+
+async def get_quests(region):
+
+    query = """
+    SELECT *
+    FROM quests
+    WHERE region = $1;
+    """
+
+    return await db.fetch(
+        query,
+        region
+    )
+
+
+async def get_quest(quest_id):
+
+    query = """
+    SELECT *
+    FROM quests
+    WHERE id = $1;
+    """
+
+    return await db.fetchrow(
+        query,
+        quest_id
+    )
+
+
+async def accept_quest(user_id, quest_id):
+
+    query = """
+    INSERT INTO player_quests (
+        user_id,
+        quest_id,
+        progress,
+        target,
+        completed,
+        claimed
+    )
+    VALUES (
+        $1,
+        $2,
+        0,
+        1,
+        FALSE,
+        FALSE
+    );
+    """
+
+    await db.execute(
+        query,
+        user_id,
+        quest_id
+    )
+
+    return True
+
+
+async def get_player_quests(user_id):
+
+    query = """
+    SELECT *
+    FROM player_quests
+    WHERE user_id = $1;
+    """
+
+    return await db.fetch(
+        query,
+        user_id
+    )
+
+
+async def complete_quest(user_id, quest_id):
+
+    query = """
+    UPDATE player_quests
+    SET completed = TRUE
+    WHERE user_id = $1
+    AND quest_id = $2;
+    """
+
+    await db.execute(
+        query,
+        user_id,
+        quest_id
+    )
+
+
+async def claim_quest(user_id, quest_id):
+
+    query = """
+    UPDATE player_quests
+    SET claimed = TRUE
+    WHERE user_id = $1
+    AND quest_id = $2;
+    """
+
+    await db.execute(
+        query,
+        user_id,
+        quest_id
+    )
