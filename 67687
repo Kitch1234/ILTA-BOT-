@@ -1,13 +1,17 @@
-CREATE TABLE IF NOT EXISTS quests (
-    id SERIAL PRIMARY KEY,
-
-    name TEXT NOT NULL,
-    description TEXT NOT NULL,
-
-    region TEXT NOT NULL,
-
-    reward_coins INTEGER DEFAULT 0,
-    reward_xp INTEGER DEFAULT 0,
-
-    required_level INTEGER DEFAULT 1
+INSERT INTO quests (
+    name,
+    description,
+    region,
+    reward_coins,
+    reward_xp,
+    required_level
+)
+VALUES
+(
+'Первые шаги',
+'Помоги жителям деревни и заработай свою первую награду.',
+'🌱 Начальная деревня',
+50,
+25,
+1
 );
