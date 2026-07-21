@@ -1,122 +1,121 @@
-import discord
-from discord.ext import commands
-from discord import app_commands
-
-from database import quest as quest_db
+from core import database
 
 
-class Quest(commands.Cog):
+# Получить квесты региона
+async def get_quests(region):
 
-    def __init__(self, bot):
-        self.bot = bot
+    query = """
+    SELECT *
+    FROM quests
+    WHERE region = $1;
+    """
 
+    async with database.db.acquire() as conn:
 
-    @app_commands.command(
-        name="quest",
-        description="Показать доступные квесты"
-    )
-    async def quest(
-        self,
-        interaction: discord.Interaction
-    ):
-
-        quests = await quest_db.get_quests("start")
-
-        if not quests:
-            await interaction.response.send_message(
-                "📜 В этом регионе нет квестов."
-            )
-            return
-
-        text = "📜 Доступные квесты:\n\n"
-
-        for q in quests:
-
-            text += (
-                f"№{q['id']} — {q['name']}\n"
-                f"{q['description']}\n"
-                f"🎯 Цель: {q['target']}\n"
-                f"💰 Монеты: {q['reward_coins']}\n"
-                f"⭐ Опыт: {q['reward_xp']}\n\n"
-            )
-
-        await interaction.response.send_message(text)
-
-
-    @app_commands.command(
-        name="quest_accept",
-        description="Принять квест"
-    )
-    @app_commands.describe(
-        quest_id="ID квеста"
-    )
-    async def quest_accept(
-        self,
-        interaction: discord.Interaction,
-        quest_id: int
-    ):
-
-        user_id = interaction.user.id
-
-        try:
-
-            await quest_db.accept_quest(
-                user_id,
-                quest_id
-            )
-
-            await interaction.response.send_message(
-                f"✅ Квест №{quest_id} принят."
-            )
-
-        except Exception as e:
-
-            await interaction.response.send_message(
-                f"❌ Ошибка:\n{e}"
-            )
-
-
-    @app_commands.command(
-        name="quest_active",
-        description="Активные квесты"
-    )
-    async def quest_active(
-        self,
-        interaction: discord.Interaction
-    ):
-
-        quests = await quest_db.get_player_quests(
-            interaction.user.id
+        return await conn.fetch(
+            query,
+            region
         )
 
-        if not quests:
-
-            await interaction.response.send_message(
-                "📜 У вас нет активных квестов."
-            )
-
-            return
-
-        text = "📜 Активные квесты\n\n"
-
-        for q in quests:
-
-            status = "✅ Выполнен"
-
-            if not q["completed"]:
-                status = "🔄 В процессе"
-
-            text += (
-                f"Квест №{q['quest_id']}\n"
-                f"Прогресс: {q['progress']}/{q['target']}\n"
-                f"{status}\n\n"
-            )
-
-        await interaction.response.send_message(text)
 
 
-async def setup(bot):
+# Получить один квест
+async def get_quest(quest_id):
 
-    await bot.add_cog(
-        Quest(bot)
+    query = """
+    SELECT *
+    FROM quests
+    WHERE id = $1;
+    """
+
+    async with database.db.acquire() as conn:
+
+        return await conn.fetchrow(
+            query,
+            quest_id
+        )
+
+
+
+# Принять квест
+async def accept_quest(user_id, quest_id):
+
+    query = """
+    INSERT INTO player_quests
+    (
+        user_id,
+        quest_id,
+        progress,
+        target,
+        completed,
+        claimed
     )
+    VALUES
+    (
+        $1,
+        $2,
+        0,
+        1,
+        FALSE,
+        FALSE
+    );
+    """
+
+    async with database.db.acquire() as conn:
+
+        await conn.execute(
+            query,
+            user_id,
+            quest_id
+        )
+
+    return True
+
+
+
+# Получить активные квесты игрока
+async def get_player_quests(user_id):
+
+    query = """
+    SELECT *
+    FROM player_quests
+    WHERE user_id = $1;
+    """
+
+    async with database.db.acquire() as conn:
+
+        return await conn.fetch(
+            query,
+            user_id
+        )
+
+
+
+# Найти квесты по типу события
+async def get_quests_by_type(quest_type):
+
+    query = """
+    SELECT *
+    FROM quests
+    WHERE type = $1;
+    """
+
+    async with database.db.acquire() as conn:
+
+        return await conn.fetch(
+            query,
+            quest_type
+        )
+
+
+
+# Обновить прогресс
+async def update_progress(
+        user_id,
+        quest_id,
+        progress
+):
+
+    query = """
+    UPDATE player_quests
+    SET progress = $3
