@@ -1,7 +1,5 @@
-"id"	"integer"
-"name"	"text"
-"description"	"text"
-"region"	"text"
-"reward_coins"	"integer"
-"reward_xp"	"integer"
-"required_level"	"integer"
+ALTER TABLE quests
+ADD COLUMN IF NOT EXISTS type TEXT DEFAULT 'monster_kill';
+
+ALTER TABLE quests
+ADD COLUMN IF NOT EXISTS target INTEGER DEFAULT 1;
