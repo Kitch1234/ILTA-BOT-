@@ -2,7 +2,10 @@ import discord
 from discord.ext import commands
 
 from core.player import create_player, get_player
-from database.quest import get_quests
+from database.quest import (
+    get_quests,
+    accept_quest
+)
 
 
 class Quest(commands.Cog):
@@ -34,26 +37,24 @@ class Quest(commands.Cog):
         )
 
         if not quests:
-
             await interaction.response.send_message(
-                "📜 В этом регионе пока нет заданий."
+                "📜 В этом регионе нет квестов."
             )
             return
 
 
         embed = discord.Embed(
-            title="📜 Доступные квесты",
+            title="📜 Квесты",
             color=discord.Color.orange()
         )
 
 
         for quest in quests:
-
             embed.add_field(
                 name=f"#{quest['id']} {quest['name']}",
                 value=(
-                    f"{quest['description']}\n\n"
-                    f"💰 {quest['reward_coins']} монет\n"
+                    f"{quest['description']}\n"
+                    f"💰 {quest['reward_coins']}\n"
                     f"⭐ {quest['reward_xp']} XP"
                 ),
                 inline=False
@@ -62,6 +63,33 @@ class Quest(commands.Cog):
 
         await interaction.response.send_message(
             embed=embed
+        )
+
+
+    @discord.app_commands.command(
+        name="quest_accept",
+        description="Взять квест"
+    )
+    async def quest_accept(
+        self,
+        interaction: discord.Interaction,
+        quest_id: int
+    ):
+
+        await create_player(
+            interaction.user.id,
+            interaction.user.name
+        )
+
+
+        await accept_quest(
+            interaction.user.id,
+            quest_id
+        )
+
+
+        await interaction.response.send_message(
+            f"📜 Вы взяли квест №{quest_id}"
         )
 
 
