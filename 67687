@@ -1,4 +1,19 @@
-@app_commands.command(name="open_pack", description="Открыть пак из 10 карт")
+import discord
+from discord.ext import commands
+from discord import app_commands
+import random
+
+from database.cards import add_card
+from data.champion_loader import load_champions
+from data.loot import get_random_rarity
+
+
+class Pack(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+        self.champions = load_champions()
+
+    @app_commands.command(name="open_pack", description="Открыть пак из 10 карт")
     async def open_pack(self, interaction: discord.Interaction):
         await interaction.response.defer()
 
@@ -42,3 +57,7 @@
 
         except Exception as e:
             await interaction.followup.send(f"❌ Ошибка: {e}")
+
+
+async def setup(bot):
+    await bot.add_cog(Pack(bot))
