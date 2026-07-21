@@ -1,18 +1,7 @@
-C:\Users\Ketek'\Desktop\qantum_universe>python main.py
-✅ База данных подключена
-✅ Загружен модуль: auction.py
-✅ Загружен модуль: balance.py
-✅ Загружен модуль: contract.py
-✅ Загружен модуль: daily.py
-✅ Загружен модуль: inventory.py
-✅ Загружен модуль: profile.py
-✅ Загружен модуль: quest.py
-✅ Загружен модуль: shop.py
-✅ Загружен модуль: work.py
-✅ Загружен модуль: travel.py
-✅ Загружен модуль: map.py
-✅ Синхронизировано команд: 12
-🟢 Бот запущен: ILTA BOT#7827
-1. START
-DB: <asyncpg.pool.Pool object at 0x000001C9F7DC2440>
-2. BEFORE EXECUTE
+SELECT 
+    pid,
+    usename,
+    state,
+    query
+FROM pg_stat_activity
+WHERE datname = 'твоя_база';
