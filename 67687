@@ -1,106 +1,16 @@
-import discord
-from discord.ext import commands
-
-from core.player import create_player, get_player
-from database.quest import get_quests, accept_quest
-
-
-class Quest(commands.Cog):
-
-    def __init__(self, bot):
-        self.bot = bot
-
-
-    @discord.app_commands.command(
-        name="quests",
-        description="Посмотреть квесты"
-    )
-    async def quests(
-        self,
-        interaction: discord.Interaction
-    ):
-
-        await create_player(
-            interaction.user.id,
-            interaction.user.name
-        )
-
-
-        player = await get_player(
-            interaction.user.id
-        )
-
-
-        quests = await get_quests(
-            player["region"]
-        )
-
-
-        if not quests:
-
-            await interaction.response.send_message(
-                "📜 Нет доступных квестов"
-            )
-            return
-
-
-        embed = discord.Embed(
-            title="📜 Квесты",
-            color=discord.Color.orange()
-        )
-
-
-        for quest in quests:
-
-            embed.add_field(
-                name=f"#{quest['id']} {quest['name']}",
-                value=(
-                    f"{quest['description']}\n"
-                    f"💰 {quest['reward_coins']}\n"
-                    f"⭐ {quest['reward_xp']} XP"
-                ),
-                inline=False
-            )
-
-
-        await interaction.response.send_message(
-            embed=embed
-        )
-
-
-
-    @discord.app_commands.command(
-        name="quest_accept",
-        description="Взять квест"
-    )
-    async def quest_accept(
-        self,
-        interaction: discord.Interaction,
-        quest_id: int
-    ):
-
-        await interaction.response.defer()
-
-
-        result = await accept_quest(
-            interaction.user.id,
-            quest_id
-        )
-
-
-        if result:
-
-            await interaction.followup.send(
-                f"✅ Квест №{quest_id} принят!"
-            )
-
-        else:
-
-            await interaction.followup.send(
-                "❌ Квест не найден"
-            )
-
-
-
-async def setup(bot):
-    await bot.add_cog(Quest(bot))
+INSERT INTO player_quests (
+    user_id,
+    quest_id,
+    progress,
+    target,
+    completed,
+    claimed
+)
+VALUES (
+    123456789,
+    1,
+    0,
+    1,
+    FALSE,
+    FALSE
+);
