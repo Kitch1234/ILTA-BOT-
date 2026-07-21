@@ -1,3 +1,9 @@
-SELECT column_name, data_type
-FROM information_schema.columns
-WHERE table_name='cards';
+"id"	"integer"
+"owner_id"	"bigint"
+"champion"	"character varying"
+"skin"	"character varying"
+"rarity"	"character varying"
+"attack"	"integer"
+"defense"	"integer"
+"health"	"integer"
+"created_at"	"timestamp without time zone"
