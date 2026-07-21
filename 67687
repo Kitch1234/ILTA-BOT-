@@ -1,99 +1,83 @@
-import discord
-from discord.ext import commands
-from discord import app_commands
-
-from database import decks as deck_db
+from core import database
 
 
-class Deck(commands.Cog):
 
-    def __init__(self, bot):
-        self.bot = bot
+# Создать колоду
 
+async def create_deck(
+        owner_id,
+        name
+):
 
-    @app_commands.command(
-        name="deck_create",
-        description="Создать колоду"
+    query = """
+    INSERT INTO decks
+    (
+        owner_id,
+        name
     )
-    async def deck_create(
-        self,
-        interaction: discord.Interaction,
-        name: str
-    ):
+    VALUES
+    (
+        $1,
+        $2
+    )
+    RETURNING id;
+    """
 
-        deck_id = await deck_db.create_deck(
-            interaction.user.id,
+    async with database.db.acquire() as conn:
+
+        return await conn.fetchval(
+            query,
+            owner_id,
             name
         )
 
-        await interaction.response.send_message(
-            f"🃏 Колода создана!\n"
-            f"Название: {name}\n"
-            f"ID: {deck_id}"
+
+
+# Получить колоды игрока
+
+async def get_decks(
+        owner_id
+):
+
+    query = """
+    SELECT *
+    FROM decks
+    WHERE owner_id = $1;
+    """
+
+    async with database.db.acquire() as conn:
+
+        return await conn.fetch(
+            query,
+            owner_id
         )
 
 
 
-    @app_commands.command(
-        name="decks",
-        description="Показать свои колоды"
+# Добавить карту в колоду
+
+async def add_card_to_deck(
+        deck_id,
+        card_id
+):
+
+    query = """
+    INSERT INTO deck_cards
+    (
+        deck_id,
+        card_id
     )
-    async def decks(
-        self,
-        interaction: discord.Interaction
-    ):
+    VALUES
+    (
+        $1,
+        $2
+    );
+    """
 
-        await interaction.response.defer()
+    async with database.db.acquire() as conn:
 
-
-        try:
-
-            result = await deck_db.get_decks(
-                interaction.user.id
-            )
-
-
-            if not result:
-
-                await interaction.followup.send(
-                    "🃏 У вас нет колод."
-                )
-
-                return
-
-
-
-            text = "🃏 Ваши колоды:\n\n"
-
-
-            for deck in result:
-
-                text += (
-                    f"#{deck['id']} "
-                    f"— {deck['name']}\n"
-                )
-
-
-            await interaction.followup.send(
-                text
-            )
-
-
-        except Exception as e:
-
-            print(
-                "DECK ERROR:",
-                e
-            )
-
-            await interaction.followup.send(
-                f"❌ Ошибка:\n{e}"
-            )
-
-
-
-async def setup(bot):
-
-    await bot.add_cog(
-        Deck(bot)
-    )
+        await conn.execute(
+            query,
+            deck_id,
+            card_id
+        )
