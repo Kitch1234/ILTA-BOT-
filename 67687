@@ -1,6 +1,6 @@
-CREATE TABLE decks (
+CREATE TABLE deck_cards (
     id SERIAL PRIMARY KEY,
-    owner_id BIGINT NOT NULL,
-    name TEXT NOT NULL,
-    created_at TIMESTAMP DEFAULT NOW()
+    deck_id INTEGER REFERENCES decks(id) ON DELETE CASCADE,
+    card_id INTEGER REFERENCES cards(id) ON DELETE CASCADE,
+    amount INTEGER DEFAULT 1
 );
