@@ -1,1 +1,13 @@
+CREATE TABLE IF NOT EXISTS quests (
+    id SERIAL PRIMARY KEY,
 
+    name TEXT NOT NULL,
+    description TEXT NOT NULL,
+
+    region TEXT NOT NULL,
+
+    reward_coins INTEGER DEFAULT 0,
+    reward_xp INTEGER DEFAULT 0,
+
+    required_level INTEGER DEFAULT 1
+);
