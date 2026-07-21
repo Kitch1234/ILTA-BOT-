@@ -1,3 +1,4 @@
+
 import discord
 from discord.ext import commands
 from discord import app_commands
@@ -229,3 +230,52 @@ class Deck(commands.Cog):
 
 
     # ==========================
+    # Выбрать активный отряд
+    # ==========================
+
+    @app_commands.command(
+        name="deck_select",
+        description="Выбрать активный боевой отряд"
+    )
+    @app_commands.describe(
+        deck_id="ID отряда"
+    )
+    async def deck_select(
+        self,
+        interaction: discord.Interaction,
+        deck_id: int
+    ):
+
+
+        try:
+
+            await player.set_active_deck(
+
+                interaction.user.id,
+                deck_id
+
+            )
+
+
+            await interaction.response.send_message(
+
+                f"⚔️ Активный отряд выбран: #{deck_id}"
+
+            )
+
+
+        except Exception as e:
+
+            await interaction.response.send_message(
+
+                f"❌ Ошибка:\n{e}"
+
+            )
+
+
+
+async def setup(bot):
+
+    await bot.add_cog(
+        Deck(bot)
+    )
