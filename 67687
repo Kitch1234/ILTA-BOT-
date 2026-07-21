@@ -1,36 +1,14 @@
-import discord
-from discord.ext import commands
-from discord import app_commands
+async def get_quest_reward(quest_id):
 
-from game.quest_events import monster_killed
+    query = """
+    SELECT reward_coins, reward_xp
+    FROM quests
+    WHERE id = $1;
+    """
 
+    async with database.db.acquire() as conn:
 
-class TestEvent(commands.Cog):
-
-    def __init__(self, bot):
-        self.bot = bot
-
-
-    @app_commands.command(
-        name="kill_test",
-        description="Тест убийства монстра"
-    )
-    async def kill_test(
-        self,
-        interaction: discord.Interaction
-    ):
-
-        await monster_killed(
-            interaction.user.id
+        return await conn.fetchrow(
+            query,
+            quest_id
         )
-
-        await interaction.response.send_message(
-            "⚔️ Монстр побежден! Прогресс квеста увеличен."
-        )
-
-
-async def setup(bot):
-
-    await bot.add_cog(
-        TestEvent(bot)
-    )
