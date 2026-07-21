@@ -1,5 +1,80 @@
-UPDATE quests
-SET 
-type='monster_kill',
-target=10
-WHERE id=1;
+from database import quest as quest_db
+
+
+async def trigger_event(user_id, event, amount=1):
+
+    quests = await quest_db.get_quests_by_type(event)
+
+    if not quests:
+        return
+
+
+    active = await quest_db.get_player_quests(
+        user_id
+    )
+
+
+    for quest in quests:
+
+        for player_quest in active:
+
+            if player_quest["quest_id"] != quest["id"]:
+                continue
+
+
+            if player_quest["completed"]:
+                continue
+
+
+            new_progress = (
+                player_quest["progress"] + amount
+            )
+
+
+            if new_progress >= quest["target"]:
+
+                await quest_db.complete_quest(
+                    user_id,
+                    quest["id"]
+                )
+
+            else:
+
+                await quest_db.update_progress(
+                    user_id,
+                    quest["id"],
+                    new_progress
+                )
+
+
+
+async def monster_killed(user_id):
+
+    await trigger_event(
+        user_id,
+        "monster_kill"
+    )
+
+
+async def boss_killed(user_id):
+
+    await trigger_event(
+        user_id,
+        "boss_kill"
+    )
+
+
+async def chest_opened(user_id):
+
+    await trigger_event(
+        user_id,
+        "open_chest"
+    )
+
+
+async def region_discovered(user_id):
+
+    await trigger_event(
+        user_id,
+        "move_region"
+    )
