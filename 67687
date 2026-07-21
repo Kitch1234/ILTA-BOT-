@@ -1,18 +1,13 @@
-CREATE TABLE IF NOT EXISTS deck_slots (
+CREATE TABLE battles (
 
-    id SERIAL PRIMARY KEY,
+id SERIAL PRIMARY KEY,
 
-    deck_id INTEGER NOT NULL
-    REFERENCES decks(id)
-    ON DELETE CASCADE,
+user_id BIGINT,
 
-    slot INTEGER NOT NULL,
+enemy_id INTEGER,
 
-    card_id INTEGER NOT NULL
-    REFERENCES cards(id)
-    ON DELETE CASCADE,
+status VARCHAR(20),
 
-
-    UNIQUE(deck_id, slot)
+created_at TIMESTAMP DEFAULT NOW()
 
 );
