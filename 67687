@@ -1,10 +1,44 @@
-# Красивый вывод с картинкой
-                embed.add_field(
-                    name=f"{rarity} — {champion_name}",
-                    value=f"Скин: {skin}\n⚔️{attack} ❤️{health} 🛡️{defense}",
-                    inline=True
+@app_commands.command(name="open_pack", description="Открыть пак из 10 карт")
+    async def open_pack(self, interaction: discord.Interaction):
+        await interaction.response.defer()
+
+        try:
+            if not self.champions:
+                await interaction.followup.send("❌ champions.json не найден!")
+                return
+
+            await interaction.followup.send(f"🎁 **{interaction.user.name} открыл пак из 10 карт!**")
+
+            for i in range(10):
+                champion_name = random.choice(list(self.champions.keys()))
+                champion = self.champions[champion_name]
+                skin = random.choice(champion.get("skins", ["Classic"]))
+                rarity = get_random_rarity()
+
+                attack = random.randint(20, 70)
+                health = random.randint(30, 100)
+                defense = random.randint(5, 35)
+
+                await add_card(
+                    interaction.user.id, champion_name, skin, rarity,
+                    attack, defense, health
                 )
-                
-                # Добавляем картинку чемпиона как отдельное изображение (лучше работает)
-                if _ == 0:  # Добавляем только первую картинку, чтобы не спамить
-                    embed.set_image(url=f"https://ddragon.leagueoflegends.com/cdn/14.20.1/img/champion/{champion_name}.png")
+
+                # Отправляем каждую карту отдельным сообщением с картинкой
+                embed = discord.Embed(
+                    title=f"{rarity} — {champion_name}",
+                    description=f"Скин: **{skin}**",
+                    color=0xFFD700
+                )
+                embed.add_field(name="⚔️ Атака", value=attack, inline=True)
+                embed.add_field(name="❤️ Здоровье", value=health, inline=True)
+                embed.add_field(name="🛡️ Защита", value=defense, inline=True)
+
+                # Картинка чемпиона
+                image_url = f"https://ddragon.leagueoflegends.com/cdn/14.20.1/img/champion/{champion_name}.png"
+                embed.set_image(url=image_url)
+
+                await interaction.followup.send(embed=embed)
+
+        except Exception as e:
+            await interaction.followup.send(f"❌ Ошибка: {e}")
