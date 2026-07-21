@@ -1,78 +1,11 @@
-import discord
-from discord.ext import commands
-from discord import app_commands
-import random
+# database/cards.py
+from core.database import db
 
-from database.cards import add_card
-from game.loot import get_random_rarity  # будем использовать твою систему лута
-
-
-class Pack(commands.Cog):
-    def __init__(self, bot):
-        self.bot = bot
-
-    @app_commands.command(
-        name="open_pack",
-        description="Открыть пак из 10 карт"
-    )
-    async def open_pack(self, interaction: discord.Interaction):
-        await interaction.response.defer()  # чтобы не было таймаута
-
-        cards_opened = []
-        text = f"🎁 **{interaction.user.name} открыл пак из 10 карт!**\n\n"
-
-        for i in range(10):
-            # Здесь будет логика выбора чемпиона + скина
-            champion = random.choice(list(CHAMPIONS.keys()))  # нужно загрузить чемпионов
-            skin = random.choice(CHAMPIONS[champion]["skins"]) if CHAMPIONS[champion]["skins"] else "Classic"
-
-            rarity = get_random_rarity()  # из loot.py
-
-            # Базовые характеристики зависят от редкости
-            attack = random.randint(20, 80) + RARITY_BONUS[rarity]["attack"]
-            health = random.randint(30, 100) + RARITY_BONUS[rarity]["health"]
-
-            await add_card(
-                owner_id=interaction.user.id,
-                champion=champion,
-                skin=skin,
-                rarity=rarity,
-                attack=attack,
-                defense=random.randint(5, 40),
-                health=health
-            )
-
-            cards_opened.append({
-                "champion": champion,
-                "skin": skin,
-                "rarity": rarity,
-                "attack": attack,
-                "health": health
-            })
-
-            emoji = RARITY_EMOJI.get(rarity, "🃏")
-            text += f"{emoji} **{champion}** — {skin} ({rarity})\n"
-
-        await interaction.followup.send(text)
-
-
-# Константы (можно вынести в data/)
-RARITY_EMOJI = {
-    "Обычный": "⚪",
-    "Эпический": "🔵",
-    "Легендарный": "🟡",
-    "Мифический": "💎",
-    "Престижный": "🌟"
-}
-
-RARITY_BONUS = {
-    "Обычный": {"attack": 0, "health": 0},
-    "Эпический": {"attack": 10, "health": 15},
-    "Легендарный": {"attack": 25, "health": 30},
-    "Мифический": {"attack": 40, "health": 50},
-    "Престижный": {"attack": 60, "health": 70}
-}
-
-
-async def setup(bot):
-    await bot.add_cog(Pack(bot))
+async def add_card(owner_id, champion, skin, rarity, attack, defense, health):
+    query = """
+    INSERT INTO cards 
+    (owner_id, champion, skin, rarity, attack, defense, health)
+    VALUES ($1, $2, $3, $4, $5, $6, $7)
+    """
+    async with db.acquire() as conn:
+        await conn.execute(query, owner_id, champion, skin, rarity, attack, defense, health)
