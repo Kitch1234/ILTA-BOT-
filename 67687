@@ -1,113 +1,18 @@
-from core import database
-
-
-async def get_quests(region):
-
-    query = """
-    SELECT *
-    FROM quests
-    WHERE region = $1;
-    """
-
-    return await database.db.fetch(
-        query,
-        region
-    )
-
-
-async def get_quest(quest_id):
-
-    query = """
-    SELECT *
-    FROM quests
-    WHERE id = $1;
-    """
-
-    return await database.db.fetchrow(
-        query,
-        quest_id
-    )
-
-
-async def accept_quest(user_id, quest_id):
-
-    print("1. START")
-
-    print("DB:", database.db)
-
-    query = """
-    INSERT INTO player_quests (
-        user_id,
-        quest_id,
-        progress,
-        target,
-        completed,
-        claimed
-    )
-    VALUES (
-        $1,
-        $2,
-        0,
-        1,
-        FALSE,
-        FALSE
-    );
-    """
-
-    print("2. BEFORE EXECUTE")
-
-    await database.db.execute(
-        query,
-        user_id,
-        quest_id
-    )
-
-    print("3. AFTER EXECUTE")
-
-    return True
-
-
-async def get_player_quests(user_id):
-
-    query = """
-    SELECT *
-    FROM player_quests
-    WHERE user_id = $1;
-    """
-
-    return await database.db.fetch(
-        query,
-        user_id
-    )
-
-
-async def complete_quest(user_id, quest_id):
-
-    query = """
-    UPDATE player_quests
-    SET completed = TRUE
-    WHERE user_id = $1
-    AND quest_id = $2;
-    """
-
-    await database.db.execute(
-        query,
-        user_id,
-        quest_id
-    )
-
-
-async def claim_quest(user_id, quest_id):
-
-    query = """
-    UPDATE player_quests
-    SET claimed = TRUE
-    WHERE user_id = $1
-    AND quest_id = $2;
-    """
-
-    await database.db.execute(
-        query,
-        user_id,
-        quest_id
-    )
+C:\Users\Ketek'\Desktop\qantum_universe>python main.py
+✅ База данных подключена
+✅ Загружен модуль: auction.py
+✅ Загружен модуль: balance.py
+✅ Загружен модуль: contract.py
+✅ Загружен модуль: daily.py
+✅ Загружен модуль: inventory.py
+✅ Загружен модуль: profile.py
+✅ Загружен модуль: quest.py
+✅ Загружен модуль: shop.py
+✅ Загружен модуль: work.py
+✅ Загружен модуль: travel.py
+✅ Загружен модуль: map.py
+✅ Синхронизировано команд: 12
+🟢 Бот запущен: ILTA BOT#7827
+1. START
+DB: <asyncpg.pool.Pool object at 0x000001C9F7DC2440>
+2. BEFORE EXECUTE
