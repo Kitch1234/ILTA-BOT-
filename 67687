@@ -1,62 +1,25 @@
-import discord
-from discord.ext import commands
-from discord import app_commands
-import random
-
-from database.cards import add_card
-from data.champion_loader import load_champions
-from loot import get_random_rarity
-
-
-class Pack(commands.Cog):
-    def __init__(self, bot):
-        self.bot = bot
-        self.champions = load_champions()
-
-    @app_commands.command(name="open_pack", description="Открыть пак из 10 карт")
-    async def open_pack(self, interaction: discord.Interaction):
-        await interaction.response.defer()
-
-        try:
-            if not self.champions:
-                await interaction.followup.send("❌ champions.json не найден!")
-                return
-
-            embed = discord.Embed(
-                title="🎁 Открытие пака — 10 карт",
-                color=0xFFD700
-            )
-
-            for _ in range(10):
-                champion_name = random.choice(list(self.champions.keys()))
-                champion = self.champions[champion_name]
-                
-                skin = random.choice(champion.get("skins", ["Classic"]))
-                rarity = get_random_rarity()
-
-                attack = random.randint(20, 70)
-                health = random.randint(30, 100)
-                defense = random.randint(5, 35)
-
-                await add_card(
-                    interaction.user.id, champion_name, skin, rarity,
-                    attack, defense, health
-                )
-
-                # Добавляем картинку (пример из DataDragon)
-                image_url = f"https://ddragon.leagueoflegends.com/cdn/14.20.1/img/champion/{champion_name}.png"
-
-                embed.add_field(
-                    name=f"{rarity} — {champion_name}",
-                    value=f"Скин: {skin}\n⚔️{attack} ❤️{health} 🛡️{defense}",
-                    inline=True
-                )
-
-            await interaction.followup.send(embed=embed)
-
-        except Exception as e:
-            await interaction.followup.send(f"❌ Ошибка: {e}")
+\Users\Ketek'\Desktop\qantum_universe>python main.py
+✅ База данных подключена
+✅ Загружен: auction
+✅ Загружен: balance
+✅ Загружен: contract
+✅ Загружен: daily
+✅ Загружен: inventory
+✅ Загружен: profile
+✅ Загружен: quest
+✅ Загружен: shop
+✅ Загружен: work
+✅ Загружен: travel
+✅ Загружен: quest_reward
+✅ Загружен: cards
+✅ Загружен: test_event
+✅ Загружен: deck
+✅ Загружен: battle
+❌ Ошибка загрузки pack: Extension 'cogs.pack' raised an error: ModuleNotFoundError: No module named 'loot'
+❌ Ошибка загрузки collection: Extension 'cogs.collection' raised an error: CommandAlreadyRegistered: Command 'collection' already registered.
+✅ Загружен: map
+✅ Синхронизировано команд: 22
+🟢 Бот запущен как ILTA BOT#7827
 
 
-async def setup(bot):
-    await bot.add_cog(Pack(bot))
+
