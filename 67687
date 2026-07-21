@@ -1,3 +1,34 @@
+from core import database
+
+
+async def get_quests(region):
+
+    query = """
+    SELECT *
+    FROM quests
+    WHERE region = $1;
+    """
+
+    return await database.db.fetch(
+        query,
+        region
+    )
+
+
+async def get_quest(quest_id):
+
+    query = """
+    SELECT *
+    FROM quests
+    WHERE id = $1;
+    """
+
+    return await database.db.fetchrow(
+        query,
+        quest_id
+    )
+
+
 async def accept_quest(user_id, quest_id):
 
     print("1. START")
@@ -13,7 +44,14 @@ async def accept_quest(user_id, quest_id):
         completed,
         claimed
     )
-    VALUES ($1, $2, 0, 1, FALSE, FALSE);
+    VALUES (
+        $1,
+        $2,
+        0,
+        1,
+        FALSE,
+        FALSE
+    );
     """
 
     print("2. BEFORE EXECUTE")
@@ -27,3 +65,49 @@ async def accept_quest(user_id, quest_id):
     print("3. AFTER EXECUTE")
 
     return True
+
+
+async def get_player_quests(user_id):
+
+    query = """
+    SELECT *
+    FROM player_quests
+    WHERE user_id = $1;
+    """
+
+    return await database.db.fetch(
+        query,
+        user_id
+    )
+
+
+async def complete_quest(user_id, quest_id):
+
+    query = """
+    UPDATE player_quests
+    SET completed = TRUE
+    WHERE user_id = $1
+    AND quest_id = $2;
+    """
+
+    await database.db.execute(
+        query,
+        user_id,
+        quest_id
+    )
+
+
+async def claim_quest(user_id, quest_id):
+
+    query = """
+    UPDATE player_quests
+    SET claimed = TRUE
+    WHERE user_id = $1
+    AND quest_id = $2;
+    """
+
+    await database.db.execute(
+        query,
+        user_id,
+        quest_id
+    )
