@@ -1,17 +1,10 @@
-INSERT INTO quests (
-    name,
-    description,
-    region,
-    reward_coins,
-    reward_xp,
-    required_level
-)
-VALUES
-(
-'Первые шаги',
-'Помоги жителям деревни и заработай свою первую награду.',
-'🌱 Начальная деревня',
-50,
-25,
-1
+CREATE TABLE IF NOT EXISTS player_quests (
+    id SERIAL PRIMARY KEY,
+
+    discord_id BIGINT NOT NULL,
+    quest_id INTEGER NOT NULL,
+
+    status TEXT DEFAULT 'active',
+
+    accepted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
