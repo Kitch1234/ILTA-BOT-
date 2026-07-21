@@ -1,22 +1,36 @@
-INSERT INTO quests
-(
-    name,
-    description,
-    region,
-    reward_coins,
-    reward_xp,
-    required_level,
-    type,
-    target
-)
-VALUES
-(
-    'Охота на монстров',
-    'Убей 10 обычных монстров',
-    'start',
-    100,
-    50,
-    1,
-    'monster_kill',
-    10
-);
+import discord
+from discord.ext import commands
+from discord import app_commands
+
+from game.quest_events import monster_killed
+
+
+class TestEvent(commands.Cog):
+
+    def __init__(self, bot):
+        self.bot = bot
+
+
+    @app_commands.command(
+        name="kill_test",
+        description="Тест убийства монстра"
+    )
+    async def kill_test(
+        self,
+        interaction: discord.Interaction
+    ):
+
+        await monster_killed(
+            interaction.user.id
+        )
+
+        await interaction.response.send_message(
+            "⚔️ Монстр побежден! Прогресс квеста увеличен."
+        )
+
+
+async def setup(bot):
+
+    await bot.add_cog(
+        TestEvent(bot)
+    )
