@@ -1,83 +1,33 @@
-from core import database
-
-
-
-# Создать колоду
-
-async def create_deck(
-        owner_id,
-        name
-):
-
-    query = """
-    INSERT INTO decks
-    (
-        owner_id,
-        name
+    @app_commands.command(
+        name="deck_add",
+        description="Добавить карту в колоду"
     )
-    VALUES
-    (
-        $1,
-        $2
+    @app_commands.describe(
+        deck_id="ID колоды",
+        card_id="ID карты"
     )
-    RETURNING id;
-    """
+    async def deck_add(
+        self,
+        interaction: discord.Interaction,
+        deck_id: int,
+        card_id: int
+    ):
 
-    async with database.db.acquire() as conn:
+        try:
 
-        return await conn.fetchval(
-            query,
-            owner_id,
-            name
-        )
-
-
-
-# Получить колоды игрока
-
-async def get_decks(
-        owner_id
-):
-
-    query = """
-    SELECT *
-    FROM decks
-    WHERE owner_id = $1;
-    """
-
-    async with database.db.acquire() as conn:
-
-        return await conn.fetch(
-            query,
-            owner_id
-        )
+            await deck_db.add_card_to_deck(
+                deck_id,
+                card_id
+            )
 
 
+            await interaction.response.send_message(
+                f"✅ Карта #{card_id} добавлена в колоду #{deck_id}"
+            )
 
-# Добавить карту в колоду
 
-async def add_card_to_deck(
-        deck_id,
-        card_id
-):
+        except Exception as e:
 
-    query = """
-    INSERT INTO deck_cards
-    (
-        deck_id,
-        card_id
-    )
-    VALUES
-    (
-        $1,
-        $2
-    );
-    """
-
-    async with database.db.acquire() as conn:
-
-        await conn.execute(
-            query,
-            deck_id,
-            card_id
-        )
+            await interaction.response.send_message(
+                f"❌ Ошибка:\n{e}"
+            )
