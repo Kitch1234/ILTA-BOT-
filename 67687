@@ -1,97 +1,132 @@
 import discord
 from discord.ext import commands
-from discord import app_commands
+import os
+import asyncio
 
-from database import quest as quest_db
+from dotenv import load_dotenv
 
-
-class Quest(commands.Cog):
-
-    def __init__(self, bot):
-        self.bot = bot
+from core.database import connect_db, close_db
 
 
-    @app_commands.command(
-        name="quest",
-        description="Показать квесты"
-    )
-    async def quest(self, interaction: discord.Interaction):
+load_dotenv()
 
-        quests = await quest_db.get_quests("start")
-
-        if not quests:
-            await interaction.response.send_message(
-                "Квестов нет."
-            )
-            return
-
-        text = "Квесты:\n\n"
-
-        for q in quests:
-            text += (
-                f"#{q['id']} {q['name']}\n"
-                f"{q['description']}\n\n"
-            )
-
-        await interaction.response.send_message(text)
+TOKEN = os.getenv("TOKEN")
 
 
-    @app_commands.command(
-        name="quest_accept",
-        description="Принять квест"
-    )
-    async def quest_accept(
-        self,
-        interaction: discord.Interaction,
-        quest_id: int
-    ):
+intents = discord.Intents.default()
+intents.message_content = True
 
-        await quest_db.accept_quest(
-            interaction.user.id,
-            quest_id
-        )
 
-        await interaction.response.send_message(
-            f"Квест {quest_id} принят."
+class QuantumBot(commands.Bot):
+
+    def __init__(self):
+
+        super().__init__(
+            command_prefix="!",
+            intents=intents
         )
 
 
-    @app_commands.command(
-        name="quest_active",
-        description="Активные квесты"
-    )
-    async def quest_active(
-        self,
-        interaction: discord.Interaction
-    ):
+    async def setup_hook(self):
 
-        quests = await quest_db.get_player_quests(
-            interaction.user.id
+        # подключение базы
+        await connect_db()
+
+        # загрузка модулей
+        cogs = [
+            "auction",
+            "balance",
+            "contract",
+            "daily",
+            "inventory",
+            "profile",
+            "quest",
+            "shop",
+            "work", "travel", "map"
+
+        ]
+
+
+        for cog in cogs:
+
+            try:
+                await self.load_extension(
+                    f"cogs.{cog}"
+                )
+
+                print(
+                    f"✅ Загружен модуль: {cog}.py"
+                )
+
+            except Exception as e:
+
+                print(
+                    f"❌ Ошибка {cog}.py:",
+                    e
+                )
+
+
+        # синхронизация команд Discord
+        try:
+
+            synced = await self.tree.sync()
+
+            print(
+                f"✅ Синхронизировано команд: {len(synced)}"
+            )
+
+        except Exception as e:
+
+            print(
+                "❌ Ошибка синхронизации:",
+                e
+            )
+
+
+    async def close(self):
+
+        await close_db()
+
+        await super().close()
+
+
+
+bot = QuantumBot()
+
+
+
+@bot.event
+async def on_ready():
+
+    print(
+        f"🟢 Бот запущен: {bot.user}"
+    )
+
+
+
+async def main():
+
+    if not TOKEN:
+
+        print(
+            "❌ TOKEN не найден в .env"
         )
 
-        if not quests:
-            await interaction.response.send_message(
-                "Нет активных квестов."
-            )
-            return
+        return
 
 
-        text = "Активные квесты:\n\n"
-
-        for q in quests:
-
-            text += (
-                f"Квест #{q['quest_id']}\n"
-                f"{q['progress']}/{q['target']}\n\n"
-            )
-
-
-        await interaction.response.send_message(text)
+    await bot.start(TOKEN)
 
 
 
-async def setup(bot):
+if __name__ == "__main__":
 
-    await bot.add_cog(
-        Quest(bot)
-    )
+    try:
+
+        asyncio.run(main())
+
+    except KeyboardInterrupt:
+
+        print(
+            "Бот остановлен"
+        )
