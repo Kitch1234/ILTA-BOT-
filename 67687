@@ -13,31 +13,24 @@ class Quest(commands.Cog):
 
     @app_commands.command(
         name="quest",
-        description="Показать доступные квесты"
+        description="Показать квесты"
     )
-    async def quest(
-        self,
-        interaction: discord.Interaction
-    ):
+    async def quest(self, interaction: discord.Interaction):
 
         quests = await quest_db.get_quests("start")
 
         if not quests:
             await interaction.response.send_message(
-                "📜 В этом регионе нет квестов."
+                "Квестов нет."
             )
             return
 
-        text = "📜 Доступные квесты:\n\n"
+        text = "Квесты:\n\n"
 
         for q in quests:
-
             text += (
-                f"№{q['id']} — {q['name']}\n"
-                f"{q['description']}\n"
-                f"🎯 Цель: {q['target']}\n"
-                f"💰 Монеты: {q['reward_coins']}\n"
-                f"⭐ Опыт: {q['reward_xp']}\n\n"
+                f"#{q['id']} {q['name']}\n"
+                f"{q['description']}\n\n"
             )
 
         await interaction.response.send_message(text)
@@ -47,33 +40,20 @@ class Quest(commands.Cog):
         name="quest_accept",
         description="Принять квест"
     )
-    @app_commands.describe(
-        quest_id="ID квеста"
-    )
     async def quest_accept(
         self,
         interaction: discord.Interaction,
         quest_id: int
     ):
 
-        user_id = interaction.user.id
+        await quest_db.accept_quest(
+            interaction.user.id,
+            quest_id
+        )
 
-        try:
-
-            await quest_db.accept_quest(
-                user_id,
-                quest_id
-            )
-
-            await interaction.response.send_message(
-                f"✅ Квест №{quest_id} принят."
-            )
-
-        except Exception as e:
-
-            await interaction.response.send_message(
-                f"❌ Ошибка:\n{e}"
-            )
+        await interaction.response.send_message(
+            f"Квест {quest_id} принят."
+        )
 
 
     @app_commands.command(
@@ -90,29 +70,24 @@ class Quest(commands.Cog):
         )
 
         if not quests:
-
             await interaction.response.send_message(
-                "📜 У вас нет активных квестов."
+                "Нет активных квестов."
             )
-
             return
 
-        text = "📜 Активные квесты\n\n"
+
+        text = "Активные квесты:\n\n"
 
         for q in quests:
 
-            status = "✅ Выполнен"
-
-            if not q["completed"]:
-                status = "🔄 В процессе"
-
             text += (
-                f"Квест №{q['quest_id']}\n"
-                f"Прогресс: {q['progress']}/{q['target']}\n"
-                f"{status}\n\n"
+                f"Квест #{q['quest_id']}\n"
+                f"{q['progress']}/{q['target']}\n\n"
             )
 
+
         await interaction.response.send_message(text)
+
 
 
 async def setup(bot):
