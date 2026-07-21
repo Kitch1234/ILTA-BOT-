@@ -1,17 +1,3 @@
-CREATE TABLE cards (
-    id SERIAL PRIMARY KEY,
-    name TEXT NOT NULL,
-    description TEXT,
-    card_type TEXT NOT NULL,
-    rarity TEXT NOT NULL,
-
-    attack INTEGER DEFAULT 0,
-    health INTEGER DEFAULT 0,
-
-    mana_cost INTEGER DEFAULT 0,
-
-    region TEXT,
-    champion TEXT,
-
-    created_at TIMESTAMP DEFAULT NOW()
-);
+SELECT column_name, data_type
+FROM information_schema.columns
+WHERE table_name='cards';
