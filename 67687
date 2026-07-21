@@ -4,6 +4,7 @@ from discord import app_commands
 
 from database import decks as deck_db
 from database import deck_slots
+from database import player
 
 
 class Deck(commands.Cog):
@@ -15,7 +16,7 @@ class Deck(commands.Cog):
 
 
     # ==========================
-    # Создать колоду
+    # Создать боевой отряд
     # ==========================
 
     @app_commands.command(
@@ -30,7 +31,6 @@ class Deck(commands.Cog):
         interaction: discord.Interaction,
         name: str
     ):
-
 
         deck_id = await deck_db.create_deck(
             interaction.user.id,
@@ -205,14 +205,14 @@ class Deck(commands.Cog):
                 f"{slots[card['slot']]} "
                 f"**{card['champion']}**\n"
                 f"⭐ {card['rarity']}\n"
-                f"⚔️ {card['attack']}\n"
-                f"❤️ {card['health']}\n\n"
+                f"⚔️ Атака: {card['attack']}\n"
+                f"❤️ Здоровье: {card['health']}\n\n"
 
             )
 
 
 
-        for slot in [1,2,3]:
+        for slot in [1, 2, 3]:
 
             if slot not in used:
 
@@ -228,8 +228,4 @@ class Deck(commands.Cog):
 
 
 
-async def setup(bot):
-
-    await bot.add_cog(
-        Deck(bot)
-    )
+    # ==========================
