@@ -1,8 +1,11 @@
-ALTER TABLE cards
-ADD COLUMN region TEXT;
+CREATE TABLE deck_slots (
 
-ALTER TABLE cards
-ADD COLUMN mana INTEGER DEFAULT 1;
+id SERIAL PRIMARY KEY,
 
-ALTER TABLE cards
-ADD COLUMN ability TEXT;
+deck_id INTEGER REFERENCES decks(id),
+
+slot INTEGER NOT NULL,
+
+card_id INTEGER REFERENCES cards(id)
+
+);
