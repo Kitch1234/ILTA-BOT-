@@ -1,125 +1,91 @@
-import discord
-from discord.ext import commands
-from discord import app_commands
-
-from database import quest as quest_db
+from core import database
 
 
-class Quest(commands.Cog):
+# Получить квесты региона
+async def get_quests(region):
 
-    def __init__(self, bot):
-        self.bot = bot
+    query = """
+    SELECT *
+    FROM quests
+    WHERE region = $1;
+    """
+
+    async with database.db.acquire() as conn:
+        return await conn.fetch(query, region)
 
 
-    @app_commands.command(
-        name="quest",
-        description="Показать доступные квесты"
+# Получить один квест
+async def get_quest(quest_id):
+
+    query = """
+    SELECT *
+    FROM quests
+    WHERE id = $1;
+    """
+
+    async with database.db.acquire() as conn:
+        return await conn.fetchrow(query, quest_id)
+
+
+# Принять квест
+async def accept_quest(user_id, quest_id):
+
+    query = """
+    INSERT INTO player_quests
+    (
+        user_id,
+        quest_id,
+        progress,
+        target,
+        completed,
+        claimed
     )
-    async def quest(
-        self,
-        interaction: discord.Interaction
-    ):
+    VALUES
+    (
+        $1,
+        $2,
+        0,
+        (
+            SELECT target
+            FROM quests
+            WHERE id = $2
+        ),
+        FALSE,
+        FALSE
+    );
+    """
 
-        quests = await quest_db.get_quests("start")
+    async with database.db.acquire() as conn:
+        await conn.execute(query, user_id, quest_id)
 
-        if not quests:
-
-            await interaction.response.send_message(
-                "📜 В этом регионе нет квестов."
-            )
-            return
-
-
-        text = "📜 Доступные квесты:\n\n"
-
-
-        for q in quests:
-
-            text += (
-                f"№{q['id']} — {q['name']}\n"
-                f"{q['description']}\n"
-                f"🎯 Цель: {q['target']}\n"
-                f"💰 Монеты: {q['reward_coins']}\n"
-                f"⭐ Опыт: {q['reward_xp']}\n\n"
-            )
+    return True
 
 
-        await interaction.response.send_message(
-            text
-        )
+# Активные квесты игрока
+async def get_player_quests(user_id):
+
+    query = """
+    SELECT *
+    FROM player_quests
+    WHERE user_id = $1;
+    """
+
+    async with database.db.acquire() as conn:
+        return await conn.fetch(query, user_id)
 
 
+# Получить квесты по типу
+async def get_quests_by_type(quest_type):
 
-    @app_commands.command(
-        name="quest_accept",
-        description="Принять квест"
-    )
-    @app_commands.describe(
-        quest_id="ID квеста"
-    )
-    async def quest_accept(
-        self,
-        interaction: discord.Interaction,
-        quest_id: int
-    ):
+    query = """
+    SELECT *
+    FROM quests
+    WHERE type = $1;
+    """
 
-        await quest_db.accept_quest(
-            interaction.user.id,
-            quest_id
-        )
+    async with database.db.acquire() as conn:
+        return await conn.fetch(query, quest_type)
 
 
-        await interaction.response.send_message(
-            f"✅ Квест №{quest_id} принят!"
-        )
-
-
-
-    @app_commands.command(
-        name="quest_active",
-        description="Показать активные квесты"
-    )
-    async def quest_active(
-        self,
-        interaction: discord.Interaction
-    ):
-
-        quests = await quest_db.get_player_quests(
-            interaction.user.id
-        )
-
-
-        if not quests:
-
-            await interaction.response.send_message(
-                "📜 У вас нет активных квестов."
-            )
-            return
-
-
-        text = "📜 Активные квесты:\n\n"
-
-
-        for q in quests:
-
-            status = "✅ Выполнен" if q["completed"] else "🔄 В процессе"
-
-
-            text += (
-                f"Квест №{q['quest_id']}\n"
-                f"Прогресс: {q['progress']}/{q['target']}\n"
-                f"{status}\n\n"
-            )
-
-
-        await interaction.response.send_message(
-            text
-        )
-
-
-
-async def setup(bot):
-
-    await bot.add_cog(
-        Quest(bot)
-    )
+# Обновить прогресс
+async def update_progress
