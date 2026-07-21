@@ -1,25 +1,10 @@
-\Users\Ketek'\Desktop\qantum_universe>python main.py
-✅ База данных подключена
-✅ Загружен: auction
-✅ Загружен: balance
-✅ Загружен: contract
-✅ Загружен: daily
-✅ Загружен: inventory
-✅ Загружен: profile
-✅ Загружен: quest
-✅ Загружен: shop
-✅ Загружен: work
-✅ Загружен: travel
-✅ Загружен: quest_reward
-✅ Загружен: cards
-✅ Загружен: test_event
-✅ Загружен: deck
-✅ Загружен: battle
-❌ Ошибка загрузки pack: Extension 'cogs.pack' raised an error: ModuleNotFoundError: No module named 'loot'
-❌ Ошибка загрузки collection: Extension 'cogs.collection' raised an error: CommandAlreadyRegistered: Command 'collection' already registered.
-✅ Загружен: map
-✅ Синхронизировано команд: 22
-🟢 Бот запущен как ILTA BOT#7827
-
-
-
+# Красивый вывод с картинкой
+                embed.add_field(
+                    name=f"{rarity} — {champion_name}",
+                    value=f"Скин: {skin}\n⚔️{attack} ❤️{health} 🛡️{defense}",
+                    inline=True
+                )
+                
+                # Добавляем картинку чемпиона как отдельное изображение (лучше работает)
+                if _ == 0:  # Добавляем только первую картинку, чтобы не спамить
+                    embed.set_image(url=f"https://ddragon.leagueoflegends.com/cdn/14.20.1/img/champion/{champion_name}.png")
