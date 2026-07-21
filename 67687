@@ -1,108 +1,23 @@
-import discord
-from discord.ext import commands
+async def accept_quest(user_id, quest_id):
 
-from core.player import (
-    create_player,
-    get_player
-)
+    print("1. Вошли в accept_quest")
 
-from database.quest import (
-    get_quests,
-    accept_quest
-)
-
-
-class Quest(commands.Cog):
-
-    def __init__(self, bot):
-        self.bot = bot
-
-
-    @discord.app_commands.command(
-        name="quests",
-        description="Посмотреть доступные квесты"
+    query = """
+    INSERT INTO player_quests (
+        user_id,
+        quest_id,
+        status
     )
-    async def quests(
-        self,
-        interaction: discord.Interaction
-    ):
+    VALUES ($1, $2, 'active');
+    """
 
-        await create_player(
-            interaction.user.id,
-            interaction.user.name
-        )
+    print("2. Перед запросом")
 
-        player = await get_player(
-            interaction.user.id
-        )
-
-        quests = await get_quests(
-            player["region"]
-        )
-
-
-        if not quests:
-
-            await interaction.response.send_message(
-                "📜 В этом регионе нет квестов."
-            )
-            return
-
-
-        embed = discord.Embed(
-            title="📜 Доступные квесты",
-            color=discord.Color.orange()
-        )
-
-
-        for quest in quests:
-
-            embed.add_field(
-                name=f"#{quest['id']} {quest['name']}",
-                value=(
-                    f"{quest['description']}\n\n"
-                    f"💰 Монеты: {quest['reward_coins']}\n"
-                    f"⭐ XP: {quest['reward_xp']}"
-                ),
-                inline=False
-            )
-
-
-        await interaction.response.send_message(
-            embed=embed
-        )
-
-
-
-    @discord.app_commands.command(
-        name="quest_accept",
-        description="Взять квест"
-    )
-    async def quest_accept(
-        self,
-        interaction: discord.Interaction,
-        quest_id: int
-    ):
-
-        await interaction.response.defer()
-
-
-        await create_player(
-            interaction.user.id,
-            interaction.user.name
-        )
-
-
-        await accept_quest(
-            interaction.user.id,
+    async with db.acquire() as conn:
+        await conn.execute(
+            query,
+            user_id,
             quest_id
         )
 
-
-        await interaction.followup.send(
-            f"✅ Квест №{quest_id} принят!"
-        )
-
-
-async def setup(bot):
-    await bot.add_cog(Quest(bot))
+    print("3. Запрос выполнен")
