@@ -1,269 +1,126 @@
-# quest_events.py
-
 """
-Игровые события для системы квестов ILTA RPG
+События квестов ILTA BOT RPG
 """
 
-
-from database.quest_queries import (
-    update_quest_progress,
-    complete_quest
-)
-
-
-
+from database import quest as quest_db
 
 
 async def trigger_event(
-
-        pool,
-
         user_id,
-
         event,
-
         amount=1
-
 ):
-
-    """
-    Главный обработчик событий
-    """
-
-
 
     events = {
 
-
-        "monster_kill":
-
-        [
-
-            "kill_monsters"
-
+        "monster_kill": [
+            1
         ],
 
-
-
-        "boss_kill":
-
-        [
-
-            "kill_boss"
-
+        "boss_kill": [
+            2
         ],
 
-
-
-        "open_chest":
-
-        [
-
-            "open_chests"
-
+        "open_chest": [
+            3
         ],
 
-
-
-        "get_card":
-
-        [
-
-            "collect_cards"
-
+        "get_card": [
+            4
         ],
 
-
-
-        "move_region":
-
-        [
-
-            "explorer"
-
+        "move_region": [
+            5
         ]
 
     }
 
 
-
-
-    quests = events.get(
-
+    quest_ids = events.get(
         event,
-
         []
-
     )
 
 
+    for quest_id in quest_ids:
 
-    for quest_id in quests:
-
-
-        await update_quest_progress(
-
-            pool,
-
-            user_id,
-
-            quest_id,
-
-            amount
-
+        quests = await quest_db.get_player_quests(
+            user_id
         )
 
 
-        await complete_quest(
+        for quest in quests:
 
-            pool,
-
-            user_id,
-
-            quest_id
-
-        )
+            if quest["quest_id"] != quest_id:
+                continue
 
 
+            if quest["completed"]:
+                continue
+
+
+            new_progress = (
+                quest["progress"] + amount
+            )
+
+
+            if new_progress >= quest["target"]:
+
+                await quest_db.complete_quest(
+                    user_id,
+                    quest_id
+                )
+
+
+            else:
+
+                await quest_db.update_progress(
+                    user_id,
+                    quest_id,
+                    new_progress
+                )
 
 
 
-
-async def monster_killed(
-
-        pool,
-
-        user_id
-
-):
-
-    """
-    Событие убийства обычного моба
-    """
-
+async def monster_killed(user_id):
 
     await trigger_event(
-
-        pool,
-
         user_id,
-
         "monster_kill"
-
     )
 
 
 
-
-
-
-
-async def boss_killed(
-
-        pool,
-
-        user_id
-
-):
-
-    """
-    Событие убийства босса
-    """
-
+async def boss_killed(user_id):
 
     await trigger_event(
-
-        pool,
-
         user_id,
-
         "boss_kill"
-
     )
 
 
 
-
-
-
-
-async def chest_opened(
-
-        pool,
-
-        user_id
-
-):
-
-    """
-    Событие открытия сундука
-    """
-
+async def chest_opened(user_id):
 
     await trigger_event(
-
-        pool,
-
         user_id,
-
         "open_chest"
-
     )
 
 
 
-
-
-
-
-async def card_received(
-
-        pool,
-
-        user_id
-
-):
-
-    """
-    Событие получения карты
-    """
-
+async def card_received(user_id):
 
     await trigger_event(
-
-        pool,
-
         user_id,
-
         "get_card"
-
     )
 
 
 
-
-
-
-
-async def region_discovered(
-
-        pool,
-
-        user_id
-
-):
-
-    """
-    Открытие нового региона
-    """
-
+async def region_discovered(user_id):
 
     await trigger_event(
-
-        pool,
-
         user_id,
-
         "move_region"
-
     )
