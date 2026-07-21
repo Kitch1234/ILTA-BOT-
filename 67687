@@ -1,2 +1,2 @@
-✅ Загружен модуль: deck.py
-❌ Ошибка battle.py: Extension 'cogs.battle' raised an error: ImportError: cannot import name 'monsters' from 'database' (unknown location)
+ALTER TABLE users
+ADD COLUMN IF NOT EXISTS active_deck INTEGER;
