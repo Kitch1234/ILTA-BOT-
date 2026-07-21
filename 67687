@@ -1,3 +1,9 @@
-SELECT column_name, data_type
-FROM information_schema.columns
-WHERE table_name='monsters';
+"id"	"integer"
+"name"	"character varying"
+"region"	"character varying"
+"level"	"integer"
+"health"	"integer"
+"attack"	"integer"
+"defense"	"integer"
+"reward_xp"	"integer"
+"reward_gold"	"integer"
