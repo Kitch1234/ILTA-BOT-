@@ -11,12 +11,7 @@ async def get_quests(region):
     """
 
     async with database.db.acquire() as conn:
-
-        return await conn.fetch(
-            query,
-            region
-        )
-
+        return await conn.fetch(query, region)
 
 
 # Получить один квест
@@ -29,12 +24,7 @@ async def get_quest(quest_id):
     """
 
     async with database.db.acquire() as conn:
-
-        return await conn.fetchrow(
-            query,
-            quest_id
-        )
-
+        return await conn.fetchrow(query, quest_id)
 
 
 # Принять квест
@@ -55,25 +45,23 @@ async def accept_quest(user_id, quest_id):
         $1,
         $2,
         0,
-        1,
+        (
+            SELECT target
+            FROM quests
+            WHERE id = $2
+        ),
         FALSE,
         FALSE
     );
     """
 
     async with database.db.acquire() as conn:
-
-        await conn.execute(
-            query,
-            user_id,
-            quest_id
-        )
+        await conn.execute(query, user_id, quest_id)
 
     return True
 
 
-
-# Получить активные квесты игрока
+# Активные квесты игрока
 async def get_player_quests(user_id):
 
     query = """
@@ -83,15 +71,10 @@ async def get_player_quests(user_id):
     """
 
     async with database.db.acquire() as conn:
-
-        return await conn.fetch(
-            query,
-            user_id
-        )
+        return await conn.fetch(query, user_id)
 
 
-
-# Найти квесты по типу события
+# Получить квесты по типу
 async def get_quests_by_type(quest_type):
 
     query = """
@@ -101,21 +84,8 @@ async def get_quests_by_type(quest_type):
     """
 
     async with database.db.acquire() as conn:
-
-        return await conn.fetch(
-            query,
-            quest_type
-        )
-
+        return await conn.fetch(query, quest_type)
 
 
 # Обновить прогресс
-async def update_progress(
-        user_id,
-        quest_id,
-        progress
-):
-
-    query = """
-    UPDATE player_quests
-    SET progress = $3
+async def update_progress
