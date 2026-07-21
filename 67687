@@ -1,13 +1,11 @@
-CREATE TABLE battles (
+CREATE TABLE battle_cards (
 
 id SERIAL PRIMARY KEY,
 
-user_id BIGINT,
+battle_id INTEGER REFERENCES battles(id),
 
-enemy_id INTEGER,
+card_id INTEGER REFERENCES cards(id),
 
-status VARCHAR(20),
-
-created_at TIMESTAMP DEFAULT NOW()
+current_health INTEGER
 
 );
