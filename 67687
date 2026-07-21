@@ -1,142 +1,22 @@
-from database import quest as quest_db
-
-
-# =================================
-# Главное событие квестов
-# =================================
-
-async def trigger_event(
-        user_id,
-        quest_type,
-        amount=1
-):
-
-    quests = await quest_db.get_quests_by_type(
-        quest_type
-    )
-
-
-    for quest in quests:
-
-        quest_id = quest["id"]
-
-
-        # ищем активный квест игрока
-        active = await quest_db.get_player_quests(
-            user_id
-        )
-
-
-        for player_quest in active:
-
-            if player_quest["quest_id"] != quest_id:
-                continue
-
-
-            if player_quest["completed"]:
-                continue
-
-
-            new_progress = (
-                player_quest["progress"]
-                + amount
-            )
-
-
-            if new_progress >= player_quest["target"]:
-
-                await quest_db.update_progress(
-                    user_id,
-                    quest_id,
-                    player_quest["target"]
-                )
-
-
-                await quest_db.complete_quest(
-                    user_id,
-                    quest_id
-                )
-
-
-            else:
-
-                await quest_db.update_progress(
-                    user_id,
-                    quest_id,
-                    new_progress
-                )
-
-
-
-# =================================
-# Убийство моба
-# =================================
-
-async def monster_killed(
-        user_id
-):
-
-    await trigger_event(
-        user_id,
-        "monster_kill"
-    )
-
-
-
-# =================================
-# Убийство босса
-# =================================
-
-async def boss_killed(
-        user_id
-):
-
-    await trigger_event(
-        user_id,
-        "boss_kill"
-    )
-
-
-
-# =================================
-# Открытие сундука
-# =================================
-
-async def chest_opened(
-        user_id
-):
-
-    await trigger_event(
-        user_id,
-        "open_chest"
-    )
-
-
-
-# =================================
-# Получение карты
-# =================================
-
-async def card_received(
-        user_id
-):
-
-    await trigger_event(
-        user_id,
-        "get_card"
-    )
-
-
-
-# =================================
-# Открытие региона
-# =================================
-
-async def region_discovered(
-        user_id
-):
-
-    await trigger_event(
-        user_id,
-        "move_region"
-    )
+INSERT INTO quests
+(
+    name,
+    description,
+    region,
+    reward_coins,
+    reward_xp,
+    required_level,
+    type,
+    target
+)
+VALUES
+(
+    'Охота на монстров',
+    'Убей 10 обычных монстров',
+    'start',
+    100,
+    50,
+    1,
+    'monster_kill',
+    10
+);
