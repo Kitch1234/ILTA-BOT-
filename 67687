@@ -1,96 +1,106 @@
-from core.database import db
+import discord
+from discord.ext import commands
+
+from core.player import create_player, get_player
+from database.quest import get_quests, accept_quest
 
 
-async def get_quests(region):
+class Quest(commands.Cog):
 
-    query = """
-    SELECT *
-    FROM quests
-    WHERE region = $1;
-    """
+    def __init__(self, bot):
+        self.bot = bot
 
-    async with db.acquire() as conn:
-        return await conn.fetch(
-            query,
-            region
+
+    @discord.app_commands.command(
+        name="quests",
+        description="Посмотреть квесты"
+    )
+    async def quests(
+        self,
+        interaction: discord.Interaction
+    ):
+
+        await create_player(
+            interaction.user.id,
+            interaction.user.name
         )
 
 
-async def get_quest(quest_id):
+        player = await get_player(
+            interaction.user.id
+        )
 
-    query = """
-    SELECT *
-    FROM quests
-    WHERE id = $1;
-    """
 
-    async with db.acquire() as conn:
-        return await conn.fetchrow(
-            query,
+        quests = await get_quests(
+            player["region"]
+        )
+
+
+        if not quests:
+
+            await interaction.response.send_message(
+                "📜 Нет доступных квестов"
+            )
+            return
+
+
+        embed = discord.Embed(
+            title="📜 Квесты",
+            color=discord.Color.orange()
+        )
+
+
+        for quest in quests:
+
+            embed.add_field(
+                name=f"#{quest['id']} {quest['name']}",
+                value=(
+                    f"{quest['description']}\n"
+                    f"💰 {quest['reward_coins']}\n"
+                    f"⭐ {quest['reward_xp']} XP"
+                ),
+                inline=False
+            )
+
+
+        await interaction.response.send_message(
+            embed=embed
+        )
+
+
+
+    @discord.app_commands.command(
+        name="quest_accept",
+        description="Взять квест"
+    )
+    async def quest_accept(
+        self,
+        interaction: discord.Interaction,
+        quest_id: int
+    ):
+
+        await interaction.response.defer()
+
+
+        result = await accept_quest(
+            interaction.user.id,
             quest_id
         )
 
 
-async def accept_quest(user_id, quest_id):
+        if result:
 
-    print("QUEST ACCEPT START")
+            await interaction.followup.send(
+                f"✅ Квест №{quest_id} принят!"
+            )
 
-    quest = await get_quest(quest_id)
+        else:
 
-    if quest is None:
-        print("QUEST NOT FOUND")
-        return False
-
-
-    query = """
-    INSERT INTO player_quests (
-        user_id,
-        quest_id,
-        progress,
-        target,
-        completed,
-        claimed
-    )
-    VALUES (
-        $1,
-        $2,
-        0,
-        $3,
-        FALSE,
-        FALSE
-    );
-    """
-
-
-    print("BEFORE INSERT")
-
-
-    async with db.acquire() as conn:
-
-        await conn.execute(
-            query,
-            user_id,
-            quest_id,
-            quest["target"]
-        )
-
-
-    print("AFTER INSERT")
-
-    return True
+            await interaction.followup.send(
+                "❌ Квест не найден"
+            )
 
 
 
-async def get_player_quests(user_id):
-
-    query = """
-    SELECT *
-    FROM player_quests
-    WHERE user_id = $1;
-    """
-
-    async with db.acquire() as conn:
-        return await conn.fetch(
-            query,
-            user_id
-        )
+async def setup(bot):
+    await bot.add_cog(Quest(bot))
