@@ -1,102 +1,103 @@
-from datetime import datetime
+import random
+from datetime import datetime, timedelta
 
-from core.database import db
+import discord
+from discord.ext import commands
+
+from core.player import (
+    create_player,
+    get_player,
+    add_coins,
+    add_xp,
+    set_last_work,
+    level_up
+)
 
 
-async def create_player(discord_id: int, username: str):
-    query = """
-    INSERT INTO users (
-        discord_id,
-        username
+class Work(commands.Cog):
+
+    def __init__(self, bot):
+        self.bot = bot
+
+    @discord.app_commands.command(
+        name="work",
+        description="Заработать монеты"
     )
-    VALUES ($1, $2)
-    ON CONFLICT (discord_id)
-    DO NOTHING;
-    """
+    async def work(self, interaction: discord.Interaction):
 
-    async with db.acquire() as conn:
-        await conn.execute(
-            query,
-            discord_id,
-            username
+        await create_player(
+            interaction.user.id,
+            interaction.user.name
+        )
+
+        player = await get_player(
+            interaction.user.id
+        )
+
+        if player["last_work"]:
+
+            cooldown = timedelta(minutes=1)
+
+            if datetime.utcnow() - player["last_work"] < cooldown:
+
+                left = cooldown - (datetime.utcnow() - player["last_work"])
+
+                await interaction.response.send_message(
+                    f"⏳ Подождите ещё **{left.seconds} сек.**",
+                    ephemeral=True
+                )
+                return
+
+        coins = random.randint(10, 30)
+        xp = random.randint(5, 15)
+
+        await add_coins(
+            interaction.user.id,
+            coins
+        )
+
+        await add_xp(
+            interaction.user.id,
+            xp
+        )
+
+        await set_last_work(
+            interaction.user.id
+        )
+
+        level = await level_up(
+            interaction.user.id
+        )
+
+        embed = discord.Embed(
+            title="💼 Работа завершена",
+            color=discord.Color.green()
+        )
+
+        embed.add_field(
+            name="💰 Монеты",
+            value=f"+{coins}",
+            inline=True
+        )
+
+        embed.add_field(
+            name="⭐ Опыт",
+            value=f"+{xp}",
+            inline=True
+        )
+
+        if level:
+
+            embed.add_field(
+                name="🎉 Уровень",
+                value="Вы повысили уровень!",
+                inline=False
+            )
+
+        await interaction.response.send_message(
+            embed=embed
         )
 
 
-async def get_player(discord_id: int):
-    query = """
-    SELECT *
-    FROM users
-    WHERE discord_id = $1;
-    """
-
-    async with db.acquire() as conn:
-        return await conn.fetchrow(query, discord_id)
-
-
-async def add_coins(discord_id: int, amount: int):
-    query = """
-    UPDATE users
-    SET coins = coins + $1
-    WHERE discord_id = $2;
-    """
-
-    async with db.acquire() as conn:
-        await conn.execute(query, amount, discord_id)
-
-
-async def add_xp(discord_id: int, amount: int):
-    query = """
-    UPDATE users
-    SET xp = xp + $1
-    WHERE discord_id = $2;
-    """
-
-    async with db.acquire() as conn:
-        await conn.execute(query, amount, discord_id)
-
-
-async def set_last_work(discord_id: int):
-    query = """
-    UPDATE users
-    SET last_work = $1
-    WHERE discord_id = $2;
-    """
-
-    async with db.acquire() as conn:
-        await conn.execute(
-            query,
-            datetime.utcnow(),
-            discord_id
-        )
-
-
-async def level_up(discord_id: int):
-    player = await get_player(discord_id)
-
-    if not player:
-        return False
-
-    level = player["level"]
-    xp = player["xp"]
-
-    need = level * 100
-
-    if xp < need:
-        return False
-
-    query = """
-    UPDATE users
-    SET
-        level = level + 1,
-        xp = xp - $1
-    WHERE discord_id = $2;
-    """
-
-    async with db.acquire() as conn:
-        await conn.execute(
-            query,
-            need,
-            discord_id
-        )
-
-    return True
+async def setup(bot):
+    await bot.add_cog(Work(bot))
