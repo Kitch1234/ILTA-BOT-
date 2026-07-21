@@ -1,8 +1,1 @@
-UPDATE cards
-SET region='Piltover'
-WHERE champion IN ('Jayce','Ekko','Caitlyn');
-
-
-UPDATE cards
-SET region='Noxus'
-WHERE champion IN ('Darius','Katarina');
+❌ Ошибка collection.py: Extension 'cogs.collection' raised an error: CommandAlreadyRegistered: Command 'collection' already registered.
