@@ -1,3 +1,4 @@
+
 C:\Users\Ketek'\Desktop\qantum_universe>python main.py
 ✅ База данных подключена
 ✅ Загружен: auction
@@ -15,10 +16,8 @@ C:\Users\Ketek'\Desktop\qantum_universe>python main.py
 ✅ Загружен: test_event
 ✅ Загружен: deck
 ✅ Загружен: battle
-❌ Ошибка загрузки pack: Extension 'cogs.pack' raised an error: ModuleNotFoundError: No module named 'champion_loader'
+❌ Ошибка загрузки pack: Extension 'cogs.pack' raised an error: ModuleNotFoundError: No module named 'game.loot'
 ✅ Загружен: collection
 ✅ Загружен: map
 ✅ Синхронизировано команд: 23
 🟢 Бот запущен как ILTA BOT#7827
-
-
