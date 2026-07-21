@@ -1,91 +1,122 @@
-from core import database
+import discord
+from discord.ext import commands
+from discord import app_commands
+
+from database import quest as quest_db
 
 
-# Получить квесты региона
-async def get_quests(region):
+class Quest(commands.Cog):
 
-    query = """
-    SELECT *
-    FROM quests
-    WHERE region = $1;
-    """
-
-    async with database.db.acquire() as conn:
-        return await conn.fetch(query, region)
+    def __init__(self, bot):
+        self.bot = bot
 
 
-# Получить один квест
-async def get_quest(quest_id):
-
-    query = """
-    SELECT *
-    FROM quests
-    WHERE id = $1;
-    """
-
-    async with database.db.acquire() as conn:
-        return await conn.fetchrow(query, quest_id)
-
-
-# Принять квест
-async def accept_quest(user_id, quest_id):
-
-    query = """
-    INSERT INTO player_quests
-    (
-        user_id,
-        quest_id,
-        progress,
-        target,
-        completed,
-        claimed
+    @app_commands.command(
+        name="quest",
+        description="Показать доступные квесты"
     )
-    VALUES
-    (
-        $1,
-        $2,
-        0,
-        (
-            SELECT target
-            FROM quests
-            WHERE id = $2
-        ),
-        FALSE,
-        FALSE
-    );
-    """
+    async def quest(
+        self,
+        interaction: discord.Interaction
+    ):
 
-    async with database.db.acquire() as conn:
-        await conn.execute(query, user_id, quest_id)
+        quests = await quest_db.get_quests("start")
 
-    return True
+        if not quests:
+            await interaction.response.send_message(
+                "📜 В этом регионе нет квестов."
+            )
+            return
 
+        text = "📜 Доступные квесты:\n\n"
 
-# Активные квесты игрока
-async def get_player_quests(user_id):
+        for q in quests:
 
-    query = """
-    SELECT *
-    FROM player_quests
-    WHERE user_id = $1;
-    """
+            text += (
+                f"№{q['id']} — {q['name']}\n"
+                f"{q['description']}\n"
+                f"🎯 Цель: {q['target']}\n"
+                f"💰 Монеты: {q['reward_coins']}\n"
+                f"⭐ Опыт: {q['reward_xp']}\n\n"
+            )
 
-    async with database.db.acquire() as conn:
-        return await conn.fetch(query, user_id)
+        await interaction.response.send_message(text)
 
 
-# Получить квесты по типу
-async def get_quests_by_type(quest_type):
+    @app_commands.command(
+        name="quest_accept",
+        description="Принять квест"
+    )
+    @app_commands.describe(
+        quest_id="ID квеста"
+    )
+    async def quest_accept(
+        self,
+        interaction: discord.Interaction,
+        quest_id: int
+    ):
 
-    query = """
-    SELECT *
-    FROM quests
-    WHERE type = $1;
-    """
+        user_id = interaction.user.id
 
-    async with database.db.acquire() as conn:
-        return await conn.fetch(query, quest_type)
+        try:
+
+            await quest_db.accept_quest(
+                user_id,
+                quest_id
+            )
+
+            await interaction.response.send_message(
+                f"✅ Квест №{quest_id} принят."
+            )
+
+        except Exception as e:
+
+            await interaction.response.send_message(
+                f"❌ Ошибка:\n{e}"
+            )
 
 
-# Обновить прогресс
-async def update_progress
+    @app_commands.command(
+        name="quest_active",
+        description="Активные квесты"
+    )
+    async def quest_active(
+        self,
+        interaction: discord.Interaction
+    ):
+
+        quests = await quest_db.get_player_quests(
+            interaction.user.id
+        )
+
+        if not quests:
+
+            await interaction.response.send_message(
+                "📜 У вас нет активных квестов."
+            )
+
+            return
+
+        text = "📜 Активные квесты\n\n"
+
+        for q in quests:
+
+            status = "✅ Выполнен"
+
+            if not q["completed"]:
+                status = "🔄 В процессе"
+
+            text += (
+                f"Квест №{q['quest_id']}\n"
+                f"Прогресс: {q['progress']}/{q['target']}\n"
+                f"{status}\n\n"
+            )
+
+        await interaction.response.send_message(text)
+
+
+async def setup(bot):
+
+    await bot.add_cog(
+        Quest(bot)
+    )
