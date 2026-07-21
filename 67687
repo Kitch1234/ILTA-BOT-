@@ -1,3 +1,7 @@
-SELECT column_name, data_type
-FROM information_schema.columns
-WHERE table_name='quests';
+"id"	"integer"
+"name"	"text"
+"description"	"text"
+"region"	"text"
+"reward_coins"	"integer"
+"reward_xp"	"integer"
+"required_level"	"integer"
