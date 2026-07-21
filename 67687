@@ -1,42 +1,36 @@
-{
-  "Ahri": {
-    "name": "Ари",
-    "role": "Mage",
-    "skins": ["Classic", "Popstar", "K/DA", "Prestige K/DA"]
-  },
-  "Yasuo": {
-    "name": "Ясуо",
-    "role": "Fighter",
-    "skins": ["Classic", "Nightbringer", "True Damage", "Battle Boss"]
-  },
-  "Jinx": {
-    "name": "Джинкс",
-    "role": "Marksman",
-    "skins": ["Classic", "Star Guardian", "PROJECT", "Crime City"]
-  },
-  "Zed": {
-    "name": "Зед",
-    "role": "Assassin",
-    "skins": ["Classic", "Death Sworn", "Galaxy Slayer", "Prestige"]
-  },
-  "Lux": {
-    "name": "Люкс",
-    "role": "Mage",
-    "skins": ["Classic", "Elementalist", "Cosmic", "Lunar Empress"]
-  },
-  "Darius": {
-    "name": "Дариус",
-    "role": "Fighter",
-    "skins": ["Classic", "Dunkmaster", "God-King"]
-  },
-  "Miss Fortune": {
-    "name": "Мисс Фортуна",
-    "role": "Marksman",
-    "skins": ["Classic", "Gun Goddess", "Bewitching"]
-  },
-  "Lee Sin": {
-    "name": "Ли Син",
-    "role": "Fighter",
-    "skins": ["Classic", "Dragon Fist", "Nightbringer"]
-  }
-}
+import discord
+from discord.ext import commands
+from discord import app_commands
+
+from database.cards import get_player_cards
+
+
+class Collection(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+
+    @app_commands.command(name="collection", description="Показать свою коллекцию карт")
+    async def collection(self, interaction: discord.Interaction):
+        cards = await get_player_cards(interaction.user.id)
+
+        if not cards:
+            await interaction.response.send_message("🃏 У тебя пока нет карт. Открой пак `/open_pack`")
+            return
+
+        embed = discord.Embed(
+            title=f"🃏 Коллекция {interaction.user.name}",
+            color=discord.Color.purple()
+        )
+
+        for card in cards:
+            embed.add_field(
+                name=f"{card['champion']} — {card['skin']}",
+                value=f"⭐ {card['rarity']}\n⚔️ {card['attack']}  ❤️ {card['health']}  🛡️ {card['defense']}",
+                inline=True
+            )
+
+        await interaction.response.send_message(embed=embed)
+
+
+async def setup(bot):
+    await bot.add_cog(Collection(bot))
