@@ -1,84 +1,24 @@
-import discord
-from discord.ext import commands
-from discord import app_commands
-import random
-
-from database.cards import add_card
-from champion_loader import load_champions, get_skins
-from game.loot import get_random_rarity  # или loot.py
-
-
-class Pack(commands.Cog):
-    def __init__(self, bot):
-        self.bot = bot
-        self.champions = load_champions()
-
-    @app_commands.command(name="open_pack", description="Открыть пак из 10 карт")
-    async def open_pack(self, interaction: discord.Interaction):
-        await interaction.response.defer()
-
-        cards = []
-        embed = discord.Embed(
-            title="🎁 Открытие пака (10 карт)",
-            color=0xFFD700,
-            description=f"Игрок: {interaction.user.name}"
-        )
-
-        for _ in range(10):
-            # Выбираем чемпиона
-            champion_name = random.choice(list(self.champions.keys()))
-            champion_data = self.champions[champion_name]
-
-            # Выбираем скин
-            skins = champion_data.get("skins", ["Classic"])
-            skin = random.choice(skins)
-
-            # Редкость
-            rarity = get_random_rarity()
-
-            # Характеристики зависят от редкости
-            base_atk = random.randint(15, 45)
-            base_hp = random.randint(25, 70)
-
-            rarity_multiplier = {
-                "Обычный": 1.0,
-                "Эпический": 1.4,
-                "Легендарный": 1.8,
-                "Мифический": 2.3,
-                "Престижный": 2.8,
-            }.get(rarity, 1.0)
-
-            attack = int(base_atk * rarity_multiplier)
-            health = int(base_hp * rarity_multiplier)
-            defense = random.randint(5, 25)
-
-            # Сохраняем карту
-            await add_card(
-                owner_id=interaction.user.id,
-                champion=champion_name,
-                skin=skin,
-                rarity=rarity,
-                attack=attack,
-                defense=defense,
-                health=health
-            )
-
-            cards.append({
-                "champion": champion_name,
-                "skin": skin,
-                "rarity": rarity,
-                "attack": attack,
-                "health": health
-            })
-
-            embed.add_field(
-                name=f"{rarity} 🃏 {champion_name}",
-                value=f"Скин: {skin}\n⚔️ {attack}  ❤️ {health}",
-                inline=True
-            )
-
-        await interaction.followup.send(embed=embed)
+C:\Users\Ketek'\Desktop\qantum_universe>python main.py
+✅ База данных подключена
+✅ Загружен: auction
+✅ Загружен: balance
+✅ Загружен: contract
+✅ Загружен: daily
+✅ Загружен: inventory
+✅ Загружен: profile
+✅ Загружен: quest
+✅ Загружен: shop
+✅ Загружен: work
+✅ Загружен: travel
+✅ Загружен: quest_reward
+✅ Загружен: cards
+✅ Загружен: test_event
+✅ Загружен: deck
+✅ Загружен: battle
+❌ Ошибка загрузки pack: Extension 'cogs.pack' raised an error: ModuleNotFoundError: No module named 'champion_loader'
+✅ Загружен: collection
+✅ Загружен: map
+✅ Синхронизировано команд: 23
+🟢 Бот запущен как ILTA BOT#7827
 
 
-async def setup(bot):
-    await bot.add_cog(Pack(bot))
