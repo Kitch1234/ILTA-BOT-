@@ -1,140 +1,269 @@
-import discord
-from discord.ext import commands
-from discord import app_commands
+# quest_events.py
 
-from database import quest as quest_db
-
-
-class Quest(commands.Cog):
-
-    def __init__(self, bot):
-        self.bot = bot
+"""
+Игровые события для системы квестов ILTA RPG
+"""
 
 
-    # Показать доступные квесты
-    @app_commands.command(
-        name="quest",
-        description="Показать доступные квесты"
+from database.quest_queries import (
+    update_quest_progress,
+    complete_quest
+)
+
+
+
+
+
+async def trigger_event(
+
+        pool,
+
+        user_id,
+
+        event,
+
+        amount=1
+
+):
+
+    """
+    Главный обработчик событий
+    """
+
+
+
+    events = {
+
+
+        "monster_kill":
+
+        [
+
+            "kill_monsters"
+
+        ],
+
+
+
+        "boss_kill":
+
+        [
+
+            "kill_boss"
+
+        ],
+
+
+
+        "open_chest":
+
+        [
+
+            "open_chests"
+
+        ],
+
+
+
+        "get_card":
+
+        [
+
+            "collect_cards"
+
+        ],
+
+
+
+        "move_region":
+
+        [
+
+            "explorer"
+
+        ]
+
+    }
+
+
+
+
+    quests = events.get(
+
+        event,
+
+        []
+
     )
-    async def quest(
-        self,
-        interaction: discord.Interaction
-    ):
-
-        quests = await quest_db.get_quests("start")
-
-        if not quests:
-
-            await interaction.response.send_message(
-                "📜 В этом регионе нет квестов."
-            )
-            return
-
-
-        text = "📜 Доступные квесты:\n\n"
-
-        for q in quests:
-
-            text += (
-                f"№{q['id']} — {q['name']}\n"
-                f"{q['description']}\n"
-                f"Награда: {q['reward']} монет\n\n"
-            )
-
-
-        await interaction.response.send_message(text)
 
 
 
-    # Принять квест
-    @app_commands.command(
-        name="quest_accept",
-        description="Принять квест"
-    )
-    @app_commands.describe(
-        quest_id="ID квеста"
-    )
-    async def quest_accept(
-        self,
-        interaction: discord.Interaction,
-        quest_id: int
-    ):
-
-        user_id = interaction.user.id
+    for quest_id in quests:
 
 
-        result = await quest_db.accept_quest(
+        await update_quest_progress(
+
+            pool,
+
             user_id,
+
+            quest_id,
+
+            amount
+
+        )
+
+
+        await complete_quest(
+
+            pool,
+
+            user_id,
+
             quest_id
+
         )
 
 
-        if result:
-
-            await interaction.response.send_message(
-                f"✅ Квест №{quest_id} принят!"
-            )
-
-        else:
-
-            await interaction.response.send_message(
-                "❌ Не удалось принять квест."
-            )
 
 
 
-    # Активные квесты игрока
-    @app_commands.command(
-        name="quest_active",
-        description="Показать активные квесты"
+
+async def monster_killed(
+
+        pool,
+
+        user_id
+
+):
+
+    """
+    Событие убийства обычного моба
+    """
+
+
+    await trigger_event(
+
+        pool,
+
+        user_id,
+
+        "monster_kill"
+
     )
-    async def quest_active(
-        self,
-        interaction: discord.Interaction
-    ):
-
-        user_id = interaction.user.id
-
-
-        quests = await quest_db.get_player_quests(
-            user_id
-        )
-
-
-        if not quests:
-
-            await interaction.response.send_message(
-                "📜 У вас нет активных квестов."
-            )
-            return
-
-
-        text = "📜 Ваши активные квесты:\n\n"
-
-
-        for q in quests:
-
-            if q["completed"]:
-                status = "✅ Выполнен"
-            else:
-                status = "🔄 В процессе"
-
-
-            text += (
-                f"Квест №{q['quest_id']}\n"
-                f"Прогресс: {q['progress']}/{q['target']}\n"
-                f"Статус: {status}\n\n"
-            )
-
-
-        await interaction.response.send_message(
-            text
-        )
 
 
 
-async def setup(bot):
 
-    await bot.add_cog(
-        Quest(bot)
+
+
+
+async def boss_killed(
+
+        pool,
+
+        user_id
+
+):
+
+    """
+    Событие убийства босса
+    """
+
+
+    await trigger_event(
+
+        pool,
+
+        user_id,
+
+        "boss_kill"
+
+    )
+
+
+
+
+
+
+
+async def chest_opened(
+
+        pool,
+
+        user_id
+
+):
+
+    """
+    Событие открытия сундука
+    """
+
+
+    await trigger_event(
+
+        pool,
+
+        user_id,
+
+        "open_chest"
+
+    )
+
+
+
+
+
+
+
+async def card_received(
+
+        pool,
+
+        user_id
+
+):
+
+    """
+    Событие получения карты
+    """
+
+
+    await trigger_event(
+
+        pool,
+
+        user_id,
+
+        "get_card"
+
+    )
+
+
+
+
+
+
+
+async def region_discovered(
+
+        pool,
+
+        user_id
+
+):
+
+    """
+    Открытие нового региона
+    """
+
+
+    await trigger_event(
+
+        pool,
+
+        user_id,
+
+        "move_region"
+
     )
