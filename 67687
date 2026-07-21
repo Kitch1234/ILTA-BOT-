@@ -1,171 +1,22 @@
-from core import database
-
-
-async def get_quests(region):
-
-    query = """
-    SELECT *
-    FROM quests
-    WHERE region = $1;
-    """
-
-    async with database.db.acquire() as conn:
-        return await conn.fetch(query, region)
-
-
-
-async def get_quest(quest_id):
-
-    query = """
-    SELECT *
-    FROM quests
-    WHERE id = $1;
-    """
-
-    async with database.db.acquire() as conn:
-        return await conn.fetchrow(query, quest_id)
-
-
-
-async def accept_quest(user_id, quest_id):
-
-    print("1. START")
-
-    print("POOL:", database.db)
-
-
-    query = """
-    INSERT INTO player_quests
-    (
-        user_id,
-        quest_id,
-        progress,
-        target,
-        completed,
-        claimed
-    )
-    VALUES
-    (
-        $1,
-        $2,
-        0,
-        1,
-        FALSE,
-        FALSE
-    );
-    """
-
-
-    print("2. BEFORE ACQUIRE")
-
-
-    async with database.db.acquire() as conn:
-
-        print("3. GOT CONNECTION")
-
-
-        try:
-
-            test = await conn.fetchval(
-                "SELECT 1"
-            )
-
-            print(
-                "TEST DB:",
-                test
-            )
-
-
-            print(
-                "4. BEFORE INSERT"
-            )
-
-
-            result = await conn.execute(
-                query,
-                user_id,
-                quest_id
-            )
-
-
-            print(
-                "5. INSERT RESULT:",
-                result
-            )
-
-
-        except Exception as e:
-
-            print(
-                "DB ERROR:",
-                e
-            )
-
-            return False
-
-
-    print(
-        "6. FINISHED"
-    )
-
-    return True
-
-
-
-
-async def get_player_quests(user_id):
-
-    query = """
-    SELECT *
-    FROM player_quests
-    WHERE user_id = $1;
-    """
-
-
-    async with database.db.acquire() as conn:
-        return await conn.fetch(
-            query,
-            user_id
-        )
-
-
-
-
-async def complete_quest(user_id, quest_id):
-
-    query = """
-    UPDATE player_quests
-    SET completed = TRUE
-    WHERE user_id = $1
-    AND quest_id = $2;
-    """
-
-
-    async with database.db.acquire() as conn:
-
-        await conn.execute(
-            query,
-            user_id,
-            quest_id
-        )
-
-
-
-
-async def claim_quest(user_id, quest_id):
-
-    query = """
-    UPDATE player_quests
-    SET claimed = TRUE
-    WHERE user_id = $1
-    AND quest_id = $2;
-    """
-
-
-    async with database.db.acquire() as conn:
-
-        await conn.execute(
-            query,
-            user_id,
-            quest_id
-        )
+\Users\Ketek'\Desktop\qantum_universe>python main.py
+✅ База данных подключена
+✅ Загружен модуль: auction.py
+✅ Загружен модуль: balance.py
+✅ Загружен модуль: contract.py
+✅ Загружен модуль: daily.py
+✅ Загружен модуль: inventory.py
+✅ Загружен модуль: profile.py
+✅ Загружен модуль: quest.py
+✅ Загружен модуль: shop.py
+✅ Загружен модуль: work.py
+✅ Загружен модуль: travel.py
+✅ Загружен модуль: map.py
+✅ Синхронизировано команд: 12
+🟢 Бот запущен: ILTA BOT#7827
+1. START
+POOL: <asyncpg.pool.Pool object at 0x0000012EB6E82440>
+2. BEFORE ACQUIRE
+3. GOT CONNECTION
+TEST DB: 1
+4. BEFORE INSERT
+DB ERROR: invalid input for query argument $2: 1 (expected str, got int)
