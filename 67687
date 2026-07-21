@@ -1,219 +1,142 @@
-from core import database
+from database import quest as quest_db
 
 
-# ==========================
-# Получить квесты региона
-# ==========================
+# =================================
+# Главное событие квестов
+# =================================
 
-async def get_quests(region):
-
-    query = """
-    SELECT *
-    FROM quests
-    WHERE region = $1;
-    """
-
-    async with database.db.acquire() as conn:
-
-        return await conn.fetch(
-            query,
-            region
-        )
-
-
-
-# ==========================
-# Получить один квест
-# ==========================
-
-async def get_quest(quest_id):
-
-    query = """
-    SELECT *
-    FROM quests
-    WHERE id = $1;
-    """
-
-    async with database.db.acquire() as conn:
-
-        return await conn.fetchrow(
-            query,
-            quest_id
-        )
-
-
-
-# ==========================
-# Принять квест
-# ==========================
-
-async def accept_quest(
+async def trigger_event(
         user_id,
-        quest_id
+        quest_type,
+        amount=1
 ):
 
-    query = """
-    INSERT INTO player_quests
-    (
-        user_id,
-        quest_id,
-        progress,
-        target,
-        completed,
-        claimed
+    quests = await quest_db.get_quests_by_type(
+        quest_type
     )
-    VALUES
-    (
-        $1,
-        $2,
-        0,
-        (
-            SELECT target
-            FROM quests
-            WHERE id = $2
-        ),
-        FALSE,
-        FALSE
-    );
-    """
 
 
-    async with database.db.acquire() as conn:
+    for quest in quests:
 
-        await conn.execute(
-            query,
-            user_id,
-            quest_id
-        )
+        quest_id = quest["id"]
 
 
-    return True
-
-
-
-# ==========================
-# Активные квесты игрока
-# ==========================
-
-async def get_player_quests(user_id):
-
-    query = """
-    SELECT *
-    FROM player_quests
-    WHERE user_id = $1;
-    """
-
-
-    async with database.db.acquire() as conn:
-
-        return await conn.fetch(
-            query,
+        # ищем активный квест игрока
+        active = await quest_db.get_player_quests(
             user_id
         )
 
 
+        for player_quest in active:
 
-# ==========================
-# Квесты по типу
-# ==========================
+            if player_quest["quest_id"] != quest_id:
+                continue
 
-async def get_quests_by_type(
-        quest_type
+
+            if player_quest["completed"]:
+                continue
+
+
+            new_progress = (
+                player_quest["progress"]
+                + amount
+            )
+
+
+            if new_progress >= player_quest["target"]:
+
+                await quest_db.update_progress(
+                    user_id,
+                    quest_id,
+                    player_quest["target"]
+                )
+
+
+                await quest_db.complete_quest(
+                    user_id,
+                    quest_id
+                )
+
+
+            else:
+
+                await quest_db.update_progress(
+                    user_id,
+                    quest_id,
+                    new_progress
+                )
+
+
+
+# =================================
+# Убийство моба
+# =================================
+
+async def monster_killed(
+        user_id
 ):
 
-    query = """
-    SELECT *
-    FROM quests
-    WHERE type = $1;
-    """
-
-
-    async with database.db.acquire() as conn:
-
-        return await conn.fetch(
-            query,
-            quest_type
-        )
-
-
-
-# ==========================
-# Обновить прогресс
-# ==========================
-
-async def update_progress(
+    await trigger_event(
         user_id,
-        quest_id,
-        progress
+        "monster_kill"
+    )
+
+
+
+# =================================
+# Убийство босса
+# =================================
+
+async def boss_killed(
+        user_id
 ):
 
-    query = """
-    UPDATE player_quests
-    SET progress = $3
-    WHERE user_id = $1
-    AND quest_id = $2;
-    """
-
-
-    async with database.db.acquire() as conn:
-
-        await conn.execute(
-            query,
-            user_id,
-            quest_id,
-            progress
-        )
-
-
-
-# ==========================
-# Завершить квест
-# ==========================
-
-async def complete_quest(
+    await trigger_event(
         user_id,
-        quest_id
+        "boss_kill"
+    )
+
+
+
+# =================================
+# Открытие сундука
+# =================================
+
+async def chest_opened(
+        user_id
 ):
 
-    query = """
-    UPDATE player_quests
-    SET completed = TRUE
-    WHERE user_id = $1
-    AND quest_id = $2;
-    """
-
-
-    async with database.db.acquire() as conn:
-
-        await conn.execute(
-            query,
-            user_id,
-            quest_id
-        )
-
-
-
-# ==========================
-# Забрать награду
-# ==========================
-
-async def claim_quest(
+    await trigger_event(
         user_id,
-        quest_id
+        "open_chest"
+    )
+
+
+
+# =================================
+# Получение карты
+# =================================
+
+async def card_received(
+        user_id
 ):
 
-    query = """
-    UPDATE player_quests
-    SET claimed = TRUE
-    WHERE user_id = $1
-    AND quest_id = $2;
-    """
+    await trigger_event(
+        user_id,
+        "get_card"
+    )
 
 
-    async with database.db.acquire() as conn:
 
-        await conn.execute(
-            query,
-            user_id,
-            quest_id
-        )
+# =================================
+# Открытие региона
+# =================================
+
+async def region_discovered(
+        user_id
+):
+
+    await trigger_event(
+        user_id,
+        "move_region"
+    )
