@@ -1,24 +1,2 @@
-INSERT INTO monsters
-(
-name,
-region,
-level,
-health,
-attack,
-defense,
-reward_xp,
-reward_gold
-)
-
-VALUES
-
-(
-'Лесной волк',
-'Start',
-1,
-200,
-30,
-5,
-25,
-50
-);
+✅ Загружен модуль: deck.py
+❌ Ошибка battle.py: Extension 'cogs.battle' raised an error: ImportError: cannot import name 'monsters' from 'database' (unknown location)
