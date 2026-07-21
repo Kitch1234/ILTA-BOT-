@@ -33,9 +33,12 @@ async def get_quest(quest_id):
 
 async def accept_quest(user_id, quest_id):
 
+    print("QUEST ACCEPT START")
+
     quest = await get_quest(quest_id)
 
     if quest is None:
+        print("QUEST NOT FOUND")
         return False
 
 
@@ -48,17 +51,31 @@ async def accept_quest(user_id, quest_id):
         completed,
         claimed
     )
-    VALUES ($1, $2, 0, $3, FALSE, FALSE);
+    VALUES (
+        $1,
+        $2,
+        0,
+        $3,
+        FALSE,
+        FALSE
+    );
     """
 
 
+    print("BEFORE INSERT")
+
+
     async with db.acquire() as conn:
+
         await conn.execute(
             query,
             user_id,
             quest_id,
             quest["target"]
         )
+
+
+    print("AFTER INSERT")
 
     return True
 
