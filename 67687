@@ -1,5 +1,5 @@
-ALTER TABLE quests
-ADD COLUMN IF NOT EXISTS type TEXT DEFAULT 'monster_kill';
-
-ALTER TABLE quests
-ADD COLUMN IF NOT EXISTS target INTEGER DEFAULT 1;
+UPDATE quests
+SET 
+type='monster_kill',
+target=10
+WHERE id=1;
