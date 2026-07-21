@@ -1,62 +1,68 @@
-import discord
-from discord.ext import commands
-import os
-import asyncio
-from dotenv import load_dotenv
+# database/decks.py
+from core.database import db  # ← Главный импорт пула БД
 
-from core.database import connect_db, close_db
 
-load_dotenv()
+# ==========================
+# Создать колоду
+# ==========================
+async def create_deck(owner_id: int, name: str):
+    query = """
+    INSERT INTO decks (owner_id, name)
+    VALUES ($1, $2)
+    RETURNING id;
+    """
 
-TOKEN = os.getenv("TOKEN")
+    async with db.acquire() as conn:
+        return await conn.fetchval(query, owner_id, name)
 
-intents = discord.Intents.default()
-intents.message_content = True
 
-class QuantumBot(commands.Bot):
-    def __init__(self):
-        super().__init__(
-            command_prefix="!",
-            intents=intents
-        )
+# ==========================
+# Получить колоды игрока
+# ==========================
+async def get_decks(owner_id: int):
+    query = """
+    SELECT *
+    FROM decks
+    WHERE owner_id = $1;
+    """
 
-    async def setup_hook(self):
-        await connect_db()
+    async with db.acquire() as conn:
+        return await conn.fetch(query, owner_id)
 
-        cogs = [
-            "auction", "balance", "contract", "daily", "inventory",
-            "profile", "quest", "shop", "work", "travel", "quest_reward",
-            "cards", "test_event", "deck", "battle", "collection", "map"
-        ]
 
-        for cog in cogs:
-            try:
-                await self.load_extension(f"cogs.{cog}")
-                print(f"✅ Загружен: {cog}")
-            except Exception as e:
-                print(f"❌ Ошибка загрузки {cog}: {e}")
+# ==========================
+# Добавить карту в колоду (через deck_cards)
+# ==========================
+async def add_card_to_deck(owner_id: int, deck_id: int, card_id: int):
+    query = """
+    INSERT INTO deck_cards (deck_id, card_id)
+    SELECT $2, id 
+    FROM cards 
+    WHERE id = $3 AND owner_id = $1;
+    """
 
-        try:
-            synced = await self.tree.sync()
-            print(f"✅ Синхронизировано команд: {len(synced)}")
-        except Exception as e:
-            print(f"❌ Ошибка синхронизации: {e}")
+    async with db.acquire() as conn:
+        result = await conn.execute(query, owner_id, deck_id, card_id)
+        return result
 
-    async def close(self):
-        await close_db()
-        await super().close()
 
-bot = QuantumBot()
+# ==========================
+# Получить карты в колоде
+# ==========================
+async def get_deck_cards(deck_id: int):
+    query = """
+    SELECT 
+        cards.id,
+        cards.champion,
+        cards.skin,
+        cards.rarity,
+        cards.attack,
+        cards.defense,
+        cards.health
+    FROM deck_cards
+    JOIN cards ON cards.id = deck_cards.card_id
+    WHERE deck_cards.deck_id = $1;
+    """
 
-@bot.event
-async def on_ready():
-    print(f"🟢 Бот запущен как {bot.user}")
-
-async def main():
-    if not TOKEN:
-        print("❌ TOKEN не найден в .env")
-        return
-    await bot.start(TOKEN)
-
-if __name__ == "__main__":
-    asyncio.run(main())
+    async with db.acquire() as conn:
+        return await conn.fetch(query, deck_id)
