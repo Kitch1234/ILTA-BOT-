@@ -1,9 +1,10 @@
-card_file = create_card(
-    champion=champion_id,
-    skin=skin_name,
-    rarity=rarity,
-    attack=attack,
-    health=health,
-    defense=defense,
-    image_url=image_url
+file = discord.File(card_file)
+
+embed.set_image(
+    url=f"attachment://{card_file.split('/')[-1]}"
+)
+
+await interaction.followup.send(
+    embed=embed,
+    file=file
 )
