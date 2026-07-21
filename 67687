@@ -1,93 +1,27 @@
-decks file: ['__builtins__', '__cached__', '__doc__', '__file__', '__loader__', '__name__', '__package__', '__spec__', 'app_commands', 'commands', 'deck_db', 'discord']
-✅ Загружен модуль: deck.py
-✅ Загружен модуль: battle.py
-✅ Загружен модуль: collection.py
-✅ Загружен модуль: map.py
-✅ Синхронизировано команд: 23
-Traceback (most recent call last):
-  File "C:\Users\Ketek'\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\aiohttp\connector.py", line 1571, in _create_direct_connection
-    hosts = await self._resolve_host(host, port, traces=traces)
-            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\Ketek'\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\aiohttp\connector.py", line 1181, in _resolve_host
-    return await asyncio.shield(resolved_host_task)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\Ketek'\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\aiohttp\connector.py", line 1212, in _resolve_host_with_throttle
-    addrs = await self._resolver.resolve(host, port, family=self._family)
-            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\Ketek'\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\aiohttp\resolver.py", line 47, in resolve
-    infos = await self._loop.getaddrinfo(
-            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.12_3.12.2800.0_x64__qbz5n2kfra8p0\Lib\asyncio\base_events.py", line 905, in getaddrinfo
-    return await self.run_in_executor(
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.12_3.12.2800.0_x64__qbz5n2kfra8p0\Lib\concurrent\futures\thread.py", line 59, in run
-    result = self.fn(*self.args, **self.kwargs)
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.12_3.12.2800.0_x64__qbz5n2kfra8p0\Lib\socket.py", line 978, in getaddrinfo
-    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-socket.gaierror: [Errno 11001] getaddrinfo failed
+# core/database.py
+import asyncpg
+import os
+from dotenv import load_dotenv
 
-The above exception was the direct cause of the following exception:
+load_dotenv()
 
-Traceback (most recent call last):
-  File "C:\Users\Ketek'\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\discord\client.py", line 728, in connect
-    self.ws = await asyncio.wait_for(coro, timeout=60.0)
-              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.12_3.12.2800.0_x64__qbz5n2kfra8p0\Lib\asyncio\tasks.py", line 520, in wait_for
-    return await fut
-           ^^^^^^^^^
-  File "C:\Users\Ketek'\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\discord\gateway.py", line 392, in from_client
-    socket = await client.http.ws_connect(str(url))
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\Ketek'\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\discord\http.py", line 571, in ws_connect
-    return await self.__session.ws_connect(url, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\Ketek'\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\aiohttp\client.py", line 1249, in _ws_connect
-    resp = await self.request(
-           ^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\Ketek'\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\aiohttp\client.py", line 858, in _request
-    resp = await handler(req)
-           ^^^^^^^^^^^^^^^^^^
-  File "C:\Users\Ketek'\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\aiohttp\client.py", line 812, in _connect_and_send_request
-    conn = await self._connector.connect(
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\Ketek'\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\aiohttp\connector.py", line 657, in connect
-    proto = await self._create_connection(req, traces, timeout)
-            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\Ketek'\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\aiohttp\connector.py", line 1242, in _create_connection
-    _, proto = await self._create_direct_connection(req, traces, timeout)
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\Ketek'\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\aiohttp\connector.py", line 1577, in _create_direct_connection
-    raise ClientConnectorDNSError(req.connection_key, exc) from exc
-aiohttp.client_exceptions.ClientConnectorDNSError: Cannot connect to host gateway.discord.gg:443 ssl:default [getaddrinfo failed]
+db = None
 
-During handling of the above exception, another exception occurred:
+async def connect_db():
+    global db
+    db = await asyncpg.create_pool(
+        host=os.getenv("DB_HOST"),
+        port=int(os.getenv("DB_PORT")),
+        user=os.getenv("DB_USER"),
+        password=os.getenv("DB_PASSWORD"),
+        database=os.getenv("DB_NAME"),
+        min_size=1,
+        max_size=10
+    )
+    print("✅ База данных подключена")
 
-Traceback (most recent call last):
-  File "C:\Users\Ketek'\Desktop\qantum_universe\main.py", line 126, in <module>
-    asyncio.run(main())
-  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.12_3.12.2800.0_x64__qbz5n2kfra8p0\Lib\asyncio\runners.py", line 195, in run
-    return runner.run(main)
-           ^^^^^^^^^^^^^^^^
-  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.12_3.12.2800.0_x64__qbz5n2kfra8p0\Lib\asyncio\runners.py", line 118, in run
-    return self._loop.run_until_complete(task)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.12_3.12.2800.0_x64__qbz5n2kfra8p0\Lib\asyncio\base_events.py", line 691, in run_until_complete
-    return future.result()
-           ^^^^^^^^^^^^^^^
-  File "C:\Users\Ketek'\Desktop\qantum_universe\main.py", line 118, in main
-    await bot.start(TOKEN)
-  File "C:\Users\Ketek'\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\discord\client.py", line 851, in start
-    await self.connect(reconnect=reconnect)
-  File "C:\Users\Ketek'\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\discord\client.py", line 787, in connect
-    sequence=self.ws.sequence,
-             ^^^^^^^^^^^^^^^^
-AttributeError: 'NoneType' object has no attribute 'sequence'
-Unclosed client session
-client_session: <aiohttp.client.ClientSession object at 0x000001D792D641D0>
-Unclosed connector
-connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001D792D25A20>, 75810.796)])']
-connector: <aiohttp.connector.TCPConnector object at 0x000001D792513BF0>
-
-C:\Users\Ketek'\Desktop\qantum_universe>
+async def close_db():
+    global db
+    if db:
+        await db.close()
+        print("✅ База отключена")
