@@ -11,6 +11,13 @@ CARD_WIDTH = 1060
 CARD_HEIGHT = 1484
 
 
+# область арта
+ART_X = 95
+ART_Y = 185
+ART_WIDTH = 870
+ART_HEIGHT = 710
+
+
 
 def get_font(size):
 
@@ -30,6 +37,7 @@ def load_asset(path):
     if os.path.exists(path):
         return Image.open(path).convert("RGBA")
 
+    print("Не найден файл:", path)
     return None
 
 
@@ -119,6 +127,7 @@ def create_card(
         timeout=15
     )
 
+
     art = Image.open(
         BytesIO(response.content)
     ).convert("RGBA")
@@ -127,13 +136,33 @@ def create_card(
     art = crop_image(
         art,
         (
-            CARD_WIDTH,
-            CARD_HEIGHT
+            ART_WIDTH,
+            ART_HEIGHT
         )
     )
 
 
-    card = art.copy()
+    # создаём чистую карту
+
+    card = Image.new(
+        "RGBA",
+        (
+            CARD_WIDTH,
+            CARD_HEIGHT
+        ),
+        (0,0,0,0)
+    )
+
+
+    # вставляем арт
+
+    card.alpha_composite(
+        art,
+        (
+            ART_X,
+            ART_Y
+        )
+    )
 
 
 
@@ -141,10 +170,21 @@ def create_card(
     # FRAME
     # ======================
 
-    frame = load_asset(
+    frame_path = (
         f"assets/frames/{rarity.lower()}.png"
     )
-print("frame",frame)
+
+
+    frame = load_asset(
+        frame_path
+    )
+
+
+    print(
+        "FRAME:",
+        frame_path,
+        frame
+    )
 
 
     if frame:
@@ -156,15 +196,19 @@ print("frame",frame)
             )
         )
 
-        card = Image.alpha_composite(
-            card,
-            frame
+
+        card.alpha_composite(
+            frame,
+            (
+                0,
+                0
+            )
         )
 
 
 
     # ======================
-    # EFFECT
+    # GLOW
     # ======================
 
     glow = load_asset(
@@ -181,32 +225,39 @@ print("frame",frame)
             )
         )
 
-        card = Image.alpha_composite(
-            card,
-            glow
+
+        card.alpha_composite(
+            glow,
+            (
+                0,
+                0
+            )
         )
 
 
 
     # ======================
-    # REGION ICON
+    # REGION
     # ======================
 
-    region = region.replace(
+    clean_region = region.replace(
         " ",
         ""
     )
 
 
     region_img = load_asset(
-        f"assets/regions/{region}.png"
+        f"assets/regions/{clean_region}.png"
     )
 
 
     if region_img:
 
         region_img = region_img.resize(
-            (120,120)
+            (
+                120,
+                120
+            )
         )
 
 
@@ -224,13 +275,14 @@ print("frame",frame)
 
 
 
+    # ======================
+    # FONTS
+    # ======================
+
     title_font = get_font(90)
     skin_font = get_font(55)
     stat_font = get_font(85)
     small_font = get_font(45)
-
-
-    stroke = 4
 
 
 
@@ -251,7 +303,7 @@ print("frame",frame)
 
 
     # ======================
-    # NAME
+    # CHAMPION
     # ======================
 
     draw.text(
@@ -260,7 +312,7 @@ print("frame",frame)
         anchor="mm",
         font=title_font,
         fill="white",
-        stroke_width=stroke,
+        stroke_width=4,
         stroke_fill="black"
     )
 
@@ -286,14 +338,16 @@ print("frame",frame)
     # STATS
     # ======================
 
+
     add_icon(
         card,
         "assets/icons/attack.png",
         (
-            CARD_LAYOUT["attack"][0]-35,
-            CARD_LAYOUT["attack"][1]-35
+            CARD_LAYOUT["attack"][0]-27,
+            CARD_LAYOUT["attack"][1]-27
         )
     )
+
 
     draw.text(
         CARD_LAYOUT["attack"],
@@ -311,10 +365,11 @@ print("frame",frame)
         card,
         "assets/icons/health.png",
         (
-            CARD_LAYOUT["health"][0]-35,
-            CARD_LAYOUT["health"][1]-35
+            CARD_LAYOUT["health"][0]-27,
+            CARD_LAYOUT["health"][1]-27
         )
     )
+
 
     draw.text(
         CARD_LAYOUT["health"],
@@ -332,8 +387,8 @@ print("frame",frame)
         card,
         "assets/icons/defense.png",
         (
-            CARD_LAYOUT["defense"][0]-35,
-            CARD_LAYOUT["defense"][1]-35
+            CARD_LAYOUT["defense"][0]-27,
+            CARD_LAYOUT["defense"][1]-27
         )
     )
 
