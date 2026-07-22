@@ -1,72 +1,23 @@
-CHAMPION_REGIONS = {
+:\Users\Ketek'\Desktop\qantum_universe>python main.py
+✅ База данных подключена
+✅ Загружен: auction
+✅ Загружен: balance
+✅ Загружен: contract
+✅ Загружен: daily
+✅ Загружен: inventory
+✅ Загружен: profile
+✅ Загружен: quest
+✅ Загружен: shop
+✅ Загружен: work
+❌ Ошибка загрузки travel: Extension 'cogs.travel' raised an error: SyntaxError: '{' was never closed (regions.py, line 54)
+✅ Загружен: quest_reward
+✅ Загружен: cards
+✅ Загружен: test_event
+✅ Загружен: deck
+✅ Загружен: battle
+❌ Ошибка загрузки pack: Extension 'cogs.pack' raised an error: SyntaxError: '{' was never closed (regions.py, line 54)
+✅ Загружен: collection
+❌ Ошибка загрузки map: Extension 'cogs.map' raised an error: SyntaxError: '{' was never closed (regions.py, line 54)
+✅ Синхронизировано команд: 21
+🟢 Бот запущен как ILTA BOT#7827
 
-    # Runeterra
-    "Aatrox": "Runeterra",
-    "Bard": "Runeterra",
-    "Kindred": "Runeterra",
-    "Ryze": "Runeterra",
-    "Viego": "ShadowIsles",
-
-    # Demacia
-    "Garen": "Demacia",
-    "Lux": "Demacia",
-    "Fiora": "Demacia",
-    "JarvanIV": "Demacia",
-
-    # Noxus
-    "Darius": "Noxus",
-    "Draven": "Noxus",
-    "Katarina": "Noxus",
-    "Swain": "Noxus",
-
-    # Ionia
-    "Ahri": "Ionia",
-    "Yasuo": "Ionia",
-    "Akali": "Ionia",
-    "Irelia": "Ionia",
-
-    # Piltover / Zaun
-    "Ezreal": "Piltover",
-    "Caitlyn": "Piltover",
-    "Jinx": "Zaun",
-    "Ekko": "Zaun",
-
-    # Freljord
-    "Ashe": "Freljord",
-    "Braum": "Freljord",
-    "Tryndamere": "Freljord",
-
-    # Shurima
-    "Azir": "Shurima",
-    "Nasus": "Shurima",
-    "Renekton": "Shurima",
-
-    # Targon
-    "Diana": "Targon",
-    "Leona": "Targon",
-    "Pantheon": "Targon",
-
-    # Bilgewater
-    "MissFortune": "Bilgewater",
-    "Gangplank": "Bilgewater",
-    "Pyke": "Bilgewater",
-
-    # Shadow Isles
-    "Kalista": "ShadowIsles",
-    "Thresh": "ShadowIsles",
-    "Hecarim": "ShadowIsles",
-
-    # Bandle City
-    "Lulu": "BandleCity",
-    "Teemo": "BandleCity",
-    "Tristana": "BandleCity",
-
-    # Ixtal
-    "Qiyana": "Ixtal",
-    "Rengar": "Ixtal",
-
-    # Void
-    "KhaZix": "Void",
-    "RekSai": "Void",
-    "Velkoz": "Void"
-}
