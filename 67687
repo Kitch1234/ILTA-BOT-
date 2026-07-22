@@ -1,29 +1,380 @@
-CARD_LAYOUT = {
+from PIL import Image, ImageDraw, ImageFont
+import requests
+from io import BytesIO
+import os
+import re
 
-    "rarity": (530, 60),
-
-    "number": (880, 105),
-
-    "champion": (530, 962),
-
-    "skin": (530, 1050),
+from data.card_layout import CARD_LAYOUT
 
 
-    "attack": (300, 1190),
-
-    "health": (580, 1190),
-
-    "defense": (855, 1190),
+CARD_WIDTH = 1060
+CARD_HEIGHT = 1484
 
 
-    "region_text": (300, 1350),
+ART_X = 95
+ART_Y = 185
+ART_WIDTH = 870
+ART_HEIGHT = 710
 
-    "tier_text": (860, 1350),
 
+RARITY_MAP = {
+    "обычный": "common",
+    "редкий": "rare",
+    "эпический": "epic",
+    "легендарный": "legendary",
+    "мифический": "mythic",
 
-    "region_icon": (100, 1350),
-
-    "tier_icon": (960, 1350),
-
-    "top_icon": (150, 130)
+    "common": "common",
+    "rare": "rare",
+    "epic": "epic",
+    "legendary": "legendary",
+    "mythic": "mythic"
 }
+
+
+
+def get_font(size):
+
+    try:
+        return ImageFont.truetype(
+            "assets/fonts/bold.ttf",
+            size
+        )
+
+    except:
+
+        try:
+            return ImageFont.truetype(
+                "assets/fonts/regular.ttf",
+                size
+            )
+
+        except:
+            return ImageFont.load_default()
+
+
+
+def load_asset(path):
+
+    if os.path.exists(path):
+        return Image.open(path).convert("RGBA")
+
+    print("Не найден:", path)
+    return None
+
+
+
+def crop_image(img, size):
+
+    ratio = img.width / img.height
+    target = size[0] / size[1]
+
+
+    if ratio > target:
+
+        h = size[1]
+        w = int(h * ratio)
+
+    else:
+
+        w = size[0]
+        h = int(w / ratio)
+
+
+    img = img.resize((w,h))
+
+
+    left = (w-size[0])//2
+    top = (h-size[1])//2
+
+
+    return img.crop(
+        (
+            left,
+            top,
+            left+size[0],
+            top+size[1]
+        )
+    )
+
+
+
+def safe_filename(name):
+
+    return re.sub(
+        r'[\\/*?:"<>|]',
+        "",
+        name
+    )
+
+
+
+def create_card(
+    champion,
+    skin,
+    rarity,
+    region,
+    attack,
+    health,
+    defense,
+    image_url,
+    card_number=1,
+    total_cards=1000
+):
+
+
+    # =====================
+    # ART
+    # =====================
+
+    response = requests.get(
+        image_url,
+        timeout=15
+    )
+
+
+    art = Image.open(
+        BytesIO(response.content)
+    ).convert("RGBA")
+
+
+    art = crop_image(
+        art,
+        (
+            ART_WIDTH,
+            ART_HEIGHT
+        )
+    )
+
+
+    card = Image.new(
+        "RGBA",
+        (
+            CARD_WIDTH,
+            CARD_HEIGHT
+        ),
+        (0,0,0,0)
+    )
+
+
+    card.alpha_composite(
+        art,
+        (
+            ART_X,
+            ART_Y
+        )
+    )
+
+
+
+    # =====================
+    # FRAME
+    # =====================
+
+
+    rarity_file = RARITY_MAP.get(
+        rarity.lower(),
+        "common"
+    )
+
+
+    frame = load_asset(
+        f"assets/frames/{rarity_file}.png"
+    )
+
+
+    if frame:
+
+        frame = frame.resize(
+            (
+                CARD_WIDTH,
+                CARD_HEIGHT
+            )
+        )
+
+        card.alpha_composite(
+            frame,
+            (0,0)
+        )
+
+
+
+    # =====================
+    # EFFECT
+    # =====================
+
+
+    glow = load_asset(
+        f"assets/effects/{rarity_file}_glow.png"
+    )
+
+
+    if glow:
+
+        glow = glow.resize(
+            (
+                CARD_WIDTH,
+                CARD_HEIGHT
+            )
+        )
+
+        card.alpha_composite(
+            glow,
+            (0,0)
+        )
+
+
+
+    draw = ImageDraw.Draw(card)
+
+
+
+    # =====================
+    # FONTS
+    # =====================
+
+
+    rarity_font = get_font(55)
+    title_font = get_font(105)
+    skin_font = get_font(65)
+    stat_font = get_font(100)
+    number_font = get_font(60)
+    region_font = get_font(55)
+
+
+
+    # =====================
+    # TEXT
+    # =====================
+
+
+    draw.text(
+        CARD_LAYOUT["rarity"],
+        rarity.upper(),
+        anchor="mm",
+        font=rarity_font,
+        fill="gold",
+        stroke_width=3,
+        stroke_fill="black"
+    )
+
+
+
+    draw.text(
+        CARD_LAYOUT["number"],
+        f"{card_number:03}/{total_cards}",
+        anchor="mm",
+        font=number_font,
+        fill="white",
+        stroke_width=3,
+        stroke_fill="black"
+    )
+
+
+
+    draw.text(
+        CARD_LAYOUT["champion"],
+        champion,
+        anchor="mm",
+        font=title_font,
+        fill="white",
+        stroke_width=5,
+        stroke_fill="black"
+    )
+
+
+
+    draw.text(
+        CARD_LAYOUT["skin"],
+        skin,
+        anchor="mm",
+        font=skin_font,
+        fill="white",
+        stroke_width=4,
+        stroke_fill="black"
+    )
+
+
+
+    # =====================
+    # STATS (БЕЗ ИКОНОК)
+    # =====================
+
+
+    draw.text(
+        CARD_LAYOUT["attack"],
+        str(attack),
+        anchor="mm",
+        font=stat_font,
+        fill="white",
+        stroke_width=4,
+        stroke_fill="black"
+    )
+
+
+    draw.text(
+        CARD_LAYOUT["health"],
+        str(health),
+        anchor="mm",
+        font=stat_font,
+        fill="white",
+        stroke_width=4,
+        stroke_fill="black"
+    )
+
+
+    draw.text(
+        CARD_LAYOUT["defense"],
+        str(defense),
+        anchor="mm",
+        font=stat_font,
+        fill="white",
+        stroke_width=4,
+        stroke_fill="black"
+    )
+
+
+
+    # =====================
+    # REGION
+    # =====================
+
+    draw.text(
+        CARD_LAYOUT["region_text"],
+        region,
+        anchor="mm",
+        font=region_font,
+        fill="white",
+        stroke_width=3,
+        stroke_fill="black"
+    )
+
+
+
+    # =====================
+    # SAVE
+    # =====================
+
+
+    os.makedirs(
+        "cards",
+        exist_ok=True
+    )
+
+
+    filename = safe_filename(
+        f"{champion}_{skin}"
+    )
+
+
+    path = f"cards/{filename}.png"
+
+
+    card.convert(
+        "RGB"
+    ).save(
+        path
+    )
+
+
+    return path
