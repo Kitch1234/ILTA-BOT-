@@ -3,10 +3,10 @@ import requests
 from io import BytesIO
 import os
 import re
+from data.card_layout import card_layout
 
-
-CARD_WIDTH = 744
-CARD_HEIGHT = 1039
+CARD_WIDTH = 1060
+CARD_HEIGHT = 1484
 
 
 def get_font(size):
