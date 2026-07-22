@@ -144,6 +144,7 @@ def create_card(
     frame = load_asset(
         f"assets/frames/{rarity.lower()}.png"
     )
+print("frame",frame)
 
 
     if frame:
