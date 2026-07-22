@@ -1,314 +1,56 @@
-from PIL import Image, ImageDraw, ImageFont
-import requests
-from io import BytesIO
-import os
-
-
-CARD_WIDTH = 744
-CARD_HEIGHT = 1039
-
-
-def get_font(size):
-    try:
-        return ImageFont.truetype(
-            "assets/fonts/font.ttf",
-            size
-        )
-    except:
-        return ImageFont.load_default()
-
-
-def load_asset(path):
-    return Image.open(path).convert("RGBA")
-
-
-def crop_image(img, size):
-
-    img_ratio = img.width / img.height
-    target_ratio = size[0] / size[1]
-
-    if img_ratio > target_ratio:
-        new_height = size[1]
-        new_width = int(new_height * img_ratio)
-
-    else:
-        new_width = size[0]
-        new_height = int(new_width / img_ratio)
-
-
-    img = img.resize(
-        (new_width, new_height)
-    )
-
-
-    left = (new_width - size[0]) // 2
-    top = (new_height - size[1]) // 2
-
-
-    return img.crop(
-        (
-            left,
-            top,
-            left + size[0],
-            top + size[1]
-        )
-    )
-
-
-def add_icon(card, path, position):
-
-    if os.path.exists(path):
-
-        icon = load_asset(path)
-
-        icon = icon.resize(
-            (55,55)
-        )
-
-        card.alpha_composite(
-            icon,
-            position
-        )
-
-
-def create_card(
-    champion,
-    skin,
-    rarity,
-    region,
-    attack,
-    health,
-    defense,
-    image_url
-):
-
-    # ======================
-    # СКАЧИВАЕМ ART
-    # ======================
-
-    response = requests.get(
-        image_url
-    )
-
-    art = Image.open(
-        BytesIO(response.content)
-    ).convert("RGBA")
-
-
-    art = crop_image(
-        art,
-        (CARD_WIDTH, CARD_HEIGHT)
-    )
-
-
-    card = art.copy()
-
-
-    # ======================
-    # РАМКА
-    # ======================
-
-    frame_path = (
-        f"assets/frames/{rarity}.png"
-    )
-
-    if os.path.exists(frame_path):
-
-        frame = load_asset(
-            frame_path
-        )
-
-        frame = frame.resize(
-            (CARD_WIDTH, CARD_HEIGHT)
-        )
-
-        card = Image.alpha_composite(
-            card,
-            frame
-        )
-
-
-    # ======================
-    # ЭФФЕКТ РЕДКОСТИ
-    # ======================
-
-    glow_path = (
-        f"assets/effects/{rarity}_glow.png"
-    )
-
-    if os.path.exists(glow_path):
-
-        glow = load_asset(
-            glow_path
-        )
-
-        glow = glow.resize(
-            (CARD_WIDTH, CARD_HEIGHT)
-        )
-
-        card = Image.alpha_composite(
-            card,
-            glow
-        )
-
-
-    # ======================
-    # РЕГИОН
-    # ======================
-
-    region_path = (
-        f"assets/regions/{region}.png"
-    )
-
-    if os.path.exists(region_path):
-
-        region_img = load_asset(
-            region_path
-        )
-
-        region_img = region_img.resize(
-            (90,90)
-        )
-
-        card.alpha_composite(
-            region_img,
-            (620,50)
-        )
-
-
-    # ======================
-    # НИЖНЯЯ ПАНЕЛЬ
-    # ======================
-
-    bottom_path = (
-        "assets/panels/bottom.png"
-    )
-
-    if os.path.exists(bottom_path):
-
-        bottom = load_asset(
-            bottom_path
-        )
-
-        bottom = bottom.resize(
-            (CARD_WIDTH,300)
-        )
-
-        card.alpha_composite(
-            bottom,
-            (0,740)
-        )
-
-
-    draw = ImageDraw.Draw(card)
-
-
-    title_font = get_font(55)
-    text_font = get_font(38)
-
-
-    # ======================
-    # ИМЯ
-    # ======================
-
-    draw.text(
-        (50,760),
-        champion,
-        font=title_font,
-        fill="white"
-    )
-
-
-    # ======================
-    # СКИН
-    # ======================
-
-    draw.text(
-        (50,825),
-        skin,
-        font=text_font,
-        fill="white"
-    )
-
-
-    # ======================
-    # СТАТЫ
-    # ======================
-
-    add_icon(
-        card,
-        "assets/icons/attack.png",
-        (50,920)
-    )
-
-    draw.text(
-        (115,925),
-        str(attack),
-        font=text_font,
-        fill="white"
-    )
-
-
-    add_icon(
-        card,
-        "assets/icons/health.png",
-        (270,920)
-    )
-
-    draw.text(
-        (335,925),
-        str(health),
-        font=text_font,
-        fill="white"
-    )
-
-
-    add_icon(
-        card,
-        "assets/icons/defense.png",
-        (490,920)
-    )
-
-    draw.text(
-        (555,925),
-        str(defense),
-        font=text_font,
-        fill="white"
-    )
-
-
-    # ======================
-    # РЕДКОСТЬ
-    # ======================
-
-    draw.text(
-        (50,50),
-        rarity.upper(),
-        font=text_font,
-        fill="gold"
-    )
-
-
-    # ======================
-    # СОХРАНЕНИЕ
-    # ======================
-
-    os.makedirs(
-        "cards",
-        exist_ok=True
-    )
-
-
-    filename = (
-        f"cards/{champion}_{skin}.png"
-    )
-
-
-    card.convert(
-        "RGB"
-    ).save(
-        filename
-    )
-
-
-    return filename
+{
+    "Aatrox": {
+        "name": "Aatrox",
+        "title": "the Darkin Blade",
+        "skins": [
+            {
+                "name": "default",
+                "id": 0
+            },
+            {
+                "name": "Justicar Aatrox",
+                "id": 1
+            },
+            {
+                "name": "Mecha Aatrox",
+                "id": 2
+            },
+            {
+                "name": "Sea Hunter Aatrox",
+                "id": 3
+            },
+            {
+                "name": "Blood Moon Aatrox",
+                "id": 7
+            },
+            {
+                "name": "Prestige Blood Moon Aatrox",
+                "id": 8
+            },
+            {
+                "name": "Victorious Aatrox",
+                "id": 9
+            },
+            {
+                "name": "Odyssey Aatrox",
+                "id": 11
+            },
+            {
+                "name": "Prestige Blood Moon Aatrox (2022)",
+                "id": 20
+            },
+            {
+                "name": "Lunar Eclipse Aatrox",
+                "id": 21
+            },
+            {
+                "name": "DRX Aatrox",
+                "id": 30
+            },
+            {
+                "name": "Prestige DRX Aatrox",
+                "id": 31
+            },
+            {
+                "name": "Primordian Aatrox",
+                "id": 33
