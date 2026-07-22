@@ -1,56 +1,72 @@
-{
-    "Aatrox": {
-        "name": "Aatrox",
-        "title": "the Darkin Blade",
-        "skins": [
-            {
-                "name": "default",
-                "id": 0
-            },
-            {
-                "name": "Justicar Aatrox",
-                "id": 1
-            },
-            {
-                "name": "Mecha Aatrox",
-                "id": 2
-            },
-            {
-                "name": "Sea Hunter Aatrox",
-                "id": 3
-            },
-            {
-                "name": "Blood Moon Aatrox",
-                "id": 7
-            },
-            {
-                "name": "Prestige Blood Moon Aatrox",
-                "id": 8
-            },
-            {
-                "name": "Victorious Aatrox",
-                "id": 9
-            },
-            {
-                "name": "Odyssey Aatrox",
-                "id": 11
-            },
-            {
-                "name": "Prestige Blood Moon Aatrox (2022)",
-                "id": 20
-            },
-            {
-                "name": "Lunar Eclipse Aatrox",
-                "id": 21
-            },
-            {
-                "name": "DRX Aatrox",
-                "id": 30
-            },
-            {
-                "name": "Prestige DRX Aatrox",
-                "id": 31
-            },
-            {
-                "name": "Primordian Aatrox",
-                "id": 33
+CHAMPION_REGIONS = {
+
+    # Runeterra
+    "Aatrox": "Runeterra",
+    "Bard": "Runeterra",
+    "Kindred": "Runeterra",
+    "Ryze": "Runeterra",
+    "Viego": "ShadowIsles",
+
+    # Demacia
+    "Garen": "Demacia",
+    "Lux": "Demacia",
+    "Fiora": "Demacia",
+    "JarvanIV": "Demacia",
+
+    # Noxus
+    "Darius": "Noxus",
+    "Draven": "Noxus",
+    "Katarina": "Noxus",
+    "Swain": "Noxus",
+
+    # Ionia
+    "Ahri": "Ionia",
+    "Yasuo": "Ionia",
+    "Akali": "Ionia",
+    "Irelia": "Ionia",
+
+    # Piltover / Zaun
+    "Ezreal": "Piltover",
+    "Caitlyn": "Piltover",
+    "Jinx": "Zaun",
+    "Ekko": "Zaun",
+
+    # Freljord
+    "Ashe": "Freljord",
+    "Braum": "Freljord",
+    "Tryndamere": "Freljord",
+
+    # Shurima
+    "Azir": "Shurima",
+    "Nasus": "Shurima",
+    "Renekton": "Shurima",
+
+    # Targon
+    "Diana": "Targon",
+    "Leona": "Targon",
+    "Pantheon": "Targon",
+
+    # Bilgewater
+    "MissFortune": "Bilgewater",
+    "Gangplank": "Bilgewater",
+    "Pyke": "Bilgewater",
+
+    # Shadow Isles
+    "Kalista": "ShadowIsles",
+    "Thresh": "ShadowIsles",
+    "Hecarim": "ShadowIsles",
+
+    # Bandle City
+    "Lulu": "BandleCity",
+    "Teemo": "BandleCity",
+    "Tristana": "BandleCity",
+
+    # Ixtal
+    "Qiyana": "Ixtal",
+    "Rengar": "Ixtal",
+
+    # Void
+    "KhaZix": "Void",
+    "RekSai": "Void",
+    "Velkoz": "Void"
+}
