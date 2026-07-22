@@ -1,22 +1,95 @@
-:\Users\Ketek'\Desktop\qantum_universe>python main.py
-✅ База данных подключена
-✅ Загружен: auction
-✅ Загружен: balance
-✅ Загружен: contract
-✅ Загружен: daily
-✅ Загружен: inventory
-✅ Загружен: profile
-✅ Загружен: quest
-✅ Загружен: shop
-✅ Загружен: work
-❌ Ошибка загрузки travel: Extension 'cogs.travel' raised an error: ImportError: cannot import name 'REGIONS' from 'data.regions' (C:\Users\Ketek'\Desktop\qantum_universe\data\regions.py)
-✅ Загружен: quest_reward
-✅ Загружен: cards
-✅ Загружен: test_event
-✅ Загружен: deck
-✅ Загружен: battle
-❌ Ошибка загрузки pack: Extension 'cogs.pack' raised an error: ImportError: cannot import name 'champion_regions' from 'data.regions' (C:\Users\Ketek'\Desktop\qantum_universe\data\regions.py)
-✅ Загружен: collection
-❌ Ошибка загрузки map: Extension 'cogs.map' raised an error: ImportError: cannot import name 'REGIONS' from 'data.regions' (C:\Users\Ketek'\Desktop\qantum_universe\data\regions.py)
-✅ Синхронизировано команд: 21
-🟢 Бот запущен как ILTA BOT#7827
+# data/regions.py
+
+
+CHAMPION_REGIONS = {
+
+    # Runeterra
+    "Aatrox": "Runeterra",
+    "Bard": "Runeterra",
+    "Kindred": "Runeterra",
+    "Ryze": "Runeterra",
+    "Viego": "ShadowIsles",
+
+    # Demacia
+    "Garen": "Demacia",
+    "Lux": "Demacia",
+    "Fiora": "Demacia",
+    "JarvanIV": "Demacia",
+
+    # Noxus
+    "Darius": "Noxus",
+    "Draven": "Noxus",
+    "Katarina": "Noxus",
+    "Swain": "Noxus",
+
+    # Ionia
+    "Ahri": "Ionia",
+    "Yasuo": "Ionia",
+    "Akali": "Ionia",
+    "Irelia": "Ionia",
+
+    # Piltover
+    "Ezreal": "Piltover",
+    "Caitlyn": "Piltover",
+    "Heimerdinger": "Piltover",
+    "Jayce": "Piltover",
+
+    # Zaun
+    "Jinx": "Zaun",
+    "Ekko": "Zaun",
+    "Warwick": "Zaun",
+    "Viktor": "Zaun",
+
+    # Freljord
+    "Ashe": "Freljord",
+    "Braum": "Freljord",
+    "Tryndamere": "Freljord",
+    "Sejuani": "Freljord",
+
+    # Shurima
+    "Azir": "Shurima",
+    "Nasus": "Shurima",
+    "Renekton": "Shurima",
+    "Sivir": "Shurima",
+
+    # Targon
+    "Diana": "Targon",
+    "Leona": "Targon",
+    "Pantheon": "Targon",
+    "Taric": "Targon",
+
+    # Bilgewater
+    "MissFortune": "Bilgewater",
+    "Gangplank": "Bilgewater",
+    "Pyke": "Bilgewater",
+    "Nautilus": "Bilgewater",
+
+    # Shadow Isles
+    "Kalista": "ShadowIsles",
+    "Thresh": "ShadowIsles",
+    "Hecarim": "ShadowIsles",
+    "Elise": "ShadowIsles",
+
+    # Bandle City
+    "Lulu": "BandleCity",
+    "Teemo": "BandleCity",
+    "Tristana": "BandleCity",
+    "Corki": "BandleCity",
+
+    # Ixtal
+    "Qiyana": "Ixtal",
+    "Rengar": "Ixtal",
+    "Nidalee": "Ixtal",
+
+    # Void
+    "KhaZix": "Void",
+    "RekSai": "Void",
+    "Velkoz": "Void",
+    "Malzahar": "Void"
+}
+
+
+# Совместимость со старыми файлами
+REGIONS = CHAMPION_REGIONS
+
+champion_regions = CHAMPION_REGIONS
