@@ -1,0 +1,172 @@
+import discord
+from discord.ext import commands
+from discord import app_commands
+import random
+
+from database.cards import add_card
+from data.champion_loader import load_champions
+from data.loot import get_random_rarity
+from generators.card_generator import create_card
+
+
+class Pack(commands.Cog):
+
+    def __init__(self, bot):
+        self.bot = bot
+        self.champions = load_champions()
+
+
+    @app_commands.command(
+        name="open_pack",
+        description="Открыть пак из 10 карт"
+    )
+    async def open_pack(self, interaction: discord.Interaction):
+
+        await interaction.response.defer()
+
+        try:
+
+            if not self.champions:
+                await interaction.followup.send(
+                    "❌ champions.json пустой или не найден!"
+                )
+                return
+
+
+            await interaction.followup.send(
+                f"🎁 **{interaction.user.name} открыл набор из 10 карт!**"
+            )
+
+
+            for number in range(10):
+
+                # Выбор чемпиона
+                champion_id = random.choice(
+                    list(self.champions.keys())
+                )
+
+                champion = self.champions[champion_id]
+
+
+                # Выбор скина
+                skins = champion.get(
+                    "skins",
+                    [
+                        {
+                            "name": "Classic",
+                            "id": 0
+                        }
+                    ]
+                )
+
+
+                skin = random.choice(skins)
+
+                skin_name = skin["name"]
+                skin_id = skin["id"]
+
+
+                # Редкость
+                rarity = get_random_rarity()
+
+
+                # Статы
+                attack = random.randint(20, 70)
+                health = random.randint(30, 100)
+                defense = random.randint(5, 35)
+
+
+                # Сохраняем карту
+                await add_card(
+                    interaction.user.id,
+                    champion_id,
+                    skin_name,
+                    rarity,
+                    attack,
+                    defense,
+                    health
+                )
+
+
+                # Embed
+                embed = discord.Embed(
+                    title=f"🎴 {rarity} | {champion_id}",
+                    description=f"✨ Образ: **{skin_name}**",
+                    color=0xFFD700
+                )
+
+
+                embed.add_field(
+                    name="⚔️ Атака",
+                    value=str(attack),
+                    inline=True
+                )
+
+                embed.add_field(
+                    name="❤️ Здоровье",
+                    value=str(health),
+                    inline=True
+                )
+
+                embed.add_field(
+                    name="🛡️ Защита",
+                    value=str(defense),
+                    inline=True
+                )
+
+
+                # Ссылка на арт скина
+                safe_name = champion_id.replace(" ", "")
+
+
+                image_url = (
+                    "https://ddragon.leagueoflegends.com/"
+                    "cdn/img/champion/splash/"
+                    f"{safe_name}_{skin_id}.jpg"
+                )
+
+
+                # Генерация карточки PNG
+                card_file = create_card(
+                    champion=champion_id,
+                    skin=skin_name,
+                    rarity=rarity,
+                    attack=attack,
+                    health=health,
+                    defense=defense,
+                    image_url=image_url
+                )
+
+
+                # Отправка готовой карты
+                file = discord.File(
+                    card_file
+                )
+
+
+                embed.set_image(
+                    url=f"attachment://{card_file.split('/')[-1]}"
+                )
+
+
+                embed.set_footer(
+                    text=f"Карта {number + 1}/10"
+                )
+
+
+                await interaction.followup.send(
+                    embed=embed,
+                    file=file
+                )
+
+
+        except Exception as e:
+
+            await interaction.followup.send(
+                f"❌ Ошибка: {e}"
+            )
+
+
+
+async def setup(bot):
+    await bot.add_cog(Pack(bot))
