@@ -1,95 +1,401 @@
-# data/regions.py
+from PIL import Image, ImageDraw, ImageFont
+import requests
+from io import BytesIO
+import os
+import re
 
 
-CHAMPION_REGIONS = {
-
-    # Runeterra
-    "Aatrox": "Runeterra",
-    "Bard": "Runeterra",
-    "Kindred": "Runeterra",
-    "Ryze": "Runeterra",
-    "Viego": "ShadowIsles",
-
-    # Demacia
-    "Garen": "Demacia",
-    "Lux": "Demacia",
-    "Fiora": "Demacia",
-    "JarvanIV": "Demacia",
-
-    # Noxus
-    "Darius": "Noxus",
-    "Draven": "Noxus",
-    "Katarina": "Noxus",
-    "Swain": "Noxus",
-
-    # Ionia
-    "Ahri": "Ionia",
-    "Yasuo": "Ionia",
-    "Akali": "Ionia",
-    "Irelia": "Ionia",
-
-    # Piltover
-    "Ezreal": "Piltover",
-    "Caitlyn": "Piltover",
-    "Heimerdinger": "Piltover",
-    "Jayce": "Piltover",
-
-    # Zaun
-    "Jinx": "Zaun",
-    "Ekko": "Zaun",
-    "Warwick": "Zaun",
-    "Viktor": "Zaun",
-
-    # Freljord
-    "Ashe": "Freljord",
-    "Braum": "Freljord",
-    "Tryndamere": "Freljord",
-    "Sejuani": "Freljord",
-
-    # Shurima
-    "Azir": "Shurima",
-    "Nasus": "Shurima",
-    "Renekton": "Shurima",
-    "Sivir": "Shurima",
-
-    # Targon
-    "Diana": "Targon",
-    "Leona": "Targon",
-    "Pantheon": "Targon",
-    "Taric": "Targon",
-
-    # Bilgewater
-    "MissFortune": "Bilgewater",
-    "Gangplank": "Bilgewater",
-    "Pyke": "Bilgewater",
-    "Nautilus": "Bilgewater",
-
-    # Shadow Isles
-    "Kalista": "ShadowIsles",
-    "Thresh": "ShadowIsles",
-    "Hecarim": "ShadowIsles",
-    "Elise": "ShadowIsles",
-
-    # Bandle City
-    "Lulu": "BandleCity",
-    "Teemo": "BandleCity",
-    "Tristana": "BandleCity",
-    "Corki": "BandleCity",
-
-    # Ixtal
-    "Qiyana": "Ixtal",
-    "Rengar": "Ixtal",
-    "Nidalee": "Ixtal",
-
-    # Void
-    "KhaZix": "Void",
-    "RekSai": "Void",
-    "Velkoz": "Void",
-    "Malzahar": "Void"
-}
+CARD_WIDTH = 744
+CARD_HEIGHT = 1039
 
 
-# Совместимость со старыми файлами
-REGIONS = CHAMPION_REGIONS
+def get_font(size):
+    try:
+        return ImageFont.truetype(
+            "assets/fonts/font.ttf",
+            size
+        )
+    except:
+        return ImageFont.load_default()
 
-champion_regions = CHAMPION_REGIONS
+
+
+def load_asset(path):
+
+    if os.path.exists(path):
+        return Image.open(path).convert("RGBA")
+
+    return None
+
+
+
+def crop_image(img, size):
+
+    img_ratio = img.width / img.height
+    target_ratio = size[0] / size[1]
+
+
+    if img_ratio > target_ratio:
+
+        new_height = size[1]
+        new_width = int(new_height * img_ratio)
+
+    else:
+
+        new_width = size[0]
+        new_height = int(new_width / img_ratio)
+
+
+    img = img.resize(
+        (new_width, new_height)
+    )
+
+
+    left = (new_width - size[0]) // 2
+    top = (new_height - size[1]) // 2
+
+
+    return img.crop(
+        (
+            left,
+            top,
+            left + size[0],
+            top + size[1]
+        )
+    )
+
+
+
+def safe_filename(name):
+
+    return re.sub(
+        r'[\\/*?:"<>|]',
+        "",
+        name
+    )
+
+
+
+def add_icon(card, path, position):
+
+    icon = load_asset(path)
+
+    if icon:
+
+        icon = icon.resize(
+            (65,65)
+        )
+
+        card.alpha_composite(
+            icon,
+            position
+        )
+
+
+
+def create_card(
+    champion,
+    skin,
+    rarity,
+    region,
+    attack,
+    health,
+    defense,
+    image_url
+):
+
+
+    # ======================
+    # ART
+    # ======================
+
+    response = requests.get(
+        image_url
+    )
+
+    art = Image.open(
+        BytesIO(response.content)
+    ).convert("RGBA")
+
+
+    art = crop_image(
+        art,
+        (
+            CARD_WIDTH,
+            CARD_HEIGHT
+        )
+    )
+
+
+    card = art.copy()
+
+
+
+    # ======================
+    # FRAME
+    # ======================
+
+    frame = load_asset(
+        f"assets/frames/{rarity}.png"
+    )
+
+
+    if frame:
+
+        frame = frame.resize(
+            (
+                CARD_WIDTH,
+                CARD_HEIGHT
+            )
+        )
+
+        card = Image.alpha_composite(
+            card,
+            frame
+        )
+
+
+
+    # ======================
+    # GLOW
+    # ======================
+
+    glow = load_asset(
+        f"assets/effects/{rarity}_glow.png"
+    )
+
+
+    if glow:
+
+        glow = glow.resize(
+            (
+                CARD_WIDTH,
+                CARD_HEIGHT
+            )
+        )
+
+        card = Image.alpha_composite(
+            card,
+            glow
+        )
+
+
+
+    # ======================
+    # REGION
+    # ======================
+
+    region = region.replace(
+        " ",
+        ""
+    )
+
+
+    region_img = load_asset(
+        f"assets/regions/{region}.png"
+    )
+
+
+    if region_img:
+
+        region_img = region_img.resize(
+            (120,120)
+        )
+
+
+        card.alpha_composite(
+            region_img,
+            (590,40)
+        )
+
+
+
+    # ======================
+    # BOTTOM PANEL
+    # ======================
+
+    bottom = load_asset(
+        "assets/panels/bottom.png"
+    )
+
+
+    if bottom:
+
+        bottom = bottom.resize(
+            (
+                CARD_WIDTH,
+                330
+            )
+        )
+
+        card.alpha_composite(
+            bottom,
+            (0,710)
+        )
+
+
+
+    draw = ImageDraw.Draw(card)
+
+
+
+    # Шрифты
+
+    title_font = get_font(82)
+    skin_font = get_font(52)
+    stat_font = get_font(65)
+    small_font = get_font(45)
+
+
+
+    stroke = 3
+
+
+
+    # ======================
+    # NAME
+    # ======================
+
+
+    draw.text(
+        (50,735),
+        champion,
+        font=title_font,
+        fill="white",
+        stroke_width=stroke,
+        stroke_fill="black"
+    )
+
+
+
+    # ======================
+    # SKIN
+    # ======================
+
+
+    draw.text(
+        (50,830),
+        skin,
+        font=skin_font,
+        fill="white",
+        stroke_width=2,
+        stroke_fill="black"
+    )
+
+
+
+    # ======================
+    # STATS
+    # ======================
+
+
+    add_icon(
+        card,
+        "assets/icons/attack.png",
+        (50,930)
+    )
+
+    draw.text(
+        (125,925),
+        str(attack),
+        font=stat_font,
+        fill="white",
+        stroke_width=3,
+        stroke_fill="black"
+    )
+
+
+    add_icon(
+        card,
+        "assets/icons/health.png",
+        (270,930)
+    )
+
+
+    draw.text(
+        (345,925),
+        str(health),
+        font=stat_font,
+        fill="white",
+        stroke_width=3,
+        stroke_fill="black"
+    )
+
+
+
+    add_icon(
+        card,
+        "assets/icons/defense.png",
+        (490,930)
+    )
+
+
+    draw.text(
+        (565,925),
+        str(defense),
+        font=stat_font,
+        fill="white",
+        stroke_width=3,
+        stroke_fill="black"
+    )
+
+
+
+    # ======================
+    # RARITY
+    # ======================
+
+    draw.text(
+        (50,50),
+        rarity.upper(),
+        font=small_font,
+        fill="gold",
+        stroke_width=2,
+        stroke_fill="black"
+    )
+
+
+
+    # ======================
+    # CARD NUMBER
+    # ======================
+
+    draw.text(
+        (600,150),
+        "#001",
+        font=small_font,
+        fill="white",
+        stroke_width=2,
+        stroke_fill="black"
+    )
+
+
+
+    # ======================
+    # SAVE
+    # ======================
+
+    os.makedirs(
+        "cards",
+        exist_ok=True
+    )
+
+
+    filename = safe_filename(
+        f"{champion}_{skin}"
+    )
+
+
+    path = (
+        f"cards/{filename}.png"
+    )
+
+
+    card.convert(
+        "RGB"
+    ).save(
+        path
+    )
+
+
+    return path
