@@ -1,60 +1,22 @@
-{
-    "Aatrox": {
-        "name": "Aatrox",
-        "title": "the Darkin Blade",
-        "skins": [
-            {
-                "name": "default",
-                "id": 0
-            },
-            {
-                "name": "Justicar Aatrox",
-                "id": 1
-            },
-            {
-                "name": "Mecha Aatrox",
-                "id": 2
-            },
-            {
-                "name": "Sea Hunter Aatrox",
-                "id": 3
-            },
-            {
-                "name": "Blood Moon Aatrox",
-                "id": 7
-            },
-            {
-                "name": "Prestige Blood Moon Aatrox",
-                "id": 8
-            },
-            {
-                "name": "Victorious Aatrox",
-                "id": 9
-            },
-            {
-                "name": "Odyssey Aatrox",
-                "id": 11
-            },
-            {
-                "name": "Prestige Blood Moon Aatrox (2022)",
-                "id": 20
-            },
-            {
-                "name": "Lunar Eclipse Aatrox",
-                "id": 21
-            },
-            {
-                "name": "DRX Aatrox",
-                "id": 30
-            },
-            {
-                "name": "Prestige DRX Aatrox",
-                "id": 31
-            },
-            {
-                "name": "Primordian Aatrox",
-                "id": 33
-            }
-        ]
-    }
-}
+:\Users\Ketek'\Desktop\qantum_universe>python main.py
+✅ База данных подключена
+✅ Загружен: auction
+✅ Загружен: balance
+✅ Загружен: contract
+✅ Загружен: daily
+✅ Загружен: inventory
+✅ Загружен: profile
+✅ Загружен: quest
+✅ Загружен: shop
+✅ Загружен: work
+❌ Ошибка загрузки travel: Extension 'cogs.travel' raised an error: ImportError: cannot import name 'REGIONS' from 'data.regions' (C:\Users\Ketek'\Desktop\qantum_universe\data\regions.py)
+✅ Загружен: quest_reward
+✅ Загружен: cards
+✅ Загружен: test_event
+✅ Загружен: deck
+✅ Загружен: battle
+❌ Ошибка загрузки pack: Extension 'cogs.pack' raised an error: ImportError: cannot import name 'champion_regions' from 'data.regions' (C:\Users\Ketek'\Desktop\qantum_universe\data\regions.py)
+✅ Загружен: collection
+❌ Ошибка загрузки map: Extension 'cogs.map' raised an error: ImportError: cannot import name 'REGIONS' from 'data.regions' (C:\Users\Ketek'\Desktop\qantum_universe\data\regions.py)
+✅ Синхронизировано команд: 21
+🟢 Бот запущен как ILTA BOT#7827
