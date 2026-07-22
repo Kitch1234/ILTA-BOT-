@@ -1,154 +1,314 @@
-Traceback (most recent call last):
-  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.12_3.12.2800.0_x64__qbz5n2kfra8p0\Lib\asyncio\tasks.py", line 520, in wait_for
-    return await fut
-           ^^^^^^^^^
-  File "C:\Users\Ketek'\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\discord\gateway.py", line 392, in from_client
-    socket = await client.http.ws_connect(str(url))
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\Ketek'\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\discord\http.py", line 571, in ws_connect
-    return await self.__session.ws_connect(url, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\Ketek'\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\aiohttp\client.py", line 1249, in _ws_connect
-    resp = await self.request(
-           ^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\Ketek'\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\aiohttp\client.py", line 858, in _request
-    resp = await handler(req)
-           ^^^^^^^^^^^^^^^^^^
-  File "C:\Users\Ketek'\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\aiohttp\client.py", line 812, in _connect_and_send_request
-    conn = await self._connector.connect(
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\Ketek'\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\aiohttp\connector.py", line 657, in connect
-    proto = await self._create_connection(req, traces, timeout)
-            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\Ketek'\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\aiohttp\connector.py", line 1242, in _create_connection
-    _, proto = await self._create_direct_connection(req, traces, timeout)
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\Ketek'\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\aiohttp\connector.py", line 1589, in _create_direct_connection
-    transp, proto = await self._wrap_create_connection(
-                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\Ketek'\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\aiohttp\connector.py", line 1301, in _wrap_create_connection
-    sock = await aiohappyeyeballs.start_connection(
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\Ketek'\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\aiohappyeyeballs\impl.py", line 89, in start_connection
-    sock, _, _ = await _staggered.staggered_race(
-                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\Ketek'\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\aiohappyeyeballs\_staggered.py", line 155, in staggered_race
-    done = await _wait_one(
-           ^^^^^^^^^^^^^^^^
-  File "C:\Users\Ketek'\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\aiohappyeyeballs\_staggered.py", line 36, in _wait_one
-    return await wait_next
-           ^^^^^^^^^^^^^^^
-asyncio.exceptions.CancelledError
+from PIL import Image, ImageDraw, ImageFont
+import requests
+from io import BytesIO
+import os
 
-The above exception was the direct cause of the following exception:
 
-Traceback (most recent call last):
-  File "C:\Users\Ketek'\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\discord\client.py", line 728, in connect
-    self.ws = await asyncio.wait_for(coro, timeout=60.0)
-              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.12_3.12.2800.0_x64__qbz5n2kfra8p0\Lib\asyncio\tasks.py", line 519, in wait_for
-    async with timeouts.timeout(timeout):
-               ^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.12_3.12.2800.0_x64__qbz5n2kfra8p0\Lib\asyncio\timeouts.py", line 115, in __aexit__
-    raise TimeoutError from exc_val
-TimeoutError
+CARD_WIDTH = 744
+CARD_HEIGHT = 1039
 
-During handling of the above exception, another exception occurred:
 
-Traceback (most recent call last):
-  File "C:\Users\Ketek'\Desktop\qantum_universe\main.py", line 62, in <module>
-    asyncio.run(main())
-  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.12_3.12.2800.0_x64__qbz5n2kfra8p0\Lib\asyncio\runners.py", line 195, in run
-    return runner.run(main)
-           ^^^^^^^^^^^^^^^^
-  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.12_3.12.2800.0_x64__qbz5n2kfra8p0\Lib\asyncio\runners.py", line 118, in run
-    return self._loop.run_until_complete(task)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.12_3.12.2800.0_x64__qbz5n2kfra8p0\Lib\asyncio\base_events.py", line 691, in run_until_complete
-    return future.result()
-           ^^^^^^^^^^^^^^^
-  File "C:\Users\Ketek'\Desktop\qantum_universe\main.py", line 59, in main
-    await bot.start(TOKEN)
-  File "C:\Users\Ketek'\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\discord\client.py", line 851, in start
-    await self.connect(reconnect=reconnect)
-  File "C:\Users\Ketek'\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\discord\client.py", line 787, in connect
-    sequence=self.ws.sequence,
-             ^^^^^^^^^^^^^^^^
-AttributeError: 'NoneType' object has no attribute 'sequence'
-Unclosed client session
-client_session: <aiohttp.client.ClientSession object at 0x0000022F2775EDB0>
+def get_font(size):
+    try:
+        return ImageFont.truetype(
+            "assets/fonts/font.ttf",
+            size
+        )
+    except:
+        return ImageFont.load_default()
 
-C:\Users\Ketek'\Desktop\qantum_universe>python main.py
-Traceback (most recent call last):
-  File "C:\Users\Ketek'\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\aiohttp\connector.py", line 1571, in _create_direct_connection
-    hosts = await self._resolve_host(host, port, traces=traces)
-            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\Ketek'\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\aiohttp\connector.py", line 1181, in _resolve_host
-    return await asyncio.shield(resolved_host_task)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\Ketek'\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\aiohttp\connector.py", line 1212, in _resolve_host_with_throttle
-    addrs = await self._resolver.resolve(host, port, family=self._family)
-            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\Ketek'\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\aiohttp\resolver.py", line 47, in resolve
-    infos = await self._loop.getaddrinfo(
-            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.12_3.12.2800.0_x64__qbz5n2kfra8p0\Lib\asyncio\base_events.py", line 905, in getaddrinfo
-    return await self.run_in_executor(
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.12_3.12.2800.0_x64__qbz5n2kfra8p0\Lib\concurrent\futures\thread.py", line 59, in run
-    result = self.fn(*self.args, **self.kwargs)
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.12_3.12.2800.0_x64__qbz5n2kfra8p0\Lib\socket.py", line 978, in getaddrinfo
-    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-socket.gaierror: [Errno 11001] getaddrinfo failed
 
-The above exception was the direct cause of the following exception:
+def load_asset(path):
+    return Image.open(path).convert("RGBA")
 
-Traceback (most recent call last):
-  File "C:\Users\Ketek'\Desktop\qantum_universe\main.py", line 62, in <module>
-    asyncio.run(main())
-  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.12_3.12.2800.0_x64__qbz5n2kfra8p0\Lib\asyncio\runners.py", line 195, in run
-    return runner.run(main)
-           ^^^^^^^^^^^^^^^^
-  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.12_3.12.2800.0_x64__qbz5n2kfra8p0\Lib\asyncio\runners.py", line 118, in run
-    return self._loop.run_until_complete(task)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.12_3.12.2800.0_x64__qbz5n2kfra8p0\Lib\asyncio\base_events.py", line 691, in run_until_complete
-    return future.result()
-           ^^^^^^^^^^^^^^^
-  File "C:\Users\Ketek'\Desktop\qantum_universe\main.py", line 59, in main
-    await bot.start(TOKEN)
-  File "C:\Users\Ketek'\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\discord\client.py", line 850, in start
-    await self.login(token)
-  File "C:\Users\Ketek'\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\discord\client.py", line 679, in login
-    data = await self.http.static_login(token)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\Ketek'\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\discord\http.py", line 844, in static_login
-    data = await self.request(Route('GET', '/users/@me'))
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\Ketek'\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\discord\http.py", line 659, in request
-    async with self.__session.request(method, url, **kwargs) as response:
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\Ketek'\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\aiohttp\client.py", line 1693, in __aenter__
-    self._resp: _RetType_co = await self._coro
-                              ^^^^^^^^^^^^^^^^
-  File "C:\Users\Ketek'\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\aiohttp\client.py", line 858, in _request
-    resp = await handler(req)
-           ^^^^^^^^^^^^^^^^^^
-  File "C:\Users\Ketek'\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\aiohttp\client.py", line 812, in _connect_and_send_request
-    conn = await self._connector.connect(
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\Ketek'\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\aiohttp\connector.py", line 657, in connect
-    proto = await self._create_connection(req, traces, timeout)
-            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\Ketek'\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\aiohttp\connector.py", line 1242, in _create_connection
-    _, proto = await self._create_direct_connection(req, traces, timeout)
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\Ketek'\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\aiohttp\connector.py", line 1577, in _create_direct_connection
-    raise ClientConnectorDNSError(req.connection_key, exc) from exc
-aiohttp.client_exceptions.ClientConnectorDNSError: Cannot connect to host discord.com:443 ssl:default [getaddrinfo failed]
-Unclosed client session
-client_session: <aiohttp.client.ClientSession object at 0x0000023B77F06270>
 
-C:\Users\Ketek'\Desktop\qantum_universe>
+def crop_image(img, size):
+
+    img_ratio = img.width / img.height
+    target_ratio = size[0] / size[1]
+
+    if img_ratio > target_ratio:
+        new_height = size[1]
+        new_width = int(new_height * img_ratio)
+
+    else:
+        new_width = size[0]
+        new_height = int(new_width / img_ratio)
+
+
+    img = img.resize(
+        (new_width, new_height)
+    )
+
+
+    left = (new_width - size[0]) // 2
+    top = (new_height - size[1]) // 2
+
+
+    return img.crop(
+        (
+            left,
+            top,
+            left + size[0],
+            top + size[1]
+        )
+    )
+
+
+def add_icon(card, path, position):
+
+    if os.path.exists(path):
+
+        icon = load_asset(path)
+
+        icon = icon.resize(
+            (55,55)
+        )
+
+        card.alpha_composite(
+            icon,
+            position
+        )
+
+
+def create_card(
+    champion,
+    skin,
+    rarity,
+    region,
+    attack,
+    health,
+    defense,
+    image_url
+):
+
+    # ======================
+    # СКАЧИВАЕМ ART
+    # ======================
+
+    response = requests.get(
+        image_url
+    )
+
+    art = Image.open(
+        BytesIO(response.content)
+    ).convert("RGBA")
+
+
+    art = crop_image(
+        art,
+        (CARD_WIDTH, CARD_HEIGHT)
+    )
+
+
+    card = art.copy()
+
+
+    # ======================
+    # РАМКА
+    # ======================
+
+    frame_path = (
+        f"assets/frames/{rarity}.png"
+    )
+
+    if os.path.exists(frame_path):
+
+        frame = load_asset(
+            frame_path
+        )
+
+        frame = frame.resize(
+            (CARD_WIDTH, CARD_HEIGHT)
+        )
+
+        card = Image.alpha_composite(
+            card,
+            frame
+        )
+
+
+    # ======================
+    # ЭФФЕКТ РЕДКОСТИ
+    # ======================
+
+    glow_path = (
+        f"assets/effects/{rarity}_glow.png"
+    )
+
+    if os.path.exists(glow_path):
+
+        glow = load_asset(
+            glow_path
+        )
+
+        glow = glow.resize(
+            (CARD_WIDTH, CARD_HEIGHT)
+        )
+
+        card = Image.alpha_composite(
+            card,
+            glow
+        )
+
+
+    # ======================
+    # РЕГИОН
+    # ======================
+
+    region_path = (
+        f"assets/regions/{region}.png"
+    )
+
+    if os.path.exists(region_path):
+
+        region_img = load_asset(
+            region_path
+        )
+
+        region_img = region_img.resize(
+            (90,90)
+        )
+
+        card.alpha_composite(
+            region_img,
+            (620,50)
+        )
+
+
+    # ======================
+    # НИЖНЯЯ ПАНЕЛЬ
+    # ======================
+
+    bottom_path = (
+        "assets/panels/bottom.png"
+    )
+
+    if os.path.exists(bottom_path):
+
+        bottom = load_asset(
+            bottom_path
+        )
+
+        bottom = bottom.resize(
+            (CARD_WIDTH,300)
+        )
+
+        card.alpha_composite(
+            bottom,
+            (0,740)
+        )
+
+
+    draw = ImageDraw.Draw(card)
+
+
+    title_font = get_font(55)
+    text_font = get_font(38)
+
+
+    # ======================
+    # ИМЯ
+    # ======================
+
+    draw.text(
+        (50,760),
+        champion,
+        font=title_font,
+        fill="white"
+    )
+
+
+    # ======================
+    # СКИН
+    # ======================
+
+    draw.text(
+        (50,825),
+        skin,
+        font=text_font,
+        fill="white"
+    )
+
+
+    # ======================
+    # СТАТЫ
+    # ======================
+
+    add_icon(
+        card,
+        "assets/icons/attack.png",
+        (50,920)
+    )
+
+    draw.text(
+        (115,925),
+        str(attack),
+        font=text_font,
+        fill="white"
+    )
+
+
+    add_icon(
+        card,
+        "assets/icons/health.png",
+        (270,920)
+    )
+
+    draw.text(
+        (335,925),
+        str(health),
+        font=text_font,
+        fill="white"
+    )
+
+
+    add_icon(
+        card,
+        "assets/icons/defense.png",
+        (490,920)
+    )
+
+    draw.text(
+        (555,925),
+        str(defense),
+        font=text_font,
+        fill="white"
+    )
+
+
+    # ======================
+    # РЕДКОСТЬ
+    # ======================
+
+    draw.text(
+        (50,50),
+        rarity.upper(),
+        font=text_font,
+        fill="gold"
+    )
+
+
+    # ======================
+    # СОХРАНЕНИЕ
+    # ======================
+
+    os.makedirs(
+        "cards",
+        exist_ok=True
+    )
+
+
+    filename = (
+        f"cards/{champion}_{skin}.png"
+    )
+
+
+    card.convert(
+        "RGB"
+    ).save(
+        filename
+    )
+
+
+    return filename
