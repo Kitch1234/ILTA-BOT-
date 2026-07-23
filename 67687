@@ -1,69 +1,424 @@
-# =====================================
-# Редкость карт ILTA
-# =====================================
+from PIL import Image, ImageDraw, ImageFont
+import requests
+from io import BytesIO
+import os
+import re
 
-CARD_RARITY = {
+from data.card_layout import CARD_LAYOUT
 
-    "Обычный": {
-        "chance": 60,
-        "color": "#808080"
-    },
 
-    "Редкий": {
-        "chance": 25,
-        "color": "#3498DB"
-    },
+CARD_WIDTH = 1060
+CARD_HEIGHT = 1484
 
-    "Эпический": {
-        "chance": 10,
-        "color": "#9B59B6"
-    },
 
-    "Легендарный": {
-        "chance": 4,
-        "color": "#F39C12"
-    },
+ART_X = 95
+ART_Y = 185
+ART_WIDTH = 870
+ART_HEIGHT = 710
 
-    "Мифический": {
-        "chance": 0.8,
-        "color": "#E91E63"
-    },
 
-    "Престижный": {
-        "chance": 0.15,
-        "color": "#FFD700"
-    },
 
-    "Чемпионский": {
-        "chance": 0.05,
-        "color": "#FFFFFF"
-    }
+RARITY_MAP = {
+
+    "обычный": "common",
+    "редкий": "rare",
+    "эпический": "epic",
+    "легендарный": "legendary",
+    "мифический": "mythic",
+    "престижный": "prestige",
+    "чемпионский": "champion"
 
 }
 
 
 
-def get_card_rarity():
-    """
-    Получить редкость карты ILTA
-    """
+def get_font(size):
 
-    roll = random.uniform(
-        0,
-        100
+    try:
+        return ImageFont.truetype(
+            "assets/fonts/bold.ttf",
+            size
+        )
+
+    except:
+
+        return ImageFont.load_default()
+
+
+
+def load_asset(path):
+
+    if os.path.exists(path):
+
+        return Image.open(
+            path
+        ).convert("RGBA")
+
+
+    return None
+
+
+
+def crop_image(img, size):
+
+    ratio = img.width / img.height
+
+    target = size[0] / size[1]
+
+
+    if ratio > target:
+
+        h = size[1]
+        w = int(h * ratio)
+
+    else:
+
+        w = size[0]
+        h = int(w / ratio)
+
+
+    img = img.resize(
+        (w,h)
     )
 
-    total = 0
+
+    left = (w-size[0])//2
+    top = (h-size[1])//2
 
 
-    for rarity, data in CARD_RARITY.items():
+    return img.crop(
+        (
+            left,
+            top,
+            left+size[0],
+            top+size[1]
+        )
+    )
 
-        total += data["chance"]
 
 
-        if roll <= total:
+def safe_filename(name):
 
-            return rarity
+    return re.sub(
+        r'[\\/*?:"<>|]',
+        "",
+        name
+    )
 
 
-    return "Обычный"
+
+def create_card(
+    champion,
+    skin,
+    rarity,
+    region,
+    attack,
+    health,
+    defense,
+    image_url,
+    card_number="ILT-000000"
+):
+
+
+    # =====================
+    # ART
+    # =====================
+
+    response = requests.get(
+        image_url,
+        timeout=15
+    )
+
+    response.raise_for_status()
+
+
+    art = Image.open(
+        BytesIO(response.content)
+    ).convert("RGBA")
+
+
+    art = crop_image(
+        art,
+        (
+            ART_WIDTH,
+            ART_HEIGHT
+        )
+    )
+
+
+    card = Image.new(
+        "RGBA",
+        (
+            CARD_WIDTH,
+            CARD_HEIGHT
+        ),
+        (0,0,0,0)
+    )
+
+
+    card.alpha_composite(
+        art,
+        (
+            ART_X,
+            ART_Y
+        )
+    )
+
+
+
+    # =====================
+    # FRAME
+    # =====================
+
+    rarity_file = RARITY_MAP.get(
+        str(rarity).lower(),
+        "common"
+    )
+
+
+    frame = load_asset(
+        f"assets/frames/{rarity_file}.png"
+    )
+
+
+    if frame:
+
+        frame = frame.resize(
+            (
+                CARD_WIDTH,
+                CARD_HEIGHT
+            )
+        )
+
+
+        card.alpha_composite(
+            frame,
+            (0,0)
+        )
+
+
+
+    draw = ImageDraw.Draw(
+        card
+    )
+
+
+
+    # =====================
+    # FONTS
+    # =====================
+
+    id_font = get_font(55)
+
+    title_font = get_font(95)
+
+    skin_font = get_font(60)
+
+    stat_font = get_font(90)
+
+    bottom_font = get_font(55)
+
+
+
+    # =====================
+    # ID
+    # =====================
+
+    draw.text(
+
+        CARD_LAYOUT["number"],
+
+        card_number,
+
+        anchor="mm",
+
+        font=id_font,
+
+        fill="white",
+
+        stroke_width=3,
+
+        stroke_fill="black"
+    )
+
+
+
+    # =====================
+    # CHAMPION
+    # =====================
+
+    draw.text(
+
+        CARD_LAYOUT["champion"],
+
+        champion,
+
+        anchor="mm",
+
+        font=title_font,
+
+        fill="white",
+
+        stroke_width=5,
+
+        stroke_fill="black"
+    )
+
+
+
+    # =====================
+    # SKIN
+    # =====================
+
+    draw.text(
+
+        CARD_LAYOUT["skin"],
+
+        skin,
+
+        anchor="mm",
+
+        font=skin_font,
+
+        fill="white",
+
+        stroke_width=4,
+
+        stroke_fill="black"
+    )
+
+
+
+    # =====================
+    # STATS
+    # =====================
+
+    draw.text(
+
+        CARD_LAYOUT["attack"],
+
+        str(attack),
+
+        anchor="mm",
+
+        font=stat_font,
+
+        fill="white",
+
+        stroke_width=4,
+
+        stroke_fill="black"
+    )
+
+
+    draw.text(
+
+        CARD_LAYOUT["health"],
+
+        str(health),
+
+        anchor="mm",
+
+        font=stat_font,
+
+        fill="white",
+
+        stroke_width=4,
+
+        stroke_fill="black"
+    )
+
+
+    draw.text(
+
+        CARD_LAYOUT["defense"],
+
+        str(defense),
+
+        anchor="mm",
+
+        font=stat_font,
+
+        fill="white",
+
+        stroke_width=4,
+
+        stroke_fill="black"
+    )
+
+
+
+    # =====================
+    # REGION
+    # =====================
+
+    draw.text(
+
+        CARD_LAYOUT["region_text"],
+
+        region,
+
+        anchor="mm",
+
+        font=bottom_font,
+
+        fill="white",
+
+        stroke_width=3,
+
+        stroke_fill="black"
+    )
+
+
+
+    # =====================
+    # RARITY
+    # =====================
+
+    draw.text(
+
+        CARD_LAYOUT["rarity"],
+
+        rarity.upper(),
+
+        anchor="mm",
+
+        font=bottom_font,
+
+        fill="gold",
+
+        stroke_width=3,
+
+        stroke_fill="black"
+    )
+
+
+
+    # =====================
+    # SAVE
+    # =====================
+
+    os.makedirs(
+        "cards",
+        exist_ok=True
+    )
+
+
+    filename = safe_filename(
+        f"{champion}_{skin}_{card_number}"
+    )
+
+
+    path = (
+        f"cards/{filename}.png"
+    )
+
+
+    card.convert(
+        "RGB"
+    ).save(
+        path
+    )
+
+
+    return path
