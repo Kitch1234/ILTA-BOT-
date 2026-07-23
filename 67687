@@ -12,7 +12,7 @@ class Cards(commands.Cog):
 
 
     @app_commands.command(
-        
+        name="collection",
         description="Посмотреть свою коллекцию карт"
     )
     async def collection(
@@ -37,25 +37,60 @@ class Cards(commands.Cog):
             return
 
 
-        text = (
-            f"🃏 Коллекция {interaction.user.name}\n\n"
+
+        embed = discord.Embed(
+
+            title=f"🃏 Коллекция {interaction.user.name}",
+
+            color=0xFFD700
         )
 
 
-        for card in cards:
+        embed.description = (
+            f"Всего карт: **{len(cards)}**\n"
+        )
 
-            text += (
-                f"🃏 {card['champion']}\n"
-                f"🎨 Скин: {card['skin']}\n"
-                f"⭐ Редкость: {card['rarity']}\n"
-                f"⚔️ Атака: {card['attack']}\n"
-                f"🛡️ Защита: {card['defense']}\n"
-                f"❤️ Здоровье: {card['health']}\n\n"
+
+
+        for card in cards[:10]:
+
+            embed.add_field(
+
+                name=(
+                    f"🎴 {card['champion']} "
+                    f"({card['rarity']})"
+                ),
+
+                value=(
+
+                    f"🆔 {card['card_code']}\n"
+
+                    f"🎨 {card['skin']}\n"
+
+                    f"🌍 {card['region']}\n"
+
+                    f"⚔️ {card['attack']}  "
+                    f"❤️ {card['health']}  "
+                    f"🛡️ {card['defense']}"
+
+                ),
+
+                inline=False
+            )
+
+
+
+        if len(cards) > 10:
+
+            embed.set_footer(
+
+                text=f"Показано 10 из {len(cards)} карт"
+
             )
 
 
         await interaction.response.send_message(
-            text
+            embed=embed
         )
 
 
