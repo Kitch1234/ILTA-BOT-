@@ -1,130 +1,62 @@
-# champion_loader.py
-
-"""
-Загрузчик чемпионов ILTA RPG
-"""
-
-import json
+import discord
+from discord.ext import commands
 import os
+import asyncio
+from dotenv import load_dotenv
 
+from core.database import connect_db, close_db
 
-CHAMPIONS_FILE = "data/champions.json"
+load_dotenv()
 
+TOKEN = os.getenv("TOKEN")
 
+intents = discord.Intents.default()
+intents.message_content = True
 
-def load_champions():
-    """
-    Загрузка всех чемпионов из JSON
-    """
-
-    if not os.path.exists(CHAMPIONS_FILE):
-
-        return {}
-
-
-    with open(
-        CHAMPIONS_FILE,
-        "r",
-        encoding="utf-8"
-    ) as file:
-
-        return json.load(file)
-
-
-
-
-
-def get_champion(name):
-    """
-    Получить одного чемпиона
-    """
-
-    champions = load_champions()
-
-
-    return champions.get(name)
-
-
-
-
-
-def get_all_champions():
-    """
-    Получить всех чемпионов
-    """
-
-    return load_champions()
-
-
-
-
-
-def search_champions(text):
-    """
-    Поиск чемпионов
-    """
-
-    champions = load_champions()
-
-
-    result = {}
-
-
-    for name, data in champions.items():
-
-        if text.lower() in name.lower():
-
-            result[name] = data
-
-
-    return result
-
-
-
-
-
-def get_skins(champion_name):
-    """
-    Получить все скины чемпиона
-    """
-
-    champion = get_champion(
-        champion_name
-    )
-
-
-    if champion:
-
-        return champion.get(
-            "skins",
-            []
+class QuantumBot(commands.Bot):
+    def __init__(self):
+        super().__init__(
+            command_prefix="!",
+            intents=intents
         )
 
+    async def setup_hook(self):
+        await connect_db()
 
-    return []
+        cogs = [
+            "auction", "balance", "contract", "daily", "inventory",
+            "profile", "quest", "shop", "work", "travel", "quest_reward",
+            "cards", "test_event", "deck", "battle", "pack", "collection", "map"
+        ]
 
+        for cog in cogs:
+            try:
+                await self.load_extension(f"cogs.{cog}")
+                print(f"✅ Загружен: {cog}")
+            except Exception as e:
+                print(f"❌ Ошибка загрузки {cog}: {e}")
 
+        try:
+            synced = await self.tree.sync()
+            print(f"✅ Синхронизировано команд: {len(synced)}")
+        except Exception as e:
+            print(f"❌ Ошибка синхронизации: {e}")
 
+    async def close(self):
+        await close_db()
+        await super().close()
 
+bot = QuantumBot()
 
-def get_skin(
-    champion_name,
-    skin_name
-):
-    """
-    Получить конкретный скин
-    """
+@bot.event
+async def on_ready():
+    print(f"🟢 Бот запущен как {bot.user}")
 
-    skins = get_skins(
-        champion_name
-    )
+async def main():
+    if not TOKEN:
+        print("❌ TOKEN не найден в .env")
+        return
+    await bot.start(TOKEN)
 
-
-    for skin in skins:
-
-        if skin["name"] == skin_name:
-
-            return skin
-
-
-    return None
+if __name__ == "__main__":
+    asyncio.run(main())
