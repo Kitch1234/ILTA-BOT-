@@ -1,95 +1,130 @@
-# data/regions.py
+# champion_loader.py
+
+"""
+Загрузчик чемпионов ILTA RPG
+"""
+
+import json
+import os
 
 
-CHAMPION_REGIONS = {
-
-    # Runeterra
-    "Aatrox": "Runeterra",
-    "Bard": "Runeterra",
-    "Kindred": "Runeterra",
-    "Ryze": "Runeterra",
-    "Viego": "ShadowIsles",
-
-    # Demacia
-    "Garen": "Demacia",
-    "Lux": "Demacia",
-    "Fiora": "Demacia",
-    "JarvanIV": "Demacia",
-
-    # Noxus
-    "Darius": "Noxus",
-    "Draven": "Noxus",
-    "Katarina": "Noxus",
-    "Swain": "Noxus",
-
-    # Ionia
-    "Ahri": "Ionia",
-    "Yasuo": "Ionia",
-    "Akali": "Ionia",
-    "Irelia": "Ionia",
-
-    # Piltover
-    "Ezreal": "Piltover",
-    "Caitlyn": "Piltover",
-    "Heimerdinger": "Piltover",
-    "Jayce": "Piltover",
-
-    # Zaun
-    "Jinx": "Zaun",
-    "Ekko": "Zaun",
-    "Warwick": "Zaun",
-    "Viktor": "Zaun",
-
-    # Freljord
-    "Ashe": "Freljord",
-    "Braum": "Freljord",
-    "Tryndamere": "Freljord",
-    "Sejuani": "Freljord",
-
-    # Shurima
-    "Azir": "Shurima",
-    "Nasus": "Shurima",
-    "Renekton": "Shurima",
-    "Sivir": "Shurima",
-
-    # Targon
-    "Diana": "Targon",
-    "Leona": "Targon",
-    "Pantheon": "Targon",
-    "Taric": "Targon",
-
-    # Bilgewater
-    "MissFortune": "Bilgewater",
-    "Gangplank": "Bilgewater",
-    "Pyke": "Bilgewater",
-    "Nautilus": "Bilgewater",
-
-    # Shadow Isles
-    "Kalista": "ShadowIsles",
-    "Thresh": "ShadowIsles",
-    "Hecarim": "ShadowIsles",
-    "Elise": "ShadowIsles",
-
-    # Bandle City
-    "Lulu": "BandleCity",
-    "Teemo": "BandleCity",
-    "Tristana": "BandleCity",
-    "Corki": "BandleCity",
-
-    # Ixtal
-    "Qiyana": "Ixtal",
-    "Rengar": "Ixtal",
-    "Nidalee": "Ixtal",
-
-    # Void
-    "KhaZix": "Void",
-    "RekSai": "Void",
-    "Velkoz": "Void",
-    "Malzahar": "Void"
-}
+CHAMPIONS_FILE = "data/champions.json"
 
 
-# Совместимость со старыми файлами
-REGIONS = CHAMPION_REGIONS
 
-champion_regions = CHAMPION_REGIONS
+def load_champions():
+    """
+    Загрузка всех чемпионов из JSON
+    """
+
+    if not os.path.exists(CHAMPIONS_FILE):
+
+        return {}
+
+
+    with open(
+        CHAMPIONS_FILE,
+        "r",
+        encoding="utf-8"
+    ) as file:
+
+        return json.load(file)
+
+
+
+
+
+def get_champion(name):
+    """
+    Получить одного чемпиона
+    """
+
+    champions = load_champions()
+
+
+    return champions.get(name)
+
+
+
+
+
+def get_all_champions():
+    """
+    Получить всех чемпионов
+    """
+
+    return load_champions()
+
+
+
+
+
+def search_champions(text):
+    """
+    Поиск чемпионов
+    """
+
+    champions = load_champions()
+
+
+    result = {}
+
+
+    for name, data in champions.items():
+
+        if text.lower() in name.lower():
+
+            result[name] = data
+
+
+    return result
+
+
+
+
+
+def get_skins(champion_name):
+    """
+    Получить все скины чемпиона
+    """
+
+    champion = get_champion(
+        champion_name
+    )
+
+
+    if champion:
+
+        return champion.get(
+            "skins",
+            []
+        )
+
+
+    return []
+
+
+
+
+
+def get_skin(
+    champion_name,
+    skin_name
+):
+    """
+    Получить конкретный скин
+    """
+
+    skins = get_skins(
+        champion_name
+    )
+
+
+    for skin in skins:
+
+        if skin["name"] == skin_name:
+
+            return skin
+
+
+    return None
