@@ -1,204 +1,42 @@
-"""
-Система добычи (Loot)
-ILTA RPG Card System
-"""
-
-import random
+CARD_LAYOUT = {
 
 
+    # ID карты справа сверху
 
-# =====================================
-# Редкость карт ILTA
-# =====================================
+    "number": (900, 110),
 
-CARD_RARITY = {
 
-    "Обычный": {
-        "chance": 60,
-        "color": "#808080"
-    },
 
-    "Редкий": {
-        "chance": 25,
-        "color": "#3498DB"
-    },
+    # Имя чемпиона
 
-    "Эпический": {
-        "chance": 10,
-        "color": "#9B59B6"
-    },
+    "champion": (530, 950),
 
-    "Легендарный": {
-        "chance": 4,
-        "color": "#F39C12"
-    },
 
-    "Мифический": {
-        "chance": 0.8,
-        "color": "#E91E63"
-    },
 
-    "Престижный": {
-        "chance": 0.15,
-        "color": "#FFD700"
-    },
+    # Имя скина
 
-    "Чемпионский": {
-        "chance": 0.05,
-        "color": "#FFFFFF"
-    }
+    "skin": (530, 1035),
+
+
+
+    # Статы
+
+    "attack": (270, 1195),
+
+    "health": (530, 1195),
+
+    "defense": (790, 1195),
+
+
+
+    # Регион
+
+    "region_text": (260, 1360),
+
+
+
+    # Редкость
+
+    "rarity": (850, 1360)
 
 }
-
-
-
-
-
-# =====================================
-# Получить редкость карты
-# =====================================
-
-def get_card_rarity():
-
-    roll = random.uniform(
-        0,
-        100
-    )
-
-
-    total = 0
-
-
-    for rarity, data in CARD_RARITY.items():
-
-        total += data["chance"]
-
-
-        if roll <= total:
-
-            return rarity
-
-
-
-    return "Обычный"
-
-
-
-
-
-# =====================================
-# Старые функции Loot
-# =====================================
-
-
-LOOT_TABLE = {
-
-
-    "normal_monster": {
-
-        "gold": {
-            "min": 10,
-            "max": 50
-        },
-
-        "items": [
-            "Stone Fragment",
-            "Sharp Claw"
-        ],
-
-        "cards": {
-            "chance": 5
-        }
-
-    },
-
-
-
-    "elite_monster": {
-
-        "gold": {
-            "min": 100,
-            "max": 500
-        },
-
-        "items": [
-            "Rare Essence",
-            "Noxian Armor"
-        ],
-
-        "cards": {
-            "chance": 20
-        }
-
-    },
-
-
-
-    "boss": {
-
-        "gold": {
-            "min": 1000,
-            "max": 5000
-        },
-
-        "items": [
-            "Mythic Chest",
-            "Legendary Essence"
-        ],
-
-        "cards": {
-            "chance": 50
-        }
-
-    }
-
-}
-
-
-
-
-
-# =====================================
-# Монстры награды
-# =====================================
-
-def monster_drop(monster_type):
-
-    loot = LOOT_TABLE.get(
-        monster_type
-    )
-
-
-    if not loot:
-
-        return None
-
-
-
-    gold = random.randint(
-        loot["gold"]["min"],
-        loot["gold"]["max"]
-    )
-
-
-
-    card_drop = random.randint(
-        1,
-        100
-    )
-
-
-
-    return {
-
-        "gold": gold,
-
-        "card_drop":
-            card_drop <= loot["cards"]["chance"],
-
-        "items":
-            random.choice(
-                loot["items"]
-            )
-
-    }
