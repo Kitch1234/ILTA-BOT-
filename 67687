@@ -1,15 +1,33 @@
+import os
 
-                # ======================
-                # ID карты
-                # ======================
 
-                card_code = f"{random.randint(1,1000):04}"
-
-                )
+ASSETS_PATH = "assets/champions"
 
 
 
-                # ======================
-                # Сохранение
-                # ======================
+def get_champion_art(
+    champion,
+    skin_id
+):
+    """
+    Получить локальный арт чемпиона
+    """
 
+    path = os.path.join(
+
+        ASSETS_PATH,
+
+        champion,
+
+        f"{skin_id}.jpg"
+
+    )
+
+
+    if os.path.exists(path):
+
+        return path
+
+
+
+    return None
