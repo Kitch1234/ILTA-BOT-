@@ -1,19 +1,67 @@
-CARD_LAYOUT = {
+import discord
+from discord.ext import commands
+from discord import app_commands
 
-    "number": (900,100),
+from database import cards as cards_db
 
-    "champion": (530,970),
 
-    "skin": (530,1060),
+class Cards(commands.Cog):
 
-    "attack": (300,1190),
+    def __init__(self, bot):
+        self.bot = bot
 
-    "health": (530,1190),
 
-    "defense": (760,1190),
+    @app_commands.command(
+        
+        description="Посмотреть свою коллекцию карт"
+    )
+    async def collection(
+        self,
+        interaction: discord.Interaction
+    ):
 
-    "region_text": (250,1350),
+        user_id = interaction.user.id
 
-    "rarity": (850,1350)
 
-}
+        cards = await cards_db.get_player_cards(
+            user_id
+        )
+
+
+        if not cards:
+
+            await interaction.response.send_message(
+                "🃏 У вас пока нет карт."
+            )
+
+            return
+
+
+        text = (
+            f"🃏 Коллекция {interaction.user.name}\n\n"
+        )
+
+
+        for card in cards:
+
+            text += (
+                f"🃏 {card['champion']}\n"
+                f"🎨 Скин: {card['skin']}\n"
+                f"⭐ Редкость: {card['rarity']}\n"
+                f"⚔️ Атака: {card['attack']}\n"
+                f"🛡️ Защита: {card['defense']}\n"
+                f"❤️ Здоровье: {card['health']}\n\n"
+            )
+
+
+        await interaction.response.send_message(
+            text
+        )
+
+
+
+async def setup(bot):
+
+    await bot.add_cog(
+        Cards(bot)
+    )
