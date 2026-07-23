@@ -1,42 +1,522 @@
-CARD_LAYOUT = {
+from PIL import Image, ImageDraw, ImageFont
+import requests
+from io import BytesIO
+import os
+import re
 
-
-    # ID карты справа сверху
-
-    "number": (900, 110),
-
-
-
-    # Имя чемпиона
-
-    "champion": (530, 950),
+from data.card_layout import CARD_LAYOUT
 
 
 
-    # Имя скина
-
-    "skin": (530, 1035),
-
+CARD_WIDTH = 1060
+CARD_HEIGHT = 1484
 
 
-    # Статы
+ART_X = 95
+ART_Y = 185
 
-    "attack": (270, 1195),
-
-    "health": (530, 1195),
-
-    "defense": (790, 1195),
+ART_WIDTH = 870
+ART_HEIGHT = 710
 
 
 
-    # Регион
+RARITY_MAP = {
 
-    "region_text": (260, 1360),
+    "Обычный": "common",
 
+    "Редкий": "rare",
 
+    "Эпический": "epic",
 
-    # Редкость
+    "Легендарный": "legendary",
 
-    "rarity": (850, 1360)
+    "Мифический": "mythic",
+
+    "Престижный": "prestige",
+
+    "Чемпионский": "champion"
 
 }
+
+
+
+
+def get_font(size, style="regular"):
+
+
+    fonts = {
+
+        "regular":
+        "assets/fonts/Beaufort-Regular.ttf",
+
+
+        "medium":
+        "assets/fonts/Beaufort-Medium.ttf",
+
+
+        "bold":
+        "assets/fonts/Beaufort-Bold.ttf",
+
+
+        "heavy":
+        "assets/fonts/Beaufort-Heavy.ttf"
+
+    }
+
+
+    try:
+
+        return ImageFont.truetype(
+
+            fonts[style],
+
+            size
+
+        )
+
+    except:
+
+        return ImageFont.load_default()
+
+
+
+
+def load_asset(path):
+
+    if os.path.exists(path):
+
+        return Image.open(path).convert("RGBA")
+
+
+    return None
+
+
+
+
+def crop_image(img, size):
+
+    ratio = img.width / img.height
+
+    target = size[0] / size[1]
+
+
+    if ratio > target:
+
+        h = size[1]
+
+        w = int(h * ratio)
+
+
+    else:
+
+        w = size[0]
+
+        h = int(w / ratio)
+
+
+
+    img = img.resize(
+        (w,h)
+    )
+
+
+    left = (w-size[0])//2
+
+    top = (h-size[1])//2
+
+
+    return img.crop(
+
+        (
+            left,
+            top,
+            left+size[0],
+            top+size[1]
+        )
+
+    )
+
+
+
+
+def safe_filename(name):
+
+    return re.sub(
+
+        r'[\\/*?:"<>|]',
+
+        "",
+
+        name
+
+    )
+
+
+
+
+def create_card(
+
+    champion,
+
+    skin,
+
+    rarity,
+
+    region,
+
+    attack,
+
+    health,
+
+    defense,
+
+    image_url,
+
+    card_number
+
+
+):
+
+
+    # ART
+
+    response = requests.get(
+
+        image_url,
+
+        timeout=15
+
+    )
+
+
+    art = Image.open(
+
+        BytesIO(response.content)
+
+    ).convert("RGBA")
+
+
+
+    art = crop_image(
+
+        art,
+
+        (
+            ART_WIDTH,
+            ART_HEIGHT
+        )
+
+    )
+
+
+
+    card = Image.new(
+
+        "RGBA",
+
+        (
+            CARD_WIDTH,
+            CARD_HEIGHT
+        ),
+
+        (0,0,0,0)
+
+    )
+
+
+    card.alpha_composite(
+
+        art,
+
+        (
+            ART_X,
+            ART_Y
+        )
+
+    )
+
+
+
+    # FRAME
+
+
+    frame_name = RARITY_MAP.get(
+
+        rarity,
+
+        "common"
+
+    )
+
+
+    frame = load_asset(
+
+        f"assets/frames/{frame_name}.png"
+
+    )
+
+
+    if frame:
+
+
+        frame = frame.resize(
+
+            (
+                CARD_WIDTH,
+                CARD_HEIGHT
+            )
+
+        )
+
+
+        card.alpha_composite(
+
+            frame,
+
+            (0,0)
+
+        )
+
+
+
+
+    draw = ImageDraw.Draw(card)
+
+
+
+    # FONTS
+
+
+    id_font = get_font(
+        45,
+        "medium"
+    )
+
+
+    champion_font = get_font(
+        100,
+        "heavy"
+    )
+
+
+    skin_font = get_font(
+        50,
+        "medium"
+    )
+
+
+    stat_font = get_font(
+        85,
+        "bold"
+    )
+
+
+    bottom_font = get_font(
+        45,
+        "bold"
+    )
+
+
+
+    # ID
+
+
+    draw.text(
+
+        CARD_LAYOUT["number"],
+
+        str(card_number),
+
+        anchor="mm",
+
+        font=id_font,
+
+        fill="white",
+
+        stroke_width=2,
+
+        stroke_fill="black"
+
+    )
+
+
+
+    # CHAMPION
+
+
+    draw.text(
+
+        CARD_LAYOUT["champion"],
+
+        champion.upper(),
+
+        anchor="mm",
+
+        font=champion_font,
+
+        fill="white",
+
+        stroke_width=4,
+
+        stroke_fill="black"
+
+    )
+
+
+
+    # SKIN
+
+
+    skin_text = " ".join(
+
+        skin.upper()
+
+    )
+
+
+
+    draw.text(
+
+        CARD_LAYOUT["skin"],
+
+        skin_text,
+
+        anchor="mm",
+
+        font=skin_font,
+
+        fill="white",
+
+        stroke_width=3,
+
+        stroke_fill="black"
+
+    )
+
+
+
+    # STATS
+
+
+    draw.text(
+
+        CARD_LAYOUT["attack"],
+
+        str(attack),
+
+        anchor="mm",
+
+        font=stat_font,
+
+        fill="white"
+
+    )
+
+
+    draw.text(
+
+        CARD_LAYOUT["health"],
+
+        str(health),
+
+        anchor="mm",
+
+        font=stat_font,
+
+        fill="white"
+
+    )
+
+
+    draw.text(
+
+        CARD_LAYOUT["defense"],
+
+        str(defense),
+
+        anchor="mm",
+
+        font=stat_font,
+
+        fill="white"
+
+    )
+
+
+
+    # REGION
+
+
+    draw.text(
+
+        CARD_LAYOUT["region_text"],
+
+        region.upper(),
+
+        anchor="mm",
+
+        font=bottom_font,
+
+        fill="white"
+
+    )
+
+
+
+    # RARITY
+
+
+    draw.text(
+
+        CARD_LAYOUT["rarity"],
+
+        rarity.upper(),
+
+        anchor="mm",
+
+        font=bottom_font,
+
+        fill="gold"
+
+    )
+
+
+
+    # SAVE
+
+
+    os.makedirs(
+
+        "cards",
+
+        exist_ok=True
+
+    )
+
+
+    filename = safe_filename(
+
+        f"{champion}_{card_number}"
+
+    )
+
+
+    path = (
+
+        f"cards/{filename}.png"
+
+    )
+
+
+    card.convert(
+
+        "RGB"
+
+    ).save(
+
+        path
+
+    )
+
+
+    return path
