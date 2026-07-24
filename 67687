@@ -1,155 +1,18 @@
 import os
-import json
-import requests
 
+path = "source_assets"
 
-OUTPUT = "assets"
+print("Проверка папки:", path)
+print("--------------------")
 
-REGIONS = {
-    "DE": "Demacia",
-    "NX": "Noxus"
-}
+for root, dirs, files in os.walk(path):
+    level = root.replace(path, "").count(os.sep)
 
+    if level > 2:
+        continue
 
-def create_folder(path):
-    os.makedirs(path, exist_ok=True)
+    indent = "    " * level
+    print(indent + os.path.basename(root) + "/")
 
-
-def download_image(url, path):
-    try:
-        r = requests.get(url, timeout=10)
-
-        if r.status_code == 200:
-            with open(path, "wb") as f:
-                f.write(r.content)
-            return True
-
-    except Exception:
-        pass
-
-    return False
-
-
-def main():
-
-    create_folder("data/champions")
-    create_folder("data/mobs")
-
-    create_folder("assets/champions")
-    create_folder("assets/mobs")
-
-
-    print("Загрузка базы LoR...")
-
-    url = "https://dd.b.pvp.net/latest/set1/en_us/data/set1-en_us.json"
-
-    cards = requests.get(url).json()
-
-
-    champions = []
-    mobs = []
-
-
-    for card in cards:
-
-        regions = card.get("regionRefs", [])
-
-        region = None
-
-        for r in regions:
-            if r in REGIONS:
-                region = REGIONS[r]
-
-
-        if not region:
-            continue
-
-
-        name = card["name"]
-        code = card["cardCode"]
-
-        image = (
-            f"https://dd.b.pvp.net/latest/set1/en_us/img/cards/"
-            f"{code}-full.png"
-        )
-
-
-        safe_name = (
-            name
-            .replace(" ", "_")
-            .replace("'", "")
-        )
-
-
-        if card.get("type") == "Unit" and card.get("rarityRef") == "Champion":
-
-            folder = f"assets/champions/{region}"
-
-            create_folder(folder)
-
-            file = f"{folder}/{safe_name}.png"
-
-
-            if download_image(image, file):
-
-                champions.append({
-                    "name": name,
-                    "region": region,
-                    "image": file
-                })
-
-                print("Champion:", name)
-
-
-        else:
-
-            folder = f"assets/mobs/{region}"
-
-            create_folder(folder)
-
-            file = f"{folder}/{safe_name}.png"
-
-
-            if download_image(image, file):
-
-                mobs.append({
-                    "name": name,
-                    "region": region,
-                    "image": file
-                })
-
-                print("Mob:", name)
-
-
-
-    with open(
-        "data/champions/champions.json",
-        "w",
-        encoding="utf-8"
-    ) as f:
-        json.dump(
-            champions,
-            f,
-            ensure_ascii=False,
-            indent=4
-        )
-
-
-    with open(
-        "data/mobs/mobs.json",
-        "w",
-        encoding="utf-8"
-    ) as f:
-        json.dump(
-            mobs,
-            f,
-            ensure_ascii=False,
-            indent=4
-        )
-
-
-    print("✅ Готово!")
-
-
-if __name__ == "__main__":
-    main()
+    for file in files[:5]:
+        print(indent + "    " + file)
