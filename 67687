@@ -1,7 +1,51 @@
+C:\Users\Ketek'\Desktop\qantum_universe>python check_assets.py
+Проверка папки: source_assets
+--------------------
+source_assets/
+    LoL/
+        dragonhead.js
+        languages.js
+        languages.json
+        OLDPATCHS.md
+        README.md
+        constants/
+            gameModes.json
+            gameTypes.json
+            maps.json
+            queues.json
+            seasons.json
+        extras/
+            creep.png
+            gold.png
+            nashor.png
+            oldmasteryback.jpg
+            rift_herald.png
+        img/
+        latest/
+            .htaccess
+            manifest.js
+            manifest.json
+        lolpatch_latest/
+            manifest.js
+            manifest.json
+    LoR/
+        .gitmodules
+        metadata.json
+        OLDPATCHS.md
+        README.md
+        adventure/
+        core/
+        set1/
+        set2/
+        set3/
+        set4/
+        set5/
+        set6/
+        set6cde/
+        set7/
+        set7b/
+        set8/
+        set9/
+        tpoc/
 
-C:\Users\Ketek'\Desktop\qantum_universe>python check_assets
-python: can't open file "C:\\Users\\Ketek'\\Desktop\\qantum_universe\\check_assets": [Errno 2] No such file or directory
-
-C:\Users\Ketek'\Desktop\qantum_universe>
-
-
+C:\Users\Ketek
