@@ -1,174 +1,213 @@
 # =================
-# KATARINA
+# RIVEN
 # =================
 
 "Base":
-"Оригинальная Катарина",
+"Оригинальная Ривен",
 
-"Battle_Academia_Katarina":
-"Катарина из Боевой Академии",
+"Arcade_Riven":
+"Аркадная Ривен",
 
-"Battle_Queen_Katarina":
-"Боевая королева Катарина",
+"Battle_Bunny_Prime_Riven":
+"Боевая крольчиха Прайм Ривен",
 
-"Bilgewater_Katarina":
-"Бильджвотерская Катарина",
+"Battle_Bunny_Riven":
+"Боевая крольчиха Ривен",
 
-"Blood_Moon_Katarina":
-"Кровавая луна Катарина",
+"Broken_Covenant_Riven":
+"Сломанный завет Ривен",
 
-"Death_Sworn_Katarina":
-"Присягнувшая смерти Катарина",
+"Championship_Riven":
+"Чемпионатная Ривен",
 
-"Faerie_Court_Katarina":
-"Двор фей Катарина",
+"Crimson_Elite_Riven":
+"Багровая элита Ривен",
 
-"High_Command_Katarina":
-"Верховное командование Катарина",
+"Dawnbringer_Riven":
+"Вестница рассвета Ривен",
 
-"High_Noon_Katarina":
-"Полуденная Катарина",
+"Dragonblade_Riven":
+"Клинок дракона Ривен",
 
-"Kitty_Cat_Katarina":
-"Кошечка Катарина",
+"Prestige_Valiant_Sword_Riven":
+"Престижный доблестный меч Ривен",
 
-"Mercenary_Katarina":
-"Наёмница Катарина",
+"Pulsefire_Riven":
+"Импульсный огонь Ривен",
 
-"Prestige_Faerie_Court_Katarina":
-"Престижный Двор фей Катарина",
+"Redeemed_Riven":
+"Искупленная Ривен",
 
-"PROJECT_Katarina":
-"ПРОЕКТ: Катарина",
+"Sentinel_Riven":
+"Страж Ривен",
 
-"Red_Card_Katarina":
-"Красная карточка Катарина",
+"Spirit_Blossom_Riven":
+"Цветение духов Ривен",
 
-"Sandstorm_Katarina":
-"Песчаная буря Катарина",
-
-"Slay_Belle_Katarina":
-"Санта-убийца Катарина",
-
-"Warring_Kingdoms_Katarina":
-"Воюющие королевства Катарина",
+"Valiant_Sword_Riven":
+"Доблестный меч Ривен",
 
 
 
 # =================
-# KLED
+# SAMIRA
 # =================
 
 "Base":
-"Оригинальный Клед",
+"Оригинальная Самира",
 
-"Count_Kledula":
-"Граф Кледула",
+"High_Noon_Samira":
+"Полуденная Самира",
 
-"Kibble_Head_Kled":
-"Киблхед Клед",
+"PsyOps_Samira":
+"Пси-операция Самира",
 
-"Marauder_Kled":
-"Мародёр Клед",
-
-"Sir_Kled":
-"Сэр Клед",
+"Space_Groove_Samira":
+"Космический ритм Самира",
 
 
 
 # =================
-# LEBLANC
+# SION
 # =================
 
 "Base":
-"Оригинальная Ле Блан",
+"Оригинальный Сион",
 
-"Bewitching_LeBlanc":
-"Заколдованная Ле Блан",
+"Barbarian_Sion":
+"Варвар Сион",
 
-"Championship_LeBlanc":
-"Чемпионатная Ле Блан",
+"Blackfrost_Sion":
+"Чёрный лёд Сион",
 
-"Coven_LeBlanc":
-"Шабаш Ле Блан",
+"Hextech_Sion":
+"Хекстековый Сион",
 
-"Debonair_LeBlanc":
-"Дебонер Ле Блан",
+"High_Noon_Sion":
+"Полуденный Сион",
 
-"Elderwood_LeBlanc":
-"Старое дерево Ле Блан",
+"Lumberjack_Sion":
+"Дровосек Сион",
 
-"iG_LeBlanc":
-"iG Ле Блан",
+"Mecha_Zero_Sion":
+"Меха Зеро Сион",
 
-"Mistletoe_LeBlanc":
-"Омела Ле Блан",
+"Warmonger_Sion":
+"Воитель Сион",
 
-"Prestige_Coven_LeBlanc":
-"Престижный Шабаш Ле Блан",
-
-"Prestigious_LeBlanc":
-"Престижная Ле Блан",
-
-"Program_LeBlanc":
-"Программа Ле Блан",
-
-"Ravenborn_LeBlanc":
-"Рождённая вороном Ле Блан",
-
-"Wicked_LeBlanc":
-"Зловещая Ле Блан",
+"Worldbreaker_Sion":
+"Разрушитель миров Сион",
 
 
 
 # =================
-# MORDEKAISER
+# SWAIN
 # =================
 
 "Base":
-"Оригинальный Мордекайзер",
+"Оригинальный Свейн",
 
-"Ashen_Graveknight_Mordekaiser":
-"Пепельный рыцарь могил Мордекайзер",
+"Bilgewater_Swain":
+"Бильджвотерский Свейн",
 
-"Dark_Star_Mordekaiser":
-"Тёмная звезда Мордекайзер",
+"Crystal_Rose_Swain":
+"Хрустальная роза Свейн",
 
-"Dragon_Knight_Mordekaiser":
-"Рыцарь дракона Мордекайзер",
+"Dragon_Master_Swain":
+"Повелитель драконов Свейн",
 
-"High_Noon_Mordekaiser":
-"Полуденный Мордекайзер",
+"Hextech_Swain":
+"Хекстековый Свейн",
 
-"Infernal_Mordekaiser":
-"Преисподняя Мордекайзер",
+"Northern_Front_Swain":
+"Северный фронт Свейн",
 
-"King_of_Clubs_Mordekaiser":
-"Король треф Мордекайзер",
+"Tyrant_Swain":
+"Тиран Свейн",
 
-"Lord_Mordekaiser":
-"Лорд Мордекайзер",
-
-"Pentakill_Mordekaiser":
-"Пентакилл Мордекайзер",
-
-"Pentakill_III_Lost_Chapter_Mordekaiser":
-"Пентакилл III: Потерянная глава Мордекайзер",
-
-"PROJECT_Mordekaiser":
-"ПРОЕКТ: Мордекайзер",
+"Winterblessed_Swain":
+"Благословлённый зимой Свейн",
 
 
 
 # =================
-# RELL
+# TALON
 # =================
 
 "Base":
-"Оригинальная Релл",
+"Оригинальный Талон",
 
-"Battle_Queen_Rell":
-"Боевая королева Релл",
+"Blood_Moon_Talon":
+"Кровавая луна Талон",
 
-"Star_Guardian_Rell":
-"Страж звёзд Релл",
+"Crimson_Elite_Talon":
+"Багровая элита Талон",
+
+"Dragonblade_Talon":
+"Клинок дракона Талон",
+
+"Enduring_Sword_Talon":
+"Неугасающий меч Талон",
+
+"High_Noon_Talon":
+"Полуденный Талон",
+
+"Prestige_High_Noon_Talon":
+"Престижный Полуденный Талон",
+
+"Renegade_Talon":
+"Отступник Талон",
+
+"SSW_Talon":
+"SSW Талон",
+
+"Talon_Blackwood":
+"Чёрное дерево Талон",
+
+"Withered_Rose_Talon":
+"Увядшая роза Талон",
+
+
+
+# =================
+# VLADIMIR
+# =================
+
+"Base":
+"Оригинальный Владимир",
+
+"Academy_Vladimir":
+"Владимир из Академии",
+
+"Blood_Lord_Vladimir":
+"Кровавый лорд Владимир",
+
+"Broken_Covenant_Vladimir":
+"Сломанный завет Владимир",
+
+"Cafe_Cuties_Vladimir":
+"Кафе для любимчиков Владимир",
+
+"Cosmic_Devourer_Vladimir":
+"Пожиратель космоса Владимир",
+
+"Count_Vladimir":
+"Граф Владимир",
+
+"Dark_Waters_Vladimir":
+"Тёмные воды Владимир",
+
+"Marquis_Vladimir":
+"Маркиз Владимир",
+
+"Nightbringer_Vladimir":
+"Вестник ночи Владимир",
+
+"Nosferatu_Vladimir":
+"Носферату Владимир",
+
+"Soulstealer_Vladimir":
+"Похититель душ Владимир",
+
+"Vandal_Vladimir":
+"Вандал Владимир",
