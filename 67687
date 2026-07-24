@@ -1,213 +1,460 @@
-# =================
-# RIVEN
-# =================
+import discord
+from discord.ext import commands
+from discord import app_commands
 
-"Base":
-"Оригинальная Ривен",
+import random
+import os
 
-"Arcade_Riven":
-"Аркадная Ривен",
+from database.cards import add_card
 
-"Battle_Bunny_Prime_Riven":
-"Боевая крольчиха Прайм Ривен",
+from data.champion_loader import load_champions
+from data.regions import champion_regions
+from data.loot import get_card_rarity
 
-"Battle_Bunny_Riven":
-"Боевая крольчиха Ривен",
+from data.translations import (
+    get_skin_name,
+    get_champion_name
+)
 
-"Broken_Covenant_Riven":
-"Сломанный завет Ривен",
+from generators.card_generator import create_card
 
-"Championship_Riven":
-"Чемпионатная Ривен",
 
-"Crimson_Elite_Riven":
-"Багровая элита Ривен",
+class Pack(commands.Cog):
 
-"Dawnbringer_Riven":
-"Вестница рассвета Ривен",
+    def __init__(self, bot):
 
-"Dragonblade_Riven":
-"Клинок дракона Ривен",
+        self.bot = bot
 
-"Prestige_Valiant_Sword_Riven":
-"Престижный доблестный меч Ривен",
+        self.champions = load_champions()
 
-"Pulsefire_Riven":
-"Импульсный огонь Ривен",
 
-"Redeemed_Riven":
-"Искупленная Ривен",
+    # ==================================
+    # ПОИСК ЛОКАЛЬНОГО АРТА
+    # ==================================
 
-"Sentinel_Riven":
-"Страж Ривен",
+    def find_local_art(
+        self,
+        champion,
+        skin
+    ):
 
-"Spirit_Blossom_Riven":
-"Цветение духов Ривен",
+        champion_folder = champion.replace(
+            " ",
+            "_"
+        )
 
-"Valiant_Sword_Riven":
-"Доблестный меч Ривен",
 
+        base_path = os.path.join(
+            "assets",
+            "champions"
+        )
 
 
-# =================
-# SAMIRA
-# =================
+        for region in os.listdir(base_path):
 
-"Base":
-"Оригинальная Самира",
+            region_path = os.path.join(
+                base_path,
+                region
+            )
 
-"High_Noon_Samira":
-"Полуденная Самира",
 
-"PsyOps_Samira":
-"Пси-операция Самира",
+            if not os.path.isdir(region_path):
+                continue
 
-"Space_Groove_Samira":
-"Космический ритм Самира",
 
 
+            champ_path = os.path.join(
+                region_path,
+                champion
+            )
 
-# =================
-# SION
-# =================
 
-"Base":
-"Оригинальный Сион",
+            if not os.path.exists(champ_path):
 
-"Barbarian_Sion":
-"Варвар Сион",
+                champ_path = os.path.join(
+                    region_path,
+                    champion_folder
+                )
 
-"Blackfrost_Sion":
-"Чёрный лёд Сион",
 
-"Hextech_Sion":
-"Хекстековый Сион",
+            if not os.path.exists(champ_path):
+                continue
 
-"High_Noon_Sion":
-"Полуденный Сион",
 
-"Lumberjack_Sion":
-"Дровосек Сион",
 
-"Mecha_Zero_Sion":
-"Меха Зеро Сион",
+            # ищем скин
 
-"Warmonger_Sion":
-"Воитель Сион",
+            for file in os.listdir(champ_path):
 
-"Worldbreaker_Sion":
-"Разрушитель миров Сион",
+                name = file.lower()
 
 
+                if skin.lower() in name:
 
-# =================
-# SWAIN
-# =================
+                    return os.path.join(
+                        champ_path,
+                        file
+                    )
 
-"Base":
-"Оригинальный Свейн",
 
-"Bilgewater_Swain":
-"Бильджвотерский Свейн",
 
-"Crystal_Rose_Swain":
-"Хрустальная роза Свейн",
+            # base
 
-"Dragon_Master_Swain":
-"Повелитель драконов Свейн",
+            if skin == "Base":
 
-"Hextech_Swain":
-"Хекстековый Свейн",
+                for file in os.listdir(champ_path):
 
-"Northern_Front_Swain":
-"Северный фронт Свейн",
+                    if file.lower().startswith(
+                        "base"
+                    ):
 
-"Tyrant_Swain":
-"Тиран Свейн",
+                        return os.path.join(
+                            champ_path,
+                            file
+                        )
 
-"Winterblessed_Swain":
-"Благословлённый зимой Свейн",
 
+        return None
 
 
-# =================
-# TALON
-# =================
 
-"Base":
-"Оригинальный Талон",
+    # ==================================
+    # OPEN PACK
+    # ==================================
 
-"Blood_Moon_Talon":
-"Кровавая луна Талон",
+    @app_commands.command(
+        name="open_pack",
+        description="Открыть набор ILTA"
+    )
+    async def open_pack(
+        self,
+        interaction: discord.Interaction
+    ):
 
-"Crimson_Elite_Talon":
-"Багровая элита Талон",
 
-"Dragonblade_Talon":
-"Клинок дракона Талон",
+        await interaction.response.defer()
 
-"Enduring_Sword_Talon":
-"Неугасающий меч Талон",
 
-"High_Noon_Talon":
-"Полуденный Талон",
 
-"Prestige_High_Noon_Talon":
-"Престижный Полуденный Талон",
+        await interaction.followup.send(
+            f"🎁 **{interaction.user.name} открыл ILTA Pack (10 карт)**"
+        )
 
-"Renegade_Talon":
-"Отступник Талон",
 
-"SSW_Talon":
-"SSW Талон",
 
-"Talon_Blackwood":
-"Чёрное дерево Талон",
+        for number in range(1,11):
 
-"Withered_Rose_Talon":
-"Увядшая роза Талон",
 
+            # --------------------------
+            # Чемпион
+            # --------------------------
 
+            champion_id = random.choice(
+                list(
+                    self.champions.keys()
+                )
+            )
 
-# =================
-# VLADIMIR
-# =================
 
-"Base":
-"Оригинальный Владимир",
+            champion = self.champions[
+                champion_id
+            ]
 
-"Academy_Vladimir":
-"Владимир из Академии",
 
-"Blood_Lord_Vladimir":
-"Кровавый лорд Владимир",
 
-"Broken_Covenant_Vladimir":
-"Сломанный завет Владимир",
+            # --------------------------
+            # Регион
+            # --------------------------
 
-"Cafe_Cuties_Vladimir":
-"Кафе для любимчиков Владимир",
+            region = champion_regions.get(
+                champion_id,
+                "Runeterra"
+            )
 
-"Cosmic_Devourer_Vladimir":
-"Пожиратель космоса Владимир",
 
-"Count_Vladimir":
-"Граф Владимир",
 
-"Dark_Waters_Vladimir":
-"Тёмные воды Владимир",
+            # --------------------------
+            # Скин
+            # --------------------------
 
-"Marquis_Vladimir":
-"Маркиз Владимир",
+            skins = champion.get(
+                "skins",
+                []
+            )
 
-"Nightbringer_Vladimir":
-"Вестник ночи Владимир",
 
-"Nosferatu_Vladimir":
-"Носферату Владимир",
+            if skins:
 
-"Soulstealer_Vladimir":
-"Похититель душ Владимир",
+                skin = random.choice(
+                    skins
+                )
 
-"Vandal_Vladimir":
-"Вандал Владимир",
+
+                skin_key = skin.get(
+                    "name",
+                    "Base"
+                )
+
+
+            else:
+
+                skin_key = "Base"
+
+
+
+            # --------------------------
+            # Редкость
+            # --------------------------
+
+            rarity = get_card_rarity()
+
+
+
+            # --------------------------
+            # Статы
+            # --------------------------
+
+            attack = random.randint(
+                20,
+                100
+            )
+
+
+            health = random.randint(
+                50,
+                150
+            )
+
+
+            defense = random.randint(
+                10,
+                80
+            )
+
+
+
+            # --------------------------
+            # ID карты
+            # --------------------------
+
+            card_code = (
+                f"{random.randint(1,9999):04}"
+            )
+
+
+
+            # --------------------------
+            # Русские названия
+            # --------------------------
+
+            champion_ru = get_champion_name(
+                champion_id
+            )
+
+
+            skin_ru = get_skin_name(
+                skin_key
+            )
+
+
+
+            # --------------------------
+            # Сохранение
+            # --------------------------
+
+            await add_card(
+
+                interaction.user.id,
+
+                card_code,
+
+                champion_id,
+
+                skin_key,
+
+                region,
+
+                rarity,
+
+                attack,
+
+                defense,
+
+                health
+
+            )
+
+
+
+            # --------------------------
+            # Локальный арт
+            # --------------------------
+
+            art_path = self.find_local_art(
+
+                champion_id,
+
+                skin_key
+
+            )
+
+
+
+            if not art_path:
+
+                await interaction.followup.send(
+
+                    f"⚠ Нет арта: "
+                    f"{champion_ru} "
+                    f"{skin_ru}"
+
+                )
+
+                continue
+
+
+
+            # --------------------------
+            # Генерация карты
+            # --------------------------
+
+            card_file = create_card(
+
+                champion=champion_ru,
+
+                skin=skin_ru,
+
+                rarity=rarity,
+
+                region=region,
+
+                attack=attack,
+
+                health=health,
+
+                defense=defense,
+
+                image_path=art_path,
+
+                card_number=card_code
+
+            )
+
+
+
+            # --------------------------
+            # Embed
+            # --------------------------
+
+            embed = discord.Embed(
+
+                title=(
+                    f"🎴 {rarity} | "
+                    f"{champion_ru}"
+                ),
+
+                description=(
+
+                    f"✨ **{skin_ru}**\n"
+
+                    f"🆔 {card_code}"
+
+                ),
+
+                color=0xFFD700
+
+            )
+
+
+
+            embed.add_field(
+
+                name="⚔ Атака",
+
+                value=str(attack),
+
+                inline=True
+
+            )
+
+
+            embed.add_field(
+
+                name="❤️ Здоровье",
+
+                value=str(health),
+
+                inline=True
+
+            )
+
+
+            embed.add_field(
+
+                name="🛡 Защита",
+
+                value=str(defense),
+
+                inline=True
+
+            )
+
+
+            embed.add_field(
+
+                name="🌍 Регион",
+
+                value=region,
+
+                inline=True
+
+            )
+
+
+
+            file = discord.File(
+                card_file
+            )
+
+
+            embed.set_image(
+
+                url=(
+
+                    "attachment://"
+
+                    +
+
+                    os.path.basename(
+                        card_file
+                    )
+
+                )
+
+            )
+
+
+            embed.set_footer(
+
+                text=f"Карта {number}/10"
+
+            )
+
+
+
+            await interaction.followup.send(
+
+                embed=embed,
+
+                file=file
+
+            )
+
+
+
+
+async def setup(bot):
+
+    await bot.add_cog(
+        Pack(bot)
+    )
