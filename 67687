@@ -1,418 +1,230 @@
-import discord
-from discord.ext import commands
-from discord import app_commands
+CHAMPION_NAMES = {
 
-import random
+    # DEMACIA
 
-from database.cards import add_card
+    "Fiora": "Фиора",
+    "Galio": "Галио",
+    "Garen": "Гарен",
+    "Jarvan IV": "Джарван IV",
+    "Kayle": "Кейл",
+    "Lucian": "Люциан",
+    "Lux": "Люкс",
+    "Morgana": "Моргана",
+    "Poppy": "Поппи",
+    "Quinn": "Квинн",
+    "Senna": "Сенна",
+    "Shyvana": "Шивана",
+    "Sona": "Сона",
+    "Sylas": "Сайлас",
+    "Vayne": "Вейн",
+    "Xin Zhao": "Синь Чжао",
 
-from data.champion_loader import load_champions
-from data.regions import champion_regions
-from data.loot import get_card_rarity
 
-from generators.card_generator import create_card
+    # NOXUS
 
+    "Ambessa": "Амбесса",
+    "Briar": "Брайер",
+    "Cassiopeia": "Кассиопея",
+    "Darius": "Дариус",
+    "Draven": "Дрейвен",
+    "Katarina": "Катарина",
+    "Kled": "Клед",
+    "LeBlanc": "ЛеБлан",
+    "Mordekaiser": "Мордекайзер",
+    "Rell": "Релл",
+    "Riven": "Ривен",
+    "Samira": "Самира",
+    "Sion": "Сион",
+    "Swain": "Свейн",
+    "Talon": "Талон",
+    "Vladimir": "Владимир"
 
+}
 
-class Pack(commands.Cog):
 
-    def __init__(self, bot):
 
-        self.bot = bot
+SKIN_NAMES = {
 
-        self.champions = load_champions()
 
+# =================
+# GAREN
+# =================
 
+"Base": "Оригинальный",
 
-    @app_commands.command(
-        name="open_pack",
-        description="Открыть набор из 10 карт ILTA"
-    )
-    async def open_pack(
-        self,
-        interaction: discord.Interaction
-    ):
+"Battle_Academia_Garen":
+"Гарен из Боевой Академии",
 
+"Commando_Garen":
+"Коммандос Гарен",
 
-        await interaction.response.defer()
+"Demacia_Vice_Garen":
+"Гарен из Вайс Демасии",
 
+"Desert_Trooper_Garen":
+"Пустынный солдат Гарен",
 
+"Dreadknight_Garen":
+"Рыцарь ужаса Гарен",
 
-        try:
+"God_King_Garen":
+"Бог-Король Гарен",
 
+"Mecha_Kingdoms_Garen":
+"Меха-Королевства Гарен",
 
-            if not self.champions:
+"Mythmaker_Garen":
+"Создатель мифов Гарен",
 
+"Prestige_Mecha_Kingdoms_Garen":
+"Престижный Меха-Королевства Гарен",
 
-                await interaction.followup.send(
-                    "❌ Нет доступных чемпионов"
-                )
+"Rogue_Admiral_Garen":
+"Мятежный адмирал Гарен",
 
-                return
+"Rugged_Garen":
+"Брутальный Гарен",
 
+"Sanguine_Garen":
+"Кровавый Гарен",
 
+"Steel_Legion_Garen":
+"Стальной легион Гарен",
 
+"Warring_Kingdoms_Garen":
+"Воюющие королевства Гарен",
 
-            await interaction.followup.send(
 
-                f"🎁 **{interaction.user.name} открыл ILTA Pack (10 карт)**"
 
-            )
+# =================
+# DARIUS
+# =================
 
+"Academy_Darius":
+"Дариус из Академии",
 
+"Bioforge_Darius":
+"Биокузница Дариус",
 
+"Crime_City_Nightmare_Darius":
+"Кошмар криминального города Дариус",
 
+"Dreadnova_Darius":
+"Дреднова Дариус",
 
-            for number in range(1,11):
+"Dunkmaster_Darius":
+"Мастер данков Дариус",
 
+"God_King_Darius":
+"Бог-Король Дариус",
 
-                # =====================
-                # Чемпион
-                # =====================
+"High_Noon_Darius":
+"Полдень Дариус",
 
+"Lord_Darius":
+"Лорд Дариус",
 
-                champion_id = random.choice(
+"Lunar_Beast_Darius":
+"Лунный зверь Дариус",
 
-                    list(
-                        self.champions.keys()
-                    )
+"Spirit_Blossom_Darius":
+"Цветение духов Дариус",
 
-                )
+"Woad_King_Darius":
+"Король воадов Дариус",
 
 
 
-                champion = self.champions[champion_id]
+# =================
+# LUX
+# =================
 
+"Battle_Academia_Lux":
+"Люкс из Боевой Академии",
 
+"Cosmic_Lux":
+"Космическая Люкс",
 
+"Dark_Cosmic_Lux":
+"Тёмная космическая Люкс",
 
+"Elementalist_Lux":
+"Люкс-элементалист",
 
-                # =====================
-                # Регион
-                # =====================
+"Empyrean_Lux":
+"Небесная Люкс",
 
+"Lunar_Empress_Lux":
+"Лунная императрица Люкс",
 
-                region = champion_regions.get(
+"Pajama_Guardian_Lux":
+"Страж пижамы Люкс",
 
-                    champion_id,
+"Porcelain_Lux":
+"Фарфоровая Люкс",
 
-                    champion.get(
-                        "region",
-                        "Runeterra"
-                    )
+"Prestige_Battle_Academia_Lux":
+"Престижная Люкс из Боевой Академии",
 
-                )
+"Star_Guardian_Lux":
+"Звёздный защитник Люкс",
 
+"Space_Groove_Lux":
+"Космический ритм Люкс",
 
 
 
+# =================
+# DARIUS / NOXUS COMMON
+# =================
 
+"Base":
+"Оригинальный"
 
+}
+# =================
+# FIORA
+# =================
 
-                # =====================
-                # Скин
-                # =====================
+"Base":
+"Оригинальная Фиора",
 
+"Bewitching_Fiora":
+"Заколдованная Фиора",
 
-                skins = champion.get(
+"Faerie_Court_Fiora":
+"Двор Фей Фиора",
 
-                    "skins",
+"Headmistress_Fiora":
+"Директор Фиора",
 
-                    []
+"Heartpiercer_Fiora":
+"Пронзающая сердца Фиора",
 
-                )
+"iG_Fiora":
+"iG Фиора",
 
+"Lunar_Beast_Fiora":
+"Лунный зверь Фиора",
 
+"Nightraven_Fiora":
+"Ночной ворон Фиора",
 
-                if not skins:
+"Pool_Party_Fiora":
+"Вечеринка у бассейна Фиора",
 
+"Prestige_Lunar_Beast_Fiora":
+"Престижный Лунный зверь Фиора",
 
-                    continue
+"PROJECT_Fiora":
+"ПРОЕКТ: Фиора",
 
+"Pulsefire_Fiora":
+"Импульсный огонь Фиора",
 
+"Royal_Guard_Fiora":
+"Королевский страж Фиора",
 
+"Soaring_Sword_Fiora":
+"Парящий меч Фиора"
 
-
-                skin = random.choice(
-
-                    skins
-
-                )
-
-
-
-                skin_name = skin["name"]
-
-
-                image_path = skin["path"]
-
-
-
-
-
-
-                # =====================
-                # Редкость
-                # =====================
-
-
-                rarity = get_card_rarity()
-
-
-
-
-
-
-                # =====================
-                # Статы
-                # =====================
-
-
-                attack = random.randint(
-                    20,
-                    100
-                )
-
-
-                health = random.randint(
-                    50,
-                    150
-                )
-
-
-                defense = random.randint(
-                    10,
-                    80
-                )
-
-
-
-
-
-
-
-                # =====================
-                # ID карты
-                # =====================
-
-
-                card_code = (
-
-                    f"{random.randint(1,9999):04}"
-
-                )
-
-
-
-
-
-
-
-                # =====================
-                # База данных
-                # =====================
-
-
-                await add_card(
-
-                    interaction.user.id,
-
-                    card_code,
-
-                    champion_id,
-
-                    skin_name,
-
-                    region,
-
-                    rarity,
-
-                    attack,
-
-                    defense,
-
-                    health
-
-                )
-
-
-
-
-
-
-
-                # =====================
-                # Генерация карты
-                # =====================
-
-
-                card_file = create_card(
-
-                    champion=champion_id,
-
-                    skin=skin_name,
-
-                    rarity=rarity,
-
-                    region=region,
-
-                    attack=attack,
-
-                    health=health,
-
-                    defense=defense,
-
-                    image_path=image_path,
-
-                    card_number=card_code
-
-                )
-
-
-
-
-
-
-
-                # =====================
-                # Discord
-                # =====================
-
-
-                embed = discord.Embed(
-
-                    title=(
-
-                        f"🎴 {rarity} | {champion_id}"
-
-                    ),
-
-                    description=(
-
-                        f"✨ **{skin_name}**\n"
-
-                        f"🆔 {card_code}"
-
-                    ),
-
-                    color=0xFFD700
-
-                )
-
-
-
-
-
-                embed.add_field(
-
-                    name="⚔ Атака",
-
-                    value=str(attack),
-
-                    inline=True
-
-                )
-
-
-                embed.add_field(
-
-                    name="❤️ Здоровье",
-
-                    value=str(health),
-
-                    inline=True
-
-                )
-
-
-                embed.add_field(
-
-                    name="🛡 Защита",
-
-                    value=str(defense),
-
-                    inline=True
-
-                )
-
-
-
-                embed.add_field(
-
-                    name="🌍 Регион",
-
-                    value=region,
-
-                    inline=True
-
-                )
-
-
-
-
-
-
-                file = discord.File(
-
-                    card_file
-
-                )
-
-
-
-                embed.set_image(
-
-                    url=(
-
-                        "attachment://"
-
-                        + card_file.split("/")[-1]
-
-                    )
-
-                )
-
-
-
-                embed.set_footer(
-
-                    text=f"Карта {number}/10"
-
-                )
-
-
-
-
-
-                await interaction.followup.send(
-
-                    embed=embed,
-
-                    file=file
-
-                )
-
-
-
-
-
-
-        except Exception as e:
-
-
-            await interaction.followup.send(
-
-                f"❌ Ошибка открытия пака:\n`{e}`"
-
-            )
-
-
-
-
-
-
-async def setup(bot):
-
-    await bot.add_cog(
-        Pack(bot)
-    )
