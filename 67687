@@ -1,244 +1,147 @@
 # =================
-# QUINN
+# AMBESSA
 # =================
 
 "Base":
-"Оригинальная Квинн",
+"Оригинальная Амбесса",
 
-"Corsair_Quinn":
-"Корсар Квинн",
+"Chosen_Of_The_Ambessa":
+"Избранная Амбесса",
 
-"Heartseeker_Quinn":
-"Квинн, покорительница сердец",
-
-"Phoenix_Quinn":
-"Феникс Квинн",
-
-"Star_Guardian_Quinn":
-"Страж звёзд Квинн",
-
-"Warden_Quinn":
-"Страж Квинн",
-
-"Woad_Scout_Quinn":
-"Разведчица племени Вод Квинн",
+"T1_Ambessa":
+"T1 Амбесса",
 
 
 
 # =================
-# SENNA
+# BRIAR
 # =================
 
 "Base":
-"Оригинальная Сенна",
+"Оригинальная Брайер",
 
-"Bewitching_Senna":
-"Заколдованная Сенна",
+"Battle_Academia_Briar":
+"Брайер из Боевой Академии",
 
-"High_Noon_Senna":
-"Полуденная Сенна",
+"Primordian_Briar":
+"Первобытная Брайер",
 
-"Lunar_Eclipse_Senna":
-"Лунное затмение Сенна",
-
-"Prestige_Lunar_Eclipse_Senna":
-"Престижное Лунное затмение Сенна",
-
-"Prestige_True_Damage_Senna":
-"Престижный Истинный урон Сенна",
-
-"PROJECT_Senna":
-"ПРОЕКТ: Сенна",
-
-"True_Damage_Senna":
-"Истинный урон Сенна",
+"Street_Demons_Briar":
+"Демоны улиц Брайер",
 
 
 
 # =================
-# SHYVANA
+# CASSIOPEIA
 # =================
 
 "Base":
-"Оригинальная Шивана",
+"Оригинальная Кассиопея",
 
-"Boneclaw_Shyvana":
-"Костяной коготь Шивана",
+"Bewitching_Cassiopeia":
+"Заколдованная Кассиопея",
 
-"Championship_Shyvana":
-"Чемпионатная Шивана",
+"Coven_Cassiopeia":
+"Шабаш Кассиопея",
 
-"Darkflame_Shyvana":
-"Тёмное пламя Шивана",
+"Desperada_Cassiopeia":
+"Отчаянная Кассиопея",
 
-"Ice_Drake_Shyvana":
-"Ледяной дракон Шивана",
+"Eternum_Cassiopeia":
+"Вечная Кассиопея",
 
-"Ironscale_Shyvana":
-"Железная чешуя Шивана",
+"Jade_Fang_Cassiopeia":
+"Нефритовый клык Кассиопея",
 
-"Ruined_Shyvana":
-"Погибельная Шивана",
+"Mythic_Cassiopeia":
+"Мифическая Кассиопея",
 
-"Super_Galaxy_Shyvana":
-"Супергалактическая Шивана",
+"Siren_Cassiopeia":
+"Сирена Кассиопея",
 
-
-
-# =================
-# SONA
-# =================
-
-"Base":
-"Оригинальная Сона",
-
-"Arcade_Sona":
-"Аркадная Сона",
-
-"DJ_Sona":
-"Диджей Сона",
-
-"Guqin_Sona":
-"Гуцинь Сона",
-
-"Muse_Sona":
-"Муза Сона",
-
-"Odyssey_Sona":
-"Одиссея Сона",
-
-"Pentakill_Sona":
-"Пентакилл Сона",
-
-"Pentakill_III_Lost_Chapter_Sona":
-"Пентакилл III: Потерянная глава Сона",
-
-"PsyOps_Sona":
-"Пси-операция Сона",
-
-"Silent_Night_Sona":
-"Тихая ночь Сона",
-
-"Star_Guardian_Sona":
-"Страж звёзд Сона",
-
-"Sweetheart_Sona":
-"Любимица Сона",
+"Spirit_Blossom_Cassiopeia":
+"Цветение духов Кассиопея",
 
 
 
 # =================
-# SYLAS
+# DARIUS
 # =================
 
 "Base":
-"Оригинальный Сайлас",
+"Оригинальный Дариус",
 
-"Ashen_Slayer_Sylas":
-"Пепельный убийца Сайлас",
+"Academy_Darius":
+"Дариус из Академии",
 
-"Battle_Wolf_Sylas":
-"Боевой волк Сайлас",
+"Bioforge_Darius":
+"Биокузница Дариус",
 
-"Freljord_Sylas":
-"Фрельйордский Сайлас",
-# =================
-# VAYNE
-# =================
+"Crime_City_Nightmare_Darius":
+"Кошмар криминального города Дариус",
 
-"Base":
-"Оригинальная Вейн",
+"Dreadnova_Darius":
+"Ужасная Нова Дариус",
 
-"Arclight_Vayne":
-"Лучезарная Вейн",
+"Dunkmaster_Darius":
+"Мастер данков Дариус",
 
-"Aristocrat_Vayne":
-"Знатная Вейн",
+"God_King_Darius":
+"Бог-Король Дариус",
 
-"Battle_Bat_Vayne":
-"Боевая летучая мышь Вейн",
+"High_Noon_Darius":
+"Полуденный Дариус",
 
-"Dawnbringer_Vayne":
-"Вестница рассвета Вейн",
+"Lord_Darius":
+"Лорд Дариус",
 
-"Dragonslayer_Vayne":
-"Убийца драконов Вейн",
+"Lunar_Beast_Darius":
+"Лунный зверь Дариус",
 
-"Firecracker_Vayne":
-"Петарда Вейн",
+"Spirit_Blossom_Darius":
+"Цветение духов Дариус",
 
-"FPX_Vayne":
-"FPX Вейн",
-
-"Heartseeker_Vayne":
-"Вейн, покорительница сердец",
-
-"Prestige_Firecracker_Vayne":
-"Престижная Петарда Вейн",
-
-"PROJECT_Vayne":
-"ПРОЕКТ: Вейн",
-
-"Sentinel_Vayne":
-"Страж Вейн",
-
-"SKT_T1_Vayne":
-"SKT T1 Вейн",
-
-"Soulstealer_Vayne":
-"Похитительница душ Вейн",
-
-"Spirit_Blossom_Vayne":
-"Цветение духов Вейн",
-
-"Vindicator_Vayne":
-"Защитница Вейн",
+"Woad_King_Darius":
+"Король Вод Дариус",
 
 
 
 # =================
-# XIN ZHAO
+# DRAVEN
 # =================
 
 "Base":
-"Оригинальный Синь Чжао",
+"Оригинальный Дрейвен",
 
-"Commando_Xin_Zhao":
-"Коммандос Синь Чжао",
+"Beast_Hunter_Draven":
+"Охотник на чудовищ Дрейвен",
 
-"Cosmic_Defender_Xin_Zhao":
-"Космический защитник Синь Чжао",
+"Debonair_Draven":
+"Дебонер Дрейвен",
 
-"Dragonslayer_Xin_Zhao":
-"Убийца драконов Синь Чжао",
+"Draven_Draven":
+"Дрейвен Дрейвен",
 
-"Firecracker_Xin_Zhao":
-"Петарда Синь Чжао",
+"Fright_Night_Draven":
+"Ночь страха Дрейвен",
 
-"Imperial_Xin_Zhao":
-"Имперский Синь Чжао",
+"Gladiator_Draven":
+"Гладиатор Дрейвен",
 
-"Marauder_Xin_Zhao":
-"Мародёр Синь Чжао",
+"Mecha_Kingdoms_Draven":
+"Меха-Королевства Дрейвен",
 
-"Secret_Agent_Xin_Zhao":
-"Секретный агент Синь Чжао",
+"Pool_Party_Draven":
+"Вечеринка у бассейна Дрейвен",
 
-"Viscero_Xin_Zhao":
-"Висцеро Синь Чжао",
+"Primetime_Draven":
+"Главная роль Дрейвен",
 
-"Warring_Kingdoms_Xin_Zhao":
-"Воюющие королевства Синь Чжао",
+"Ruined_Draven":
+"Погибельный Дрейвен",
 
-"Winged_Hussar_Xin_Zhao":
-"Крылатый гусар Синь Чжао",
-"Lunar_Wraith_Sylas":
-"Лунный призрак Сайлас",
+"Santa_Draven":
+"Санта Дрейвен",
 
-"Prestige_PROJECT_Sylas":
-"Престижный ПРОЕКТ: Сайлас",
-
-"PROJECT_Sylas":
-"ПРОЕКТ: Сайлас",
-
-
+"Soul_Reaver_Draven":
+"Пожиратель душ Дрейвен",
