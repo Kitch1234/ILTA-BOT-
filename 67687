@@ -1,147 +1,174 @@
 # =================
-# AMBESSA
+# KATARINA
 # =================
 
 "Base":
-"Оригинальная Амбесса",
+"Оригинальная Катарина",
 
-"Chosen_Of_The_Ambessa":
-"Избранная Амбесса",
+"Battle_Academia_Katarina":
+"Катарина из Боевой Академии",
 
-"T1_Ambessa":
-"T1 Амбесса",
+"Battle_Queen_Katarina":
+"Боевая королева Катарина",
 
+"Bilgewater_Katarina":
+"Бильджвотерская Катарина",
 
+"Blood_Moon_Katarina":
+"Кровавая луна Катарина",
 
-# =================
-# BRIAR
-# =================
+"Death_Sworn_Katarina":
+"Присягнувшая смерти Катарина",
 
-"Base":
-"Оригинальная Брайер",
+"Faerie_Court_Katarina":
+"Двор фей Катарина",
 
-"Battle_Academia_Briar":
-"Брайер из Боевой Академии",
+"High_Command_Katarina":
+"Верховное командование Катарина",
 
-"Primordian_Briar":
-"Первобытная Брайер",
+"High_Noon_Katarina":
+"Полуденная Катарина",
 
-"Street_Demons_Briar":
-"Демоны улиц Брайер",
+"Kitty_Cat_Katarina":
+"Кошечка Катарина",
 
+"Mercenary_Katarina":
+"Наёмница Катарина",
 
+"Prestige_Faerie_Court_Katarina":
+"Престижный Двор фей Катарина",
 
-# =================
-# CASSIOPEIA
-# =================
+"PROJECT_Katarina":
+"ПРОЕКТ: Катарина",
 
-"Base":
-"Оригинальная Кассиопея",
+"Red_Card_Katarina":
+"Красная карточка Катарина",
 
-"Bewitching_Cassiopeia":
-"Заколдованная Кассиопея",
+"Sandstorm_Katarina":
+"Песчаная буря Катарина",
 
-"Coven_Cassiopeia":
-"Шабаш Кассиопея",
+"Slay_Belle_Katarina":
+"Санта-убийца Катарина",
 
-"Desperada_Cassiopeia":
-"Отчаянная Кассиопея",
-
-"Eternum_Cassiopeia":
-"Вечная Кассиопея",
-
-"Jade_Fang_Cassiopeia":
-"Нефритовый клык Кассиопея",
-
-"Mythic_Cassiopeia":
-"Мифическая Кассиопея",
-
-"Siren_Cassiopeia":
-"Сирена Кассиопея",
-
-"Spirit_Blossom_Cassiopeia":
-"Цветение духов Кассиопея",
+"Warring_Kingdoms_Katarina":
+"Воюющие королевства Катарина",
 
 
 
 # =================
-# DARIUS
+# KLED
 # =================
 
 "Base":
-"Оригинальный Дариус",
+"Оригинальный Клед",
 
-"Academy_Darius":
-"Дариус из Академии",
+"Count_Kledula":
+"Граф Кледула",
 
-"Bioforge_Darius":
-"Биокузница Дариус",
+"Kibble_Head_Kled":
+"Киблхед Клед",
 
-"Crime_City_Nightmare_Darius":
-"Кошмар криминального города Дариус",
+"Marauder_Kled":
+"Мародёр Клед",
 
-"Dreadnova_Darius":
-"Ужасная Нова Дариус",
-
-"Dunkmaster_Darius":
-"Мастер данков Дариус",
-
-"God_King_Darius":
-"Бог-Король Дариус",
-
-"High_Noon_Darius":
-"Полуденный Дариус",
-
-"Lord_Darius":
-"Лорд Дариус",
-
-"Lunar_Beast_Darius":
-"Лунный зверь Дариус",
-
-"Spirit_Blossom_Darius":
-"Цветение духов Дариус",
-
-"Woad_King_Darius":
-"Король Вод Дариус",
+"Sir_Kled":
+"Сэр Клед",
 
 
 
 # =================
-# DRAVEN
+# LEBLANC
 # =================
 
 "Base":
-"Оригинальный Дрейвен",
+"Оригинальная Ле Блан",
 
-"Beast_Hunter_Draven":
-"Охотник на чудовищ Дрейвен",
+"Bewitching_LeBlanc":
+"Заколдованная Ле Блан",
 
-"Debonair_Draven":
-"Дебонер Дрейвен",
+"Championship_LeBlanc":
+"Чемпионатная Ле Блан",
 
-"Draven_Draven":
-"Дрейвен Дрейвен",
+"Coven_LeBlanc":
+"Шабаш Ле Блан",
 
-"Fright_Night_Draven":
-"Ночь страха Дрейвен",
+"Debonair_LeBlanc":
+"Дебонер Ле Блан",
 
-"Gladiator_Draven":
-"Гладиатор Дрейвен",
+"Elderwood_LeBlanc":
+"Старое дерево Ле Блан",
 
-"Mecha_Kingdoms_Draven":
-"Меха-Королевства Дрейвен",
+"iG_LeBlanc":
+"iG Ле Блан",
 
-"Pool_Party_Draven":
-"Вечеринка у бассейна Дрейвен",
+"Mistletoe_LeBlanc":
+"Омела Ле Блан",
 
-"Primetime_Draven":
-"Главная роль Дрейвен",
+"Prestige_Coven_LeBlanc":
+"Престижный Шабаш Ле Блан",
 
-"Ruined_Draven":
-"Погибельный Дрейвен",
+"Prestigious_LeBlanc":
+"Престижная Ле Блан",
 
-"Santa_Draven":
-"Санта Дрейвен",
+"Program_LeBlanc":
+"Программа Ле Блан",
 
-"Soul_Reaver_Draven":
-"Пожиратель душ Дрейвен",
+"Ravenborn_LeBlanc":
+"Рождённая вороном Ле Блан",
+
+"Wicked_LeBlanc":
+"Зловещая Ле Блан",
+
+
+
+# =================
+# MORDEKAISER
+# =================
+
+"Base":
+"Оригинальный Мордекайзер",
+
+"Ashen_Graveknight_Mordekaiser":
+"Пепельный рыцарь могил Мордекайзер",
+
+"Dark_Star_Mordekaiser":
+"Тёмная звезда Мордекайзер",
+
+"Dragon_Knight_Mordekaiser":
+"Рыцарь дракона Мордекайзер",
+
+"High_Noon_Mordekaiser":
+"Полуденный Мордекайзер",
+
+"Infernal_Mordekaiser":
+"Преисподняя Мордекайзер",
+
+"King_of_Clubs_Mordekaiser":
+"Король треф Мордекайзер",
+
+"Lord_Mordekaiser":
+"Лорд Мордекайзер",
+
+"Pentakill_Mordekaiser":
+"Пентакилл Мордекайзер",
+
+"Pentakill_III_Lost_Chapter_Mordekaiser":
+"Пентакилл III: Потерянная глава Мордекайзер",
+
+"PROJECT_Mordekaiser":
+"ПРОЕКТ: Мордекайзер",
+
+
+
+# =================
+# RELL
+# =================
+
+"Base":
+"Оригинальная Релл",
+
+"Battle_Queen_Rell":
+"Боевая королева Релл",
+
+"Star_Guardian_Rell":
+"Страж звёзд Релл",
