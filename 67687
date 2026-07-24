@@ -1,2 +1,23 @@
+:\Users\Ketek'\Desktop\qantum_universe>python main.py
+✅ База данных подключена
+✅ Загружен: auction
+✅ Загружен: balance
+✅ Загружен: contract
+✅ Загружен: daily
+✅ Загружен: inventory
+✅ Загружен: profile
+✅ Загружен: quest
+✅ Загружен: shop
+✅ Загружен: work
+🌍 Регионов загружено для чемпионов: 32
+❌ Ошибка загрузки travel: Extension 'cogs.travel' raised an error: ImportError: cannot import name 'REGIONS' from 'data.regions' (C:\Users\Ketek'\Desktop\qantum_universe\data\regions.py)
+✅ Загружен: quest_reward
+✅ Загружен: cards
+✅ Загружен: test_event
+✅ Загружен: deck
 ✅ Загружен: battle
 ❌ Ошибка загрузки pack: Extension 'cogs.pack' raised an error: ImportError: cannot import name 'load_champions' from partially initialized module 'data.champion_loader' (most likely due to a circular import) (C:\Users\Ketek'\Desktop\qantum_universe\data\champion_loader.py)
+✅ Загружен: collection
+❌ Ошибка загрузки map: Extension 'cogs.map' raised an error: ImportError: cannot import name 'REGIONS' from 'data.regions' (C:\Users\Ketek'\Desktop\qantum_universe\data\regions.py)
+✅ Синхронизировано команд: 21
+🟢 Бот запущен как ILTA BOT#7827
