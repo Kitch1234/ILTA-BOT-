@@ -1,1 +1,763 @@
-https://league-of-legends-champions-data.vercel.app/champion/Garen?version=13.11.1
+ft Windows [Version 10.0.26200.8894]
+(c) Корпорация Майкрософт (Microsoft Corporation). Все права защищены.
+
+C:\Users\Ketek'\Desktop\qantum_universe>tree /F
+Структура папок тома Local Disk
+Серийный номер тома: 00000011 46A3:5EF7
+C:.
+│   .env
+│   check_assets.py
+│   check_images.py
+│   check_lor.py
+│   create_folders.py
+│   download_lor_assets.py
+│   main.py
+│   README.md
+│   requirements.txt
+│
+├───assets
+│   ├───backgrounds
+│   │   │   AerialBackground.png
+│   │   │   Set2_Title_Background_BG_TX.png
+│   │   │
+│   │   └───regions
+│   ├───cards
+│   │   ├───champions
+│   │   ├───items
+│   │   ├───monsters
+│   │   └───spells
+│   ├───champions
+│   │   ├───Demacia
+│   │   │   ├───Fiora
+│   │   │   │       Base.webp
+│   │   │   │       Bewitching_Fiora.webp
+│   │   │   │       Faerie_Court_Fiora.webp
+│   │   │   │       Headmistress_Fiora.webp
+│   │   │   │       Heartpiercer_Fiora.webp
+│   │   │   │       iG_Fiora.webp
+│   │   │   │       Lunar_Beast_Fiora.webp
+│   │   │   │       Nightraven_Fiora.webp
+│   │   │   │       Pool_Party_Fiora.webp
+│   │   │   │       Prestige_Lunar_Beast_Fiora.webp
+│   │   │   │       PROJECT_Fiora.webp
+│   │   │   │       Pulsefire_Fiora.webp
+│   │   │   │       Royal_Guard_Fiora.webp
+│   │   │   │       Soaring_Sword_Fiora.webp
+│   │   │   │
+│   │   │   ├───Galio
+│   │   │   │       Base.webp
+│   │   │   │       Birdio.webp
+│   │   │   │       Commando_Galio.webp
+│   │   │   │       Debonair_Galio.webp
+│   │   │   │       Dragon_Guardian_Galio.webp
+│   │   │   │       Enchanted_Galio.webp
+│   │   │   │       Gatekeeper_Galio.webp
+│   │   │   │       Hextech_Galio.webp
+│   │   │   │       Infernal_Galio.webp
+│   │   │   │       Mythmaker_Galio.webp
+│   │   │   │
+│   │   │   ├───Garen
+│   │   │   │       Base.webp
+│   │   │   │       Battle_Academia_Garen.webp
+│   │   │   │       Commando_Garen.webp
+│   │   │   │       Demacia_Vice_Garen.webp
+│   │   │   │       Desert_Trooper_Garen.webp
+│   │   │   │       Dreadknight_Garen.webp
+│   │   │   │       God_King_Garen.webp
+│   │   │   │       Mecha_Kingdoms_Garen.webp
+│   │   │   │       Mythmaker_Garen.webp
+│   │   │   │       Prestige_Mecha_Kingdoms_Garen.webp
+│   │   │   │       Rogue_Admiral_Garen.webp
+│   │   │   │       Rugged_Garen.webp
+│   │   │   │       Sanguine_Garen.webp
+│   │   │   │       Steel_Legion_Garen.webp
+│   │   │   │       Warring_Kingdoms_Garen.webp
+│   │   │   │
+│   │   │   ├───Jarvan IV
+│   │   │   │       Base.webp
+│   │   │   │       Commando_Jarvan_IV.webp
+│   │   │   │       Darkforge_Jarvan_IV.webp
+│   │   │   │       Dark_Star_Jarvan_IV.webp
+│   │   │   │       Dragonslayer_Jarvan_IV.webp
+│   │   │   │       Fnatic_Jarvan_IV.webp
+│   │   │   │       Hextech_Jarvan_IV.webp
+│   │   │   │       Lunar_Beast_Jarvan_IV.webp
+│   │   │   │       Nightbringer_Jarvan_IV.webp
+│   │   │   │       Pool_Party_Jarvan_IV.webp
+│   │   │   │       SSG_Jarvan_IV.webp
+│   │   │   │       Victorious_Jarvan_IV.webp
+│   │   │   │       Warring_Kingdoms_Jarvan_IV.webp
+│   │   │   │       Worlds_2021_Jarvan_IV.webp
+│   │   │   │
+│   │   │   ├───Kayle
+│   │   │   │       Aether_Wing_Kayle.webp
+│   │   │   │       Base.webp
+│   │   │   │       Battleborn_Kayle.webp
+│   │   │   │       Dragonslayer_Kayle.webp
+│   │   │   │       Iron_Inquisitor_Kayle.webp
+│   │   │   │       Judgment_Kayle.webp
+│   │   │   │       Pentakill_III_Lost_Chapter_Kayle.webp
+│   │   │   │       Pentakill_Kayle.webp
+│   │   │   │       PsyOps_Kayle.webp
+│   │   │   │       Riot_Kayle.webp
+│   │   │   │       Silver_Kayle.webp
+│   │   │   │       Sun_Eater_Kayle.webp
+│   │   │   │       Transcended_Kayle.webp
+│   │   │   │       Viridian_Kayle.webp
+│   │   │   │
+│   │   │   ├───Lucian
+│   │   │   │       Arcana_Lucian.webp
+│   │   │   │       Base.webp
+│   │   │   │       Demacia_Vice_Lucian.webp
+│   │   │   │       Heartseeker_Lucian.webp
+│   │   │   │       High_Noon_Lucian.webp
+│   │   │   │       Hired_Gun_Lucian.webp
+│   │   │   │       Prestige_Pulsefire_Lucian.webp
+│   │   │   │       PROJECT_Lucian.webp
+│   │   │   │       Pulsefire_Lucian.webp
+│   │   │   │       Striker_Lucian.webp
+│   │   │   │       Strike_Paladin_Lucian.webp
+│   │   │   │       Victorious_Lucian.webp
+│   │   │   │
+│   │   │   ├───Lux
+│   │   │   │       Base.webp
+│   │   │   │       Battle_Academia_Lux.webp
+│   │   │   │       Commando_Lux.webp
+│   │   │   │       Cosmic_Lux.webp
+│   │   │   │       Dark_Cosmic_Lux.webp
+│   │   │   │       Elementalist_Lux.webp
+│   │   │   │       Empyrean_Lux.webp
+│   │   │   │       Imperial_Lux.webp
+│   │   │   │       Lunar_Empress_Lux.webp
+│   │   │   │       Pajama_Guardian_Lux.webp
+│   │   │   │       Porcelain_Lux.webp
+│   │   │   │       Prestige_Battle_Academia_Lux.webp
+│   │   │   │       Prestige_Porcelain_Lux.webp
+│   │   │   │       Sorceress_Lux.webp
+│   │   │   │       Space_Groove_Lux.webp
+│   │   │   │       Spellthief_Lux.webp
+│   │   │   │       Star_Guardian_Lux.webp
+│   │   │   │       Steel_Legion_Lux.webp
+│   │   │   │
+│   │   │   ├───Morgana
+│   │   │   │       Base.webp
+│   │   │   │       Bewitching_Morgana.webp
+│   │   │   │       Blackthorn_Morgana.webp
+│   │   │   │       Blade_Mistress_Morgana.webp
+│   │   │   │       Coven_Morgana.webp
+│   │   │   │       Dawnbringer_Morgana.webp
+│   │   │   │       Exiled_Morgana.webp
+│   │   │   │       Ghost_Bride_Morgana.webp
+│   │   │   │       Lunar_Wraith_Morgana.webp
+│   │   │   │       Majestic_Empress_Morgana.webp
+│   │   │   │       Prestige_Bewitching_Morgana.webp
+│   │   │   │       Sinful_Succulence_Morgana.webp
+│   │   │   │       Snow_Moon_Morgana.webp
+│   │   │   │       Star_Nemesis_Morgana.webp
+│   │   │   │       Victorious_Morgana.webp
+│   │   │   │
+│   │   │   ├───Poppy
+│   │   │   │       Astronaut_Poppy.webp
+│   │   │   │       Base.webp
+│   │   │   │       Battle_Regalia_Poppy.webp
+│   │   │   │       Bewitching_Poppy.webp
+│   │   │   │       Blacksmith_Poppy.webp
+│   │   │   │       Hextech_Poppy.webp
+│   │   │   │       Lollipoppy.webp
+│   │   │   │       Noxus_Poppy.webp
+│   │   │   │       Ragdoll_Poppy.webp
+│   │   │   │       Scarlet_Hammer_Poppy.webp
+│   │   │   │       Snow_Fawn_Poppy.webp
+│   │   │   │       Star_Guardian_Poppy.webp
+│   │   │   │
+│   │   │   ├───Quinn
+│   │   │   │       Base.webp
+│   │   │   │       Corsair_Quinn.webp
+│   │   │   │       Heartseeker_Quinn.webp
+│   │   │   │       Phoenix_Quinn.webp
+│   │   │   │       Star_Guardian_Quinn.webp
+│   │   │   │       Warden_Quinn.webp
+│   │   │   │       Woad_Scout_Quinn.webp
+│   │   │   │
+│   │   │   ├───Senna
+│   │   │   │       Base.webp
+│   │   │   │       Bewitching_Senna.webp
+│   │   │   │       High_Noon_Senna.webp
+│   │   │   │       Lunar_Eclipse_Senna.webp
+│   │   │   │       Prestige_Lunar_Eclipse_Senna.webp
+│   │   │   │       Prestige_True_Damage_Senna.webp
+│   │   │   │       PROJECT_Senna.webp
+│   │   │   │       True_Damage_Senna.webp
+│   │   │   │
+│   │   │   ├───Shyvana
+│   │   │   │       Base.webp
+│   │   │   │       Boneclaw_Shyvana.webp
+│   │   │   │       Championship_Shyvana.webp
+│   │   │   │       Darkflame_Shyvana.webp
+│   │   │   │       Ice_Drake_Shyvana.webp
+│   │   │   │       Ironscale_Shyvana.webp
+│   │   │   │       Ruined_Shyvana.webp
+│   │   │   │       Super_Galaxy_Shyvana.webp
+│   │   │   │
+│   │   │   ├───Sona
+│   │   │   │       Arcade_Sona.webp
+│   │   │   │       Base.webp
+│   │   │   │       DJ_Sona.webp
+│   │   │   │       Guqin_Sona.webp
+│   │   │   │       Muse_Sona.webp
+│   │   │   │       Odyssey_Sona.webp
+│   │   │   │       Pentakill_III_Lost_Chapter_Sona.webp
+│   │   │   │       Pentakill_Sona.webp
+│   │   │   │       PsyOps_Sona.webp
+│   │   │   │       Silent_Night_Sona.webp
+│   │   │   │       Star_Guardian_Sona.webp
+│   │   │   │       Sweetheart_Sona.webp
+│   │   │   │
+│   │   │   ├───Sylas
+│   │   │   │       Ashen_Slayer_Sylas.webp
+│   │   │   │       Base.webp
+│   │   │   │       Battle_Wolf_Sylas.webp
+│   │   │   │       Freljord_Sylas.webp
+│   │   │   │       Lunar_Wraith_Sylas.webp
+│   │   │   │       Prestige_PROJECT_Sylas.webp
+│   │   │   │       PROJECT_Sylas.webp
+│   │   │   │
+│   │   │   ├───Vayne
+│   │   │   │       Arclight_Vayne.webp
+│   │   │   │       Aristocrat_Vayne.webp
+│   │   │   │       Base.webp
+│   │   │   │       Battle_Bat_Vayne.webp
+│   │   │   │       Dawnbringer_Vayne.webp
+│   │   │   │       Dragonslayer_Vayne.webp
+│   │   │   │       Firecracker_Vayne.webp
+│   │   │   │       FPX_Vayne.webp
+│   │   │   │       Heartseeker_Vayne.webp
+│   │   │   │       Prestige_Firecracker_Vayne.webp
+│   │   │   │       PROJECT_Vayne.webp
+│   │   │   │       Sentinel_Vayne.webp
+│   │   │   │       SKT_T1_Vayne.webp
+│   │   │   │       Soulstealer_Vayne.webp
+│   │   │   │       Spirit_Blossom_Vayne.webp
+│   │   │   │       Vindicator_Vayne.webp
+│   │   │   │
+│   │   │   └───Xin Zhao
+│   │   │           Base.webp
+│   │   │           Commando_Xin_Zhao.webp
+│   │   │           Cosmic_Defender_Xin_Zhao.webp
+│   │   │           Dragonslayer_Xin_Zhao.webp
+│   │   │           Firecracker_Xin_Zhao.webp
+│   │   │           Imperial_Xin_Zhao.webp
+│   │   │           Marauder_Xin_Zhao.webp
+│   │   │           Secret_Agent_Xin_Zhao.webp
+│   │   │           Viscero_Xin_Zhao.webp
+│   │   │           Warring_Kingdoms_Xin_Zhao.webp
+│   │   │           Winged_Hussar_Xin_Zhao.webp
+│   │   │
+│   │   ├───Freljord
+│   │   ├───Ionia
+│   │   ├───Noxus
+│   │   │   ├───Ambessa
+│   │   │   │       Base.jpg
+│   │   │   │       Chosen_Of_The_Ambessa.jpg
+│   │   │   │       T1_Ambessa.jpg
+│   │   │   │
+│   │   │   ├───Briar
+│   │   │   │       Base.jpg
+│   │   │   │       Battle_Academia_Briar.jpg
+│   │   │   │       Primordian_Briar.jpg
+│   │   │   │       Street_Demons_Briar.jpg
+│   │   │   │
+│   │   │   ├───Cassiopeia
+│   │   │   │       Base.webp
+│   │   │   │       Bewitching_Cassiopeia.webp
+│   │   │   │       Coven_Cassiopeia.webp
+│   │   │   │       Desperada_Cassiopeia.webp
+│   │   │   │       Eternum_Cassiopeia.webp
+│   │   │   │       Jade_Fang_Cassiopeia.webp
+│   │   │   │       Mythic_Cassiopeia.webp
+│   │   │   │       Siren_Cassiopeia.webp
+│   │   │   │       Spirit_Blossom_Cassiopeia.webp
+│   │   │   │
+│   │   │   ├───Darius
+│   │   │   │       Academy_Darius.webp
+│   │   │   │       Base.webp
+│   │   │   │       Bioforge_Darius.webp
+│   │   │   │       Crime_City_Nightmare_Darius.webp
+│   │   │   │       Dreadnova_Darius.webp
+│   │   │   │       Dunkmaster_Darius.webp
+│   │   │   │       God_King_Darius.webp
+│   │   │   │       High_Noon_Darius.webp
+│   │   │   │       Lord_Darius.webp
+│   │   │   │       Lunar_Beast_Darius.webp
+│   │   │   │       Spirit_Blossom_Darius.webp
+│   │   │   │       Woad_King_Darius.webp
+│   │   │   │
+│   │   │   ├───Draven
+│   │   │   │       Base.webp
+│   │   │   │       Beast_Hunter_Draven.webp
+│   │   │   │       Debonair_Draven.webp
+│   │   │   │       Draven_Draven.webp
+│   │   │   │       Fright_Night_Draven.webp
+│   │   │   │       Gladiator_Draven.webp
+│   │   │   │       Mecha_Kingdoms_Draven.webp
+│   │   │   │       Pool_Party_Draven.webp
+│   │   │   │       Primetime_Draven.webp
+│   │   │   │       Ruined_Draven.webp
+│   │   │   │       Santa_Draven.webp
+│   │   │   │       Soul_Reaver_Draven.webp
+│   │   │   │
+│   │   │   ├───Katarina
+│   │   │   │       Base.webp
+│   │   │   │       Battle_Academia_Katarina.webp
+│   │   │   │       Battle_Queen_Katarina.webp
+│   │   │   │       Bilgewater_Katarina.webp
+│   │   │   │       Blood_Moon_Katarina.webp
+│   │   │   │       Death_Sworn_Katarina.webp
+│   │   │   │       Faerie_Court_Katarina.webp
+│   │   │   │       High_Command_Katarina.webp
+│   │   │   │       High_Noon_Katarina.webp
+│   │   │   │       Kitty_Cat_Katarina.webp
+│   │   │   │       Mercenary_Katarina.webp
+│   │   │   │       Prestige_Faerie_Court_Katarina.webp
+│   │   │   │       PROJECT_Katarina.webp
+│   │   │   │       Red_Card_Katarina.webp
+│   │   │   │       Sandstorm_Katarina.webp
+│   │   │   │       Slay_Belle_Katarina.webp
+│   │   │   │       Warring_Kingdoms_Katarina.webp
+│   │   │   │
+│   │   │   ├───Kled
+│   │   │   │       Base.webp
+│   │   │   │       Count_Kledula.webp
+│   │   │   │       Kibble_Head_Kled.webp
+│   │   │   │       Marauder_Kled.webp
+│   │   │   │       Sir_Kled.webp
+│   │   │   │
+│   │   │   ├───LeBlanc
+│   │   │   │       Base.webp
+│   │   │   │       Bewitching_LeBlanc.webp
+│   │   │   │       Championship_LeBlanc.webp
+│   │   │   │       Coven_LeBlanc.webp
+│   │   │   │       Debonair_LeBlanc.webp
+│   │   │   │       Elderwood_LeBlanc.webp
+│   │   │   │       iG_LeBlanc.webp
+│   │   │   │       Mistletoe_LeBlanc.webp
+│   │   │   │       Prestige_Coven_LeBlanc.webp
+│   │   │   │       Prestigious_LeBlanc.webp
+│   │   │   │       Program_LeBlanc.webp
+│   │   │   │       Ravenborn_LeBlanc.webp
+│   │   │   │       Wicked_LeBlanc.webp
+│   │   │   │
+│   │   │   ├───Mordekaiser
+│   │   │   │       Ashen_Graveknight_Mordekaiser.webp
+│   │   │   │       Base.webp
+│   │   │   │       Dark_Star_Mordekaiser.webp
+│   │   │   │       Dragon_Knight_Mordekaiser.webp
+│   │   │   │       High_Noon_Mordekaiser.webp
+│   │   │   │       Infernal_Mordekaiser.webp
+│   │   │   │       King_of_Clubs_Mordekaiser.webp
+│   │   │   │       Lord_Mordekaiser.webp
+│   │   │   │       Pentakill_III_Lost_Chapter_Mordekaiser.webp
+│   │   │   │       Pentakill_Mordekaiser.webp
+│   │   │   │       PROJECT_Mordekaiser.webp
+│   │   │   │
+│   │   │   ├───Rell
+│   │   │   │       Base.webp
+│   │   │   │       Battle_Queen_Rell.webp
+│   │   │   │       Star_Guardian_Rell.webp
+│   │   │   │
+│   │   │   ├───Riven
+│   │   │   │       Arcade_Riven.webp
+│   │   │   │       Base.webp
+│   │   │   │       Battle_Bunny_Prime_Riven.webp
+│   │   │   │       Battle_Bunny_Riven.webp
+│   │   │   │       Broken_Covenant_Riven.webp
+│   │   │   │       Championship_Riven.webp
+│   │   │   │       Crimson_Elite_Riven.webp
+│   │   │   │       Dawnbringer_Riven.webp
+│   │   │   │       Dragonblade_Riven.webp
+│   │   │   │       Prestige_Valiant_Sword_Riven.webp
+│   │   │   │       Pulsefire_Riven.webp
+│   │   │   │       Redeemed_Riven.webp
+│   │   │   │       Sentinel_Riven.webp
+│   │   │   │       Spirit_Blossom_Riven.webp
+│   │   │   │       Valiant_Sword_Riven.webp
+│   │   │   │
+│   │   │   ├───Samira
+│   │   │   │       Base.webp
+│   │   │   │       High_Noon_Samira.webp
+│   │   │   │       PsyOps_Samira.webp
+│   │   │   │       Space_Groove_Samira.webp
+│   │   │   │
+│   │   │   ├───Sion
+│   │   │   │       Barbarian_Sion.webp
+│   │   │   │       Base.webp
+│   │   │   │       Blackfrost_Sion.webp
+│   │   │   │       Hextech_Sion.webp
+│   │   │   │       High_Noon_Sion.webp
+│   │   │   │       Lumberjack_Sion.webp
+│   │   │   │       Mecha_Zero_Sion.webp
+│   │   │   │       Warmonger_Sion.webp
+│   │   │   │       Worldbreaker_Sion.webp
+│   │   │   │
+│   │   │   ├───Swain
+│   │   │   │       Base.webp
+│   │   │   │       Bilgewater_Swain.webp
+│   │   │   │       Crystal_Rose_Swain.webp
+│   │   │   │       Dragon_Master_Swain.webp
+│   │   │   │       Hextech_Swain.webp
+│   │   │   │       Northern_Front_Swain.webp
+│   │   │   │       Tyrant_Swain.webp
+│   │   │   │       Winterblessed_Swain.webp
+│   │   │   │
+│   │   │   ├───Talon
+│   │   │   │       Base.webp
+│   │   │   │       Blood_Moon_Talon.webp
+│   │   │   │       Crimson_Elite_Talon.webp
+│   │   │   │       Dragonblade_Talon.webp
+│   │   │   │       Enduring_Sword_Talon.webp
+│   │   │   │       High_Noon_Talon.webp
+│   │   │   │       Prestige_High_Noon_Talon.webp
+│   │   │   │       Renegade_Talon.webp
+│   │   │   │       SSW_Talon.webp
+│   │   │   │       Talon_Blackwood.webp
+│   │   │   │       Withered_Rose_Talon.webp
+│   │   │   │
+│   │   │   └───Vladimir
+│   │   │           Academy_Vladimir.webp
+│   │   │           Base.webp
+│   │   │           Blood_Lord_Vladimir.webp
+│   │   │           Broken_Covenant_Vladimir.webp
+│   │   │           Cafe_Cuties_Vladimir.webp
+│   │   │           Cosmic_Devourer_Vladimir.webp
+│   │   │           Count_Vladimir.webp
+│   │   │           Dark_Waters_Vladimir.webp
+│   │   │           Marquis_Vladimir.webp
+│   │   │           Nightbringer_Vladimir.webp
+│   │   │           Nosferatu_Vladimir.webp
+│   │   │           Soulstealer_Vladimir.webp
+│   │   │           Vandal_Vladimir.webp
+│   │   │
+│   │   ├───Piltover_Zaun
+│   │   ├───Shadow_Isles
+│   │   ├───Shurima
+│   │   └───Void
+│   ├───effects
+│   │       AllianceForgeModal_BG.png
+│   │       NoiseSpecks.png
+│   │       UnownedSmoke.png
+│   │
+│   ├───fonts
+│   │       Beaufort-Bold.ttf
+│   │       Beaufort-Heavy.ttf
+│   │       Beaufort-Medium.ttf
+│   │       Beaufort-Regular.ttf
+│   │
+│   ├───frames
+│   │       common.png
+│   │       epic.png
+│   │       legendary.png
+│   │       mythic.png
+│   │       rare.png
+│   │
+│   ├───icons
+│   │       attack.png
+│   │       CardBack_WildCard_Champ_crispmip.png
+│   │       CardBack_WildCard_Common_crispmip.png
+│   │       CardBack_WildCard_Epic_crispmip.png
+│   │       CardBack_WildCard_Rare_crispmip.png
+│   │       defense.png
+│   │       dgccno5-60fa5121-a8cf-4925-81e8-28a581edcf3f.png
+│   │       health.png
+│   │       Hold_ping.png
+│   │       Keyword_Spellshield_HD.png
+│   │       Keyword_Stunned_HD.png
+│   │       LoR_Power.png
+│   │       PoC_Champion_Fragment_icon_HD.png
+│   │       rarity-common.png
+│   │       rarity-rare.png
+│   │       rarity-super.png
+│   │       rarity-superchamp.png
+│   │
+│   ├───logo
+│   │       attack.png
+│   │       defense.png
+│   │       health.png
+│   │       Keyword_Barrier_HD.png
+│   │
+│   ├───mobs
+│   │   ├───Demacia
+│   │   ├───Freljord
+│   │   ├───Ionia
+│   │   ├───Noxus
+│   │   ├───Piltover_Zaun
+│   │   ├───Shadow_Isles
+│   │   ├───Shurima
+│   │   └───Void
+│   ├───panels
+│   ├───regions
+│   │       Bandle_City.png
+│   │       Bilgewater.png
+│   │       Demacia.png
+│   │       Freljord.png
+│   │       Ionia.png
+│   │       Noxus.png
+│   │       Piltover_Zaun.png
+│   │       Runeterra.png
+│   │       Shadow_Isles.png
+│   │       Shurima.png
+│   │       Spirit_Blossom.png
+│   │       Targon.png
+│   │
+│   └───ui
+│       ├───battle
+│       ├───buttons
+│       ├───cards
+│       └───profile
+├───cards
+│       Aatrox_Primordian Aatrox.png
+│       Ahri_ILT-779997.png
+│       Akali_Empyrean Akali.png
+│       Akshan_Crystal Rose Akshan.png
+│       Alistar_Longhorn Alistar.png
+│       Aurora_ILT-975806.png
+│       Blitzcrank_Lancer Rogue Blitzcrank.png
+│       Braum_Santa Braum.png
+│       Briar_ILT-567943.png
+│       Briar_Primordian Briar.png
+│       Caitlyn_Arcade Caitlyn.png
+│       Corki_UFO Corki.png
+│       Diana_ILT-405884.png
+│       Fiddlesticks_default.png
+│       Fiddlesticks_ILT-625390.png
+│       Fiddlesticks_Risen Fiddlesticks.png
+│       Galio_Debonair Galio.png
+│       Gangplank_ILT-778206.png
+│       Gnar_El León Gnar.png
+│       Gragas_default.png
+│       Gragas_Warden Gragas.png
+│       Gwen_Cafe Cuties Gwen.png
+│       Hecarim_0936.png
+│       Hwei_default.png
+│       Hwei_Winterblessed Hwei.png
+│       Irelia_Porcelain Irelia.png
+│       Ivern_Candy King Ivern.png
+│       Ivern_Old God Ivern.png
+│       Janna_Crystal Rose Janna.png
+│       Jhin_ILT-171787.png
+│       Kaisa_Arcade Kai'Sa.png
+│       Kaisa_Lagoon Dragon Kai'Sa.png
+│       Karma_Sun Goddess Karma.png
+│       Karthus_Statue of Karthus.png
+│       Kayle_Sun-Eater Kayle.png
+│       Kindred_0981.png
+│       Kindred_Super Galaxy Kindred.png
+│       Kled_Count Kledula.png
+│       Kled_default.png
+│       KogMaw_default.png
+│       Lissandra_Blade Queen Lissandra.png
+│       Lissandra_default.png
+│       Malphite_Lunar Guardian Malphite.png
+│       Malphite_Odyssey Malphite.png
+│       Malzahar_Three Honors Malzahar.png
+│       Maokai_Worldbreaker Maokai.png
+│       Milio_default.png
+│       MonkeyKing_Battle Academia Wukong.png
+│       Morgana_Victorious Morgana.png
+│       Nami_default.png
+│       Nautilus_Fright Night Nautilus.png
+│       Neeko_ILT-900328.png
+│       Nocturne_Hextech Nocturne.png
+│       Orianna_Star Guardian Orianna.png
+│       Pyke_default.png
+│       Pyke_Sentinel Pyke.png
+│       Qiyana_Battle Boss Qiyana.png
+│       Qiyana_default.png
+│       RekSai_default.png
+│       Renata_Prestige La Ilusión Renata Glasc.png
+│       Rumble_Space Groove Rumble.png
+│       Sejuani_Hextech Sejuani.png
+│       Shen_Frozen Shen.png
+│       Shyvana_Immortal Journey Shyvana.png
+│       Singed_Riot Squad Singed.png
+│       Sion_Warmonger Sion.png
+│       Sivir_Odyssey Sivir.png
+│       Smolder_Heavenscale Smolder.png
+│       Sona_PsyOps Sona.png
+│       Syndra_Pool Party Syndra.png
+│       TahmKench_Urf Kench.png
+│       Taliyah_0708.png
+│       Talon_default.png
+│       Teemo_Happy Elf Teemo.png
+│       Thresh_ILT-159656.png
+│       Tryndamere_Sultan Tryndamere.png
+│       TwistedFate_Crime City Nightmare Twisted Fate.png
+│       Udyr_ILT-136354.png
+│       Varus_ILT-425906.png
+│       Vayne_SKT T1 Vayne.png
+│       Vayne_Soulstealer Vayne.png
+│       Veigar_default.png
+│       Vex_Dawnbringer Vex.png
+│       Viktor_0548.png
+│       Vi_Officer Vi.png
+│       Vladimir_Soulstealer Vladimir.png
+│       Volibear_Duality Dragon Volibear.png
+│       Xayah_SSG Xayah.png
+│       Yasuo_Spirit Blossom Yasuo.png
+│       Yone_Ocean Song Yone.png
+│       Yorick_Pentakill Yorick.png
+│       Zac_Special Weapon Zac.png
+│       Zed_PsyOps Zed.png
+│       Zeri_Ocean Song Zeri.png
+│       Zyra_Crystal Rose Zyra.png
+│
+├───cogs
+│   │   344.txt
+│   │   auction.py
+│   │   balance.py
+│   │   battle.py
+│   │   cards.py
+│   │   collection.py
+│   │   contract.py
+│   │   daily.py
+│   │   deck.py
+│   │   inventory.py
+│   │   map.py
+│   │   pack.py
+│   │   profile.py
+│   │   quest.py
+│   │   quest_reward.py
+│   │   shop.py
+│   │   test_event.py
+│   │   test_event.py.txt
+│   │   travel.py
+│   │   work.py
+│   │   __init__.py
+│   │
+│   └───__pycache__
+│           auction.cpython-312.pyc
+│           balance.cpython-312.pyc
+│           battle.cpython-312.pyc
+│           cards.cpython-312.pyc
+│           collection.cpython-312.pyc
+│           contract.cpython-312.pyc
+│           daily.cpython-312.pyc
+│           deck.cpython-312.pyc
+│           inventory.cpython-312.pyc
+│           map.cpython-312.pyc
+│           open_cards.cpython-312.pyc
+│           pack.cpython-312.pyc
+│           Profile.cpython-312.pyc
+│           quest.cpython-312.pyc
+│           quests.cpython-312.pyc
+│           quest_manager.cpython-312.pyc
+│           quest_reward.cpython-312.pyc
+│           shop.cpython-312.pyc
+│           test_event.cpython-312.pyc
+│           travel.cpython-312.pyc
+│           work.cpython-312.pyc
+│           __init__.cpython-312.pyc
+│
+├───core
+│   │   database.py
+│   │   db.py
+│   │   economy.py
+│   │   player.py
+│   │
+│   └───__pycache__
+│           database.cpython-312.pyc
+│           db.cpython-312.pyc
+│           economy.cpython-312.pyc
+│           player.cpython-312.pyc
+│
+├───data
+│   │   card_layout.py
+│   │   champions.json
+│   │   champions.py
+│   │   champion_assets.py
+│   │   champion_loader.py
+│   │   Items.py
+│   │   loot.py
+│   │   monsters.py
+│   │   quests.json
+│   │   quests.py
+│   │   regions.py
+│   │   shop.json
+│   │   update_champions.py
+│   │   world_map.json
+│   │
+│   ├───champions
+│   ├───items
+│   ├───mobs
+│   ├───quests
+│   ├───regions
+│   └───__pycache__
+│           card_layout.cpython-312.pyc
+│           champion_loader.cpython-312.pyc
+│           loot.cpython-312.pyc
+│           monsters.cpython-312.pyc
+│           regions.cpython-312.pyc
+│
+├───database
+│   │   auction_queries.py
+│   │   battle.py
+│   │   cards.py
+│   │   collection.py
+│   │   connection.py
+│   │   database.py
+│   │   decks.py
+│   │   deck_slots.py
+│   │   models.py
+│   │   monsters.py
+│   │   player.py
+│   │   queries.py
+│   │   quest.py
+│   │   quest_queries.py
+│   │   schema.sql
+│   │
+│   └───__pycache__
+│           cards.cpython-312.pyc
+│           collection.cpython-312.pyc
+│           database.cpython-312.pyc
+│           decks.cpython-312.pyc
+│           deck_slots.cpython-312.pyc
+│           monsters.cpython-312.pyc
+│           player.cpython-312.pyc
+│           queries.cpython-312.pyc
+│           quest.cpython-312.pyc
+│           quest_queries.cpython-312.pyc
+│
+├───game
+│   │   abilities.py
+│   │   combat.py
+│   │   leveling.py
+│   │   movement.py
+│   │   quest_events.py
+│   │   rewards.py
+│   │   world.py
+│   │   Текстовый документ.txt
+│   │
+│   ├───combat
+│   ├───quests
+│   ├───rewards
+│   ├───world
+│   └───__pycache__
+│           combat.cpython-312.pyc
+│           movement.cpython-312.pyc
+│           quest_events.cpython-312.pyc
+│           world.cpython-312.pyc
+│
+├───generators
+│   │   card_generator.py
+│   │   champion_lore_generator.py
+│   │   generate_all_cards.py
+│   │   skin_generator.py
+│   │
+│   └───__pycache__
+│           card_generator.cpython-312.pyc
+│
+├───sql
+│       schema.sql
+│
+└───__pycache__
+        main.cpython-312.pyc
+
