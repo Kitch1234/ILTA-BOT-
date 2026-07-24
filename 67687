@@ -1,33 +1,59 @@
 import os
 
+folders = [
+    # Чемпионы
+    "assets/champions/Demacia",
+    "assets/champions/Noxus",
+    "assets/champions/Ionia",
+    "assets/champions/Freljord",
+    "assets/champions/Shurima",
+    "assets/champions/Piltover_Zaun",
+    "assets/champions/Shadow_Isles",
+    "assets/champions/Void",
 
-ASSETS_PATH = "assets/champions"
+    # Мобы
+    "assets/mobs/Demacia",
+    "assets/mobs/Noxus",
+    "assets/mobs/Ionia",
+    "assets/mobs/Freljord",
+    "assets/mobs/Shurima",
+    "assets/mobs/Piltover_Zaun",
+    "assets/mobs/Shadow_Isles",
+    "assets/mobs/Void",
 
+    # Карты игроков
+    "assets/cards/champions",
+    "assets/cards/spells",
+    "assets/cards/items",
+    "assets/cards/monsters",
 
+    # Фоны регионов
+    "assets/backgrounds/regions",
 
-def get_champion_art(
-    champion,
-    skin_id
-):
-    """
-    Получить локальный арт чемпиона
-    """
+    # UI
+    "assets/ui/profile",
+    "assets/ui/cards",
+    "assets/ui/battle",
+    "assets/ui/buttons",
 
-    path = os.path.join(
+    # Данные
+    "data/champions",
+    "data/mobs",
+    "data/items",
+    "data/quests",
+    "data/regions",
 
-        ASSETS_PATH,
+    # Игровые системы
+    "game/combat",
+    "game/quests",
+    "game/world",
+    "game/rewards",
 
-        champion,
+    # База данных
+    "database"
+]
 
-        f"{skin_id}.jpg"
+for folder in folders:
+    os.makedirs(folder, exist_ok=True)
 
-    )
-
-
-    if os.path.exists(path):
-
-        return path
-
-
-
-    return None
+print("✅ Структура ILTA создана!")
