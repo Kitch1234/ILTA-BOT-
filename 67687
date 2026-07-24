@@ -1,18 +1,48 @@
-import os
+ource_assets/
+    LoL/
+        dragonhead.js
+        languages.js
+        languages.json
+        OLDPATCHS.md
+        README.md
+        constants/
+            gameModes.json
+            gameTypes.json
+            maps.json
+            queues.json
+            seasons.json
+        extras/
+            creep.png
+            gold.png
+            nashor.png
+            oldmasteryback.jpg
+            rift_herald.png
+        img/
+        latest/
+            .htaccess
+            manifest.js
+            manifest.json
+        lolpatch_latest/
+            manifest.js
+            manifest.json
+    LoR/
+        .gitmodules
+        metadata.json
+        OLDPATCHS.md
+        README.md
+        adventure/
+        core/
+        set1/
+        set2/
+        set3/
+        set4/
+        set5/
+        set6/
+        set6cde/
+        set7/
+        set7b/
+        set8/
+        set9/
+        tpoc/
 
-path = "source_assets/LoR/set1"
-
-print("Проверяем:", path)
-print("----------------")
-
-for root, dirs, files in os.walk(path):
-    level = root.replace(path, "").count(os.sep)
-
-    if level > 3:
-        continue
-
-    indent = "    " * level
-    print(indent + os.path.basename(root) + "/")
-
-    for file in files[:5]:
-        print(indent + "   " + file)
+C:\Users\Ketek'
