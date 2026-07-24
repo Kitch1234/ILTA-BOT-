@@ -1,128 +1,25 @@
-import os
+REGIONS = {
 
+    "Demacia": "Демасия",
 
-CHAMPIONS_PATH = "assets/champions"
+    "Noxus": "Ноксус",
 
+    "Freljord": "Фрельйорд",
 
-IMAGE_EXTENSIONS = (
-    ".png",
-    ".jpg",
-    ".jpeg",
-    ".webp"
-)
+    "Ionia": "Иония",
 
+    "Shurima": "Шурима",
 
+    "Void": "Пустота",
 
-def load_champions():
+    "Shadow_Isles": "Теневые острова",
 
-    champions = {}
+    "Piltover_Zaun": "Пилтовер и Заун",
 
+    "Targon": "Таргон",
 
-    if not os.path.exists(CHAMPIONS_PATH):
+    "Bilgewater": "Билджвотер",
 
-        print(
-            "❌ Папка assets/champions не найдена"
-        )
+    "Bandle_City": "Бандл Сити"
 
-        return champions
-
-
-
-    # регионы
-
-    for region in os.listdir(CHAMPIONS_PATH):
-
-
-        region_path = os.path.join(
-            CHAMPIONS_PATH,
-            region
-        )
-
-
-        if not os.path.isdir(region_path):
-
-            continue
-
-
-
-        # чемпионы
-
-        for champion in os.listdir(region_path):
-
-
-            champion_path = os.path.join(
-                region_path,
-                champion
-            )
-
-
-            if not os.path.isdir(champion_path):
-
-                continue
-
-
-
-            skins = []
-
-
-
-            # скины
-
-            for image in os.listdir(champion_path):
-
-
-                if not image.lower().endswith(
-                    IMAGE_EXTENSIONS
-                ):
-
-                    continue
-
-
-
-                skin_name = os.path.splitext(
-                    image
-                )[0]
-
-
-
-                skins.append({
-
-                    "name": skin_name,
-
-                    "file": os.path.join(
-                        champion_path,
-                        image
-                    )
-
-                })
-
-
-
-            if len(skins) == 0:
-
-                continue
-
-
-
-            champions[champion] = {
-
-                "region": region,
-
-                "skins": skins
-
-            }
-
-
-
-            print(
-                f"✅ Загружен {region}: {champion} ({len(skins)} картинок)"
-            )
-
-
-
-    print(
-        f"🌟 Всего чемпионов загружено: {len(champions)}"
-    )
-
-
-    return champions
+}
