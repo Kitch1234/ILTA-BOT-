@@ -1,25 +1,6 @@
-REGIONS = {
-
-    "Demacia": "Демасия",
-
-    "Noxus": "Ноксус",
-
-    "Freljord": "Фрельйорд",
-
-    "Ionia": "Иония",
-
-    "Shurima": "Шурима",
-
-    "Void": "Пустота",
-
-    "Shadow_Isles": "Теневые острова",
-
-    "Piltover_Zaun": "Пилтовер и Заун",
-
-    "Targon": "Таргон",
-
-    "Bilgewater": "Билджвотер",
-
-    "Bandle_City": "Бандл Сити"
-
-}
+Загружен: test_event
+✅ Загружен: deck
+✅ Загружен: battle
+❌ Ошибка загрузки pack: Extension 'cogs.pack' raised an error: SyntaxError: unmatched '}' (translations.py, line 231)
+✅ Загружен: collection
+✅ Загружен: map
