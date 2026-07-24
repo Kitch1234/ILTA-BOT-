@@ -1,23 +1,128 @@
-:\Users\Ketek'\Desktop\qantum_universe>python main.py
-✅ База данных подключена
-✅ Загружен: auction
-✅ Загружен: balance
-✅ Загружен: contract
-✅ Загружен: daily
-✅ Загружен: inventory
-✅ Загружен: profile
-✅ Загружен: quest
-✅ Загружен: shop
-✅ Загружен: work
-🌍 Регионов загружено для чемпионов: 32
-❌ Ошибка загрузки travel: Extension 'cogs.travel' raised an error: ImportError: cannot import name 'REGIONS' from 'data.regions' (C:\Users\Ketek'\Desktop\qantum_universe\data\regions.py)
-✅ Загружен: quest_reward
-✅ Загружен: cards
-✅ Загружен: test_event
-✅ Загружен: deck
-✅ Загружен: battle
-❌ Ошибка загрузки pack: Extension 'cogs.pack' raised an error: ImportError: cannot import name 'load_champions' from partially initialized module 'data.champion_loader' (most likely due to a circular import) (C:\Users\Ketek'\Desktop\qantum_universe\data\champion_loader.py)
-✅ Загружен: collection
-❌ Ошибка загрузки map: Extension 'cogs.map' raised an error: ImportError: cannot import name 'REGIONS' from 'data.regions' (C:\Users\Ketek'\Desktop\qantum_universe\data\regions.py)
-✅ Синхронизировано команд: 21
-🟢 Бот запущен как ILTA BOT#7827
+import os
+
+
+CHAMPIONS_PATH = "assets/champions"
+
+
+IMAGE_EXTENSIONS = (
+    ".png",
+    ".jpg",
+    ".jpeg",
+    ".webp"
+)
+
+
+
+def load_champions():
+
+    champions = {}
+
+
+    if not os.path.exists(CHAMPIONS_PATH):
+
+        print(
+            "❌ Папка assets/champions не найдена"
+        )
+
+        return champions
+
+
+
+    # регионы
+
+    for region in os.listdir(CHAMPIONS_PATH):
+
+
+        region_path = os.path.join(
+            CHAMPIONS_PATH,
+            region
+        )
+
+
+        if not os.path.isdir(region_path):
+
+            continue
+
+
+
+        # чемпионы
+
+        for champion in os.listdir(region_path):
+
+
+            champion_path = os.path.join(
+                region_path,
+                champion
+            )
+
+
+            if not os.path.isdir(champion_path):
+
+                continue
+
+
+
+            skins = []
+
+
+
+            # скины
+
+            for image in os.listdir(champion_path):
+
+
+                if not image.lower().endswith(
+                    IMAGE_EXTENSIONS
+                ):
+
+                    continue
+
+
+
+                skin_name = os.path.splitext(
+                    image
+                )[0]
+
+
+
+                skins.append({
+
+                    "name": skin_name,
+
+                    "file": os.path.join(
+                        champion_path,
+                        image
+                    )
+
+                })
+
+
+
+            if len(skins) == 0:
+
+                continue
+
+
+
+            champions[champion] = {
+
+                "region": region,
+
+                "skins": skins
+
+            }
+
+
+
+            print(
+                f"✅ Загружен {region}: {champion} ({len(skins)} картинок)"
+            )
+
+
+
+    print(
+        f"🌟 Всего чемпионов загружено: {len(champions)}"
+    )
+
+
+    return champions
