@@ -1,42 +1,386 @@
-CARD_LAYOUT = {
+from PIL import Image, ImageDraw, ImageFont
+import os
+import re
+
+from data.card_layout import CARD_LAYOUT
 
 
-    # ID карты справа сверху
+CARD_WIDTH = 1060
+CARD_HEIGHT = 1484
 
-    "number": (900, 90),
+ART_X = 55
+ART_Y = 130
 
-
-
-    # Имя чемпиона
-
-    "champion": (530, 1010),
-
+ART_WIDTH = 950
+ART_HEIGHT = 850
 
 
-    # Имя скина
-
-    "skin": (530, 1080),
-
-
-
-    # Статы
-
-    "attack": (250, 1210),
-
-    "health": (530, 1210),
-
-    "defense": (810, 1210),
-
-
-
-    # Регион
-
-    "region_text": (250, 1380),
-
-
-
-    # Редкость
-
-    "rarity": (820, 1380)
-
+RARITY_MAP = {
+    "Обычный": "common",
+    "Редкий": "rare",
+    "Эпический": "epic",
+    "Легендарный": "legendary",
+    "Мифический": "mythic"
 }
+
+
+def get_font(size, style="regular"):
+
+    fonts = {
+        "regular": "assets/fonts/Beaufort-Regular.ttf",
+        "medium": "assets/fonts/Beaufort-Medium.ttf",
+        "bold": "assets/fonts/Beaufort-Bold.ttf",
+        "heavy": "assets/fonts/Beaufort-Heavy.ttf"
+    }
+
+    try:
+        return ImageFont.truetype(
+            fonts[style],
+            size
+        )
+
+    except:
+        return ImageFont.load_default()
+
+
+
+def load_asset(path):
+
+    if os.path.exists(path):
+
+        return Image.open(path).convert("RGBA")
+
+    return None
+
+
+
+def find_champion_image(region, champion, skin):
+
+    base_path = (
+        f"assets/champions/{region}/{champion}/{skin}"
+    )
+
+    for ext in [
+        ".webp",
+        ".png",
+        ".jpg",
+        ".jpeg"
+    ]:
+
+        path = base_path + ext
+
+        if os.path.exists(path):
+            return path
+
+
+    return None
+
+
+
+def crop_image(img, size):
+
+    ratio = img.width / img.height
+
+    target = size[0] / size[1]
+
+
+    if ratio > target:
+
+        h = size[1]
+        w = int(h * ratio)
+
+    else:
+
+        w = size[0]
+        h = int(w / ratio)
+
+
+    img = img.resize(
+        (w,h)
+    )
+
+
+    left = (w-size[0]) // 2
+    top = (h-size[1]) // 2
+
+
+    return img.crop(
+        (
+            left,
+            top,
+            left+size[0],
+            top+size[1]
+        )
+    )
+
+
+
+def safe_filename(name):
+
+    return re.sub(
+        r'[\\/*?:"<>|]',
+        "",
+        name
+    )
+
+
+
+def create_card(
+        champion,
+        skin,
+        rarity,
+        region,
+        attack,
+        health,
+        defense,
+        card_number
+):
+
+
+    # ------------------
+    # ART
+    # ------------------
+
+    image_path = find_champion_image(
+        region,
+        champion,
+        skin
+    )
+
+
+    if not image_path:
+
+        print(
+            f"Не найден арт: {region}/{champion}/{skin}"
+        )
+
+        return None
+
+
+    art = Image.open(
+        image_path
+    ).convert("RGBA")
+
+
+    art = crop_image(
+        art,
+        (
+            ART_WIDTH,
+            ART_HEIGHT
+        )
+    )
+
+
+    card = Image.new(
+        "RGBA",
+        (
+            CARD_WIDTH,
+            CARD_HEIGHT
+        ),
+        (0,0,0,0)
+    )
+
+
+    card.alpha_composite(
+        art,
+        (
+            ART_X,
+            ART_Y
+        )
+    )
+
+
+
+    # ------------------
+    # FRAME
+    # ------------------
+
+    frame_name = RARITY_MAP.get(
+        rarity,
+        "common"
+    )
+
+
+    frame = load_asset(
+        f"assets/frames/{frame_name}.png"
+    )
+
+
+    if frame:
+
+        frame = frame.resize(
+            (
+                CARD_WIDTH,
+                CARD_HEIGHT
+            )
+        )
+
+
+        card.alpha_composite(
+            frame,
+            (0,0)
+        )
+
+
+
+    draw = ImageDraw.Draw(card)
+
+
+
+    # ------------------
+    # FONTS
+    # ------------------
+
+    id_font = get_font(
+        45,
+        "medium"
+    )
+
+    champion_font = get_font(
+        80,
+        "heavy"
+    )
+
+    skin_font = get_font(
+        40,
+        "medium"
+    )
+
+    stat_font = get_font(
+        65,
+        "bold"
+    )
+
+    bottom_font = get_font(
+        40,
+        "bold"
+    )
+
+
+
+    # ------------------
+    # TEXT
+    # ------------------
+
+    draw.text(
+        CARD_LAYOUT["number"],
+        str(card_number),
+        anchor="mm",
+        font=id_font,
+        fill="white",
+        stroke_width=2,
+        stroke_fill="black"
+    )
+
+
+    draw.text(
+        CARD_LAYOUT["champion"],
+        champion.upper(),
+        anchor="mm",
+        font=champion_font,
+        fill="white",
+        stroke_width=4,
+        stroke_fill="black"
+    )
+
+
+    skin_name = skin.replace(
+        "_",
+        " "
+    )
+
+
+    if skin != "Base":
+
+        draw.text(
+            CARD_LAYOUT["skin"],
+            skin_name.upper(),
+            anchor="mm",
+            font=skin_font,
+            fill="white",
+            stroke_width=3,
+            stroke_fill="black"
+        )
+
+
+
+    draw.text(
+        CARD_LAYOUT["attack"],
+        str(attack),
+        anchor="mm",
+        font=stat_font,
+        fill="white"
+    )
+
+
+    draw.text(
+        CARD_LAYOUT["health"],
+        str(health),
+        anchor="mm",
+        font=stat_font,
+        fill="white"
+    )
+
+
+    draw.text(
+        CARD_LAYOUT["defense"],
+        str(defense),
+        anchor="mm",
+        font=stat_font,
+        fill="white"
+    )
+
+
+    draw.text(
+        CARD_LAYOUT["region_text"],
+        region.upper(),
+        anchor="mm",
+        font=bottom_font,
+        fill="white"
+    )
+
+
+    draw.text(
+        CARD_LAYOUT["rarity"],
+        rarity.upper(),
+        anchor="mm",
+        font=bottom_font,
+        fill="gold"
+    )
+
+
+
+    # ------------------
+    # SAVE
+    # ------------------
+
+    os.makedirs(
+        "generated_cards",
+        exist_ok=True
+    )
+
+
+    filename = safe_filename(
+        f"{champion}_{skin}"
+    )
+
+
+    path = (
+        f"generated_cards/{filename}.png"
+    )
+
+
+    card.convert(
+        "RGB"
+    ).save(
+        path,
+        quality=95
+    )
+
+
+    print(
+        f"Создано: {path}"
+    )
+
+
+    return path
