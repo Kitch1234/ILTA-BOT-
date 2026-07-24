@@ -1,557 +1,147 @@
-from PIL import Image, ImageDraw, ImageFont
 import os
-import re
-
-from data.card_layout import CARD_LAYOUT
 
 
-CARD_WIDTH = 1060
-CARD_HEIGHT = 1484
-
-
-ART_X = 55
-ART_Y = 130
-
-ART_WIDTH = 950
-ART_HEIGHT = 850
+CHAMPIONS_PATH = "assets/champions"
 
 
 
-RARITY_MAP = {
-
-    "Обычный": "common",
-    "Редкий": "rare",
-    "Эпический": "epic",
-    "Легендарный": "legendary",
-    "Мифический": "mythic",
-    "Престижный": "prestige",
-    "Чемпионский": "champion"
-
-}
+IMAGE_EXTENSIONS = (
+    ".png",
+    ".jpg",
+    ".jpeg",
+    ".webp"
+)
 
 
 
-# ==========================
-# ШРИФТЫ
-# ==========================
-
-def get_font(size, style="regular"):
-
-    fonts = {
-
-        "regular":
-        "assets/fonts/Beaufort-Regular.ttf",
-
-        "medium":
-        "assets/fonts/Beaufort-Medium.ttf",
-
-        "bold":
-        "assets/fonts/Beaufort-Bold.ttf",
-
-        "heavy":
-        "assets/fonts/Beaufort-Heavy.ttf"
-
-    }
+def load_champions():
 
 
-    try:
+    champions = {}
 
-        return ImageFont.truetype(
-            fonts[style],
-            size
+
+
+    if not os.path.exists(CHAMPIONS_PATH):
+
+        print(
+            "❌ Папка champions не найдена"
         )
 
-    except:
-
-        return ImageFont.load_default()
+        return champions
 
 
 
-# ==========================
-# ЗАГРУЗКА
-# ==========================
+    # регионы
 
-def load_asset(path):
+    for region in os.listdir(CHAMPIONS_PATH):
 
-    if os.path.exists(path):
 
-        return Image.open(
-            path
-        ).convert(
-            "RGBA"
+        region_path = os.path.join(
+
+            CHAMPIONS_PATH,
+
+            region
+
         )
 
 
-    return None
+        if not os.path.isdir(region_path):
 
+            continue
 
 
 
-# ==========================
-# ОБРЕЗКА АРТА
-# ==========================
+        # чемпионы
 
-def crop_image(
-    img,
-    size
-):
+        for champion in os.listdir(region_path):
 
-    ratio = img.width / img.height
 
-    target = size[0] / size[1]
+            champion_path = os.path.join(
 
+                region_path,
 
-    if ratio > target:
+                champion
 
-        h = size[1]
-
-        w = int(
-            h * ratio
-        )
-
-    else:
-
-        w = size[0]
-
-        h = int(
-            w / ratio
-        )
-
-
-    img = img.resize(
-        (
-            w,
-            h
-        )
-    )
-
-
-    left = (
-        w - size[0]
-    ) // 2
-
-
-    top = (
-        h - size[1]
-    ) // 2
-
-
-
-    return img.crop(
-
-        (
-            left,
-            top,
-            left + size[0],
-            top + size[1]
-        )
-
-    )
-
-
-
-
-# ==========================
-# ИМЯ ФАЙЛА
-# ==========================
-
-def safe_filename(name):
-
-    return re.sub(
-
-        r'[\\/*?:"<>|]',
-
-        "",
-
-        name
-
-    )
-
-
-
-
-# ==========================
-# СОЗДАНИЕ КАРТЫ
-# ==========================
-
-def create_card(
-
-    champion,
-
-    skin,
-
-    rarity,
-
-    region,
-
-    attack,
-
-    health,
-
-    defense,
-
-    image_path,
-
-    card_number
-
-):
-
-
-    # ----------------------
-    # АРТ
-    # ----------------------
-
-    art = Image.open(
-
-        image_path
-
-    ).convert(
-
-        "RGBA"
-
-    )
-
-
-    art = crop_image(
-
-        art,
-
-        (
-            ART_WIDTH,
-            ART_HEIGHT
-        )
-
-    )
-
-
-
-    # ----------------------
-    # ОСНОВА КАРТЫ
-    # ----------------------
-
-    card = Image.new(
-
-        "RGBA",
-
-        (
-            CARD_WIDTH,
-            CARD_HEIGHT
-        ),
-
-        (
-            0,
-            0,
-            0,
-            0
-        )
-
-    )
-
-
-    card.alpha_composite(
-
-        art,
-
-        (
-            ART_X,
-            ART_Y
-        )
-
-    )
-
-
-
-    # ----------------------
-    # РАМКА
-    # ----------------------
-
-    frame_name = RARITY_MAP.get(
-
-        rarity,
-
-        "common"
-
-    )
-
-
-    frame = load_asset(
-
-        f"assets/frames/{frame_name}.png"
-
-    )
-
-
-    if frame:
-
-
-        frame = frame.resize(
-
-            (
-                CARD_WIDTH,
-                CARD_HEIGHT
             )
 
-        )
 
+            if not os.path.isdir(champion_path):
 
-        card.alpha_composite(
-
-            frame,
-
-            (
-                0,
-                0
-            )
-
-        )
+                continue
 
 
 
-    draw = ImageDraw.Draw(card)
+            skins = []
 
 
 
-    # ----------------------
-    # ШРИФТЫ
-    # ----------------------
+            # образы
 
-    id_font = get_font(
-        45,
-        "medium"
-    )
+            for file in os.listdir(champion_path):
 
 
-    champion_font = get_font(
-        80,
-        "heavy"
-    )
+                if not file.lower().endswith(
+                    IMAGE_EXTENSIONS
+                ):
+
+                    continue
 
 
-    skin_font = get_font(
-        40,
-        "medium"
-    )
+
+                skin_name = os.path.splitext(
+                    file
+                )[0]
 
 
-    stat_font = get_font(
-        65,
-        "bold"
-    )
 
+                skins.append({
 
-    bottom_font = get_font(
-        45,
-        "bold"
-    )
+                    "name": skin_name,
+
+                    "file": os.path.join(
+
+                        champion_path,
+
+                        file
+
+                    )
+
+                })
 
 
 
 
-    # ----------------------
-    # НОМЕР
-    # ----------------------
+            if skins:
 
-    draw.text(
 
-        CARD_LAYOUT["number"],
+                champions[champion] = {
 
-        str(card_number),
 
-        anchor="mm",
+                    "region": region,
 
-        font=id_font,
 
-        fill="white",
+                    "skins": skins
 
-        stroke_width=2,
 
-        stroke_fill="black"
-
-    )
+                }
 
 
 
+                print(
 
-    # ----------------------
-    # ЧЕМПИОН
-    # ----------------------
+                    f"✅ {region}: {champion} "
+                    f"({len(skins)} образов)"
 
-    draw.text(
+                )
 
-        CARD_LAYOUT["champion"],
 
-        champion.upper(),
 
-        anchor="mm",
 
-        font=champion_font,
+    print(
 
-        fill="white",
-
-        stroke_width=4,
-
-        stroke_fill="black"
+        f"\nВсего чемпионов: {len(champions)}"
 
     )
 
 
-
-
-    # ----------------------
-    # СКИН
-    # ----------------------
-
-    draw.text(
-
-        CARD_LAYOUT["skin"],
-
-        skin,
-
-        anchor="mm",
-
-        font=skin_font,
-
-        fill="white",
-
-        stroke_width=3,
-
-        stroke_fill="black"
-
-    )
-
-
-
-
-    # ----------------------
-    # СТАТЫ
-    # ----------------------
-
-    draw.text(
-
-        CARD_LAYOUT["attack"],
-
-        str(attack),
-
-        anchor="mm",
-
-        font=stat_font,
-
-        fill="white"
-
-    )
-
-
-    draw.text(
-
-        CARD_LAYOUT["health"],
-
-        str(health),
-
-        anchor="mm",
-
-        font=stat_font,
-
-        fill="white"
-
-    )
-
-
-    draw.text(
-
-        CARD_LAYOUT["defense"],
-
-        str(defense),
-
-        anchor="mm",
-
-        font=stat_font,
-
-        fill="white"
-
-    )
-
-
-
-
-    # ----------------------
-    # РЕГИОН
-    # ----------------------
-
-    draw.text(
-
-        CARD_LAYOUT["region_text"],
-
-        region.upper(),
-
-        anchor="mm",
-
-        font=bottom_font,
-
-        fill="white"
-
-    )
-
-
-
-
-    # ----------------------
-    # РЕДКОСТЬ
-    # ----------------------
-
-    draw.text(
-
-        CARD_LAYOUT["rarity"],
-
-        rarity.upper(),
-
-        anchor="mm",
-
-        font=bottom_font,
-
-        fill="gold"
-
-    )
-
-
-
-
-    # ----------------------
-    # СОХРАНЕНИЕ
-    # ----------------------
-
-    os.makedirs(
-
-        "cards",
-
-        exist_ok=True
-
-    )
-
-
-    filename = safe_filename(
-
-        f"{champion}_{skin}_{card_number}"
-
-    )
-
-
-    path = (
-
-        f"cards/{filename}.png"
-
-    )
-
-
-
-    card.convert(
-
-        "RGB"
-
-    ).save(
-
-        path
-
-    )
-
-
-    return path
+    return champions
