@@ -1,144 +1,192 @@
 # =================
-# GAREN
+# LUCIAN
 # =================
 
 "Base":
-"Оригинальный Гарен",
+"Оригинальный Люциан",
 
-"Battle_Academia_Garen":
-"Гарен из Боевой Академии",
+"Arcana_Lucian":
+"Аркана Люциан",
 
-"Commando_Garen":
-"Коммандос Гарен",
+"Demacia_Vice_Lucian":
+"Вайс Демасии Люциан",
 
-"Demacia_Vice_Garen":
-"Гарен из Вайс Демасии",
+"Heartseeker_Lucian":
+"Люциан, покоритель сердец",
 
-"Desert_Trooper_Garen":
-"Пустынный солдат Гарен",
+"High_Noon_Lucian":
+"Полуденный Люциан",
 
-"Dreadknight_Garen":
-"Рыцарь ужаса Гарен",
+"Hired_Gun_Lucian":
+"Наёмник Люциан",
 
-"God_King_Garen":
-"Бог-Король Гарен",
+"Prestige_Pulsefire_Lucian":
+"Престижный Импульсный огонь Люциан",
 
-"Mecha_Kingdoms_Garen":
-"Меха-Королевства Гарен",
+"PROJECT_Lucian":
+"ПРОЕКТ: Люциан",
 
-"Mythmaker_Garen":
-"Создатель мифов Гарен",
+"Pulsefire_Lucian":
+"Импульсный огонь Люциан",
 
-"Prestige_Mecha_Kingdoms_Garen":
-"Престижный Меха-Королевства Гарен",
+"Striker_Lucian":
+"Нападающий Люциан",
 
-"Rogue_Admiral_Garen":
-"Мятежный адмирал Гарен",
+"Strike_Paladin_Lucian":
+"Ударный паладин Люциан",
 
-"Rugged_Garen":
-"Закалённый Гарен",
-
-"Sanguine_Garen":
-"Кровавый Гарен",
-
-"Steel_Legion_Garen":
-"Стальной легион Гарен",
-
-"Warring_Kingdoms_Garen":
-"Воюющие королевства Гарен",
+"Victorious_Lucian":
+"Победоносный Люциан",
 
 
 
 # =================
-# JARVAN IV
+# LUX
 # =================
 
 "Base":
-"Оригинальный Джарван IV",
+"Оригинальная Люкс",
 
-"Commando_Jarvan_IV":
-"Коммандос Джарван IV",
+"Battle_Academia_Lux":
+"Люкс из Боевой Академии",
 
-"Darkforge_Jarvan_IV":
-"Тёмная кузница Джарван IV",
+"Commando_Lux":
+"Коммандос Люкс",
 
-"Dark_Star_Jarvan_IV":
-"Тёмная звезда Джарван IV",
+"Cosmic_Lux":
+"Космическая Люкс",
 
-"Dragonslayer_Jarvan_IV":
-"Убийца драконов Джарван IV",
+"Dark_Cosmic_Lux":
+"Тёмная космическая Люкс",
 
-"Fnatic_Jarvan_IV":
-"Fnatic Джарван IV",
+"Elementalist_Lux":
+"Элементалистка Люкс",
 
-"Hextech_Jarvan_IV":
-"Хекстековый Джарван IV",
+"Empyrean_Lux":
+"Небесная Люкс",
 
-"Lunar_Beast_Jarvan_IV":
-"Лунный зверь Джарван IV",
+"Imperial_Lux":
+"Имперская Люкс",
 
-"Nightbringer_Jarvan_IV":
-"Вестник ночи Джарван IV",
+"Lunar_Empress_Lux":
+"Лунная императрица Люкс",
 
-"Pool_Party_Jarvan_IV":
-"Вечеринка у бассейна Джарван IV",
+"Pajama_Guardian_Lux":
+"Страж пижамы Люкс",
 
-"SSG_Jarvan_IV":
-"SSG Джарван IV",
+"Porcelain_Lux":
+"Фарфоровая Люкс",
 
-"Victorious_Jarvan_IV":
-"Победоносный Джарван IV",
+"Prestige_Battle_Academia_Lux":
+"Престижная Люкс из Боевой Академии",
 
-"Warring_Kingdoms_Jarvan_IV":
-"Воюющие королевства Джарван IV",
+"Prestige_Porcelain_Lux":
+"Престижная фарфоровая Люкс",
 
-"Worlds_2021_Jarvan_IV":
-"Чемпионат мира 2021 Джарван IV",
+"Sorceress_Lux":
+"Колдунья Люкс",
+
+"Space_Groove_Lux":
+"Космический ритм Люкс",
+
+"Spellthief_Lux":
+"Похитительница заклинаний Люкс",
+
+"Star_Guardian_Lux":
+"Страж звёзд Люкс",
+
+"Steel_Legion_Lux":
+"Стальной легион Люкс",
 
 
 
 # =================
-# KAYLE
+# MORGANA
 # =================
 
 "Base":
-"Оригинальная Кейл",
+"Оригинальная Моргана",
 
-"Aether_Wing_Kayle":
-"Крыло эфира Кейл",
+"Bewitching_Morgana":
+"Заколдованная Моргана",
 
-"Battleborn_Kayle":
-"Рождённая в битве Кейл",
+"Blackthorn_Morgana":
+"Терновая Моргана",
 
-"Dragonslayer_Kayle":
-"Убийца драконов Кейл",
+"Blade_Mistress_Morgana":
+"Повелительница клинков Моргана",
 
-"Iron_Inquisitor_Kayle":
-"Железный инквизитор Кейл",
+"Coven_Morgana":
+"Шабаш Моргана",
 
-"Judgment_Kayle":
-"Правосудие Кейл",
+"Dawnbringer_Morgana":
+"Вестница рассвета Моргана",
 
-"Pentakill_Kayle":
-"Пентакилл Кейл",
+"Exiled_Morgana":
+"Изгнанная Моргана",
 
-"Pentakill_III_Lost_Chapter_Kayle":
-"Пентакилл III: Потерянная глава Кейл",
+"Ghost_Bride_Morgana":
+"Призрачная невеста Моргана",
 
-"PsyOps_Kayle":
-"Пси-операция Кейл",
+"Lunar_Wraith_Morgana":
+"Лунный призрак Моргана",
 
-"Riot_Kayle":
-"Riot Кейл",
+"Majestic_Empress_Morgana":
+"Величественная императрица Моргана",
 
-"Silver_Kayle":
-"Серебряная Кейл",
+"Prestige_Bewitching_Morgana":
+"Престижная заколдованная Моргана",
 
-"Sun_Eater_Kayle":
-"Пожиратель солнца Кейл",
+"Sinful_Succulence_Morgana":
+"Грешная сладость Моргана",
 
-"Transcended_Kayle":
-"Возвышенная Кейл",
+"Snow_Moon_Morgana":
+"Снежная луна Моргана",
 
-"Viridian_Kayle":
-"Изумрудная Кейл"
+"Star_Nemesis_Morgana":
+"Звёздный враг Моргана",
+
+"Victorious_Morgana":
+"Победоносная Моргана",
+
+
+
+# =================
+# POPPY
+# =================
+
+"Base":
+"Оригинальная Поппи",
+
+"Astronaut_Poppy":
+"Космонавт Поппи",
+
+"Battle_Regalia_Poppy":
+"Боевая регалия Поппи",
+
+"Bewitching_Poppy":
+"Заколдованная Поппи",
+
+"Blacksmith_Poppy":
+"Кузнец Поппи",
+
+"Hextech_Poppy":
+"Хекстековая Поппи",
+
+"Lollipoppy":
+"Лоллипоппи",
+
+"Noxus_Poppy":
+"Ноксусская Поппи",
+
+"Ragdoll_Poppy":
+"Тряпичная Поппи",
+
+"Scarlet_Hammer_Poppy":
+"Алый молот Поппи",
+
+"Snow_Fawn_Poppy":
+"Снежный оленёнок Поппи",
+
+"Star_Guardian_Poppy":
+"Страж звёзд Поппи"
