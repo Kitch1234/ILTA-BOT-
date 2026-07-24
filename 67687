@@ -1,230 +1,33 @@
-CHAMPION_NAMES = {
-
-    # DEMACIA
-
-    "Fiora": "Фиора",
-    "Galio": "Галио",
-    "Garen": "Гарен",
-    "Jarvan IV": "Джарван IV",
-    "Kayle": "Кейл",
-    "Lucian": "Люциан",
-    "Lux": "Люкс",
-    "Morgana": "Моргана",
-    "Poppy": "Поппи",
-    "Quinn": "Квинн",
-    "Senna": "Сенна",
-    "Shyvana": "Шивана",
-    "Sona": "Сона",
-    "Sylas": "Сайлас",
-    "Vayne": "Вейн",
-    "Xin Zhao": "Синь Чжао",
-
-
-    # NOXUS
-
-    "Ambessa": "Амбесса",
-    "Briar": "Брайер",
-    "Cassiopeia": "Кассиопея",
-    "Darius": "Дариус",
-    "Draven": "Дрейвен",
-    "Katarina": "Катарина",
-    "Kled": "Клед",
-    "LeBlanc": "ЛеБлан",
-    "Mordekaiser": "Мордекайзер",
-    "Rell": "Релл",
-    "Riven": "Ривен",
-    "Samira": "Самира",
-    "Sion": "Сион",
-    "Swain": "Свейн",
-    "Talon": "Талон",
-    "Vladimir": "Владимир"
-
-}
-
-
-
-SKIN_NAMES = {
-
-
 # =================
-# GAREN
-# =================
-
-"Base": "Оригинальный",
-
-"Battle_Academia_Garen":
-"Гарен из Боевой Академии",
-
-"Commando_Garen":
-"Коммандос Гарен",
-
-"Demacia_Vice_Garen":
-"Гарен из Вайс Демасии",
-
-"Desert_Trooper_Garen":
-"Пустынный солдат Гарен",
-
-"Dreadknight_Garen":
-"Рыцарь ужаса Гарен",
-
-"God_King_Garen":
-"Бог-Король Гарен",
-
-"Mecha_Kingdoms_Garen":
-"Меха-Королевства Гарен",
-
-"Mythmaker_Garen":
-"Создатель мифов Гарен",
-
-"Prestige_Mecha_Kingdoms_Garen":
-"Престижный Меха-Королевства Гарен",
-
-"Rogue_Admiral_Garen":
-"Мятежный адмирал Гарен",
-
-"Rugged_Garen":
-"Брутальный Гарен",
-
-"Sanguine_Garen":
-"Кровавый Гарен",
-
-"Steel_Legion_Garen":
-"Стальной легион Гарен",
-
-"Warring_Kingdoms_Garen":
-"Воюющие королевства Гарен",
-
-
-
-# =================
-# DARIUS
-# =================
-
-"Academy_Darius":
-"Дариус из Академии",
-
-"Bioforge_Darius":
-"Биокузница Дариус",
-
-"Crime_City_Nightmare_Darius":
-"Кошмар криминального города Дариус",
-
-"Dreadnova_Darius":
-"Дреднова Дариус",
-
-"Dunkmaster_Darius":
-"Мастер данков Дариус",
-
-"God_King_Darius":
-"Бог-Король Дариус",
-
-"High_Noon_Darius":
-"Полдень Дариус",
-
-"Lord_Darius":
-"Лорд Дариус",
-
-"Lunar_Beast_Darius":
-"Лунный зверь Дариус",
-
-"Spirit_Blossom_Darius":
-"Цветение духов Дариус",
-
-"Woad_King_Darius":
-"Король воадов Дариус",
-
-
-
-# =================
-# LUX
-# =================
-
-"Battle_Academia_Lux":
-"Люкс из Боевой Академии",
-
-"Cosmic_Lux":
-"Космическая Люкс",
-
-"Dark_Cosmic_Lux":
-"Тёмная космическая Люкс",
-
-"Elementalist_Lux":
-"Люкс-элементалист",
-
-"Empyrean_Lux":
-"Небесная Люкс",
-
-"Lunar_Empress_Lux":
-"Лунная императрица Люкс",
-
-"Pajama_Guardian_Lux":
-"Страж пижамы Люкс",
-
-"Porcelain_Lux":
-"Фарфоровая Люкс",
-
-"Prestige_Battle_Academia_Lux":
-"Престижная Люкс из Боевой Академии",
-
-"Star_Guardian_Lux":
-"Звёздный защитник Люкс",
-
-"Space_Groove_Lux":
-"Космический ритм Люкс",
-
-
-
-# =================
-# DARIUS / NOXUS COMMON
+# GALIO
 # =================
 
 "Base":
-"Оригинальный"
+"Оригинальный Галио",
 
-}
-# =================
-# FIORA
-# =================
+"Birdio":
+"Бирдио Галио",
 
-"Base":
-"Оригинальная Фиора",
+"Commando_Galio":
+"Коммандос Галио",
 
-"Bewitching_Fiora":
-"Заколдованная Фиора",
+"Debonair_Galio":
+"Дебонер Галио",
 
-"Faerie_Court_Fiora":
-"Двор Фей Фиора",
+"Dragon_Guardian_Galio":
+"Страж драконов Галио",
 
-"Headmistress_Fiora":
-"Директор Фиора",
+"Enchanted_Galio":
+"Зачарованный Галио",
 
-"Heartpiercer_Fiora":
-"Пронзающая сердца Фиора",
+"Gatekeeper_Galio":
+"Хранитель врат Галио",
 
-"iG_Fiora":
-"iG Фиора",
+"Hextech_Galio":
+"Хекстековый Галио",
 
-"Lunar_Beast_Fiora":
-"Лунный зверь Фиора",
+"Infernal_Galio":
+"Преисподняя Галио",
 
-"Nightraven_Fiora":
-"Ночной ворон Фиора",
-
-"Pool_Party_Fiora":
-"Вечеринка у бассейна Фиора",
-
-"Prestige_Lunar_Beast_Fiora":
-"Престижный Лунный зверь Фиора",
-
-"PROJECT_Fiora":
-"ПРОЕКТ: Фиора",
-
-"Pulsefire_Fiora":
-"Импульсный огонь Фиора",
-
-"Royal_Guard_Fiora":
-"Королевский страж Фиора",
-
-"Soaring_Sword_Fiora":
-"Парящий меч Фиора"
-
+"Mythmaker_Galio":
+"Создатель мифов Галио"
