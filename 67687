@@ -1,4 +1,5 @@
-Users\Ketek'\Desktop\qantum_universe>python main.py
+
+C:\Users\Ketek'\Desktop\qantum_universe>python main.py
 ✅ База данных подключена
 ✅ Загружен: auction
 ✅ Загружен: balance
@@ -16,8 +17,8 @@ Users\Ketek'\Desktop\qantum_universe>python main.py
 ✅ Загружен: test_event
 ✅ Загружен: deck
 ✅ Загружен: battle
-❌ Ошибка загрузки pack: Extension 'cogs.pack' raised an error: SyntaxError: '{' was never closed (translations.py, line 46)
+❌ Ошибка загрузки pack: Extension 'cogs.pack' raised an error: SyntaxError: invalid syntax (translations.py, line 189)
 ✅ Загружен: collection
 ✅ Загружен: map
 ✅ Синхронизировано команд: 23
-🟢 Бот запущен как ILTA BOT#7827
+
