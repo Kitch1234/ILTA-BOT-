@@ -5,16 +5,16 @@ CHAMPION_PATH = "assets/champions"
 
 
 
-def load_champions():
+def load_regions():
 
-    champions = {}
+    champion_regions = {}
 
 
 
     if not os.path.exists(CHAMPION_PATH):
 
         print(
-            "❌ Папка assets/champions не найдена"
+            "❌ Не найдена папка champions"
         )
 
         return {}
@@ -22,15 +22,17 @@ def load_champions():
 
 
 
-    # регионы
-
     for region in os.listdir(CHAMPION_PATH):
 
 
         region_path = os.path.join(
+
             CHAMPION_PATH,
+
             region
+
         )
+
 
 
         if not os.path.isdir(
@@ -43,14 +45,15 @@ def load_champions():
 
 
 
-        # чемпионы
-
         for champion in os.listdir(region_path):
 
 
             champion_path = os.path.join(
+
                 region_path,
+
                 champion
+
             )
 
 
@@ -63,76 +66,23 @@ def load_champions():
 
 
 
-
-
-            skins = []
-
-
-
-            # образы
-
-            for file in os.listdir(
-                champion_path
-            ):
-
-
-                if file.lower().endswith(
-                    (
-                        ".png",
-                        ".jpg",
-                        ".jpeg",
-                        ".webp"
-                    )
-                ):
-
-
-                    skin_name = os.path.splitext(
-                        file
-                    )[0]
-
-
-
-                    skins.append(
-
-                        {
-                            "name": skin_name,
-
-                            "file": file,
-
-                            "path": os.path.join(
-                                champion_path,
-                                file
-                            )
-
-                        }
-
-                    )
-
-
-
-
-
-            champions[champion] = {
-
-
-                "name": champion,
-
-
-                "region": region,
-
-
-                "skins": skins
-
-
-            }
+            champion_regions[champion] = region
 
 
 
 
 
     print(
-        f"✅ Загружено чемпионов: {len(champions)}"
+        f"🌍 Регионов загружено для чемпионов: {len(champion_regions)}"
     )
 
 
-    return champions
+    return champion_regions
+
+
+
+
+
+# автоматическая загрузка
+
+champion_regions = load_regions()
