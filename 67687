@@ -1,24 +1,21 @@
 
-C:\Users\Ketek'\Desktop\qantum_universe>python main.py
-✅ База данных подключена
-✅ Загружен: auction
-✅ Загружен: balance
-✅ Загружен: contract
-✅ Загружен: daily
-✅ Загружен: inventory
-✅ Загружен: profile
-✅ Загружен: quest
-✅ Загружен: shop
-✅ Загружен: work
-🌍 Регионов загружено для чемпионов: 32
-✅ Загружен: travel
-✅ Загружен: quest_reward
-✅ Загружен: cards
-✅ Загружен: test_event
-✅ Загружен: deck
-✅ Загружен: battle
-❌ Ошибка загрузки pack: Extension 'cogs.pack' raised an error: SyntaxError: invalid syntax (translations.py, line 189)
-✅ Загружен: collection
-✅ Загружен: map
-✅ Синхронизировано команд: 23
+# =================
+# DARIUS / NOXUS COMMON
+# =================
 
+"Base":
+"Оригинальный"
+
+
+# =================
+# FIORA
+# =================
+
+"Base":
+"Оригинальная Фиора",
+
+"Bewitching_Fiora":
+"Заколдованная Фиора",
+
+"Faerie_Court_Fiora":
+"Двор Фей Фиора",
