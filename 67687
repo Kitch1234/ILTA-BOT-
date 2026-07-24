@@ -1,460 +1,557 @@
-import discord
-from discord.ext import commands
-from discord import app_commands
-
-import random
+from PIL import Image, ImageDraw, ImageFont
 import os
+import re
 
-from database.cards import add_card
-
-from data.champion_loader import load_champions
-from data.regions import champion_regions
-from data.loot import get_card_rarity
-
-from data.translations import (
-    get_skin_name,
-    get_champion_name
-)
-
-from generators.card_generator import create_card
+from data.card_layout import CARD_LAYOUT
 
 
-class Pack(commands.Cog):
-
-    def __init__(self, bot):
-
-        self.bot = bot
-
-        self.champions = load_champions()
+CARD_WIDTH = 1060
+CARD_HEIGHT = 1484
 
 
-    # ==================================
-    # ПОИСК ЛОКАЛЬНОГО АРТА
-    # ==================================
+ART_X = 55
+ART_Y = 130
 
-    def find_local_art(
-        self,
-        champion,
-        skin
-    ):
+ART_WIDTH = 950
+ART_HEIGHT = 850
 
-        champion_folder = champion.replace(
-            " ",
-            "_"
+
+
+RARITY_MAP = {
+
+    "Обычный": "common",
+    "Редкий": "rare",
+    "Эпический": "epic",
+    "Легендарный": "legendary",
+    "Мифический": "mythic",
+    "Престижный": "prestige",
+    "Чемпионский": "champion"
+
+}
+
+
+
+# ==========================
+# ШРИФТЫ
+# ==========================
+
+def get_font(size, style="regular"):
+
+    fonts = {
+
+        "regular":
+        "assets/fonts/Beaufort-Regular.ttf",
+
+        "medium":
+        "assets/fonts/Beaufort-Medium.ttf",
+
+        "bold":
+        "assets/fonts/Beaufort-Bold.ttf",
+
+        "heavy":
+        "assets/fonts/Beaufort-Heavy.ttf"
+
+    }
+
+
+    try:
+
+        return ImageFont.truetype(
+            fonts[style],
+            size
+        )
+
+    except:
+
+        return ImageFont.load_default()
+
+
+
+# ==========================
+# ЗАГРУЗКА
+# ==========================
+
+def load_asset(path):
+
+    if os.path.exists(path):
+
+        return Image.open(
+            path
+        ).convert(
+            "RGBA"
         )
 
 
-        base_path = os.path.join(
-            "assets",
-            "champions"
+    return None
+
+
+
+
+# ==========================
+# ОБРЕЗКА АРТА
+# ==========================
+
+def crop_image(
+    img,
+    size
+):
+
+    ratio = img.width / img.height
+
+    target = size[0] / size[1]
+
+
+    if ratio > target:
+
+        h = size[1]
+
+        w = int(
+            h * ratio
+        )
+
+    else:
+
+        w = size[0]
+
+        h = int(
+            w / ratio
         )
 
 
-        for region in os.listdir(base_path):
-
-            region_path = os.path.join(
-                base_path,
-                region
-            )
-
-
-            if not os.path.isdir(region_path):
-                continue
-
-
-
-            champ_path = os.path.join(
-                region_path,
-                champion
-            )
-
-
-            if not os.path.exists(champ_path):
-
-                champ_path = os.path.join(
-                    region_path,
-                    champion_folder
-                )
-
-
-            if not os.path.exists(champ_path):
-                continue
-
-
-
-            # ищем скин
-
-            for file in os.listdir(champ_path):
-
-                name = file.lower()
-
-
-                if skin.lower() in name:
-
-                    return os.path.join(
-                        champ_path,
-                        file
-                    )
-
-
-
-            # base
-
-            if skin == "Base":
-
-                for file in os.listdir(champ_path):
-
-                    if file.lower().startswith(
-                        "base"
-                    ):
-
-                        return os.path.join(
-                            champ_path,
-                            file
-                        )
-
-
-        return None
-
-
-
-    # ==================================
-    # OPEN PACK
-    # ==================================
-
-    @app_commands.command(
-        name="open_pack",
-        description="Открыть набор ILTA"
+    img = img.resize(
+        (
+            w,
+            h
+        )
     )
-    async def open_pack(
-        self,
-        interaction: discord.Interaction
-    ):
 
 
-        await interaction.response.defer()
+    left = (
+        w - size[0]
+    ) // 2
+
+
+    top = (
+        h - size[1]
+    ) // 2
 
 
 
-        await interaction.followup.send(
-            f"🎁 **{interaction.user.name} открыл ILTA Pack (10 карт)**"
+    return img.crop(
+
+        (
+            left,
+            top,
+            left + size[0],
+            top + size[1]
+        )
+
+    )
+
+
+
+
+# ==========================
+# ИМЯ ФАЙЛА
+# ==========================
+
+def safe_filename(name):
+
+    return re.sub(
+
+        r'[\\/*?:"<>|]',
+
+        "",
+
+        name
+
+    )
+
+
+
+
+# ==========================
+# СОЗДАНИЕ КАРТЫ
+# ==========================
+
+def create_card(
+
+    champion,
+
+    skin,
+
+    rarity,
+
+    region,
+
+    attack,
+
+    health,
+
+    defense,
+
+    image_path,
+
+    card_number
+
+):
+
+
+    # ----------------------
+    # АРТ
+    # ----------------------
+
+    art = Image.open(
+
+        image_path
+
+    ).convert(
+
+        "RGBA"
+
+    )
+
+
+    art = crop_image(
+
+        art,
+
+        (
+            ART_WIDTH,
+            ART_HEIGHT
+        )
+
+    )
+
+
+
+    # ----------------------
+    # ОСНОВА КАРТЫ
+    # ----------------------
+
+    card = Image.new(
+
+        "RGBA",
+
+        (
+            CARD_WIDTH,
+            CARD_HEIGHT
+        ),
+
+        (
+            0,
+            0,
+            0,
+            0
+        )
+
+    )
+
+
+    card.alpha_composite(
+
+        art,
+
+        (
+            ART_X,
+            ART_Y
+        )
+
+    )
+
+
+
+    # ----------------------
+    # РАМКА
+    # ----------------------
+
+    frame_name = RARITY_MAP.get(
+
+        rarity,
+
+        "common"
+
+    )
+
+
+    frame = load_asset(
+
+        f"assets/frames/{frame_name}.png"
+
+    )
+
+
+    if frame:
+
+
+        frame = frame.resize(
+
+            (
+                CARD_WIDTH,
+                CARD_HEIGHT
+            )
+
+        )
+
+
+        card.alpha_composite(
+
+            frame,
+
+            (
+                0,
+                0
+            )
+
         )
 
 
 
-        for number in range(1,11):
+    draw = ImageDraw.Draw(card)
 
 
-            # --------------------------
-            # Чемпион
-            # --------------------------
 
-            champion_id = random.choice(
-                list(
-                    self.champions.keys()
-                )
-            )
+    # ----------------------
+    # ШРИФТЫ
+    # ----------------------
 
-
-            champion = self.champions[
-                champion_id
-            ]
-
-
-
-            # --------------------------
-            # Регион
-            # --------------------------
-
-            region = champion_regions.get(
-                champion_id,
-                "Runeterra"
-            )
-
-
-
-            # --------------------------
-            # Скин
-            # --------------------------
-
-            skins = champion.get(
-                "skins",
-                []
-            )
-
-
-            if skins:
-
-                skin = random.choice(
-                    skins
-                )
-
-
-                skin_key = skin.get(
-                    "name",
-                    "Base"
-                )
-
-
-            else:
-
-                skin_key = "Base"
-
-
-
-            # --------------------------
-            # Редкость
-            # --------------------------
-
-            rarity = get_card_rarity()
-
-
-
-            # --------------------------
-            # Статы
-            # --------------------------
-
-            attack = random.randint(
-                20,
-                100
-            )
-
-
-            health = random.randint(
-                50,
-                150
-            )
-
-
-            defense = random.randint(
-                10,
-                80
-            )
-
-
-
-            # --------------------------
-            # ID карты
-            # --------------------------
-
-            card_code = (
-                f"{random.randint(1,9999):04}"
-            )
-
-
-
-            # --------------------------
-            # Русские названия
-            # --------------------------
-
-            champion_ru = get_champion_name(
-                champion_id
-            )
-
-
-            skin_ru = get_skin_name(
-                skin_key
-            )
-
-
-
-            # --------------------------
-            # Сохранение
-            # --------------------------
-
-            await add_card(
-
-                interaction.user.id,
-
-                card_code,
-
-                champion_id,
-
-                skin_key,
-
-                region,
-
-                rarity,
-
-                attack,
-
-                defense,
-
-                health
-
-            )
-
-
-
-            # --------------------------
-            # Локальный арт
-            # --------------------------
-
-            art_path = self.find_local_art(
-
-                champion_id,
-
-                skin_key
-
-            )
-
-
-
-            if not art_path:
-
-                await interaction.followup.send(
-
-                    f"⚠ Нет арта: "
-                    f"{champion_ru} "
-                    f"{skin_ru}"
-
-                )
-
-                continue
-
-
-
-            # --------------------------
-            # Генерация карты
-            # --------------------------
-
-            card_file = create_card(
-
-                champion=champion_ru,
-
-                skin=skin_ru,
-
-                rarity=rarity,
-
-                region=region,
-
-                attack=attack,
-
-                health=health,
-
-                defense=defense,
-
-                image_path=art_path,
-
-                card_number=card_code
-
-            )
-
-
-
-            # --------------------------
-            # Embed
-            # --------------------------
-
-            embed = discord.Embed(
-
-                title=(
-                    f"🎴 {rarity} | "
-                    f"{champion_ru}"
-                ),
-
-                description=(
-
-                    f"✨ **{skin_ru}**\n"
-
-                    f"🆔 {card_code}"
-
-                ),
-
-                color=0xFFD700
-
-            )
-
-
-
-            embed.add_field(
-
-                name="⚔ Атака",
-
-                value=str(attack),
-
-                inline=True
-
-            )
-
-
-            embed.add_field(
-
-                name="❤️ Здоровье",
-
-                value=str(health),
-
-                inline=True
-
-            )
-
-
-            embed.add_field(
-
-                name="🛡 Защита",
-
-                value=str(defense),
-
-                inline=True
-
-            )
-
-
-            embed.add_field(
-
-                name="🌍 Регион",
-
-                value=region,
-
-                inline=True
-
-            )
-
-
-
-            file = discord.File(
-                card_file
-            )
-
-
-            embed.set_image(
-
-                url=(
-
-                    "attachment://"
-
-                    +
-
-                    os.path.basename(
-                        card_file
-                    )
-
-                )
-
-            )
-
-
-            embed.set_footer(
-
-                text=f"Карта {number}/10"
-
-            )
-
-
-
-            await interaction.followup.send(
-
-                embed=embed,
-
-                file=file
-
-            )
-
-
-
-
-async def setup(bot):
-
-    await bot.add_cog(
-        Pack(bot)
+    id_font = get_font(
+        45,
+        "medium"
     )
+
+
+    champion_font = get_font(
+        80,
+        "heavy"
+    )
+
+
+    skin_font = get_font(
+        40,
+        "medium"
+    )
+
+
+    stat_font = get_font(
+        65,
+        "bold"
+    )
+
+
+    bottom_font = get_font(
+        45,
+        "bold"
+    )
+
+
+
+
+    # ----------------------
+    # НОМЕР
+    # ----------------------
+
+    draw.text(
+
+        CARD_LAYOUT["number"],
+
+        str(card_number),
+
+        anchor="mm",
+
+        font=id_font,
+
+        fill="white",
+
+        stroke_width=2,
+
+        stroke_fill="black"
+
+    )
+
+
+
+
+    # ----------------------
+    # ЧЕМПИОН
+    # ----------------------
+
+    draw.text(
+
+        CARD_LAYOUT["champion"],
+
+        champion.upper(),
+
+        anchor="mm",
+
+        font=champion_font,
+
+        fill="white",
+
+        stroke_width=4,
+
+        stroke_fill="black"
+
+    )
+
+
+
+
+    # ----------------------
+    # СКИН
+    # ----------------------
+
+    draw.text(
+
+        CARD_LAYOUT["skin"],
+
+        skin,
+
+        anchor="mm",
+
+        font=skin_font,
+
+        fill="white",
+
+        stroke_width=3,
+
+        stroke_fill="black"
+
+    )
+
+
+
+
+    # ----------------------
+    # СТАТЫ
+    # ----------------------
+
+    draw.text(
+
+        CARD_LAYOUT["attack"],
+
+        str(attack),
+
+        anchor="mm",
+
+        font=stat_font,
+
+        fill="white"
+
+    )
+
+
+    draw.text(
+
+        CARD_LAYOUT["health"],
+
+        str(health),
+
+        anchor="mm",
+
+        font=stat_font,
+
+        fill="white"
+
+    )
+
+
+    draw.text(
+
+        CARD_LAYOUT["defense"],
+
+        str(defense),
+
+        anchor="mm",
+
+        font=stat_font,
+
+        fill="white"
+
+    )
+
+
+
+
+    # ----------------------
+    # РЕГИОН
+    # ----------------------
+
+    draw.text(
+
+        CARD_LAYOUT["region_text"],
+
+        region.upper(),
+
+        anchor="mm",
+
+        font=bottom_font,
+
+        fill="white"
+
+    )
+
+
+
+
+    # ----------------------
+    # РЕДКОСТЬ
+    # ----------------------
+
+    draw.text(
+
+        CARD_LAYOUT["rarity"],
+
+        rarity.upper(),
+
+        anchor="mm",
+
+        font=bottom_font,
+
+        fill="gold"
+
+    )
+
+
+
+
+    # ----------------------
+    # СОХРАНЕНИЕ
+    # ----------------------
+
+    os.makedirs(
+
+        "cards",
+
+        exist_ok=True
+
+    )
+
+
+    filename = safe_filename(
+
+        f"{champion}_{skin}_{card_number}"
+
+    )
+
+
+    path = (
+
+        f"cards/{filename}.png"
+
+    )
+
+
+
+    card.convert(
+
+        "RGB"
+
+    ).save(
+
+        path
+
+    )
+
+
+    return path
