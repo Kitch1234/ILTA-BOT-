@@ -1,18 +1,7 @@
-import os
 
-path = "source_assets"
+C:\Users\Ketek'\Desktop\qantum_universe>python check_assets
+python: can't open file "C:\\Users\\Ketek'\\Desktop\\qantum_universe\\check_assets": [Errno 2] No such file or directory
 
-print("Проверка папки:", path)
-print("--------------------")
+C:\Users\Ketek'\Desktop\qantum_universe>
 
-for root, dirs, files in os.walk(path):
-    level = root.replace(path, "").count(os.sep)
 
-    if level > 2:
-        continue
-
-    indent = "    " * level
-    print(indent + os.path.basename(root) + "/")
-
-    for file in files[:5]:
-        print(indent + "    " + file)
