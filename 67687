@@ -1,87 +1,279 @@
-import json
+import discord
+from discord.ext import commands
+from discord import app_commands
+
+import random
 import os
 
+from database.cards import add_card
 
-FILE = "data/champions_ru.json"
+from data.champion_loader import load_champions
+from data.regions import champion_regions
+from data.loot import get_card_rarity
 
+from generators.card_generator import create_card
 
-if os.path.exists(FILE):
-
-    with open(
-        FILE,
-        "r",
-        encoding="utf-8"
-    ) as f:
-
-        TRANSLATIONS = json.load(f)
-
-else:
-
-    TRANSLATIONS = {}
+from data.translation_loader import (
+    get_champion_ru,
+    get_skin_ru,
+    get_region_ru
+)
 
 
+ASSET_PATH = "assets/champions"
 
-def get_champion_ru(champion):
 
-    data = TRANSLATIONS.get(
+class Pack(commands.Cog):
+
+    def __init__(self, bot):
+
+        self.bot = bot
+
+        self.champions = load_champions()
+
+
+
+    def find_skin_image(
+        self,
         champion,
-        {}
+        skin
+    ):
+
+        for region in os.listdir(
+            ASSET_PATH
+        ):
+
+            region_path = os.path.join(
+                ASSET_PATH,
+                region
+            )
+
+
+            if not os.path.isdir(
+                region_path
+            ):
+                continue
+
+
+
+            champion_path = os.path.join(
+                region_path,
+                champion
+            )
+
+
+            if not os.path.exists(
+                champion_path
+            ):
+                continue
+
+
+
+            files = os.listdir(
+                champion_path
+            )
+
+
+
+            for file in files:
+
+                filename = os.path.splitext(
+                    file
+                )[0]
+
+
+                if filename.lower() == skin.lower():
+
+                    return os.path.join(
+                        champion_path,
+                        file
+                    )
+
+
+
+        return None
+
+
+
+    @app_commands.command(
+        name="open_pack",
+        description="Открыть ILTA Pack (10 карт)"
     )
-
-    return data.get(
-        "name",
-        champion
-    )
-
+    async def open_pack(
+        self,
+        interaction: discord.Interaction
+    ):
 
 
-def get_skin_ru(champion, skin):
-
-    data = TRANSLATIONS.get(
-        champion,
-        {}
-    )
-
-    skins = data.get(
-        "skins",
-        {}
-    )
-
-
-    return skins.get(
-        skin,
-        skin.replace("_", " ")
-    )
+        await interaction.response.defer()
 
 
 
-def get_region_ru(champion):
+        if not self.champions:
 
-    data = TRANSLATIONS.get(
-        champion,
-        {}
-    )
+            await interaction.followup.send(
+                "❌ Чемпионы не найдены"
+            )
 
-    region = data.get(
-        "region",
-        "Runeterra"
-    )
+            return
 
 
-    regions = {
 
-        "Demacia": "Демасия",
-        "Noxus": "Ноксус",
-        "Freljord": "Фрельйорд",
-        "Ionia": "Иония",
-        "Shurima": "Шурима",
-        "Void": "Пустота",
-        "Shadow_Isles": "Сумрачные острова"
-
-    }
+        await interaction.followup.send(
+            f"🎁 **{interaction.user.name} открыл ILTA Pack (10 карт)**"
+        )
 
 
-    return regions.get(
-        region,
-        region
-    )
+
+        for number in range(1,11):
+
+
+            champion_id = random.choice(
+                list(self.champions.keys())
+            )
+
+
+
+            champion = self.champions[
+                champion_id
+            ]
+
+
+
+            region = champion_regions.get(
+                champion_id,
+                "Runeterra"
+            )
+
+
+
+            skins = champion.get(
+                "skins",
+                []
+            )
+
+
+
+            if skins:
+
+                skin = random.choice(
+                    skins
+                )
+
+
+                skin_name = skin["name"]
+
+
+            else:
+
+                skin_name = "Base"
+
+
+
+            rarity = get_card_rarity()
+
+
+
+            attack = random.randint(
+                20,
+                100
+            )
+
+
+            health = random.randint(
+                50,
+                150
+            )
+
+
+            defense = random.randint(
+                10,
+                80
+            )
+
+
+
+            card_code = (
+                f"{random.randint(1,9999):04}"
+            )
+
+
+
+            await add_card(
+
+                interaction.user.id,
+
+                card_code,
+
+                champion_id,
+
+                skin_name,
+
+                region,
+
+                rarity,
+
+                attack,
+
+                defense,
+
+                health
+            )
+
+
+
+
+            # ======================
+            # ЛОКАЛЬНЫЙ АРТ
+            # ======================
+
+
+            image_path = self.find_skin_image(
+                champion_id,
+                skin_name
+            )
+
+
+
+            if not image_path:
+
+                await interaction.followup.send(
+                    f"⚠ Нет арта {champion_id} {skin_name}"
+                )
+
+                continue
+
+
+
+
+            # ======================
+            # ПЕРЕВОД
+            # ======================
+
+
+            champion_ru = get_champion_ru(
+                champion_id
+            )
+
+
+            skin_ru = get_skin_ru(
+                champion_id,
+                skin_name
+            )
+
+
+            region_ru = get_region_ru(
+                champion_id
+            )
+
+
+
+
+            # ======================
+            # ГЕНЕРАЦИЯ КАРТЫ
+            # ======================
+
+
+            card_file = create_card(
+
+                champion=champ
