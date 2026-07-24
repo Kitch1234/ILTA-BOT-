@@ -1,386 +1,298 @@
-from PIL import Image, ImageDraw, ImageFont
-import os
-import re
+import discord
+from discord.ext import commands
+from discord import app_commands
 
-from data.card_layout import CARD_LAYOUT
+import random
 
+from database.cards import add_card
+from data.champion_loader import load_champions
+from data.regions import champion_regions
+from data.loot import get_card_rarity
 
-CARD_WIDTH = 1060
-CARD_HEIGHT = 1484
-
-ART_X = 55
-ART_Y = 130
-
-ART_WIDTH = 950
-ART_HEIGHT = 850
+from generators.card_generator import create_card
 
 
-RARITY_MAP = {
-    "Обычный": "common",
-    "Редкий": "rare",
-    "Эпический": "epic",
-    "Легендарный": "legendary",
-    "Мифический": "mythic"
-}
+class Pack(commands.Cog):
 
+    def __init__(self, bot):
 
-def get_font(size, style="regular"):
-
-    fonts = {
-        "regular": "assets/fonts/Beaufort-Regular.ttf",
-        "medium": "assets/fonts/Beaufort-Medium.ttf",
-        "bold": "assets/fonts/Beaufort-Bold.ttf",
-        "heavy": "assets/fonts/Beaufort-Heavy.ttf"
-    }
-
-    try:
-        return ImageFont.truetype(
-            fonts[style],
-            size
-        )
-
-    except:
-        return ImageFont.load_default()
+        self.bot = bot
+        self.champions = load_champions()
 
 
 
-def load_asset(path):
-
-    if os.path.exists(path):
-
-        return Image.open(path).convert("RGBA")
-
-    return None
-
-
-
-def find_champion_image(region, champion, skin):
-
-    base_path = (
-        f"assets/champions/{region}/{champion}/{skin}"
+    @app_commands.command(
+        name="open_pack",
+        description="Открыть набор из 10 карт ILTA"
     )
+    async def open_pack(
+        self,
+        interaction: discord.Interaction
+    ):
 
-    for ext in [
-        ".webp",
-        ".png",
-        ".jpg",
-        ".jpeg"
-    ]:
-
-        path = base_path + ext
-
-        if os.path.exists(path):
-            return path
+        await interaction.response.defer()
 
 
-    return None
+        try:
 
+            if not self.champions:
 
+                await interaction.followup.send(
+                    "❌ Чемпионы не найдены"
+                )
 
-def crop_image(img, size):
-
-    ratio = img.width / img.height
-
-    target = size[0] / size[1]
-
-
-    if ratio > target:
-
-        h = size[1]
-        w = int(h * ratio)
-
-    else:
-
-        w = size[0]
-        h = int(w / ratio)
-
-
-    img = img.resize(
-        (w,h)
-    )
-
-
-    left = (w-size[0]) // 2
-    top = (h-size[1]) // 2
-
-
-    return img.crop(
-        (
-            left,
-            top,
-            left+size[0],
-            top+size[1]
-        )
-    )
+                return
 
 
 
-def safe_filename(name):
-
-    return re.sub(
-        r'[\\/*?:"<>|]',
-        "",
-        name
-    )
-
-
-
-def create_card(
-        champion,
-        skin,
-        rarity,
-        region,
-        attack,
-        health,
-        defense,
-        card_number
-):
-
-
-    # ------------------
-    # ART
-    # ------------------
-
-    image_path = find_champion_image(
-        region,
-        champion,
-        skin
-    )
-
-
-    if not image_path:
-
-        print(
-            f"Не найден арт: {region}/{champion}/{skin}"
-        )
-
-        return None
-
-
-    art = Image.open(
-        image_path
-    ).convert("RGBA")
-
-
-    art = crop_image(
-        art,
-        (
-            ART_WIDTH,
-            ART_HEIGHT
-        )
-    )
-
-
-    card = Image.new(
-        "RGBA",
-        (
-            CARD_WIDTH,
-            CARD_HEIGHT
-        ),
-        (0,0,0,0)
-    )
-
-
-    card.alpha_composite(
-        art,
-        (
-            ART_X,
-            ART_Y
-        )
-    )
-
-
-
-    # ------------------
-    # FRAME
-    # ------------------
-
-    frame_name = RARITY_MAP.get(
-        rarity,
-        "common"
-    )
-
-
-    frame = load_asset(
-        f"assets/frames/{frame_name}.png"
-    )
-
-
-    if frame:
-
-        frame = frame.resize(
-            (
-                CARD_WIDTH,
-                CARD_HEIGHT
+            await interaction.followup.send(
+                f"🎁 **{interaction.user.name} открыл ILTA Pack (10 карт)**"
             )
-        )
-
-
-        card.alpha_composite(
-            frame,
-            (0,0)
-        )
 
 
 
-    draw = ImageDraw.Draw(card)
+            for number in range(1,11):
+
+
+                # ======================
+                # Чемпион
+                # ======================
+
+                champion_id = random.choice(
+                    list(self.champions.keys())
+                )
+
+
+                champion = self.champions[champion_id]
 
 
 
-    # ------------------
-    # FONTS
-    # ------------------
+                # ======================
+                # Регион
+                # ======================
 
-    id_font = get_font(
-        45,
-        "medium"
+                region = champion_regions.get(
+                    champion_id,
+                    "Runeterra"
+                )
+
+
+
+                # ======================
+                # Скин
+                # ======================
+
+                skins = champion.get(
+                    "skins",
+                    []
+                )
+
+
+                if skins:
+
+                    skin = random.choice(
+                        skins
+                    )
+
+                    skin_name = skin["name"]
+                    skin_id = skin["id"]
+
+                else:
+
+                    skin_name = "default"
+                    skin_id = 0
+
+
+
+                # ======================
+                # Редкость
+                # ======================
+
+                rarity = get_card_rarity()
+
+
+
+                # ======================
+                # Статы
+                # ======================
+
+                attack = random.randint(
+                    20,
+                    100
+                )
+
+                health = random.randint(
+                    50,
+                    150
+                )
+
+                defense = random.randint(
+                    10,
+                    80
+                )
+
+
+
+                # ======================
+                # ID карты
+                # ======================
+
+                card_code = f"{random.randint(1,1000):04}"
+
+
+
+
+                # ======================
+                # Сохранение
+                # ======================
+
+                await add_card(
+
+                    interaction.user.id,
+
+                    card_code,
+
+                    champion_id,
+
+                    skin_name,
+
+                    region,
+
+                    rarity,
+
+                    attack,
+
+                    defense,
+
+                    health
+                )
+
+
+
+                # ======================
+                # Арт
+                # ======================
+
+                safe_name = champion_id.replace(
+                    " ",
+                    ""
+                )
+
+
+                image_url = (
+                    "https://ddragon.leagueoflegends.com/"
+                    "cdn/img/champion/splash/"
+                    f"{safe_name}_{skin_id}.jpg"
+                )
+
+
+
+                # ======================
+                # Генерация карты
+                # ======================
+
+                card_file = create_card(
+
+                    champion=champion_id,
+
+                    skin=skin_name,
+
+                    rarity=rarity,
+
+                    region=region,
+
+                    attack=attack,
+
+                    health=health,
+
+                    defense=defense,
+
+                    image_url=image_url,
+
+                    card_number=card_code
+
+                )
+
+
+
+                # ======================
+                # Discord Embed
+                # ======================
+
+                embed = discord.Embed(
+
+                    title=f"🎴 {rarity} | {champion_id}",
+
+                    description=(
+                        f"✨ **{skin_name}**\n"
+                        f"🆔 {card_code}"
+                    ),
+
+                    color=0xFFD700
+                )
+
+
+
+                embed.add_field(
+                    name="⚔ Атака",
+                    value=str(attack),
+                    inline=True
+                )
+
+                embed.add_field(
+                    name="❤️ Здоровье",
+                    value=str(health),
+                    inline=True
+                )
+
+                embed.add_field(
+                    name="🛡 Защита",
+                    value=str(defense),
+                    inline=True
+                )
+
+
+                embed.add_field(
+                    name="🌍 Регион",
+                    value=region,
+                    inline=True
+                )
+
+
+
+                file = discord.File(
+                    card_file
+                )
+
+
+                embed.set_image(
+                    url=
+                    f"attachment://{card_file.split('/')[-1]}"
+                )
+
+
+                embed.set_footer(
+                    text=f"Карта {number}/10"
+                )
+
+
+                await interaction.followup.send(
+                    embed=embed,
+                    file=file
+                )
+
+
+
+        except Exception as e:
+
+            await interaction.followup.send(
+                f"❌ Ошибка открытия пака: {e}"
+            )
+
+
+
+async def setup(bot):
+
+    await bot.add_cog(
+        Pack(bot)
     )
-
-    champion_font = get_font(
-        80,
-        "heavy"
-    )
-
-    skin_font = get_font(
-        40,
-        "medium"
-    )
-
-    stat_font = get_font(
-        65,
-        "bold"
-    )
-
-    bottom_font = get_font(
-        40,
-        "bold"
-    )
-
-
-
-    # ------------------
-    # TEXT
-    # ------------------
-
-    draw.text(
-        CARD_LAYOUT["number"],
-        str(card_number),
-        anchor="mm",
-        font=id_font,
-        fill="white",
-        stroke_width=2,
-        stroke_fill="black"
-    )
-
-
-    draw.text(
-        CARD_LAYOUT["champion"],
-        champion.upper(),
-        anchor="mm",
-        font=champion_font,
-        fill="white",
-        stroke_width=4,
-        stroke_fill="black"
-    )
-
-
-    skin_name = skin.replace(
-        "_",
-        " "
-    )
-
-
-    if skin != "Base":
-
-        draw.text(
-            CARD_LAYOUT["skin"],
-            skin_name.upper(),
-            anchor="mm",
-            font=skin_font,
-            fill="white",
-            stroke_width=3,
-            stroke_fill="black"
-        )
-
-
-
-    draw.text(
-        CARD_LAYOUT["attack"],
-        str(attack),
-        anchor="mm",
-        font=stat_font,
-        fill="white"
-    )
-
-
-    draw.text(
-        CARD_LAYOUT["health"],
-        str(health),
-        anchor="mm",
-        font=stat_font,
-        fill="white"
-    )
-
-
-    draw.text(
-        CARD_LAYOUT["defense"],
-        str(defense),
-        anchor="mm",
-        font=stat_font,
-        fill="white"
-    )
-
-
-    draw.text(
-        CARD_LAYOUT["region_text"],
-        region.upper(),
-        anchor="mm",
-        font=bottom_font,
-        fill="white"
-    )
-
-
-    draw.text(
-        CARD_LAYOUT["rarity"],
-        rarity.upper(),
-        anchor="mm",
-        font=bottom_font,
-        fill="gold"
-    )
-
-
-
-    # ------------------
-    # SAVE
-    # ------------------
-
-    os.makedirs(
-        "generated_cards",
-        exist_ok=True
-    )
-
-
-    filename = safe_filename(
-        f"{champion}_{skin}"
-    )
-
-
-    path = (
-        f"generated_cards/{filename}.png"
-    )
-
-
-    card.convert(
-        "RGB"
-    ).save(
-        path,
-        quality=95
-    )
-
-
-    print(
-        f"Создано: {path}"
-    )
-
-
-    return path
