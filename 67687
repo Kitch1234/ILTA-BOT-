@@ -1,33 +1,144 @@
 # =================
-# GALIO
+# GAREN
 # =================
 
 "Base":
-"Оригинальный Галио",
+"Оригинальный Гарен",
 
-"Birdio":
-"Бирдио Галио",
+"Battle_Academia_Garen":
+"Гарен из Боевой Академии",
 
-"Commando_Galio":
-"Коммандос Галио",
+"Commando_Garen":
+"Коммандос Гарен",
 
-"Debonair_Galio":
-"Дебонер Галио",
+"Demacia_Vice_Garen":
+"Гарен из Вайс Демасии",
 
-"Dragon_Guardian_Galio":
-"Страж драконов Галио",
+"Desert_Trooper_Garen":
+"Пустынный солдат Гарен",
 
-"Enchanted_Galio":
-"Зачарованный Галио",
+"Dreadknight_Garen":
+"Рыцарь ужаса Гарен",
 
-"Gatekeeper_Galio":
-"Хранитель врат Галио",
+"God_King_Garen":
+"Бог-Король Гарен",
 
-"Hextech_Galio":
-"Хекстековый Галио",
+"Mecha_Kingdoms_Garen":
+"Меха-Королевства Гарен",
 
-"Infernal_Galio":
-"Преисподняя Галио",
+"Mythmaker_Garen":
+"Создатель мифов Гарен",
 
-"Mythmaker_Galio":
-"Создатель мифов Галио"
+"Prestige_Mecha_Kingdoms_Garen":
+"Престижный Меха-Королевства Гарен",
+
+"Rogue_Admiral_Garen":
+"Мятежный адмирал Гарен",
+
+"Rugged_Garen":
+"Закалённый Гарен",
+
+"Sanguine_Garen":
+"Кровавый Гарен",
+
+"Steel_Legion_Garen":
+"Стальной легион Гарен",
+
+"Warring_Kingdoms_Garen":
+"Воюющие королевства Гарен",
+
+
+
+# =================
+# JARVAN IV
+# =================
+
+"Base":
+"Оригинальный Джарван IV",
+
+"Commando_Jarvan_IV":
+"Коммандос Джарван IV",
+
+"Darkforge_Jarvan_IV":
+"Тёмная кузница Джарван IV",
+
+"Dark_Star_Jarvan_IV":
+"Тёмная звезда Джарван IV",
+
+"Dragonslayer_Jarvan_IV":
+"Убийца драконов Джарван IV",
+
+"Fnatic_Jarvan_IV":
+"Fnatic Джарван IV",
+
+"Hextech_Jarvan_IV":
+"Хекстековый Джарван IV",
+
+"Lunar_Beast_Jarvan_IV":
+"Лунный зверь Джарван IV",
+
+"Nightbringer_Jarvan_IV":
+"Вестник ночи Джарван IV",
+
+"Pool_Party_Jarvan_IV":
+"Вечеринка у бассейна Джарван IV",
+
+"SSG_Jarvan_IV":
+"SSG Джарван IV",
+
+"Victorious_Jarvan_IV":
+"Победоносный Джарван IV",
+
+"Warring_Kingdoms_Jarvan_IV":
+"Воюющие королевства Джарван IV",
+
+"Worlds_2021_Jarvan_IV":
+"Чемпионат мира 2021 Джарван IV",
+
+
+
+# =================
+# KAYLE
+# =================
+
+"Base":
+"Оригинальная Кейл",
+
+"Aether_Wing_Kayle":
+"Крыло эфира Кейл",
+
+"Battleborn_Kayle":
+"Рождённая в битве Кейл",
+
+"Dragonslayer_Kayle":
+"Убийца драконов Кейл",
+
+"Iron_Inquisitor_Kayle":
+"Железный инквизитор Кейл",
+
+"Judgment_Kayle":
+"Правосудие Кейл",
+
+"Pentakill_Kayle":
+"Пентакилл Кейл",
+
+"Pentakill_III_Lost_Chapter_Kayle":
+"Пентакилл III: Потерянная глава Кейл",
+
+"PsyOps_Kayle":
+"Пси-операция Кейл",
+
+"Riot_Kayle":
+"Riot Кейл",
+
+"Silver_Kayle":
+"Серебряная Кейл",
+
+"Sun_Eater_Kayle":
+"Пожиратель солнца Кейл",
+
+"Transcended_Kayle":
+"Возвышенная Кейл",
+
+"Viridian_Kayle":
+"Изумрудная Кейл"
