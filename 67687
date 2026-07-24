@@ -5,6 +5,7 @@ from discord import app_commands
 import random
 
 from database.cards import add_card
+
 from data.champion_loader import load_champions
 from data.regions import champion_regions
 from data.loot import get_card_rarity
@@ -12,12 +13,24 @@ from data.loot import get_card_rarity
 from generators.card_generator import create_card
 
 
+
 class Pack(commands.Cog):
 
     def __init__(self, bot):
 
         self.bot = bot
+
         self.champions = load_champions()
+
+
+
+    def normalize_skin(self, name):
+
+        return (
+            name
+            .replace(" ", "_")
+            .replace("-", "_")
+        )
 
 
 
@@ -30,12 +43,16 @@ class Pack(commands.Cog):
         interaction: discord.Interaction
     ):
 
+
         await interaction.response.defer()
+
 
 
         try:
 
+
             if not self.champions:
+
 
                 await interaction.followup.send(
                     "❌ Чемпионы не найдены"
@@ -45,9 +62,14 @@ class Pack(commands.Cog):
 
 
 
+
             await interaction.followup.send(
+
                 f"🎁 **{interaction.user.name} открыл ILTA Pack (10 карт)**"
+
             )
+
+
 
 
 
@@ -58,8 +80,11 @@ class Pack(commands.Cog):
                 # Чемпион
                 # ======================
 
+
                 champion_id = random.choice(
+
                     list(self.champions.keys())
+
                 )
 
 
@@ -67,14 +92,20 @@ class Pack(commands.Cog):
 
 
 
+
                 # ======================
                 # Регион
                 # ======================
 
+
                 region = champion_regions.get(
+
                     champion_id,
+
                     "Runeterra"
+
                 )
+
 
 
 
@@ -82,25 +113,46 @@ class Pack(commands.Cog):
                 # Скин
                 # ======================
 
+
                 skins = champion.get(
+
                     "skins",
+
                     []
+
                 )
 
 
+
                 if skins:
+
 
                     skin = random.choice(
                         skins
                     )
 
-                    skin_name = skin["name"]
-                    skin_id = skin["id"]
+
+                    skin_name = skin.get(
+                        "name",
+                        "Base"
+                    )
+
 
                 else:
 
-                    skin_name = "default"
-                    skin_id = 0
+
+                    skin_name = "Base"
+
+
+
+
+
+                skin_name = self.normalize_skin(
+
+                    skin_name
+
+                )
+
 
 
 
@@ -108,7 +160,9 @@ class Pack(commands.Cog):
                 # Редкость
                 # ======================
 
+
                 rarity = get_card_rarity()
+
 
 
 
@@ -116,20 +170,33 @@ class Pack(commands.Cog):
                 # Статы
                 # ======================
 
+
                 attack = random.randint(
+
                     20,
+
                     100
+
                 )
+
 
                 health = random.randint(
+
                     50,
+
                     150
+
                 )
 
+
                 defense = random.randint(
+
                     10,
+
                     80
+
                 )
+
 
 
 
@@ -137,14 +204,21 @@ class Pack(commands.Cog):
                 # ID карты
                 # ======================
 
-                card_code = f"{random.randint(1,1000):04}"
+
+                card_code = (
+
+                    f"{random.randint(1,9999):04}"
+
+                )
+
 
 
 
 
                 # ======================
-                # Сохранение
+                # База данных
                 # ======================
+
 
                 await add_card(
 
@@ -165,31 +239,18 @@ class Pack(commands.Cog):
                     defense,
 
                     health
+
                 )
 
 
 
-                # ======================
-                # Арт
-                # ======================
-
-                safe_name = champion_id.replace(
-                    " ",
-                    ""
-                )
-
-
-                image_url = (
-                    "https://ddragon.leagueoflegends.com/"
-                    "cdn/img/champion/splash/"
-                    f"{safe_name}_{skin_id}.jpg"
-                )
 
 
 
                 # ======================
                 # Генерация карты
                 # ======================
+
 
                 card_file = create_card(
 
@@ -207,11 +268,26 @@ class Pack(commands.Cog):
 
                     defense=defense,
 
-                    image_url=image_url,
-
                     card_number=card_code
 
                 )
+
+
+
+
+                if not card_file:
+
+
+                    await interaction.followup.send(
+
+                        f"⚠ Не найден арт {champion_id} {skin_name}"
+
+                    )
+
+                    continue
+
+
+
 
 
 
@@ -219,80 +295,134 @@ class Pack(commands.Cog):
                 # Discord Embed
                 # ======================
 
+
                 embed = discord.Embed(
 
                     title=f"🎴 {rarity} | {champion_id}",
 
                     description=(
-                        f"✨ **{skin_name}**\n"
+
+                        f"✨ **{skin_name.replace('_',' ')}**\n"
+
                         f"🆔 {card_code}"
+
                     ),
 
                     color=0xFFD700
+
                 )
 
 
 
+
                 embed.add_field(
+
                     name="⚔ Атака",
+
                     value=str(attack),
+
                     inline=True
+
                 )
 
+
                 embed.add_field(
+
                     name="❤️ Здоровье",
+
                     value=str(health),
+
                     inline=True
+
                 )
 
+
                 embed.add_field(
+
                     name="🛡 Защита",
+
                     value=str(defense),
+
                     inline=True
+
                 )
 
 
                 embed.add_field(
+
                     name="🌍 Регион",
+
                     value=region,
+
                     inline=True
+
                 )
+
+
 
 
 
                 file = discord.File(
+
                     card_file
+
                 )
+
+
 
 
                 embed.set_image(
-                    url=
-                    f"attachment://{card_file.split('/')[-1]}"
+
+                    url=(
+
+                        f"attachment://{card_file.split('/')[-1]}"
+
+                    )
+
                 )
+
+
 
 
                 embed.set_footer(
+
                     text=f"Карта {number}/10"
+
                 )
+
+
 
 
                 await interaction.followup.send(
+
                     embed=embed,
+
                     file=file
+
                 )
+
+
+
 
 
 
         except Exception as e:
 
+
             await interaction.followup.send(
+
                 f"❌ Ошибка открытия пака: {e}"
+
             )
+
+
 
 
 
 async def setup(bot):
 
     await bot.add_cog(
+
         Pack(bot)
+
     )
