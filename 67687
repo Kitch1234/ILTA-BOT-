@@ -1,59 +1,155 @@
 import os
+import json
+import requests
 
-folders = [
-    # Чемпионы
-    "assets/champions/Demacia",
-    "assets/champions/Noxus",
-    "assets/champions/Ionia",
-    "assets/champions/Freljord",
-    "assets/champions/Shurima",
-    "assets/champions/Piltover_Zaun",
-    "assets/champions/Shadow_Isles",
-    "assets/champions/Void",
 
-    # Мобы
-    "assets/mobs/Demacia",
-    "assets/mobs/Noxus",
-    "assets/mobs/Ionia",
-    "assets/mobs/Freljord",
-    "assets/mobs/Shurima",
-    "assets/mobs/Piltover_Zaun",
-    "assets/mobs/Shadow_Isles",
-    "assets/mobs/Void",
+OUTPUT = "assets"
 
-    # Карты игроков
-    "assets/cards/champions",
-    "assets/cards/spells",
-    "assets/cards/items",
-    "assets/cards/monsters",
+REGIONS = {
+    "DE": "Demacia",
+    "NX": "Noxus"
+}
 
-    # Фоны регионов
-    "assets/backgrounds/regions",
 
-    # UI
-    "assets/ui/profile",
-    "assets/ui/cards",
-    "assets/ui/battle",
-    "assets/ui/buttons",
+def create_folder(path):
+    os.makedirs(path, exist_ok=True)
 
-    # Данные
-    "data/champions",
-    "data/mobs",
-    "data/items",
-    "data/quests",
-    "data/regions",
 
-    # Игровые системы
-    "game/combat",
-    "game/quests",
-    "game/world",
-    "game/rewards",
+def download_image(url, path):
+    try:
+        r = requests.get(url, timeout=10)
 
-    # База данных
-    "database"
-]
+        if r.status_code == 200:
+            with open(path, "wb") as f:
+                f.write(r.content)
+            return True
 
-for folder in folders:
-    os.makedirs(folder, exist_ok=True)
+    except Exception:
+        pass
 
-print("✅ Структура ILTA создана!")
+    return False
+
+
+def main():
+
+    create_folder("data/champions")
+    create_folder("data/mobs")
+
+    create_folder("assets/champions")
+    create_folder("assets/mobs")
+
+
+    print("Загрузка базы LoR...")
+
+    url = "https://dd.b.pvp.net/latest/set1/en_us/data/set1-en_us.json"
+
+    cards = requests.get(url).json()
+
+
+    champions = []
+    mobs = []
+
+
+    for card in cards:
+
+        regions = card.get("regionRefs", [])
+
+        region = None
+
+        for r in regions:
+            if r in REGIONS:
+                region = REGIONS[r]
+
+
+        if not region:
+            continue
+
+
+        name = card["name"]
+        code = card["cardCode"]
+
+        image = (
+            f"https://dd.b.pvp.net/latest/set1/en_us/img/cards/"
+            f"{code}-full.png"
+        )
+
+
+        safe_name = (
+            name
+            .replace(" ", "_")
+            .replace("'", "")
+        )
+
+
+        if card.get("type") == "Unit" and card.get("rarityRef") == "Champion":
+
+            folder = f"assets/champions/{region}"
+
+            create_folder(folder)
+
+            file = f"{folder}/{safe_name}.png"
+
+
+            if download_image(image, file):
+
+                champions.append({
+                    "name": name,
+                    "region": region,
+                    "image": file
+                })
+
+                print("Champion:", name)
+
+
+        else:
+
+            folder = f"assets/mobs/{region}"
+
+            create_folder(folder)
+
+            file = f"{folder}/{safe_name}.png"
+
+
+            if download_image(image, file):
+
+                mobs.append({
+                    "name": name,
+                    "region": region,
+                    "image": file
+                })
+
+                print("Mob:", name)
+
+
+
+    with open(
+        "data/champions/champions.json",
+        "w",
+        encoding="utf-8"
+    ) as f:
+        json.dump(
+            champions,
+            f,
+            ensure_ascii=False,
+            indent=4
+        )
+
+
+    with open(
+        "data/mobs/mobs.json",
+        "w",
+        encoding="utf-8"
+    ) as f:
+        json.dump(
+            mobs,
+            f,
+            ensure_ascii=False,
+            indent=4
+        )
+
+
+    print("✅ Готово!")
+
+
+if __name__ == "__main__":
+    main()
