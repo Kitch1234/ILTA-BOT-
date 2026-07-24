@@ -1,6 +1,59 @@
-Загружен: test_event
-✅ Загружен: deck
-✅ Загружен: battle
-❌ Ошибка загрузки pack: Extension 'cogs.pack' raised an error: SyntaxError: unmatched '}' (translations.py, line 231)
-✅ Загружен: collection
-✅ Загружен: map
+CHAMPION_NAMES = {
+
+    # DEMACIA
+
+    "Fiora": "Фиора",
+    "Galio": "Галио",
+    "Garen": "Гарен",
+    "Jarvan IV": "Джарван IV",
+    "Kayle": "Кейл",
+    "Lucian": "Люциан",
+    "Lux": "Люкс",
+    "Morgana": "Моргана",
+    "Poppy": "Поппи",
+    "Quinn": "Квинн",
+    "Senna": "Сенна",
+    "Shyvana": "Шивана",
+    "Sona": "Сона",
+    "Sylas": "Сайлас",
+    "Vayne": "Вейн",
+    "Xin Zhao": "Синь Чжао",
+
+
+    # NOXUS
+
+    "Ambessa": "Амбесса",
+    "Briar": "Брайер",
+    "Cassiopeia": "Кассиопея",
+    "Darius": "Дариус",
+    "Draven": "Дрейвен",
+    "Katarina": "Катарина",
+    "Kled": "Клед",
+    "LeBlanc": "ЛеБлан",
+    "Mordekaiser": "Мордекайзер",
+    "Rell": "Релл",
+    "Riven": "Ривен",
+    "Samira": "Самира",
+    "Sion": "Сион",
+    "Swain": "Свейн",
+    "Talon": "Талон",
+    "Vladimir": "Владимир"
+
+}
+
+
+
+SKIN_NAMES = 
+
+
+# =================
+# GAREN
+# =================
+
+"Base": "Оригинальный",
+
+"Battle_Academia_Garen":
+"Гарен из Боевой Академии",
+
+"Commando_Garen":
+"Коммандос Гарен",
