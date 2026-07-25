@@ -1,12 +1,228 @@
-def fit_image(
+from PIL import Image, ImageDraw, ImageFont
+import os
 
-    image,
 
+# =========================
+# РАЗМЕР КАРТЫ
+# =========================
+
+CARD_WIDTH = 1060
+CARD_HEIGHT = 1484
+
+
+ASSETS = "assets"
+
+OUTPUT = "generated_cards"
+
+
+
+# =========================
+# ШРИФТЫ
+# =========================
+
+FONT_BOLD = os.path.join(
+    ASSETS,
+    "fonts",
+    "Beaufort-Bold.ttf"
+)
+
+
+FONT_REGULAR = os.path.join(
+    ASSETS,
+    "fonts",
+    "Beaufort-Regular.ttf"
+)
+
+
+
+# =========================
+# РАМКИ
+# =========================
+
+FRAME_PATHS = {
+
+    "Обычный": "common.png",
+    "Редкий": "rare.png",
+    "Эпический": "epic.png",
+    "Легендарный": "legendary.png",
+    "Мифический": "mythic.png",
+
+    # английские варианты
+    "Common": "common.png",
+    "Rare": "rare.png",
+    "Epic": "epic.png",
+    "Legendary": "legendary.png",
+    "Mythic": "mythic.png"
+
+}
+
+
+
+# =========================
+# КООРДИНАТЫ
+# =========================
+
+CARD_LAYOUT = {
+
+    "number": (900, 90),
+
+    "champion": (530, 1010),
+
+    "skin": (530, 1080),
+
+    "attack": (250, 1210),
+
+    "health": (530, 1210),
+
+    "defense": (810, 1210),
+
+    "region_text": (250, 1380),
+
+    "rarity": (820, 1380)
+
+}
+
+
+
+# =========================
+# ШРИФТ
+# =========================
+
+def get_font(path, size):
+
+    return ImageFont.truetype(
+        path,
+        size
+    )
+
+
+
+# =========================
+# ТЕКСТ С АВТОРАЗМЕРОМ
+# =========================
+
+def draw_text(
+    draw,
+    position,
+    text,
     size,
-
-    zoom=0.65
-
+    bold=True,
+    max_width=400,
+    centered=True
 ):
+
+
+    font_path = (
+        FONT_BOLD
+        if bold
+        else FONT_REGULAR
+    )
+
+
+    current_size = size
+
+
+    while True:
+
+
+        font = get_font(
+            font_path,
+            current_size
+        )
+
+
+        box = draw.textbbox(
+            (0,0),
+            text,
+            font=font
+        )
+
+
+        width = (
+            box[2] - box[0]
+        )
+
+
+        if width <= max_width:
+
+            break
+
+
+        current_size -= 2
+
+
+        if current_size <= 12:
+
+            break
+
+
+
+    if centered:
+
+        x = (
+            position[0]
+            -
+            width // 2
+        )
+
+    else:
+
+        x = position[0]
+
+
+
+    y = position[1]
+
+
+
+    # тень
+
+    draw.text(
+
+        (
+            x + 3,
+            y + 3
+        ),
+
+        text,
+
+        font=font,
+
+        fill=(0,0,0,220)
+
+    )
+
+
+
+    # текст
+
+    draw.text(
+
+        (
+            x,
+            y
+        ),
+
+        text,
+
+        font=font,
+
+        fill=(255,255,255)
+
+    )
+
+
+
+# =========================
+# АРТ
+# =========================
+
+def fit_image(
+    image,
+    size,
+    zoom=0.65
+):
+
 
     target_w, target_h = size
 
@@ -87,3 +303,347 @@ def fit_image(
 
 
     return canvas
+
+
+
+# =========================
+# СОЗДАНИЕ КАРТЫ
+# =========================
+
+def create_card(
+
+    champion,
+
+    skin,
+
+    rarity,
+
+    region,
+
+    attack,
+
+    health,
+
+    defense,
+
+    image_path,
+
+    card_number
+
+):
+
+
+    os.makedirs(
+        OUTPUT,
+        exist_ok=True
+    )
+
+
+
+    card = Image.new(
+
+        "RGBA",
+
+        (
+            CARD_WIDTH,
+            CARD_HEIGHT
+        ),
+
+        (0,0,0,0)
+
+    )
+
+
+
+    # =====================
+    # АРТ
+    # =====================
+
+
+    art = Image.open(
+
+        image_path
+
+    ).convert(
+
+        "RGBA"
+
+    )
+
+
+    art = fit_image(
+
+        art,
+
+        (
+            CARD_WIDTH,
+            CARD_HEIGHT
+        )
+
+    )
+
+
+    card.alpha_composite(
+
+        art
+
+    )
+
+
+
+    # =====================
+    # РАМКА
+    # =====================
+
+
+    frame_name = FRAME_PATHS.get(
+
+        rarity,
+
+        "common.png"
+
+    )
+
+
+    frame_path = os.path.join(
+
+        ASSETS,
+
+        "frames",
+
+        frame_name
+
+    )
+
+
+
+    if os.path.exists(frame_path):
+
+
+        frame = Image.open(
+
+            frame_path
+
+        ).convert(
+
+            "RGBA"
+
+        )
+
+
+        frame = frame.resize(
+
+            (
+                CARD_WIDTH,
+                CARD_HEIGHT
+            ),
+
+            Image.LANCZOS
+
+        )
+
+
+        card.alpha_composite(
+
+            frame
+
+        )
+
+
+
+    draw = ImageDraw.Draw(
+
+        card
+
+    )
+
+
+
+    # =====================
+    # ТЕКСТ
+    # =====================
+
+
+    draw_text(
+
+        draw,
+
+        CARD_LAYOUT["number"],
+
+        f"#{card_number}",
+
+        36,
+
+        True,
+
+        150,
+
+        False
+
+    )
+
+
+
+    draw_text(
+
+        draw,
+
+        CARD_LAYOUT["champion"],
+
+        champion,
+
+        54,
+
+        True,
+
+        450
+
+    )
+
+
+
+    draw_text(
+
+        draw,
+
+        CARD_LAYOUT["skin"],
+
+        skin,
+
+        38,
+
+        False,
+
+        500
+
+    )
+
+
+
+    # =====================
+    # СТАТЫ
+    # =====================
+
+
+    draw_text(
+
+        draw,
+
+        CARD_LAYOUT["attack"],
+
+        str(attack),
+
+        50,
+
+        True,
+
+        100
+
+    )
+
+
+    draw_text(
+
+        draw,
+
+        CARD_LAYOUT["health"],
+
+        str(health),
+
+        50,
+
+        True,
+
+        100
+
+    )
+
+
+    draw_text(
+
+        draw,
+
+        CARD_LAYOUT["defense"],
+
+        str(defense),
+
+        50,
+
+        True,
+
+        100
+
+    )
+
+
+
+    draw_text(
+
+        draw,
+
+        CARD_LAYOUT["region_text"],
+
+        region,
+
+        34,
+
+        True,
+
+        250
+
+    )
+
+
+    draw_text(
+
+        draw,
+
+        CARD_LAYOUT["rarity"],
+
+        rarity,
+
+        34,
+
+        True,
+
+        250
+
+    )
+
+
+
+    # =====================
+    # СОХРАНЕНИЕ
+    # =====================
+
+
+    filename = (
+
+        f"{champion}_{skin}_{card_number}.png"
+
+    ).replace(
+
+        " ",
+
+        "_"
+
+    )
+
+
+    path = os.path.join(
+
+        OUTPUT,
+
+        filename
+
+    )
+
+
+    card.save(
+
+        path
+
+    )
+
+
+    return path
