@@ -1,23 +1,136 @@
-\Users\Ketek'\Desktop\qantum_universe>python main.py
-✅ База данных подключена
-✅ Загружен: auction
-✅ Загружен: balance
-✅ Загружен: contract
-✅ Загружен: daily
-✅ Загружен: inventory
-✅ Загружен: profile
-✅ Загружен: quest
-✅ Загружен: shop
-✅ Загружен: work
-🌍 Регионов загружено для чемпионов: 32
-✅ Загружен: travel
-✅ Загружен: quest_reward
-✅ Загружен: cards
-✅ Загружен: test_event
-✅ Загружен: deck
-✅ Загружен: battle
-❌ Ошибка загрузки pack: Extension 'cogs.pack' raised an error: ImportError: cannot import name 'get_skin_name' from 'data.translations' (C:\Users\Ketek'\Desktop\qantum_universe\data\translations.py)
-✅ Загружен: collection
-✅ Загружен: map
-✅ Синхронизировано команд: 23
-🟢 Бот запущен как ILTA BOT#7827
+CHAMPION_NAMES = {
+
+    # DEMACIA
+
+    "Fiora": "Фиора",
+    "Galio": "Галио",
+    "Garen": "Гарен",
+    "Jarvan IV": "Джарван IV",
+    "Kayle": "Кейл",
+    "Lucian": "Люциан",
+    "Lux": "Люкс",
+    "Morgana": "Моргана",
+    "Poppy": "Поппи",
+    "Quinn": "Квинн",
+    "Senna": "Сенна",
+    "Shyvana": "Шивана",
+    "Sona": "Сона",
+    "Sylas": "Сайлас",
+    "Vayne": "Вейн",
+    "Xin Zhao": "Синь Чжао",
+
+
+    # NOXUS
+
+    "Ambessa": "Амбесса",
+    "Briar": "Брайер",
+    "Cassiopeia": "Кассиопея",
+    "Darius": "Дариус",
+    "Draven": "Дрейвен",
+    "Katarina": "Катарина",
+    "Kled": "Клед",
+    "LeBlanc": "ЛеБлан",
+    "Mordekaiser": "Мордекайзер",
+    "Rell": "Релл",
+    "Riven": "Ривен",
+    "Samira": "Самира",
+    "Sion": "Сион",
+    "Swain": "Свейн",
+    "Talon": "Талон",
+    "Vladimir": "Владимир"
+
+}
+
+
+
+SKIN_NAMES = {
+
+
+# =================
+# GAREN
+# =================
+
+"Base": "Оригинальный",
+
+"Battle_Academia_Garen":
+"Гарен из Боевой Академии",
+
+"Commando_Garen":
+"Коммандос Гарен",
+
+"Demacia_Vice_Garen":
+"Гарен из Вайс Демасии",
+
+"Desert_Trooper_Garen":
+"Пустынный солдат Гарен",
+
+"Dreadknight_Garen":
+"Рыцарь ужаса Гарен",
+
+"God_King_Garen":
+"Бог-Король Гарен",
+
+"Mecha_Kingdoms_Garen":
+"Меха-Королевства Гарен",
+
+"Mythmaker_Garen":
+"Создатель мифов Гарен",
+
+"Prestige_Mecha_Kingdoms_Garen":
+"Престижный Меха-Королевства Гарен",
+
+"Rogue_Admiral_Garen":
+"Мятежный адмирал Гарен",
+
+"Rugged_Garen":
+"Брутальный Гарен",
+
+"Sanguine_Garen":
+"Кровавый Гарен",
+
+"Steel_Legion_Garen":
+"Стальной легион Гарен",
+
+"Warring_Kingdoms_Garen":
+"Воюющие королевства Гарен",
+
+
+
+# =================
+# DARIUS
+# =================
+
+"Academy_Darius":
+"Дариус из Академии",
+
+"Bioforge_Darius":
+"Биокузница Дариус",
+
+"Crime_City_Nightmare_Darius":
+"Кошмар криминального города Дариус",
+
+"Dreadnova_Darius":
+"Дреднова Дариус",
+
+"Dunkmaster_Darius":
+"Мастер данков Дариус",
+
+"God_King_Darius":
+"Бог-Король Дариус",
+
+"High_Noon_Darius":
+"Полдень Дариус",
+
+"Lord_Darius":
+"Лорд Дариус",
+
+"Lunar_Beast_Darius":
+"Лунный зверь Дариус",
+
+"Spirit_Blossom_Darius":
+"Цветение духов Дариус",
+
+"Woad_King_Darius":
+"Король воадов Дариус",
+
+
