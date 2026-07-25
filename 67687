@@ -1,183 +1,381 @@
 import discord
+from discord.ext import commands
+from discord import app_commands
+
+import random
 import os
 
-from generators.card_generator import create_card
 
+from database.cards import add_card
 
-class SkinView(discord.ui.View):
+from data.champion_loader import load_champions
+from data.loot import get_card_rarity
 
-    def __init__(
-        self,
-        cards,
-        champion_data,
-        champion_name,
-        region,
-        rarity,
-        attack,
-        health,
-        defense,
-        card_number
-    ):
+from data.translations import (
+    get_champion_name
+)
 
-        super().__init__(
-            timeout=300
-        )
-
-        self.cards = cards
-        self.index = 0
-
-        self.champion_name = champion_name
-        self.region = region
-        self.rarity = rarity
-
-        self.attack = attack
-        self.health = health
-        self.defense = defense
-
-        self.card_number = card_number
+from views.skin_view import SkinView
 
 
 
-    async def render(
-        self,
-        interaction
-    ):
+class Pack(commands.Cog):
 
 
-        skin = self.cards[self.index]
+    def __init__(self, bot):
 
+        self.bot = bot
 
-        file_path = create_card(
-
-            champion=self.champion_name,
-
-            skin=skin["name"],
-
-            rarity=self.rarity,
-
-            region=self.region,
-
-            attack=self.attack,
-
-            health=self.health,
-
-            defense=self.defense,
-
-            image_path=skin["file"],
-
-            card_number=self.card_number
-
-        )
-
-
-        file = discord.File(
-            file_path
-        )
-
-
-        embed = discord.Embed(
-
-            title=
-            f"🎴 {self.rarity} | {self.champion_name}",
-
-            description=
-            f"✨ {skin['name']}\n🆔 {self.card_number}",
-
-            color=0xFFD700
-
-        )
-
-
-        embed.add_field(
-            name="⚔ Атака",
-            value=self.attack
-        )
-
-
-        embed.add_field(
-            name="❤️ Здоровье",
-            value=self.health
-        )
-
-
-        embed.add_field(
-            name="🛡 Защита",
-            value=self.defense
-        )
-
-
-        embed.set_image(
-
-            url=
-            f"attachment://{file.filename}"
-
-        )
-
-
-        await interaction.response.edit_message(
-
-            embed=embed,
-
-            attachments=[file],
-
-            view=self
-
-        )
+        self.champions = load_champions()
 
 
 
-    @discord.ui.button(
-        emoji="◀️",
-        style=discord.ButtonStyle.secondary
+    @app_commands.command(
+        name="open_pack",
+        description="Открыть ILTA Pack (3 карты)"
     )
-    async def previous(
-
+    async def open_pack(
         self,
-
-        interaction,
-
-        button
-
+        interaction: discord.Interaction
     ):
 
 
-        self.index -= 1
+        await interaction.response.defer()
 
 
-        if self.index < 0:
 
-            self.index = len(self.cards)-1
+        if not self.champions:
+
+            await interaction.followup.send(
+                "❌ Нет доступных чемпионов"
+            )
+
+            return
 
 
-        await self.render(
-            interaction
+
+        await interaction.followup.send(
+
+            f"🎁 **{interaction.user.name} открыл ILTA Pack (3 карты)**"
+
         )
 
 
 
-    @discord.ui.button(
-        emoji="▶️",
-        style=discord.ButtonStyle.secondary
+        for number in range(1,4):
+
+
+            # =====================
+            # ЧЕМПИОН
+            # =====================
+
+            champion_id = random.choice(
+
+                list(
+                    self.champions.keys()
+                )
+
+            )
+
+
+            champion = self.champions[champion_id]
+
+
+
+            region = champion.get(
+
+                "region",
+
+                "Runeterra"
+
+            )
+
+
+
+            skins = champion.get(
+
+                "skins",
+
+                []
+
+            )
+
+
+            if not skins:
+
+                continue
+
+
+
+            # =====================
+            # ВСЕ СКИНЫ
+            # =====================
+
+            skin_list = skins.copy()
+
+
+
+            first_skin = random.choice(
+
+                skin_list
+
+            )
+
+
+
+            # =====================
+            # НАЗВАНИЕ
+            # =====================
+
+            champion_name = get_champion_name(
+
+                champion_id
+
+            )
+
+
+
+            # =====================
+            # РЕДКОСТЬ
+            # =====================
+
+            rarity = get_card_rarity()
+
+
+
+            # =====================
+            # СТАТЫ
+            # =====================
+
+            attack = random.randint(
+                20,
+                100
+            )
+
+
+            health = random.randint(
+                50,
+                150
+            )
+
+
+            defense = random.randint(
+                10,
+                80
+            )
+
+
+
+            # =====================
+            # ID
+            # =====================
+
+            card_code = (
+
+                f"{random.randint(1,9999):04}"
+
+            )
+
+
+
+            # =====================
+            # СОХРАНЕНИЕ
+            # =====================
+
+            await add_card(
+
+                interaction.user.id,
+
+                card_code,
+
+                champion_id,
+
+                first_skin["name"],
+
+                region,
+
+                rarity,
+
+                attack,
+
+                defense,
+
+                health
+
+            )
+
+
+
+            # =====================
+            # VIEW
+            # =====================
+
+            view = SkinView(
+
+                cards=skin_list,
+
+                champion_data=champion,
+
+                champion_name=champion_name,
+
+                region=region,
+
+                rarity=rarity,
+
+                attack=attack,
+
+                health=health,
+
+                defense=defense,
+
+                card_number=card_code
+
+            )
+
+
+
+            # первая карта
+
+            file_path = view.cards[0]["file"]
+
+
+
+            from generators.card_generator import create_card
+
+
+
+            generated = create_card(
+
+                champion=champion_name,
+
+                skin=first_skin["name"],
+
+                rarity=rarity,
+
+                region=region,
+
+                attack=attack,
+
+                health=health,
+
+                defense=defense,
+
+                image_path=file_path,
+
+                card_number=card_code
+
+            )
+
+
+
+            file = discord.File(
+
+                generated
+
+            )
+
+
+
+            embed = discord.Embed(
+
+                title=(
+
+                    f"🎴 {rarity} | {champion_name}"
+
+                ),
+
+                description=(
+
+                    f"✨ {first_skin['name']}\n"
+
+                    f"🆔 {card_code}"
+
+                ),
+
+                color=0xFFD700
+
+            )
+
+
+
+            embed.add_field(
+
+                name="⚔ Атака",
+
+                value=str(attack),
+
+                inline=True
+
+            )
+
+
+            embed.add_field(
+
+                name="❤️ Здоровье",
+
+                value=str(health),
+
+                inline=True
+
+            )
+
+
+            embed.add_field(
+
+                name="🛡 Защита",
+
+                value=str(defense),
+
+                inline=True
+
+            )
+
+
+            embed.add_field(
+
+                name="🌍 Регион",
+
+                value=region,
+
+                inline=True
+
+            )
+
+
+            embed.set_image(
+
+                url=
+
+                f"attachment://{file.filename}"
+
+            )
+
+
+            embed.set_footer(
+
+                text=f"Карта {number}/3 | ◀️ ▶️ Скины"
+
+            )
+
+
+
+            await interaction.followup.send(
+
+                embed=embed,
+
+                file=file,
+
+                view=view
+
+            )
+
+
+
+
+async def setup(bot):
+
+    await bot.add_cog(
+
+        Pack(bot)
+
     )
-    async def next(
-
-        self,
-
-        interaction,
-
-        button
-
-    ):
-
-
-        self.index += 1
-
-
-        if self.index >= len(self.cards):
-
-            self.index = 0
-
-
-        await self.render(
-            interaction
-        )
