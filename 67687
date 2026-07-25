@@ -1,316 +1,78 @@
 import os
-import json
-import requests
-from PIL import Image
-from io import BytesIO
+import re
 
 
-# =========================
-# НАСТРОЙКИ
-# =========================
+FOLDER = "assets/champions"
 
-TARGET_REGIONS = [
-    "Demacia",
-    "Noxus"
-]
-
-
-CHAMPIONS_JSON = (
-    "data/champions.json"
-)
-
-
-OUTPUT = (
-    "assets/champions"
-)
-
-
-
-# =========================
-# ИМЕНА
-# =========================
 
 def clean_name(name):
 
-    name = name.replace(
-        " ",
-        "_"
+    # расширение
+    filename, ext = os.path.splitext(name)
+
+    # заменяем пробелы
+    filename = filename.replace(" ", "_")
+
+    # убираем лишнее
+    filename = filename.replace(":", "")
+    filename = filename.replace("'", "")
+    filename = filename.replace("-", "_")
+
+    # двойные _
+    filename = re.sub(
+        "_+",
+        "_",
+        filename
     )
 
-    name = name.replace(
-        ":",
-        ""
-    )
-
-    name = name.replace(
-        "'",
-        ""
-    )
-
-    return name
+    return filename + ext.lower()
 
 
 
-# =========================
-# СКАЧИВАНИЕ
-# =========================
+def rename_folder(path):
 
-def download_image(
-    url,
-    path
-):
+    for root, dirs, files in os.walk(path):
 
-    try:
+        for file in files:
 
-        response = requests.get(
-            url,
-            timeout=20
-        )
-
-
-        if response.status_code != 200:
-
-            return False
-
-
-
-        image = Image.open(
-            BytesIO(
-                response.content
+            old = os.path.join(
+                root,
+                file
             )
-        )
 
 
-        image = image.convert(
-            "RGB"
-        )
+            new_name = clean_name(
+                file
+            )
 
 
-        image.save(
-            path,
-            "WEBP",
-            quality=95
-        )
+            new = os.path.join(
+                root,
+                new_name
+            )
 
 
-        return True
+            if old != new:
 
-
-
-    except Exception as error:
-
-        print(
-            "Ошибка:",
-            error
-        )
-
-        return False
-
-
-
-# =========================
-# ЗАГРУЗКА JSON
-# =========================
-
-with open(
-    CHAMPIONS_JSON,
-    "r",
-    encoding="utf-8"
-) as file:
-
-    champions = json.load(
-        file
-    )
-
-
-
-# =========================
-# ПОИСК РЕГИОНА
-# =========================
-
-def find_region(
-    champion
-):
-
-    for region in TARGET_REGIONS:
-
-
-        path = os.path.join(
-
-            OUTPUT,
-
-            region,
-
-            champion
-
-        )
-
-
-        if os.path.exists(path):
-
-            return region
-
-
-
-    return None
-
-
-
-# =========================
-# ОСНОВА
-# =========================
-
-for champion_name, data in champions.items():
-
-
-    region = find_region(
-        champion_name
-    )
-
-
-    if not region:
-
-        continue
-
-
-
-    print(
-        "\n🌍",
-        region,
-        "|",
-        champion_name
-    )
-
-
-
-    champion_folder = os.path.join(
-
-        OUTPUT,
-
-        region,
-
-        champion_name
-
-    )
-
-
-    os.makedirs(
-        champion_folder,
-        exist_ok=True
-    )
-
-
-
-    for skin in data.get(
-        "skins",
-        []
-    ):
-
-
-        skin_name = skin.get(
-            "name",
-            "default"
-        )
-
-
-        skin_id = skin.get(
-            "id",
-            0
-        )
-
-
-
-        if skin_name == "default":
-
-            filename = "Base.webp"
-
-        else:
-
-            filename = (
-                clean_name(
-                    skin_name
+                os.rename(
+                    old,
+                    new
                 )
-                +
-                ".webp"
-            )
+
+                print(
+                    "✔",
+                    file,
+                    "→",
+                    new_name
+                )
 
 
 
-        save_path = os.path.join(
-
-            champion_folder,
-
-            filename
-
-        )
-
-
-
-        if os.path.exists(save_path):
-
-            print(
-                "✔ Уже есть:",
-                filename
-            )
-
-            continue
-
-
-
-        # =====================
-        # RIOT SPLASH ART
-        # =====================
-
-        url = (
-
-            "https://ddragon.leagueoflegends.com/"
-
-            "cdn/img/champion/splash/"
-
-            f"{champion_name}_{skin_id}.jpg"
-
-        )
-
-
-
-        print(
-            "⬇ Скачивание:",
-            skin_name
-        )
-
-
-
-        result = download_image(
-
-            url,
-
-            save_path
-
-        )
-
-
-        if result:
-
-            print(
-                "  ✅ Сохранено"
-            )
-
-        else:
-
-            print(
-                "  ❌ Не найдено"
-            )
-
-
-
-print(
-    "\n===================="
+rename_folder(
+    FOLDER
 )
 
-print(
-    "✅ Загрузка завершена"
-)
 
 print(
-    "===================="
+    "\n✅ Переименование завершено"
 )
