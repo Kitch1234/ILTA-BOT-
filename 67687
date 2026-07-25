@@ -1,649 +1,183 @@
-from PIL import Image, ImageDraw, ImageFont
+import discord
 import os
 
+from generators.card_generator import create_card
 
-# =========================
-# РАЗМЕР КАРТЫ
-# =========================
 
-CARD_WIDTH = 1060
-CARD_HEIGHT = 1484
+class SkinView(discord.ui.View):
 
-
-ASSETS = "assets"
-
-OUTPUT = "generated_cards"
-
-
-
-# =========================
-# ШРИФТЫ
-# =========================
-
-FONT_BOLD = os.path.join(
-    ASSETS,
-    "fonts",
-    "Beaufort-Bold.ttf"
-)
-
-
-FONT_REGULAR = os.path.join(
-    ASSETS,
-    "fonts",
-    "Beaufort-Regular.ttf"
-)
-
-
-
-# =========================
-# РАМКИ
-# =========================
-
-FRAME_PATHS = {
-
-    "Обычный": "common.png",
-    "Редкий": "rare.png",
-    "Эпический": "epic.png",
-    "Легендарный": "legendary.png",
-    "Мифический": "mythic.png",
-
-    # английские варианты
-    "Common": "common.png",
-    "Rare": "rare.png",
-    "Epic": "epic.png",
-    "Legendary": "legendary.png",
-    "Mythic": "mythic.png"
-
-}
-
-
-
-# =========================
-# КООРДИНАТЫ
-# =========================
-
-CARD_LAYOUT = {
-
-    "number": (900, 90),
-
-    "champion": (530, 1010),
-
-    "skin": (530, 1080),
-
-    "attack": (250, 1210),
-
-    "health": (530, 1210),
-
-    "defense": (810, 1210),
-
-    "region_text": (250, 1380),
-
-    "rarity": (820, 1380)
-
-}
-
-
-
-# =========================
-# ШРИФТ
-# =========================
-
-def get_font(path, size):
-
-    return ImageFont.truetype(
-        path,
-        size
-    )
-
-
-
-# =========================
-# ТЕКСТ С АВТОРАЗМЕРОМ
-# =========================
-
-def draw_text(
-    draw,
-    position,
-    text,
-    size,
-    bold=True,
-    max_width=400,
-    centered=True
-):
-
-
-    font_path = (
-        FONT_BOLD
-        if bold
-        else FONT_REGULAR
-    )
-
-
-    current_size = size
-
-
-    while True:
-
-
-        font = get_font(
-            font_path,
-            current_size
-        )
-
-
-        box = draw.textbbox(
-            (0,0),
-            text,
-            font=font
-        )
-
-
-        width = (
-            box[2] - box[0]
-        )
-
-
-        if width <= max_width:
-
-            break
-
-
-        current_size -= 2
-
-
-        if current_size <= 12:
-
-            break
-
-
-
-    if centered:
-
-        x = (
-            position[0]
-            -
-            width // 2
-        )
-
-    else:
-
-        x = position[0]
-
-
-
-    y = position[1]
-
-
-
-    # тень
-
-    draw.text(
-
-        (
-            x + 3,
-            y + 3
-        ),
-
-        text,
-
-        font=font,
-
-        fill=(0,0,0,220)
-
-    )
-
-
-
-    # текст
-
-    draw.text(
-
-        (
-            x,
-            y
-        ),
-
-        text,
-
-        font=font,
-
-        fill=(255,255,255)
-
-    )
-
-
-
-# =========================
-# АРТ
-# =========================
-
-def fit_image(
-    image,
-    size,
-    zoom=0.65
-):
-
-
-    target_w, target_h = size
-
-
-    ratio = min(
-
-        target_w / image.width,
-
-        target_h / image.height
-
-    )
-
-
-    ratio *= zoom
-
-
-
-    new_size = (
-
-        int(image.width * ratio),
-
-        int(image.height * ratio)
-
-    )
-
-
-    image = image.resize(
-
-        new_size,
-
-        Image.LANCZOS
-
-    )
-
-
-
-    canvas = Image.new(
-
-        "RGBA",
-
-        (
-            target_w,
-            target_h
-        ),
-
-        (0,0,0,0)
-
-    )
-
-
-
-    x = (
-
-        target_w - image.width
-
-    ) // 2
-
-
-
-    y = (
-
-        target_h - image.height
-
-    ) // 2
-
-
-
-    canvas.alpha_composite(
-
-        image,
-
-        (
-            x,
-            y
-        )
-
-    )
-
-
-    return canvas
-
-
-
-# =========================
-# СОЗДАНИЕ КАРТЫ
-# =========================
-
-def create_card(
-
-    champion,
-
-    skin,
-
-    rarity,
-
-    region,
-
-    attack,
-
-    health,
-
-    defense,
-
-    image_path,
-
-    card_number
-
-):
-
-
-    os.makedirs(
-        OUTPUT,
-        exist_ok=True
-    )
-
-
-
-    card = Image.new(
-
-        "RGBA",
-
-        (
-            CARD_WIDTH,
-            CARD_HEIGHT
-        ),
-
-        (0,0,0,0)
-
-    )
-
-
-
-    # =====================
-    # АРТ
-    # =====================
-
-
-    art = Image.open(
-
-        image_path
-
-    ).convert(
-
-        "RGBA"
-
-    )
-
-
-    art = fit_image(
-
-        art,
-
-        (
-            CARD_WIDTH,
-            CARD_HEIGHT
-        )
-
-    )
-
-
-    card.alpha_composite(
-
-        art
-
-    )
-
-
-
-    # =====================
-    # РАМКА
-    # =====================
-
-
-    frame_name = FRAME_PATHS.get(
-
-        rarity,
-
-        "common.png"
-
-    )
-
-
-    frame_path = os.path.join(
-
-        ASSETS,
-
-        "frames",
-
-        frame_name
-
-    )
-
-
-
-    if os.path.exists(frame_path):
-
-
-        frame = Image.open(
-
-            frame_path
-
-        ).convert(
-
-            "RGBA"
-
-        )
-
-
-        frame = frame.resize(
-
-            (
-                CARD_WIDTH,
-                CARD_HEIGHT
-            ),
-
-            Image.LANCZOS
-
-        )
-
-
-        card.alpha_composite(
-
-            frame
-
-        )
-
-
-
-    draw = ImageDraw.Draw(
-
-        card
-
-    )
-
-
-
-    # =====================
-    # ТЕКСТ
-    # =====================
-
-
-    draw_text(
-
-        draw,
-
-        CARD_LAYOUT["number"],
-
-        f"#{card_number}",
-
-        36,
-
-        True,
-
-        150,
-
-        False
-
-    )
-
-
-
-    draw_text(
-
-        draw,
-
-        CARD_LAYOUT["champion"],
-
-        champion,
-
-        54,
-
-        True,
-
-        450
-
-    )
-
-
-
-    draw_text(
-
-        draw,
-
-        CARD_LAYOUT["skin"],
-
-        skin,
-
-        38,
-
-        False,
-
-        500
-
-    )
-
-
-
-    # =====================
-    # СТАТЫ
-    # =====================
-
-
-    draw_text(
-
-        draw,
-
-        CARD_LAYOUT["attack"],
-
-        str(attack),
-
-        50,
-
-        True,
-
-        100
-
-    )
-
-
-    draw_text(
-
-        draw,
-
-        CARD_LAYOUT["health"],
-
-        str(health),
-
-        50,
-
-        True,
-
-        100
-
-    )
-
-
-    draw_text(
-
-        draw,
-
-        CARD_LAYOUT["defense"],
-
-        str(defense),
-
-        50,
-
-        True,
-
-        100
-
-    )
-
-
-
-    draw_text(
-
-        draw,
-
-        CARD_LAYOUT["region_text"],
-
+    def __init__(
+        self,
+        cards,
+        champion_data,
+        champion_name,
         region,
-
-        34,
-
-        True,
-
-        250
-
-    )
-
-
-    draw_text(
-
-        draw,
-
-        CARD_LAYOUT["rarity"],
-
         rarity,
+        attack,
+        health,
+        defense,
+        card_number
+    ):
 
-        34,
+        super().__init__(
+            timeout=300
+        )
 
-        True,
+        self.cards = cards
+        self.index = 0
 
-        250
+        self.champion_name = champion_name
+        self.region = region
+        self.rarity = rarity
 
+        self.attack = attack
+        self.health = health
+        self.defense = defense
+
+        self.card_number = card_number
+
+
+
+    async def render(
+        self,
+        interaction
+    ):
+
+
+        skin = self.cards[self.index]
+
+
+        file_path = create_card(
+
+            champion=self.champion_name,
+
+            skin=skin["name"],
+
+            rarity=self.rarity,
+
+            region=self.region,
+
+            attack=self.attack,
+
+            health=self.health,
+
+            defense=self.defense,
+
+            image_path=skin["file"],
+
+            card_number=self.card_number
+
+        )
+
+
+        file = discord.File(
+            file_path
+        )
+
+
+        embed = discord.Embed(
+
+            title=
+            f"🎴 {self.rarity} | {self.champion_name}",
+
+            description=
+            f"✨ {skin['name']}\n🆔 {self.card_number}",
+
+            color=0xFFD700
+
+        )
+
+
+        embed.add_field(
+            name="⚔ Атака",
+            value=self.attack
+        )
+
+
+        embed.add_field(
+            name="❤️ Здоровье",
+            value=self.health
+        )
+
+
+        embed.add_field(
+            name="🛡 Защита",
+            value=self.defense
+        )
+
+
+        embed.set_image(
+
+            url=
+            f"attachment://{file.filename}"
+
+        )
+
+
+        await interaction.response.edit_message(
+
+            embed=embed,
+
+            attachments=[file],
+
+            view=self
+
+        )
+
+
+
+    @discord.ui.button(
+        emoji="◀️",
+        style=discord.ButtonStyle.secondary
     )
+    async def previous(
+
+        self,
+
+        interaction,
+
+        button
+
+    ):
+
+
+        self.index -= 1
+
+
+        if self.index < 0:
+
+            self.index = len(self.cards)-1
+
+
+        await self.render(
+            interaction
+        )
 
 
 
-    # =====================
-    # СОХРАНЕНИЕ
-    # =====================
-
-
-    filename = (
-
-        f"{champion}_{skin}_{card_number}.png"
-
-    ).replace(
-
-        " ",
-
-        "_"
-
+    @discord.ui.button(
+        emoji="▶️",
+        style=discord.ButtonStyle.secondary
     )
+    async def next(
+
+        self,
+
+        interaction,
+
+        button
+
+    ):
 
 
-    path = os.path.join(
-
-        OUTPUT,
-
-        filename
-
-    )
+        self.index += 1
 
 
-    card.save(
+        if self.index >= len(self.cards):
 
-        path
-
-    )
+            self.index = 0
 
 
-    return path
+        await self.render(
+            interaction
+        )
