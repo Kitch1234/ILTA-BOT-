@@ -2,12 +2,13 @@ from PIL import Image, ImageDraw, ImageFont
 import os
 
 
+
 # =========================
 # РАЗМЕР КАРТЫ
 # =========================
 
-CARD_WIDTH = 1060
-CARD_HEIGHT = 1484
+CARD_WIDTH = 1064
+CARD_HEIGHT = 1478
 
 
 ASSETS = "assets"
@@ -51,33 +52,53 @@ FRAME_PATHS = {
 
 
 # =========================
-# КООРДИНАТЫ
+# ОБЛАСТЬ АРТА
+# =========================
+
+ART_WIDTH = 850
+ART_HEIGHT = 1150
+
+
+
+ART_X = (
+
+    CARD_WIDTH - ART_WIDTH
+
+) // 2
+
+
+ART_Y = 80
+
+
+
+# =========================
+# ТЕКСТ
 # =========================
 
 CARD_LAYOUT = {
 
-    "number": (900,90),
+    "number": (900,80),
 
-    "champion": (530,1010),
+    "champion": (532,1180),
 
-    "skin": (530,1080),
+    "skin": (532,1240),
 
-    "attack": (250,1210),
+    "attack": (250,1340),
 
-    "health": (530,1210),
+    "health": (530,1340),
 
-    "defense": (810,1210),
+    "defense": (810,1340),
 
-    "region": (250,1380),
+    "region": (250,1420),
 
-    "rarity": (820,1380)
+    "rarity": (820,1420)
 
 }
 
 
 
 # =========================
-# ШРИФТ
+# ФОНТ
 # =========================
 
 def get_font(path,size):
@@ -88,10 +109,6 @@ def get_font(path,size):
     )
 
 
-
-# =========================
-# ТЕКСТ
-# =========================
 
 def draw_text(
     draw,
@@ -147,25 +164,35 @@ def draw_text(
 
 
 # =========================
-# АРТ
+# ПОДГОТОВКА АРТА
 # =========================
 
 def prepare_art(image):
 
 
-    # =====================
-    # ФОН
-    # =====================
+    # сохраняем пропорции
 
-    bg = image.copy()
+    ratio = max(
+
+        ART_WIDTH / image.width,
+
+        ART_HEIGHT / image.height
+
+    )
 
 
-    bg = bg.resize(
+    new_size = (
 
-        (
-            CARD_WIDTH,
-            CARD_HEIGHT
-        ),
+        int(image.width * ratio),
+
+        int(image.height * ratio)
+
+    )
+
+
+    image = image.resize(
+
+        new_size,
 
         Image.LANCZOS
 
@@ -173,96 +200,42 @@ def prepare_art(image):
 
 
 
-    # =====================
-    # ОСНОВНОЙ АРТ
-    # =====================
+    # обрезка по центру
 
-    fg = image.copy()
+    left = (
 
-
-    ratio = min(
-
-        CARD_WIDTH / fg.width,
-
-        CARD_HEIGHT / fg.height
-
-    ) * 0.82
-
-
-
-    fg = fg.resize(
-
-        (
-            int(fg.width * ratio),
-
-            int(fg.height * ratio)
-
-        ),
-
-        Image.LANCZOS
-
-    )
-
-
-
-    result = Image.new(
-
-        "RGBA",
-
-        (
-            CARD_WIDTH,
-            CARD_HEIGHT
-        )
-
-    )
-
-
-
-    # фон
-
-    result.alpha_composite(
-
-        bg,
-
-        (
-            0,
-            0
-        )
-
-    )
-
-
-
-    # центр
-
-    x = (
-
-        CARD_WIDTH - fg.width
+        image.width - ART_WIDTH
 
     ) // 2
 
 
-    y = (
+    top = (
 
-        CARD_HEIGHT - fg.height
+        image.height - ART_HEIGHT
 
     ) // 2
 
 
 
-    result.alpha_composite(
-
-        fg,
+    image = image.crop(
 
         (
-            x,
-            y
+
+            left,
+
+            top,
+
+            left + ART_WIDTH,
+
+            top + ART_HEIGHT
+
         )
 
     )
 
 
-    return result
+    return image
+
 
 
 
@@ -318,6 +291,10 @@ def create_card(
 
 
 
+    # =====================
+    # АРТ
+    # =====================
+
     art = Image.open(
 
         image_path
@@ -327,7 +304,6 @@ def create_card(
         "RGBA"
 
     )
-
 
 
     art = prepare_art(
@@ -340,7 +316,12 @@ def create_card(
 
     card.alpha_composite(
 
-        art
+        art,
+
+        (
+            ART_X,
+            ART_Y
+        )
 
     )
 
@@ -359,6 +340,7 @@ def create_card(
     )
 
 
+
     frame_path = os.path.join(
 
         ASSETS,
@@ -372,6 +354,7 @@ def create_card(
 
 
     if os.path.exists(frame_path):
+
 
         frame = Image.open(
 
@@ -416,6 +399,7 @@ def create_card(
     # ТЕКСТ
     # =====================
 
+
     draw_text(
 
         draw,
@@ -441,6 +425,7 @@ def create_card(
         54
 
     )
+
 
 
     draw_text(
@@ -472,6 +457,7 @@ def create_card(
     )
 
 
+
     draw_text(
 
         draw,
@@ -483,6 +469,7 @@ def create_card(
         50
 
     )
+
 
 
     draw_text(
@@ -498,6 +485,7 @@ def create_card(
     )
 
 
+
     draw_text(
 
         draw,
@@ -509,6 +497,7 @@ def create_card(
         34
 
     )
+
 
 
     draw_text(
