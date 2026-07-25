@@ -1,1 +1,244 @@
-C:\Users\Ketek'\Desktop\img\champion\centered
+import os
+import json
+
+
+CHAMPIONS_FILE = "data/champions.json"
+
+
+# ПАПКА С CENTERED АРТАМИ
+CHAMPIONS_PATH = r"C:\Users\Ketek'\Desktop\img\champion\centered"
+
+
+IMAGE_EXTENSIONS = (
+    ".png",
+    ".jpg",
+    ".jpeg",
+    ".webp"
+)
+
+
+
+def clean_name(name):
+
+    return name.replace(
+        "_",
+        " "
+    )
+
+
+
+
+
+def load_champions():
+
+    champions = {}
+
+
+
+    if not os.path.exists(CHAMPIONS_PATH):
+
+        print(
+            "❌ Папка centered не найдена"
+        )
+
+        return champions
+
+
+
+
+
+    if not os.path.exists(CHAMPIONS_FILE):
+
+        print(
+            "❌ Нет data/champions.json"
+        )
+
+        return champions
+
+
+
+
+
+    with open(
+        CHAMPIONS_FILE,
+        "r",
+        encoding="utf-8"
+    ) as file:
+
+        json_data = json.load(file)
+
+
+
+
+
+    for image in os.listdir(CHAMPIONS_PATH):
+
+
+        if not image.lower().endswith(
+            IMAGE_EXTENSIONS
+        ):
+
+            continue
+
+
+
+        filename = os.path.splitext(
+            image
+        )[0]
+
+
+
+        try:
+
+            champion_raw, skin_id = filename.rsplit(
+                "_",
+                1
+            )
+
+            skin_id = int(
+                skin_id
+            )
+
+
+        except:
+
+            continue
+
+
+
+
+
+        # приводим имя
+
+        champion_name = champion_raw.capitalize()
+
+
+
+
+
+        # ищем в json
+
+        if champion_name not in json_data:
+
+
+            found = None
+
+
+            for name in json_data.keys():
+
+                if name.lower() == champion_raw.lower():
+
+                    found = name
+
+                    break
+
+
+
+            if found:
+
+                champion_name = found
+
+            else:
+
+                print(
+                    "⚠ Нет в JSON:",
+                    champion_raw
+                )
+
+                continue
+
+
+
+
+
+
+        champion_info = json_data[champion_name]
+
+
+
+
+
+        if champion_name not in champions:
+
+            champions[champion_name] = {
+
+                "id": champion_info.get(
+                    "id"
+                ),
+
+                "region": "Unknown",
+
+                "skins": []
+
+            }
+
+
+
+
+
+        skin_name = "Unknown"
+
+
+
+
+
+        for skin in champion_info.get(
+            "skins",
+            []
+        ):
+
+
+            if skin.get(
+                "id"
+            ) == skin_id:
+
+
+                skin_name = skin.get(
+                    "name"
+                )
+
+                break
+
+
+
+
+
+
+        champions[champion_name]["skins"].append({
+
+            "id": skin_id,
+
+            "name": skin_name,
+
+            "file": os.path.join(
+                CHAMPIONS_PATH,
+                image
+            )
+
+        })
+
+
+
+
+
+
+    print()
+
+
+    for champion, data in champions.items():
+
+        print(
+            f"✅ {champion}: {len(data['skins'])} артов"
+        )
+
+
+
+    print()
+
+    print(
+        f"🌟 Всего чемпионов: {len(champions)}"
+    )
+
+
+
+    return champions
