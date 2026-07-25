@@ -1,24 +1,27 @@
+import json
 import os
 
 
+JSON_FILE = "data/champions.json"
+
+
+# откуда брать регионы
 CHAMPION_PATH = "assets/champions"
 
 
 
 def load_regions():
 
-    champion_regions = {}
-
+    regions = {}
 
 
     if not os.path.exists(CHAMPION_PATH):
 
         print(
-            "❌ Не найдена папка champions"
+            "❌ Нет папки assets/champions"
         )
 
-        return {}
-
+        return regions
 
 
 
@@ -26,22 +29,14 @@ def load_regions():
 
 
         region_path = os.path.join(
-
             CHAMPION_PATH,
-
             region
-
         )
 
 
-
-        if not os.path.isdir(
-            region_path
-        ):
+        if not os.path.isdir(region_path):
 
             continue
-
-
 
 
 
@@ -49,66 +44,91 @@ def load_regions():
 
 
             champion_path = os.path.join(
-
                 region_path,
-
                 champion
-
             )
 
 
+            if os.path.isdir(champion_path):
 
-            if not os.path.isdir(
-                champion_path
-            ):
-
-                continue
+                regions[champion] = region
 
 
 
-            champion_regions[champion] = region
+    return regions
 
 
+
+
+
+def main():
+
+
+    if not os.path.exists(JSON_FILE):
+
+        print(
+            "❌ Нет champions.json"
+        )
+
+        return
+
+
+
+    with open(
+        JSON_FILE,
+        "r",
+        encoding="utf-8"
+    ) as f:
+
+        champions = json.load(f)
+
+
+
+
+    regions = load_regions()
+
+
+
+    updated = 0
+
+
+
+    for champion, data in champions.items():
+
+
+        if champion in regions:
+
+
+            data["region"] = regions[champion]
+
+            updated += 1
+
+
+
+
+    with open(
+        JSON_FILE,
+        "w",
+        encoding="utf-8"
+    ) as f:
+
+        json.dump(
+            champions,
+            f,
+            ensure_ascii=False,
+            indent=4
+        )
 
 
 
     print(
-        f"🌍 Регионов загружено для чемпионов: {len(champion_regions)}"
+        f"✅ Обновлено регионов: {updated}"
     )
 
 
-    return champion_regions
 
 
 
+if __name__ == "__main__":
 
-
-# автоматическая загрузка
-
-champion_regions = load_regions()
-
-REGIONS = {
-
-    "Demacia": "Демасия",
-
-    "Noxus": "Ноксус",
-
-    "Freljord": "Фрельйорд",
-
-    "Ionia": "Иония",
-
-    "Shurima": "Шурима",
-
-    "Void": "Пустота",
-
-    "Shadow_Isles": "Теневые острова",
-
-    "Piltover_Zaun": "Пилтовер и Заун",
-
-    "Targon": "Таргон",
-
-    "Bilgewater": "Билджвотер",
-
-    "Bandle_City": "Бандл Сити"
-
-}
+    main()
