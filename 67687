@@ -1,392 +1,197 @@
-from PIL import Image, ImageDraw, ImageFont
 import os
+import re
 
 
-CARD_WIDTH = 1060
-CARD_HEIGHT = 1484
+CHAMPIONS_PATH = "assets/champions"
 
 
-ASSETS = "assets"
-OUTPUT = "generated_cards"
-
-
-FONT_BOLD = os.path.join(
-    ASSETS,
-    "fonts",
-    "Beaufort-Bold.ttf"
-)
-
-FONT_REGULAR = os.path.join(
-    ASSETS,
-    "fonts",
-    "Beaufort-Regular.ttf"
+IMAGE_EXTENSIONS = (
+    ".png",
+    ".jpg",
+    ".jpeg",
+    ".webp"
 )
 
 
 
-FRAME_PATHS = {
-
-    "Обычный": "common.png",
-    "Редкий": "rare.png",
-    "Эпический": "epic.png",
-    "Легендарный": "legendary.png",
-    "Мифический": "mythic.png"
-
-}
-
-
-
-CARD_LAYOUT = {
-
-    "number": (900, 90),
-
-    "champion": (530, 1010),
-
-    "skin": (530, 1080),
-
-    "attack": (250, 1210),
-
-    "health": (530, 1210),
-
-    "defense": (810, 1210),
-
-    "region": (250, 1380),
-
-    "rarity": (820, 1380)
-
-}
-
-
-
-def get_font(path, size):
-
-    return ImageFont.truetype(
-        path,
-        size
-    )
-
-
-
-
-
-def draw_text(
-    draw,
-    position,
-    text,
-    size,
-    bold=True
-):
-
-    font = get_font(
-        FONT_BOLD if bold else FONT_REGULAR,
-        size
-    )
-
-
-    x, y = position
-
-
-    draw.text(
-        (
-            x + 3,
-            y + 3
-        ),
-        text,
-        font=font,
-        fill=(0,0,0)
-    )
-
-
-    draw.text(
-        (
-            x,
-            y
-        ),
-        text,
-        font=font,
-        fill=(255,255,255)
-    )
-
-
-
-
-
-def fit_image(
-    image,
-    size,
-    zoom=0.65
-):
-
-    target_w, target_h = size
-
-
-    ratio = max(
-        target_w / image.width,
-        target_h / image.height
-    )
-
-
-    ratio *= zoom
-
-
-    new_w = int(
-        image.width * ratio
-    )
-
-    new_h = int(
-        image.height * ratio
-    )
-
-
-    image = image.resize(
-        (
-            new_w,
-            new_h
-        ),
-        Image.LANCZOS
-    )
-
-
-    canvas = Image.new(
-        "RGBA",
-        (
-            target_w,
-            target_h
-        ),
-        (0,0,0,0)
-    )
-
-
-    x = (
-        target_w - new_w
-    ) // 2
-
-
-    y = (
-        target_h - new_h
-    ) // 2
-
-
-    canvas.alpha_composite(
-        image,
-        (
-            x,
-            y
-        )
-    )
-
-
-    return canvas
-
-
-
-
-
-def resize_text(
-    text,
-    max_len
-):
-
-    if len(text) > max_len:
-
-        return text[:max_len-3] + "..."
-
-    return text
-
-
-
-
-
-def create_card(
+def clean_skin_name(
     champion,
-    skin,
-    rarity,
-    region,
-    attack,
-    health,
-    defense,
-    image_path,
-    card_number
+    name
 ):
 
+    name = os.path.splitext(
+        name
+    )[0]
 
-    os.makedirs(
-        OUTPUT,
-        exist_ok=True
+
+    name = (
+        name
+        .replace("_", " ")
+        .replace("-", " ")
     )
 
 
+    # убрать loading 308
 
-    card = Image.new(
-        "RGBA",
-        (
-            CARD_WIDTH,
-            CARD_HEIGHT
-        ),
-        (0,0,0,0)
+    name = re.sub(
+        r"\s*loading\s*\d+",
+        "",
+        name,
+        flags=re.I
     )
 
 
-
-    # ART
-
-    art = Image.open(
-        image_path
-    ).convert(
-        "RGBA"
-    )
+    words = name.split()
 
 
-    art = fit_image(
-        art,
-        (
-            CARD_WIDTH,
-            CARD_HEIGHT
-        ),
-        zoom=0.65
-    )
+    # убрать повтор чемпиона
+
+    if words:
+
+        if words[0].lower() == champion.lower():
+
+            words = words[1:]
 
 
-    card.alpha_composite(
-        art
-    )
+    # убрать повтор чемпиона в конце
+
+    if words:
+
+        if words[-1].lower() == champion.lower():
+
+            words = words[:-1]
+
+
+    name = " ".join(words)
+
+
+    return name.strip()
 
 
 
-    # FRAME
-
-    frame_file = FRAME_PATHS.get(
-        rarity,
-        "common.png"
-    )
 
 
-    frame_path = os.path.join(
-        ASSETS,
-        "frames",
-        frame_file
-    )
+def load_champions():
+
+    champions = {}
 
 
-    if os.path.exists(frame_path):
+    if not os.path.exists(
+        CHAMPIONS_PATH
+    ):
 
-        frame = Image.open(
-            frame_path
-        ).convert(
-            "RGBA"
+        print(
+            "❌ Папка assets/champions не найдена"
+        )
+
+        return champions
+
+
+
+
+    for region in sorted(
+        os.listdir(CHAMPIONS_PATH)
+    ):
+
+
+        region_path = os.path.join(
+            CHAMPIONS_PATH,
+            region
         )
 
 
-        frame = frame.resize(
-            (
-                CARD_WIDTH,
-                CARD_HEIGHT
-            ),
-            Image.LANCZOS
-        )
+        if not os.path.isdir(
+            region_path
+        ):
 
-
-        card.alpha_composite(
-            frame
-        )
+            continue
 
 
 
-    draw = ImageDraw.Draw(
-        card
+
+
+        for champion in sorted(
+            os.listdir(region_path)
+        ):
+
+
+            champion_path = os.path.join(
+                region_path,
+                champion
+            )
+
+
+            if not os.path.isdir(
+                champion_path
+            ):
+
+                continue
+
+
+
+            skins = []
+
+
+
+            for image in sorted(
+                os.listdir(champion_path)
+            ):
+
+
+                if not image.lower().endswith(
+                    IMAGE_EXTENSIONS
+                ):
+
+                    continue
+
+
+
+                skin_name = clean_skin_name(
+                    champion,
+                    image
+                )
+
+
+
+                skins.append({
+
+                    "name": skin_name,
+
+                    "file": os.path.join(
+                        champion_path,
+                        image
+                    )
+
+                })
+
+
+
+            if not skins:
+
+                continue
+
+
+
+
+            champions[champion] = {
+
+                "region": region,
+
+                "skins": skins
+
+            }
+
+
+
+            print(
+                f"✅ {region}: {champion} ({len(skins)} скинов)"
+            )
+
+
+
+    print(
+        f"\n🌟 Загружено чемпионов: {len(champions)}"
     )
 
 
-
-    # TEXT
-
-    draw_text(
-        draw,
-        CARD_LAYOUT["number"],
-        f"#{card_number}",
-        36
-    )
-
-
-    draw_text(
-        draw,
-        CARD_LAYOUT["champion"],
-        resize_text(champion,18),
-        52
-    )
-
-
-    draw_text(
-        draw,
-        CARD_LAYOUT["skin"],
-        resize_text(skin,25),
-        36,
-        False
-    )
-
-
-
-    # STATS
-
-    draw_text(
-        draw,
-        CARD_LAYOUT["attack"],
-        str(attack),
-        50
-    )
-
-
-    draw_text(
-        draw,
-        CARD_LAYOUT["health"],
-        str(health),
-        50
-    )
-
-
-    draw_text(
-        draw,
-        CARD_LAYOUT["defense"],
-        str(defense),
-        50
-    )
-
-
-
-    draw_text(
-        draw,
-        CARD_LAYOUT["region"],
-        region,
-        34
-    )
-
-
-    draw_text(
-        draw,
-        CARD_LAYOUT["rarity"],
-        rarity,
-        34
-    )
-
-
-
-    filename = (
-        f"{champion}_{skin}_{card_number}.png"
-    ).replace(
-        " ",
-        "_"
-    )
-
-
-    path = os.path.join(
-        OUTPUT,
-        filename
-    )
-
-
-    card.save(
-        path
-    )
-
-
-    return path
+    return champions
