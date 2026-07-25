@@ -15,10 +15,12 @@ IMAGE_EXTENSIONS = (
 
 def clean_name(name):
 
-    return name.replace(
-        "_",
-        " "
+    return (
+        name
+        .replace("_", " ")
+        .strip()
     )
+
 
 
 
@@ -27,17 +29,16 @@ def load_champions():
     champions = {}
 
 
+
     if not os.path.exists(CHAMPIONS_PATH):
 
         print(
-            "❌ Папка assets/champions не найдена"
+            "❌ Нет папки assets/champions"
         )
 
-        return champions
+        return {}
 
 
-
-    # регионы
 
     for region in sorted(
         os.listdir(CHAMPIONS_PATH)
@@ -51,27 +52,23 @@ def load_champions():
 
 
         if not os.path.isdir(region_path):
-
             continue
 
 
 
 
-        # чемпионы
-
-        for champion in sorted(
+        for champion_folder in sorted(
             os.listdir(region_path)
         ):
 
 
             champion_path = os.path.join(
                 region_path,
-                champion
+                champion_folder
             )
 
 
             if not os.path.isdir(champion_path):
-
                 continue
 
 
@@ -79,8 +76,6 @@ def load_champions():
             skins = []
 
 
-
-            # изображения скинов
 
             for image in sorted(
                 os.listdir(champion_path)
@@ -90,7 +85,6 @@ def load_champions():
                 if not image.lower().endswith(
                     IMAGE_EXTENSIONS
                 ):
-
                     continue
 
 
@@ -116,20 +110,18 @@ def load_champions():
 
 
 
-            if not skins:
 
+            if not skins:
                 continue
 
 
 
 
-            champion_name = clean_name(
-                champion
-            )
+            champions[champion_folder] = {
 
-
-
-            champions[champion_name] = {
+                "name": clean_name(
+                    champion_folder
+                ),
 
                 "region": region,
 
@@ -140,14 +132,14 @@ def load_champions():
 
 
             print(
-                f"✅ Загружен {region}: {champion_name} ({len(skins)} скинов)"
+                f"✅ {region}: {champion_folder} ({len(skins)} скинов)"
             )
 
 
 
 
     print(
-        f"\n🌟 Всего чемпионов загружено: {len(champions)}"
+        f"\n🌟 Чемпионов загружено: {len(champions)}"
     )
 
 
