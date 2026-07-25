@@ -1,429 +1,218 @@
-import discord
-from discord.ext import commands
-from discord import app_commands
-
-import random
 import os
+import json
 
-from database.cards import add_card
 
-from data.champion_loader import load_champions
-from data.loot import get_card_rarity
+CHAMPIONS_FILE = "data/champions.json"
 
-from data.translations import (
-    get_skin_name,
-    get_champion_name
+
+CHAMPIONS_PATH = r"C:\Users\Ketek'\Desktop\img\champion\centered"
+
+
+ALLOWED_REGIONS = [
+    "Demacia",
+    "Noxus"
+]
+
+
+IMAGE_EXTENSIONS = (
+    ".png",
+    ".jpg",
+    ".jpeg",
+    ".webp"
 )
 
-from generators.card_generator import create_card
+
+
+def load_champions():
+
+    champions = {}
 
 
 
-class PackView(discord.ui.View):
+    if not os.path.exists(CHAMPIONS_FILE):
 
+        print("❌ Нет champions.json")
 
-    def __init__(self, cards):
-
-        super().__init__(
-            timeout=180
-        )
-
-        self.cards = cards
-        self.index = 0
+        return champions
 
 
 
-    async def update_message(
-        self,
-        interaction
-    ):
+    with open(
+        CHAMPIONS_FILE,
+        "r",
+        encoding="utf-8"
+    ) as file:
 
-        card = self.cards[self.index]
-
-
-        embed = create_embed(
-            card,
-            self.index + 1,
-            len(self.cards)
-        )
+        json_data = json.load(file)
 
 
-        file = discord.File(
-            card["file"]
-        )
+
+    if not os.path.exists(CHAMPIONS_PATH):
+
+        print("❌ Нет centered папки")
+
+        return champions
 
 
-        embed.set_image(
 
-            url=
-            "attachment://"
-            +
-            os.path.basename(
-                card["file"]
+
+    for image in os.listdir(CHAMPIONS_PATH):
+
+
+        if not image.lower().endswith(
+            IMAGE_EXTENSIONS
+        ):
+
+            continue
+
+
+
+        filename = os.path.splitext(
+            image
+        )[0]
+
+
+
+        try:
+
+            champion_raw, skin_id = filename.rsplit(
+                "_",
+                1
             )
 
-        )
+            skin_id = int(
+                skin_id
+            )
 
 
-        await interaction.response.edit_message(
+        except:
 
-            embed=embed,
-
-            attachments=[file],
-
-            view=self
-
-        )
+            continue
 
 
 
 
-    @discord.ui.button(
-        emoji="⬅️",
-        style=discord.ButtonStyle.secondary
-    )
-    async def previous(
-        self,
-        interaction,
-        button
-    ):
+        # ищем имя чемпиона
 
-        self.index -= 1
+        champion_key = None
 
 
-        if self.index < 0:
+        for name in json_data.keys():
 
-            self.index = len(self.cards)-1
+            if name.lower() == champion_raw.lower():
 
+                champion_key = name
 
-        await self.update_message(
-            interaction
-        )
+                break
 
 
 
+        if not champion_key:
+
+            print(
+                "⚠ Нет в JSON:",
+                champion_raw
+            )
+
+            continue
 
 
-    @discord.ui.button(
-        emoji="➡️",
-        style=discord.ButtonStyle.secondary
-    )
-    async def next(
-        self,
-        interaction,
-        button
-    ):
-
-        self.index += 1
 
 
-        if self.index >= len(self.cards):
-
-            self.index = 0
+        data = json_data[champion_key]
 
 
-        await self.update_message(
-            interaction
+
+        region = data.get(
+            "region"
         )
 
 
 
+        # только Demacia и Noxus
 
+        if region not in ALLOWED_REGIONS:
 
+            continue
 
-def create_embed(
-    card,
-    number,
-    total
-):
 
 
-    embed = discord.Embed(
 
-        title=f"🎴 {card['rarity']} | {card['champion']}",
+        if champion_key not in champions:
 
-        description=(
+            champions[champion_key] = {
 
-            f"✨ **{card['skin']}**\n"
+                "id": data.get(
+                    "id"
+                ),
 
-            f"🆔 {card['code']}"
+                "region": region,
 
-        ),
+                "skins": []
 
-        color=0xFFD700
+            }
 
-    )
 
 
-    embed.add_field(
 
-        name="⚔ Атака",
 
-        value=str(card["attack"])
+        skin_name = "Unknown"
 
-    )
 
 
-    embed.add_field(
+        for skin in data.get(
+            "skins",
+            []
+        ):
 
-        name="❤️ Здоровье",
 
-        value=str(card["health"])
+            if skin.get(
+                "id"
+            ) == skin_id:
 
-    )
-
-
-    embed.add_field(
-
-        name="🛡 Защита",
-
-        value=str(card["defense"])
-
-    )
-
-
-    embed.add_field(
-
-        name="🌍 Регион",
-
-        value=card["region"]
-
-    )
-
-
-    embed.set_footer(
-
-        text=f"Карта {number}/{total}"
-
-    )
-
-
-    return embed
-
-
-
-
-
-
-class Pack(commands.Cog):
-
-
-    def __init__(self, bot):
-
-        self.bot = bot
-
-        self.champions = load_champions()
-
-
-
-    @app_commands.command(
-
-        name="open_pack",
-
-        description="Открыть ILTA Pack (3 карты)"
-
-    )
-    async def open_pack(
-
-        self,
-
-        interaction: discord.Interaction
-
-    ):
-
-
-        await interaction.response.defer()
-
-
-
-        cards = []
-
-
-
-        for i in range(3):
-
-
-            champion_id = random.choice(
-
-                list(
-                    self.champions.keys()
+                skin_name = skin.get(
+                    "name"
                 )
 
+                break
+
+
+
+
+        champions[champion_key]["skins"].append({
+
+            "id": skin_id,
+
+            "name": skin_name,
+
+            "file": os.path.join(
+                CHAMPIONS_PATH,
+                image
             )
 
-
-            champion = self.champions[champion_id]
-
-
-
-            skin = random.choice(
-
-                champion["skins"]
-
-            )
-
-
-            rarity = get_card_rarity()
-
-
-
-            attack = random.randint(
-                20,
-                100
-            )
-
-
-            health = random.randint(
-                50,
-                150
-            )
-
-
-            defense = random.randint(
-                10,
-                80
-            )
-
-
-
-            code = (
-
-                f"{random.randint(1,9999):04}"
-
-            )
-
-
-
-            await add_card(
-
-                interaction.user.id,
-
-                code,
-
-                champion_id,
-
-                skin["name"],
-
-                champion["region"],
-
-                rarity,
-
-                attack,
-
-                defense,
-
-                health
-
-            )
-
-
-
-            card_file = create_card(
-
-                champion=champion_id,
-
-                skin=skin["name"],
-
-                rarity=rarity,
-
-                region=champion["region"],
-
-                attack=attack,
-
-                health=health,
-
-                defense=defense,
-
-                image_path=skin["file"],
-
-                card_number=code
-
-            )
-
-
-
-            cards.append({
-
-                "champion": champion_id,
-
-                "skin": skin["name"],
-
-                "rarity": rarity,
-
-                "region": champion["region"],
-
-                "attack": attack,
-
-                "health": health,
-
-                "defense": defense,
-
-                "code": code,
-
-                "file": card_file
-
-            })
+        })
 
 
 
 
-        view = PackView(
-            cards
+
+    print()
+
+
+    for name, data in champions.items():
+
+        print(
+            f"✅ {data['region']}: {name} ({len(data['skins'])} артов)"
         )
 
 
 
-        first = cards[0]
+    print()
 
-
-        embed = create_embed(
-
-            first,
-
-            1,
-
-            3
-
-        )
-
-
-        file = discord.File(
-
-            first["file"]
-
-        )
-
-
-        embed.set_image(
-
-            url=
-            "attachment://"
-            +
-            os.path.basename(
-                first["file"]
-            )
-
-        )
-
-
-
-        await interaction.followup.send(
-
-            embed=embed,
-
-            file=file,
-
-            view=view
-
-        )
-
-
-
-
-
-
-async def setup(bot):
-
-    await bot.add_cog(
-        Pack(bot)
+    print(
+        f"🌟 Загружено Demacia/Noxus: {len(champions)}"
     )
+
+
+
+    return champions
