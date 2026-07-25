@@ -1,22 +1,4 @@
-"player_quests"
-"treasury"
-"players"
-"inventory"
-"regions"
-"player_position"
-"monsters"
-"skills"
-"player_skills"
-"cards"
-"auctions"
-"achievements"
-"player_achievements"
-"shop_items"
-"battle_logs"
-"users"
-"deck_slots"
-"quests"
-"decks"
-"deck_cards"
-"battles"
-"battle_cards"
+SELECT column_name, data_type
+FROM information_schema.columns
+WHERE table_name = 'cards'
+ORDER BY ordinal_position;
