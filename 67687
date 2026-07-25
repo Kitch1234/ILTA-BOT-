@@ -1,115 +1,124 @@
+import json
 import os
-import requests
 
 
-CHAMPIONS_PATH = "assets/champions"
+FILE = "data/champions.json"
 
 
-BASE_URL = (
-    "https://raw.communitydragon.org/"
-    "latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/"
-)
+# Riot Champion IDs
+CHAMPION_IDS = {
 
+    "Aatrox": 266,
+    "Ahri": 103,
+    "Akali": 84,
+    "Akshan": 166,
+    "Alistar": 12,
+    "Amumu": 32,
+    "Anivia": 34,
+    "Annie": 1,
+    "Aphelios": 523,
+    "Ashe": 22,
 
-def download_image(url, path):
+    "Darius": 122,
+    "Draven": 119,
+    "Katarina": 55,
+    "Kled": 240,
+    "LeBlanc": 7,
+    "Mordekaiser": 82,
+    "Riven": 92,
+    "Samira": 360,
+    "Sion": 14,
+    "Swain": 50,
+    "Talon": 91,
+    "Vladimir": 8,
 
-    try:
-
-        r = requests.get(
-            url,
-            timeout=20
-        )
-
-        if r.status_code != 200:
-            return False
-
-
-        with open(
-            path,
-            "wb"
-        ) as f:
-
-            f.write(
-                r.content
-            )
-
-
-        return True
-
-
-    except Exception as e:
-
-        print(e)
-
-        return False
-
-
-
-def scan_champions():
-
-    champions = []
-
-
-    for region in os.listdir(CHAMPIONS_PATH):
-
-        region_path = os.path.join(
-            CHAMPIONS_PATH,
-            region
-        )
-
-
-        if not os.path.isdir(region_path):
-            continue
-
-
-
-        for champion in os.listdir(region_path):
-
-            champion_path = os.path.join(
-                region_path,
-                champion
-            )
-
-
-            if os.path.isdir(champion_path):
-
-                champions.append(
-                    champion
-                )
-
-
-    return champions
-
+    "Fiora": 114,
+    "Garen": 86,
+    "JarvanIV": 59,
+    "Jarvan IV": 59,
+    "Lux": 99,
+    "Lucian": 236,
+    "Quinn": 133,
+    "Shyvana": 102,
+    "Sona": 37,
+    "Sylas": 517,
+    "XinZhao": 5,
+    "Xin Zhao": 5
+}
 
 
 
 def main():
 
-    champions = scan_champions()
+    if not os.path.exists(FILE):
+
+        print(
+            "❌ Не найден:",
+            FILE
+        )
+
+        return
 
 
+
+    with open(
+        FILE,
+        "r",
+        encoding="utf-8"
+    ) as f:
+
+        data = json.load(f)
+
+
+
+    updated = 0
+
+
+
+    for champion, info in data.items():
+
+
+        if champion in CHAMPION_IDS:
+
+            info["id"] = CHAMPION_IDS[champion]
+
+            updated += 1
+
+            print(
+                "✔",
+                champion,
+                "→",
+                CHAMPION_IDS[champion]
+            )
+
+        else:
+
+            print(
+                "⚠ Нет ID:",
+                champion
+            )
+
+
+
+    with open(
+        FILE,
+        "w",
+        encoding="utf-8"
+    ) as f:
+
+        json.dump(
+            data,
+            f,
+            ensure_ascii=False,
+            indent=4
+        )
+
+
+
+    print()
     print(
-        f"Найдено чемпионов: {len(champions)}"
+        f"✅ Обновлено чемпионов: {updated}"
     )
-
-
-    for champion in champions:
-
-
-        print(
-            "Обработка:",
-            champion
-        )
-
-
-        # пока тестовый вариант
-        # создаём папку
-
-        print(
-            "Готов:"
-            ,
-            champion
-        )
 
 
 
