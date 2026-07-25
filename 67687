@@ -1,6 +1,20 @@
-def get_champion_name(name: str) -> str:
-    return CHAMPION_NAMES.get(name, name)
-
-
-def get_skin_name(name: str) -> str:
-    return SKIN_NAMES.get(name, name.replace("_", " "))
+ Загружен: auction
+✅ Загружен: balance
+✅ Загружен: contract
+✅ Загружен: daily
+✅ Загружен: inventory
+✅ Загружен: profile
+✅ Загружен: quest
+✅ Загружен: shop
+✅ Загружен: work
+🌍 Регионов загружено для чемпионов: 32
+✅ Загружен: travel
+✅ Загружен: quest_reward
+✅ Загружен: cards
+✅ Загружен: test_event
+✅ Загружен: deck
+✅ Загружен: battle
+❌ Ошибка загрузки pack: Extension 'cogs.pack' raised an error: ImportError: cannot import name 'create_card' from partially initialized module 'generators.card_generator' (most likely due to a circular import) (C:\Users\Ketek'\Desktop\qantum_universe\generators\card_generator.py)
+✅ Загружен: collection
+✅ Загружен: map
+✅ Синхронизировано команд: 23
