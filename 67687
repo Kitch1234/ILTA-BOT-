@@ -5,101 +5,171 @@ from PIL import Image
 from io import BytesIO
 
 
-REGIONS = [
+# =========================
+# НАСТРОЙКИ
+# =========================
+
+TARGET_REGIONS = [
     "Demacia",
     "Noxus"
 ]
 
 
-CHAMPIONS_JSON = "data/champions.json"
+CHAMPIONS_JSON = (
+    "data/champions.json"
+)
 
-OUTPUT = "assets/champions"
+
+OUTPUT = (
+    "assets/champions"
+)
 
 
+
+# =========================
+# ИМЕНА
+# =========================
 
 def clean_name(name):
 
-    return (
-        name
-        .replace(" ", "_")
-        .replace(":", "")
-        .replace("'", "")
+    name = name.replace(
+        " ",
+        "_"
     )
 
+    name = name.replace(
+        ":",
+        ""
+    )
+
+    name = name.replace(
+        "'",
+        ""
+    )
+
+    return name
 
 
-def download(url, path):
+
+# =========================
+# СКАЧИВАНИЕ
+# =========================
+
+def download_image(
+    url,
+    path
+):
 
     try:
 
-        r = requests.get(
+        response = requests.get(
             url,
             timeout=20
         )
 
 
-        if r.status_code != 200:
+        if response.status_code != 200:
+
             return False
 
 
-        img = Image.open(
-            BytesIO(r.content)
+
+        image = Image.open(
+            BytesIO(
+                response.content
+            )
         )
 
 
-        img.save(
+        image = image.convert(
+            "RGB"
+        )
+
+
+        image.save(
             path,
-            "WEBP"
+            "WEBP",
+            quality=95
         )
 
 
         return True
 
 
-    except Exception as e:
+
+    except Exception as error:
 
         print(
             "Ошибка:",
-            e
+            error
         )
 
         return False
 
 
 
+# =========================
+# ЗАГРУЗКА JSON
+# =========================
+
 with open(
     CHAMPIONS_JSON,
     "r",
     encoding="utf-8"
-) as f:
+) as file:
 
-    champions = json.load(f)
-
-
-
-for champion, data in champions.items():
+    champions = json.load(
+        file
+    )
 
 
-    region = None
+
+# =========================
+# ПОИСК РЕГИОНА
+# =========================
+
+def find_region(
+    champion
+):
+
+    for region in TARGET_REGIONS:
 
 
-    for r in REGIONS:
+        path = os.path.join(
 
-        test = os.path.join(
             OUTPUT,
-            r,
+
+            region,
+
             champion
+
         )
 
 
-        if os.path.exists(test):
+        if os.path.exists(path):
 
-            region = r
-            break
+            return region
 
+
+
+    return None
+
+
+
+# =========================
+# ОСНОВА
+# =========================
+
+for champion_name, data in champions.items():
+
+
+    region = find_region(
+        champion_name
+    )
 
 
     if not region:
+
         continue
 
 
@@ -107,39 +177,46 @@ for champion, data in champions.items():
     print(
         "\n🌍",
         region,
-        champion
+        "|",
+        champion_name
     )
 
 
-    folder = os.path.join(
+
+    champion_folder = os.path.join(
+
         OUTPUT,
+
         region,
-        champion
+
+        champion_name
+
     )
 
 
     os.makedirs(
-        folder,
+        champion_folder,
         exist_ok=True
     )
 
 
 
-    # Riot champion key
-
-    champion_key = data.get(
-        "key",
-        champion
-    )
+    for skin in data.get(
+        "skins",
+        []
+    ):
 
 
+        skin_name = skin.get(
+            "name",
+            "default"
+        )
 
-    for skin in data["skins"]:
 
-
-        skin_name = skin["name"]
-
-        skin_id = skin["id"]
+        skin_id = skin.get(
+            "id",
+            0
+        )
 
 
 
@@ -159,17 +236,20 @@ for champion, data in champions.items():
 
 
 
-        path = os.path.join(
-            folder,
+        save_path = os.path.join(
+
+            champion_folder,
+
             filename
+
         )
 
 
 
-        if os.path.exists(path):
+        if os.path.exists(save_path):
 
             print(
-                "✔",
+                "✔ Уже есть:",
                 filename
             )
 
@@ -177,49 +257,60 @@ for champion, data in champions.items():
 
 
 
-        # centered splash
+        # =====================
+        # RIOT SPLASH ART
+        # =====================
 
-        if skin_id == 0:
+        url = (
 
-            url = (
-                f"https://ddragon.leagueoflegends.com/"
-                f"cdn/img/champion/splash/"
-                f"{champion}_0.jpg"
-            )
+            "https://ddragon.leagueoflegends.com/"
 
-        else:
+            "cdn/img/champion/splash/"
 
-            url = (
-                f"https://ddragon.leagueoflegends.com/"
-                f"cdn/img/champion/splash/"
-                f"{champion}_{skin_id}.jpg"
-            )
+            f"{champion_name}_{skin_id}.jpg"
+
+        )
 
 
 
         print(
-            "⬇",
+            "⬇ Скачивание:",
             skin_name
         )
 
 
-        if download(
+
+        result = download_image(
+
             url,
-            path
-        ):
+
+            save_path
+
+        )
+
+
+        if result:
 
             print(
-                "  OK"
+                "  ✅ Сохранено"
             )
 
         else:
 
             print(
-                "  ❌ Нет файла"
+                "  ❌ Не найдено"
             )
 
 
 
 print(
-    "\n✅ Загрузка завершена"
+    "\n===================="
+)
+
+print(
+    "✅ Загрузка завершена"
+)
+
+print(
+    "===================="
 )
