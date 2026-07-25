@@ -3,7 +3,7 @@ import os
 
 
 # =========================
-# НАСТРОЙКИ
+# РАЗМЕР КАРТЫ
 # =========================
 
 CARD_WIDTH = 1060
@@ -12,6 +12,10 @@ CARD_HEIGHT = 1484
 
 ASSETS = "assets"
 
+
+# =========================
+# ШРИФТЫ
+# =========================
 
 FONT_BOLD = os.path.join(
     ASSETS,
@@ -26,12 +30,10 @@ FONT_REGULAR = os.path.join(
 )
 
 
-BACKGROUND = os.path.join(
-    ASSETS,
-    "backgrounds",
-    "Set2_Title_Background_BG_TX.png"
-)
 
+# =========================
+# РАМКИ
+# =========================
 
 FRAME_PATHS = {
 
@@ -44,44 +46,12 @@ FRAME_PATHS = {
 }
 
 
-ICONS = {
-
-    "attack": os.path.join(
-        ASSETS,
-        "icons",
-        "attack.png"
-    ),
-
-    "health": os.path.join(
-        ASSETS,
-        "icons",
-        "health.png"
-    ),
-
-    "defense": os.path.join(
-        ASSETS,
-        "icons",
-        "defense.png"
-    )
-
-}
-
-
-REGION_PATH = os.path.join(
-    ASSETS,
-    "regions"
-)
-
-
-OUTPUT = "generated_cards"
-
 
 # =========================
 # КООРДИНАТЫ
 # =========================
 
 CARD_LAYOUT = {
-
 
     "number": (900, 90),
 
@@ -102,11 +72,19 @@ CARD_LAYOUT = {
 }
 
 
+
+OUTPUT = "generated_cards"
+
+
+
 # =========================
-# ШРИФТЫ
+# ШРИФТ
 # =========================
 
-def font(path, size):
+def get_font(
+    path,
+    size
+):
 
     return ImageFont.truetype(
         path,
@@ -121,40 +99,50 @@ def font(path, size):
 
 def draw_text(
     draw,
-    pos,
+    position,
     text,
     size,
     bold=True
 ):
 
-    f = font(
+    font = get_font(
         FONT_BOLD if bold else FONT_REGULAR,
         size
     )
 
 
-    x, y = pos
+    x, y = position
 
+
+    # тень
 
     draw.text(
-        (x + 3, y + 3),
+        (
+            x + 3,
+            y + 3
+        ),
         text,
-        font=f,
-        fill=(0,0,0)
+        font=font,
+        fill=(0,0,0,220)
     )
 
 
+    # текст
+
     draw.text(
-        (x,y),
+        (
+            x,
+            y
+        ),
         text,
-        font=f,
+        font=font,
         fill=(255,255,255)
     )
 
 
 
 # =========================
-# ОБРЕЗКА АРТА
+# ЗАПОЛНЕНИЕ КАРТИНКОЙ
 # =========================
 
 def fit_image(
@@ -162,57 +150,90 @@ def fit_image(
     size
 ):
 
-    image.thumbnail(
-        size,
+    ratio = max(
+        size[0] / image.width,
+        size[1] / image.height
+    )
+
+
+    new_size = (
+
+        int(
+            image.width * ratio
+        ),
+
+        int(
+            image.height * ratio
+        )
+
+    )
+
+
+    image = image.resize(
+        new_size,
         Image.LANCZOS
     )
 
 
-    canvas = Image.new(
-        "RGBA",
-        size,
-        (0,0,0,0)
-    )
+    left = (
 
-
-    x = (
-        size[0]
-        -
         image.width
-    ) // 2
-
-
-    y = (
-        size[1]
         -
-        image.height
+        size[0]
+
     ) // 2
 
 
-    canvas.paste(
-        image,
-        (x,y)
+    top = (
+
+        image.height
+        -
+        size[1]
+
+    ) // 2
+
+
+
+    image = image.crop(
+
+        (
+            left,
+            top,
+            left + size[0],
+            top + size[1]
+        )
+
     )
 
 
-    return canvas
+    return image
 
 
 
 # =========================
-# ГЕНЕРАЦИЯ
+# СОЗДАНИЕ КАРТЫ
 # =========================
 
 def create_card(
+
     champion,
+
     skin,
+
     rarity,
+
     region,
+
     attack,
+
     health,
+
     defense,
+
     image_path,
+
     card_number
+
 ):
 
 
@@ -222,25 +243,29 @@ def create_card(
     )
 
 
-    # фон
 
-    card = Image.open(
-        BACKGROUND
-    ).convert(
-        "RGBA"
-    )
+    # =====================
+    # ЧЕРНЫЙ ФОН ПОД АРТ
+    # =====================
 
+    card = Image.new(
 
-    card = card.resize(
+        "RGBA",
+
         (
             CARD_WIDTH,
             CARD_HEIGHT
-        )
+        ),
+
+        (0,0,0,255)
+
     )
 
 
 
-    # арт
+    # =====================
+    # АРТ ЧЕМПИОНА
+    # =====================
 
     art = Image.open(
         image_path
@@ -250,157 +275,55 @@ def create_card(
 
 
     art = fit_image(
+
         art,
-        (
-            870,
-            700
-        )
-    )
 
-
-    card.alpha_composite(
-        art,
-        (
-            95,
-            170
-        )
-    )
-
-
-
-    # рамка
-
-    frame_file = FRAME_PATHS.get(
-        rarity,
-        "common.png"
-    )
-
-
-    frame = Image.open(
-        os.path.join(
-            ASSETS,
-            "frames",
-            frame_file
-        )
-    ).convert(
-        "RGBA"
-    )
-
-
-    frame = frame.resize(
         (
             CARD_WIDTH,
             CARD_HEIGHT
         )
+
     )
 
 
     card.alpha_composite(
-        frame
-    )
-
-
-
-    draw = ImageDraw.Draw(
-        card
-    )
-
-
-
-    # тексты
-
-    draw_text(
-        draw,
-        CARD_LAYOUT["number"],
-        f"#{card_number}",
-        36
-    )
-
-
-    draw_text(
-        draw,
-        CARD_LAYOUT["champion"],
-        champion,
-        54
-    )
-
-
-    draw_text(
-        draw,
-        CARD_LAYOUT["skin"],
-        skin,
-        38,
-        False
-    )
-
-
-
-    # статы
-
-    draw_text(
-        draw,
-        CARD_LAYOUT["attack"],
-        str(attack),
-        50
-    )
-
-
-    draw_text(
-        draw,
-        CARD_LAYOUT["health"],
-        str(health),
-        50
-    )
-
-
-    draw_text(
-        draw,
-        CARD_LAYOUT["defense"],
-        str(defense),
-        50
-    )
-
-
-
-    # регион
-
-    draw_text(
-        draw,
-        CARD_LAYOUT["region_text"],
-        region,
-        34
-    )
-
-
-    draw_text(
-        draw,
-        CARD_LAYOUT["rarity"],
-        rarity,
-        34
-    )
-
-
-
-    # сохраняем
-
-    filename = (
-        f"{champion}_{skin}_{card_number}.png"
-        .replace(
-            " ",
-            "_"
+        art,
+        (
+            0,
+            0
         )
     )
 
 
-    path = os.path.join(
-        OUTPUT,
-        filename
+
+    # =====================
+    # РАМКА
+    # =====================
+
+    frame_name = FRAME_PATHS.get(
+
+        rarity,
+
+        "common.png"
+
     )
 
 
-    card.save(
-        path
+    frame_path = os.path.join(
+
+        ASSETS,
+
+        "frames",
+
+        frame_name
+
     )
 
 
-    return path
+    if os.path.exists(frame_path):
+
+        frame = Image.open(
+
+            frame_path
+
+        ).
