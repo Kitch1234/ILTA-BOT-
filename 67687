@@ -1,6 +1,250 @@
-CDRAGON_URL = (
+import os
+import json
+import requests
+
+
+CHAMPIONS_JSON = "data/champions.json"
+
+ASSETS_PATH = "assets/champions"
+
+
+REGIONS = [
+    "Demacia",
+    "Noxus"
+]
+
+
+BASE_URL = (
     "https://raw.communitydragon.org/latest/"
-    "plugins/rcp-be-lol-game-data/global/default/"
-    "assets/characters/{champion}/skins/{skin}/"
-    "{champion}loadscreen.jpg"
+    "game/assets/characters/"
+    "{champion}/skins/"
+    "{skin}/"
+    "{file}"
 )
+
+
+
+def download(url, path):
+
+    try:
+
+        r = requests.get(
+            url,
+            timeout=30
+        )
+
+
+        if r.status_code != 200:
+
+            print(
+                "❌ Нет:",
+                url
+            )
+
+            return False
+
+
+
+        with open(
+            path,
+            "wb"
+        ) as f:
+
+            f.write(
+                r.content
+            )
+
+
+        return True
+
+
+
+    except Exception as e:
+
+        print(
+            "Ошибка:",
+            e
+        )
+
+        return False
+
+
+
+
+
+def get_skin_folder(skin_id):
+
+    if skin_id == 0:
+
+        return "base"
+
+
+    return f"skin{skin_id:02}"
+
+
+
+
+
+def main():
+
+
+    with open(
+        CHAMPIONS_JSON,
+        "r",
+        encoding="utf-8"
+    ) as f:
+
+        champions = json.load(f)
+
+
+
+    total = 0
+
+
+
+    for region in REGIONS:
+
+
+        region_path = os.path.join(
+            ASSETS_PATH,
+            region
+        )
+
+
+        if not os.path.exists(region_path):
+
+            continue
+
+
+
+        for folder in os.listdir(region_path):
+
+
+            if folder not in champions:
+
+                continue
+
+
+
+            data = champions[folder]
+
+
+            champion_id = data.get(
+                "id"
+            )
+
+
+            if not champion_id:
+
+                continue
+
+
+
+            # внутреннее имя Riot
+
+            champion = folder.lower()
+
+            champion_path = os.path.join(
+                region_path,
+                folder
+            )
+
+
+            print()
+            print(
+                "====",
+                folder,
+                "===="
+            )
+
+
+
+            for skin in data.get(
+                "skins",
+                []
+            ):
+
+
+                skin_id = skin["id"]
+
+
+                skin_folder = get_skin_folder(
+                    skin_id
+                )
+
+
+                name = skin["name"]
+
+
+                filename = (
+                    name
+                    .replace(" ", "_")
+                    .replace("/", "_")
+                    + ".jpg"
+                )
+
+
+                save = os.path.join(
+                    champion_path,
+                    filename
+                )
+
+
+                if os.path.exists(save):
+
+                    print(
+                        "Есть:",
+                        filename
+                    )
+
+                    continue
+
+
+
+                # основной файл загрузочного арта
+
+                url = BASE_URL.format(
+
+                    champion=champion,
+
+                    skin=skin_folder,
+
+                    file=f"{champion}loadscreen.jpg"
+
+                )
+
+
+
+                print(
+                    "Скачивание:",
+                    name
+                )
+
+
+
+                if download(
+                    url,
+                    save
+                ):
+
+                    total += 1
+
+                    print(
+                        "✔ Готово"
+                    )
+
+
+
+    print()
+
+    print(
+        "Всего скачано:",
+        total
+    )
+
+
+
+
+if __name__ == "__main__":
+
+    main()
