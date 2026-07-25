@@ -1,197 +1,89 @@
-import os
-import re
+def fit_image(
 
+    image,
 
-CHAMPIONS_PATH = "assets/champions"
+    size,
 
+    zoom=0.65
 
-IMAGE_EXTENSIONS = (
-    ".png",
-    ".jpg",
-    ".jpeg",
-    ".webp"
-)
-
-
-
-def clean_skin_name(
-    champion,
-    name
 ):
 
-    name = os.path.splitext(
-        name
-    )[0]
+    target_w, target_h = size
 
 
-    name = (
-        name
-        .replace("_", " ")
-        .replace("-", " ")
+    ratio = min(
+
+        target_w / image.width,
+
+        target_h / image.height
+
     )
 
 
-    # убрать loading 308
+    ratio *= zoom
 
-    name = re.sub(
-        r"\s*loading\s*\d+",
-        "",
-        name,
-        flags=re.I
+
+
+    new_size = (
+
+        int(image.width * ratio),
+
+        int(image.height * ratio)
+
     )
 
 
-    words = name.split()
+    image = image.resize(
 
+        new_size,
 
-    # убрать повтор чемпиона
+        Image.LANCZOS
 
-    if words:
-
-        if words[0].lower() == champion.lower():
-
-            words = words[1:]
-
-
-    # убрать повтор чемпиона в конце
-
-    if words:
-
-        if words[-1].lower() == champion.lower():
-
-            words = words[:-1]
-
-
-    name = " ".join(words)
-
-
-    return name.strip()
+    )
 
 
 
+    canvas = Image.new(
+
+        "RGBA",
+
+        (
+            target_w,
+            target_h
+        ),
+
+        (0,0,0,0)
+
+    )
 
 
-def load_champions():
 
-    champions = {}
+    x = (
+
+        target_w - image.width
+
+    ) // 2
 
 
-    if not os.path.exists(
-        CHAMPIONS_PATH
-    ):
 
-        print(
-            "❌ Папка assets/champions не найдена"
+    y = (
+
+        target_h - image.height
+
+    ) // 2
+
+
+
+    canvas.alpha_composite(
+
+        image,
+
+        (
+            x,
+            y
         )
 
-        return champions
-
-
-
-
-    for region in sorted(
-        os.listdir(CHAMPIONS_PATH)
-    ):
-
-
-        region_path = os.path.join(
-            CHAMPIONS_PATH,
-            region
-        )
-
-
-        if not os.path.isdir(
-            region_path
-        ):
-
-            continue
-
-
-
-
-
-        for champion in sorted(
-            os.listdir(region_path)
-        ):
-
-
-            champion_path = os.path.join(
-                region_path,
-                champion
-            )
-
-
-            if not os.path.isdir(
-                champion_path
-            ):
-
-                continue
-
-
-
-            skins = []
-
-
-
-            for image in sorted(
-                os.listdir(champion_path)
-            ):
-
-
-                if not image.lower().endswith(
-                    IMAGE_EXTENSIONS
-                ):
-
-                    continue
-
-
-
-                skin_name = clean_skin_name(
-                    champion,
-                    image
-                )
-
-
-
-                skins.append({
-
-                    "name": skin_name,
-
-                    "file": os.path.join(
-                        champion_path,
-                        image
-                    )
-
-                })
-
-
-
-            if not skins:
-
-                continue
-
-
-
-
-            champions[champion] = {
-
-                "region": region,
-
-                "skins": skins
-
-            }
-
-
-
-            print(
-                f"✅ {region}: {champion} ({len(skins)} скинов)"
-            )
-
-
-
-    print(
-        f"\n🌟 Загружено чемпионов: {len(champions)}"
     )
 
 
-    return champions
+    return canvas
