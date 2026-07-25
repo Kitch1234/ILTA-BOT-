@@ -19,6 +19,14 @@ from generators.card_generator import create_card
 
 
 
+# =========================
+# НАСТРОЙКИ PACK
+# =========================
+
+PACK_SIZE = 3
+
+
+
 class Pack(commands.Cog):
 
 
@@ -32,7 +40,7 @@ class Pack(commands.Cog):
 
     @app_commands.command(
         name="open_pack",
-        description="Открыть ILTA Pack (10 карт)"
+        description="Открыть ILTA Pack"
     )
     async def open_pack(
         self,
@@ -46,11 +54,8 @@ class Pack(commands.Cog):
 
         if not self.champions:
 
-
             await interaction.followup.send(
-
                 "❌ Нет доступных чемпионов"
-
             )
 
             return
@@ -59,17 +64,17 @@ class Pack(commands.Cog):
 
         await interaction.followup.send(
 
-            f"🎁 **{interaction.user.name} открыл ILTA Pack (10 карт)**"
+            f"🎁 **{interaction.user.name} открыл ILTA Pack ({PACK_SIZE} карты)**"
 
         )
 
 
 
-        for number in range(1, 11):
+        for number in range(1, PACK_SIZE + 1):
 
 
             # =====================
-            # ВЫБОР ЧЕМПИОНА
+            # ЧЕМПИОН
             # =====================
 
             champion_id = random.choice(
@@ -86,39 +91,29 @@ class Pack(commands.Cog):
 
 
             region = champion.get(
-
                 "region",
-
                 "Runeterra"
-
             )
 
 
 
             # =====================
-            # ВЫБОР СКИНА
+            # СКИН
             # =====================
 
             skins = champion.get(
-
                 "skins",
-
                 []
-
             )
 
 
-
             if not skins:
-
                 continue
 
 
 
             skin = random.choice(
-
                 skins
-
             )
 
 
@@ -128,24 +123,18 @@ class Pack(commands.Cog):
 
 
 
-
             # =====================
-            # РУССКИЕ НАЗВАНИЯ
+            # ИМЕНА
             # =====================
 
             champion_ru = get_champion_name(
-
                 champion_id
-
             )
 
 
             skin_ru = get_skin_name(
-
                 skin_name
-
             )
-
 
 
 
@@ -157,51 +146,36 @@ class Pack(commands.Cog):
 
 
 
-
             # =====================
             # СТАТЫ
             # =====================
 
             attack = random.randint(
-
                 20,
-
                 100
-
             )
 
 
             health = random.randint(
-
                 50,
-
                 150
-
             )
 
 
             defense = random.randint(
-
                 10,
-
                 80
-
             )
 
 
 
-
             # =====================
-            # ID КАРТЫ
+            # ID
             # =====================
 
             card_code = (
-
                 f"{random.randint(1,9999):04}"
-
             )
-
-
 
 
 
@@ -233,10 +207,8 @@ class Pack(commands.Cog):
 
 
 
-
-
             # =====================
-            # ГЕНЕРАЦИЯ КАРТЫ
+            # КАРТА PNG
             # =====================
 
             card_file = create_card(
@@ -263,19 +235,15 @@ class Pack(commands.Cog):
 
 
 
-
-
             # =====================
-            # DISCORD EMBED
+            # EMBED
             # =====================
 
             embed = discord.Embed(
 
                 title=(
 
-                    f"🎴 {rarity} | "
-
-                    f"{champion_ru}"
+                    f"🎴 {rarity} | {champion_ru}"
 
                 ),
 
@@ -294,57 +262,37 @@ class Pack(commands.Cog):
 
 
             embed.add_field(
-
                 name="⚔ Атака",
-
                 value=str(attack),
-
                 inline=True
-
             )
 
 
             embed.add_field(
-
                 name="❤️ Здоровье",
-
                 value=str(health),
-
                 inline=True
-
             )
 
 
             embed.add_field(
-
                 name="🛡 Защита",
-
                 value=str(defense),
-
                 inline=True
-
             )
 
 
             embed.add_field(
-
                 name="🌍 Регион",
-
                 value=region,
-
                 inline=True
-
             )
-
 
 
 
             file = discord.File(
-
                 card_file
-
             )
-
 
 
             embed.set_image(
@@ -355,11 +303,7 @@ class Pack(commands.Cog):
 
                     +
 
-                    os.path.basename(
-
-                        card_file
-
-                    )
+                    os.path.basename(card_file)
 
                 )
 
@@ -369,7 +313,7 @@ class Pack(commands.Cog):
 
             embed.set_footer(
 
-                text=f"Карта {number}/10"
+                text=f"Карта {number}/{PACK_SIZE}"
 
             )
 
@@ -386,11 +330,8 @@ class Pack(commands.Cog):
 
 
 
-
 async def setup(bot):
 
     await bot.add_cog(
-
         Pack(bot)
-
     )
