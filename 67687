@@ -1,233 +1,114 @@
-{
-    "Aatrox": {
-        "name": "Aatrox",
-        "title": "the Darkin Blade",
-        "skins": [
-            {
-                "name": "default",
-                "id": 0
-            },
-            {
-                "name": "Justicar Aatrox",
-                "id": 1
-            },
-            {
-                "name": "Mecha Aatrox",
-                "id": 2
-            },
-            {
-                "name": "Sea Hunter Aatrox",
-                "id": 3
-            },
-            {
-                "name": "Blood Moon Aatrox",
-                "id": 7
-            },
-            {
-                "name": "Prestige Blood Moon Aatrox",
-                "id": 8
-            },
-            {
-                "name": "Victorious Aatrox",
-                "id": 9
-            },
-            {
-                "name": "Odyssey Aatrox",
-                "id": 11
-            },
-            {
-                "name": "Prestige Blood Moon Aatrox (2022)",
-                "id": 20
-            },
-            {
-                "name": "Lunar Eclipse Aatrox",
-                "id": 21
-            },
-            {
-                "name": "DRX Aatrox",
-                "id": 30
-            },
-            {
-                "name": "Prestige DRX Aatrox",
-                "id": 31
-            },
-            {
-                "name": "Primordian Aatrox",
-                "id": 33
-            }
-        ]
-    },
-    "Ahri": {
-        "name": "Ahri",
-        "title": "the Nine-Tailed Fox",
-        "skins": [
-            {
-                "name": "default",
-                "id": 0
-            },
-            {
-                "name": "Dynasty Ahri",
-                "id": 1
-            },
-            {
-                "name": "Midnight Ahri",
-                "id": 2
-            },
-            {
-                "name": "Foxfire Ahri",
-                "id": 3
-            },
-            {
-                "name": "Popstar Ahri",
-                "id": 4
-            },
-            {
-                "name": "Challenger Ahri",
-                "id": 5
-            },
-            {
-                "name": "Academy Ahri",
-                "id": 6
-            },
-            {
-                "name": "Arcade Ahri",
-                "id": 7
-            },
-            {
-                "name": "Star Guardian Ahri",
-                "id": 14
-            },
-            {
-                "name": "K/DA Ahri",
-                "id": 15
-            },
-            {
-                "name": "Prestige K/DA Ahri",
-                "id": 16
-            },
-            {
-                "name": "Elderwood Ahri",
-                "id": 17
-            },
-            {
-                "name": "Spirit Blossom Ahri",
-                "id": 27
-            },
-            {
-                "name": "K/DA ALL OUT Ahri",
-                "id": 28
-            },
-            {
-                "name": "Coven Ahri",
-                "id": 42
-            },
-            {
-                "name": "Prestige K/DA Ahri (2022)",
-                "id": 65
-            },
-            {
-                "name": "Arcana Ahri",
-                "id": 66
-            },
-            {
-                "name": "Snow Moon Ahri",
-                "id": 76
-            },
-            {
-                "name": "Risen Legend Ahri",
-                "id": 85
-            },
-            {
-                "name": "Immortalized Legend Ahri",
-                "id": 86
-            }
-        ]
-    },
-    "Akali": {
-        "name": "Akali",
-        "title": "the Rogue Assassin",
-        "skins": [
-            {
-                "name": "default",
-                "id": 0
-            },
-            {
-                "name": "Stinger Akali",
-                "id": 1
-            },
-            {
-                "name": "Infernal Akali",
-                "id": 2
-            },
-            {
-                "name": "All-star Akali",
-                "id": 3
-            },
-            {
-                "name": "Nurse Akali",
-                "id": 4
-            },
-            {
-                "name": "Blood Moon Akali",
-                "id": 5
-            },
-            {
-                "name": "Silverfang Akali",
-                "id": 6
-            },
-            {
-                "name": "Headhunter Akali",
-                "id": 7
-            },
-            {
-                "name": "Sashimi Akali",
-                "id": 8
-            },
-            {
-                "name": "K/DA Akali",
-                "id": 9
-            },
-            {
-                "name": "Prestige K/DA Akali",
-                "id": 13
-            },
-            {
-                "name": "PROJECT: Akali",
-                "id": 14
-            },
-            {
-                "name": "True Damage Akali",
-                "id": 15
-            },
-            {
-                "name": "K/DA ALL OUT Akali",
-                "id": 32
-            },
-            {
-                "name": "Crime City Nightmare Akali",
-                "id": 50
-            },
-            {
-                "name": "Prestige K/DA Akali (2022)",
-                "id": 60
-            },
-            {
-                "name": "Star Guardian Akali",
-                "id": 61
-            },
-            {
-                "name": "DRX Akali",
-                "id": 68
-            },
-            {
-                "name": "Coven Akali",
-                "id": 70
-            },
-            {
-                "name": "Prestige Coven Akali",
-                "id": 71
-            },
-            {
-                "name": "Empyrean Akali",
-                "id": 82
-            }
+import os
+
+
+CHAMPION_PATH = "assets/champions"
+
+
+
+def load_regions():
+
+    champion_regions = {}
+
+
+
+    if not os.path.exists(CHAMPION_PATH):
+
+        print(
+            "❌ Не найдена папка champions"
+        )
+
+        return {}
+
+
+
+
+    for region in os.listdir(CHAMPION_PATH):
+
+
+        region_path = os.path.join(
+
+            CHAMPION_PATH,
+
+            region
+
+        )
+
+
+
+        if not os.path.isdir(
+            region_path
+        ):
+
+            continue
+
+
+
+
+
+        for champion in os.listdir(region_path):
+
+
+            champion_path = os.path.join(
+
+                region_path,
+
+                champion
+
+            )
+
+
+
+            if not os.path.isdir(
+                champion_path
+            ):
+
+                continue
+
+
+
+            champion_regions[champion] = region
+
+
+
+
+
+    print(
+        f"🌍 Регионов загружено для чемпионов: {len(champion_regions)}"
+    )
+
+
+    return champion_regions
+
+
+
+
+
+# автоматическая загрузка
+
+champion_regions = load_regions()
+
+REGIONS = {
+
+    "Demacia": "Демасия",
+
+    "Noxus": "Ноксус",
+
+    "Freljord": "Фрельйорд",
+
+    "Ionia": "Иония",
+
+    "Shurima": "Шурима",
+
+    "Void": "Пустота",
+
+    "Shadow_Isles": "Теневые острова",
+
+    "Piltover_Zaun": "Пилтовер и Заун",
+
+    "Targon": "Таргон",
+
+    "Bilgewater": "Билджвотер",
+
+    "Bandle_City": "Бандл Сити"
+
+}
