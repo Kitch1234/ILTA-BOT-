@@ -1,585 +1,233 @@
-from PIL import Image, ImageDraw, ImageFont
-import os
-
-
-# =========================
-# РАЗМЕР КАРТЫ
-# =========================
-
-CARD_WIDTH = 1060
-CARD_HEIGHT = 1484
-
-
-ASSETS = "assets"
-
-
-OUTPUT = "generated_cards"
-
-
-
-# =========================
-# ШРИФТЫ
-# =========================
-
-FONT_BOLD = os.path.join(
-    ASSETS,
-    "fonts",
-    "Beaufort-Bold.ttf"
-)
-
-
-FONT_REGULAR = os.path.join(
-    ASSETS,
-    "fonts",
-    "Beaufort-Regular.ttf"
-)
-
-
-
-# =========================
-# РАМКИ
-# =========================
-
-FRAME_PATHS = {
-
-    "Common": "common.png",
-    "Rare": "rare.png",
-    "Epic": "epic.png",
-    "Legendary": "legendary.png",
-    "Mythic": "mythic.png"
-
-}
-
-
-
-# =========================
-# КООРДИНАТЫ
-# =========================
-
-CARD_LAYOUT = {
-
-    "number": (900, 90),
-
-    "champion": (530, 1010),
-
-    "skin": (530, 1080),
-
-    "attack": (250, 1210),
-
-    "health": (530, 1210),
-
-    "defense": (810, 1210),
-
-    "region_text": (250, 1380),
-
-    "rarity": (820, 1380)
-
-}
-
-
-
-# =========================
-# ШРИФТ
-# =========================
-
-def get_font(path, size):
-
-    return ImageFont.truetype(
-        path,
-        size
-    )
-
-
-
-# =========================
-# ТЕКСТ
-# =========================
-
-def draw_text(
-    draw,
-    position,
-    text,
-    size,
-    bold=True
-):
-
-    font = get_font(
-
-        FONT_BOLD if bold
-        else FONT_REGULAR,
-
-        size
-
-    )
-
-
-    x, y = position
-
-
-    # тень
-
-    draw.text(
-
-        (
-            x + 3,
-            y + 3
-        ),
-
-        text,
-
-        font=font,
-
-        fill=(0,0,0,220)
-
-    )
-
-
-    # основной текст
-
-    draw.text(
-
-        (
-            x,
-            y
-        ),
-
-        text,
-
-        font=font,
-
-        fill=(255,255,255)
-
-    )
-
-
-
-# =========================
-# АРТ ЧЕМПИОНА
-# =========================
-
-def fit_image(
-
-    image,
-
-    size,
-
-    zoom=1.08
-
-):
-
-
-    target_w, target_h = size
-
-
-
-    # масштаб под карту
-
-    ratio = max(
-
-        target_w / image.width,
-
-        target_h / image.height
-
-    )
-
-
-    # небольшой запас
-
-    ratio *= zoom
-
-
-
-    new_size = (
-
-        int(image.width * ratio),
-
-        int(image.height * ratio)
-
-    )
-
-
-
-    image = image.resize(
-
-        new_size,
-
-        Image.LANCZOS
-
-    )
-
-
-
-    # центрирование
-
-    left = (
-
-        image.width - target_w
-
-    ) // 2
-
-
-
-    top = (
-
-        image.height - target_h
-
-    ) // 2
-
-
-
-    image = image.crop(
-
-        (
-
-            left,
-
-            top,
-
-            left + target_w,
-
-            top + target_h
-
-        )
-
-    )
-
-
-    return image
-
-
-
-# =========================
-# СОЗДАНИЕ КАРТЫ
-# =========================
-
-def create_card(
-
-    champion,
-
-    skin,
-
-    rarity,
-
-    region,
-
-    attack,
-
-    health,
-
-    defense,
-
-    image_path,
-
-    card_number
-
-):
-
-
-    os.makedirs(
-
-        OUTPUT,
-
-        exist_ok=True
-
-    )
-
-
-
-    # =====================
-    # ПРОЗРАЧНЫЙ ФОН
-    # =====================
-
-    card = Image.new(
-
-        "RGBA",
-
-        (
-            CARD_WIDTH,
-            CARD_HEIGHT
-        ),
-
-        (0,0,0,0)
-
-    )
-
-
-
-    # =====================
-    # АРТ
-    # =====================
-
-    art = Image.open(
-
-        image_path
-
-    ).convert(
-
-        "RGBA"
-
-    )
-
-
-
-    art = fit_image(
-
-        art,
-
-        (
-            CARD_WIDTH,
-            CARD_HEIGHT
-        ),
-
-        zoom=1.08
-
-    )
-
-
-
-    card.alpha_composite(
-
-        art,
-
-        (
-            0,
-            0
-        )
-
-    )
-
-
-
-    # =====================
-    # РАМКА
-    # =====================
-
-    frame_name = FRAME_PATHS.get(
-
-        rarity,
-
-        "common.png"
-
-    )
-
-
-
-    frame_path = os.path.join(
-
-        ASSETS,
-
-        "frames",
-
-        frame_name
-
-    )
-
-
-
-    if os.path.exists(frame_path):
-
-
-        frame = Image.open(
-
-            frame_path
-
-        ).convert(
-
-            "RGBA"
-
-        )
-
-
-
-        frame = frame.resize(
-
-            (
-                CARD_WIDTH,
-                CARD_HEIGHT
-            ),
-
-            Image.LANCZOS
-
-        )
-
-
-
-        card.alpha_composite(
-
-            frame
-
-        )
-
-
-
-    draw = ImageDraw.Draw(
-
-        card
-
-    )
-
-
-
-    # =====================
-    # ТЕКСТ
-    # =====================
-
-
-    draw_text(
-
-        draw,
-
-        CARD_LAYOUT["number"],
-
-        f"#{card_number}",
-
-        36
-
-    )
-
-
-
-    draw_text(
-
-        draw,
-
-        CARD_LAYOUT["champion"],
-
-        champion,
-
-        54
-
-    )
-
-
-
-    draw_text(
-
-        draw,
-
-        CARD_LAYOUT["skin"],
-
-        skin,
-
-        38,
-
-        False
-
-    )
-
-
-
-    # =====================
-    # СТАТЫ
-    # =====================
-
-
-    draw_text(
-
-        draw,
-
-        CARD_LAYOUT["attack"],
-
-        str(attack),
-
-        50
-
-    )
-
-
-    draw_text(
-
-        draw,
-
-        CARD_LAYOUT["health"],
-
-        str(health),
-
-        50
-
-    )
-
-
-    draw_text(
-
-        draw,
-
-        CARD_LAYOUT["defense"],
-
-        str(defense),
-
-        50
-
-    )
-
-
-
-    # =====================
-    # НИЗ
-    # =====================
-
-
-    draw_text(
-
-        draw,
-
-        CARD_LAYOUT["region_text"],
-
-        region,
-
-        34
-
-    )
-
-
-
-    draw_text(
-
-        draw,
-
-        CARD_LAYOUT["rarity"],
-
-        rarity,
-
-        34
-
-    )
-
-
-
-    # =====================
-    # СОХРАНЕНИЕ
-    # =====================
-
-
-    filename = (
-
-        f"{champion}_{skin}_{card_number}.png"
-
-    ).replace(
-
-        " ",
-
-        "_"
-
-    )
-
-
-
-    path = os.path.join(
-
-        OUTPUT,
-
-        filename
-
-    )
-
-
-
-    card.save(
-
-        path
-
-    )
-
-
-
-    return path
+{
+    "Aatrox": {
+        "name": "Aatrox",
+        "title": "the Darkin Blade",
+        "skins": [
+            {
+                "name": "default",
+                "id": 0
+            },
+            {
+                "name": "Justicar Aatrox",
+                "id": 1
+            },
+            {
+                "name": "Mecha Aatrox",
+                "id": 2
+            },
+            {
+                "name": "Sea Hunter Aatrox",
+                "id": 3
+            },
+            {
+                "name": "Blood Moon Aatrox",
+                "id": 7
+            },
+            {
+                "name": "Prestige Blood Moon Aatrox",
+                "id": 8
+            },
+            {
+                "name": "Victorious Aatrox",
+                "id": 9
+            },
+            {
+                "name": "Odyssey Aatrox",
+                "id": 11
+            },
+            {
+                "name": "Prestige Blood Moon Aatrox (2022)",
+                "id": 20
+            },
+            {
+                "name": "Lunar Eclipse Aatrox",
+                "id": 21
+            },
+            {
+                "name": "DRX Aatrox",
+                "id": 30
+            },
+            {
+                "name": "Prestige DRX Aatrox",
+                "id": 31
+            },
+            {
+                "name": "Primordian Aatrox",
+                "id": 33
+            }
+        ]
+    },
+    "Ahri": {
+        "name": "Ahri",
+        "title": "the Nine-Tailed Fox",
+        "skins": [
+            {
+                "name": "default",
+                "id": 0
+            },
+            {
+                "name": "Dynasty Ahri",
+                "id": 1
+            },
+            {
+                "name": "Midnight Ahri",
+                "id": 2
+            },
+            {
+                "name": "Foxfire Ahri",
+                "id": 3
+            },
+            {
+                "name": "Popstar Ahri",
+                "id": 4
+            },
+            {
+                "name": "Challenger Ahri",
+                "id": 5
+            },
+            {
+                "name": "Academy Ahri",
+                "id": 6
+            },
+            {
+                "name": "Arcade Ahri",
+                "id": 7
+            },
+            {
+                "name": "Star Guardian Ahri",
+                "id": 14
+            },
+            {
+                "name": "K/DA Ahri",
+                "id": 15
+            },
+            {
+                "name": "Prestige K/DA Ahri",
+                "id": 16
+            },
+            {
+                "name": "Elderwood Ahri",
+                "id": 17
+            },
+            {
+                "name": "Spirit Blossom Ahri",
+                "id": 27
+            },
+            {
+                "name": "K/DA ALL OUT Ahri",
+                "id": 28
+            },
+            {
+                "name": "Coven Ahri",
+                "id": 42
+            },
+            {
+                "name": "Prestige K/DA Ahri (2022)",
+                "id": 65
+            },
+            {
+                "name": "Arcana Ahri",
+                "id": 66
+            },
+            {
+                "name": "Snow Moon Ahri",
+                "id": 76
+            },
+            {
+                "name": "Risen Legend Ahri",
+                "id": 85
+            },
+            {
+                "name": "Immortalized Legend Ahri",
+                "id": 86
+            }
+        ]
+    },
+    "Akali": {
+        "name": "Akali",
+        "title": "the Rogue Assassin",
+        "skins": [
+            {
+                "name": "default",
+                "id": 0
+            },
+            {
+                "name": "Stinger Akali",
+                "id": 1
+            },
+            {
+                "name": "Infernal Akali",
+                "id": 2
+            },
+            {
+                "name": "All-star Akali",
+                "id": 3
+            },
+            {
+                "name": "Nurse Akali",
+                "id": 4
+            },
+            {
+                "name": "Blood Moon Akali",
+                "id": 5
+            },
+            {
+                "name": "Silverfang Akali",
+                "id": 6
+            },
+            {
+                "name": "Headhunter Akali",
+                "id": 7
+            },
+            {
+                "name": "Sashimi Akali",
+                "id": 8
+            },
+            {
+                "name": "K/DA Akali",
+                "id": 9
+            },
+            {
+                "name": "Prestige K/DA Akali",
+                "id": 13
+            },
+            {
+                "name": "PROJECT: Akali",
+                "id": 14
+            },
+            {
+                "name": "True Damage Akali",
+                "id": 15
+            },
+            {
+                "name": "K/DA ALL OUT Akali",
+                "id": 32
+            },
+            {
+                "name": "Crime City Nightmare Akali",
+                "id": 50
+            },
+            {
+                "name": "Prestige K/DA Akali (2022)",
+                "id": 60
+            },
+            {
+                "name": "Star Guardian Akali",
+                "id": 61
+            },
+            {
+                "name": "DRX Akali",
+                "id": 68
+            },
+            {
+                "name": "Coven Akali",
+                "id": 70
+            },
+            {
+                "name": "Prestige Coven Akali",
+                "id": 71
+            },
+            {
+                "name": "Empyrean Akali",
+                "id": 82
+            }
