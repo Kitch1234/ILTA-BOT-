@@ -1,20 +1,460 @@
- Загружен: auction
-✅ Загружен: balance
-✅ Загружен: contract
-✅ Загружен: daily
-✅ Загружен: inventory
-✅ Загружен: profile
-✅ Загружен: quest
-✅ Загружен: shop
-✅ Загружен: work
-🌍 Регионов загружено для чемпионов: 32
-✅ Загружен: travel
-✅ Загружен: quest_reward
-✅ Загружен: cards
-✅ Загружен: test_event
-✅ Загружен: deck
-✅ Загружен: battle
-❌ Ошибка загрузки pack: Extension 'cogs.pack' raised an error: ImportError: cannot import name 'create_card' from partially initialized module 'generators.card_generator' (most likely due to a circular import) (C:\Users\Ketek'\Desktop\qantum_universe\generators\card_generator.py)
-✅ Загружен: collection
-✅ Загружен: map
-✅ Синхронизировано команд: 23
+import discord
+from discord.ext import commands
+from discord import app_commands
+
+import random
+import os
+
+from database.cards import add_card
+
+from data.champion_loader import load_champions
+from data.regions import champion_regions
+from data.loot import get_card_rarity
+
+from data.translations import (
+    get_skin_name,
+    get_champion_name
+)
+
+from generators.card_generator import create_card
+
+
+class Pack(commands.Cog):
+
+    def __init__(self, bot):
+
+        self.bot = bot
+
+        self.champions = load_champions()
+
+
+    # ==================================
+    # ПОИСК ЛОКАЛЬНОГО АРТА
+    # ==================================
+
+    def find_local_art(
+        self,
+        champion,
+        skin
+    ):
+
+        champion_folder = champion.replace(
+            " ",
+            "_"
+        )
+
+
+        base_path = os.path.join(
+            "assets",
+            "champions"
+        )
+
+
+        for region in os.listdir(base_path):
+
+            region_path = os.path.join(
+                base_path,
+                region
+            )
+
+
+            if not os.path.isdir(region_path):
+                continue
+
+
+
+            champ_path = os.path.join(
+                region_path,
+                champion
+            )
+
+
+            if not os.path.exists(champ_path):
+
+                champ_path = os.path.join(
+                    region_path,
+                    champion_folder
+                )
+
+
+            if not os.path.exists(champ_path):
+                continue
+
+
+
+            # ищем скин
+
+            for file in os.listdir(champ_path):
+
+                name = file.lower()
+
+
+                if skin.lower() in name:
+
+                    return os.path.join(
+                        champ_path,
+                        file
+                    )
+
+
+
+            # base
+
+            if skin == "Base":
+
+                for file in os.listdir(champ_path):
+
+                    if file.lower().startswith(
+                        "base"
+                    ):
+
+                        return os.path.join(
+                            champ_path,
+                            file
+                        )
+
+
+        return None
+
+
+
+    # ==================================
+    # OPEN PACK
+    # ==================================
+
+    @app_commands.command(
+        name="open_pack",
+        description="Открыть набор ILTA"
+    )
+    async def open_pack(
+        self,
+        interaction: discord.Interaction
+    ):
+
+
+        await interaction.response.defer()
+
+
+
+        await interaction.followup.send(
+            f"🎁 **{interaction.user.name} открыл ILTA Pack (10 карт)**"
+        )
+
+
+
+        for number in range(1,11):
+
+
+            # --------------------------
+            # Чемпион
+            # --------------------------
+
+            champion_id = random.choice(
+                list(
+                    self.champions.keys()
+                )
+            )
+
+
+            champion = self.champions[
+                champion_id
+            ]
+
+
+
+            # --------------------------
+            # Регион
+            # --------------------------
+
+            region = champion_regions.get(
+                champion_id,
+                "Runeterra"
+            )
+
+
+
+            # --------------------------
+            # Скин
+            # --------------------------
+
+            skins = champion.get(
+                "skins",
+                []
+            )
+
+
+            if skins:
+
+                skin = random.choice(
+                    skins
+                )
+
+
+                skin_key = skin.get(
+                    "name",
+                    "Base"
+                )
+
+
+            else:
+
+                skin_key = "Base"
+
+
+
+            # --------------------------
+            # Редкость
+            # --------------------------
+
+            rarity = get_card_rarity()
+
+
+
+            # --------------------------
+            # Статы
+            # --------------------------
+
+            attack = random.randint(
+                20,
+                100
+            )
+
+
+            health = random.randint(
+                50,
+                150
+            )
+
+
+            defense = random.randint(
+                10,
+                80
+            )
+
+
+
+            # --------------------------
+            # ID карты
+            # --------------------------
+
+            card_code = (
+                f"{random.randint(1,9999):04}"
+            )
+
+
+
+            # --------------------------
+            # Русские названия
+            # --------------------------
+
+            champion_ru = get_champion_name(
+                champion_id
+            )
+
+
+            skin_ru = get_skin_name(
+                skin_key
+            )
+
+
+
+            # --------------------------
+            # Сохранение
+            # --------------------------
+
+            await add_card(
+
+                interaction.user.id,
+
+                card_code,
+
+                champion_id,
+
+                skin_key,
+
+                region,
+
+                rarity,
+
+                attack,
+
+                defense,
+
+                health
+
+            )
+
+
+
+            # --------------------------
+            # Локальный арт
+            # --------------------------
+
+            art_path = self.find_local_art(
+
+                champion_id,
+
+                skin_key
+
+            )
+
+
+
+            if not art_path:
+
+                await interaction.followup.send(
+
+                    f"⚠ Нет арта: "
+                    f"{champion_ru} "
+                    f"{skin_ru}"
+
+                )
+
+                continue
+
+
+
+            # --------------------------
+            # Генерация карты
+            # --------------------------
+
+            card_file = create_card(
+
+                champion=champion_ru,
+
+                skin=skin_ru,
+
+                rarity=rarity,
+
+                region=region,
+
+                attack=attack,
+
+                health=health,
+
+                defense=defense,
+
+                image_path=art_path,
+
+                card_number=card_code
+
+            )
+
+
+
+            # --------------------------
+            # Embed
+            # --------------------------
+
+            embed = discord.Embed(
+
+                title=(
+                    f"🎴 {rarity} | "
+                    f"{champion_ru}"
+                ),
+
+                description=(
+
+                    f"✨ **{skin_ru}**\n"
+
+                    f"🆔 {card_code}"
+
+                ),
+
+                color=0xFFD700
+
+            )
+
+
+
+            embed.add_field(
+
+                name="⚔ Атака",
+
+                value=str(attack),
+
+                inline=True
+
+            )
+
+
+            embed.add_field(
+
+                name="❤️ Здоровье",
+
+                value=str(health),
+
+                inline=True
+
+            )
+
+
+            embed.add_field(
+
+                name="🛡 Защита",
+
+                value=str(defense),
+
+                inline=True
+
+            )
+
+
+            embed.add_field(
+
+                name="🌍 Регион",
+
+                value=region,
+
+                inline=True
+
+            )
+
+
+
+            file = discord.File(
+                card_file
+            )
+
+
+            embed.set_image(
+
+                url=(
+
+                    "attachment://"
+
+                    +
+
+                    os.path.basename(
+                        card_file
+                    )
+
+                )
+
+            )
+
+
+            embed.set_footer(
+
+                text=f"Карта {number}/10"
+
+            )
+
+
+
+            await interaction.followup.send(
+
+                embed=embed,
+
+                file=file
+
+            )
+
+
+
+
+async def setup(bot):
+
+    await bot.add_cog(
+        Pack(bot)
+    )
