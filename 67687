@@ -1,7 +1,105 @@
-C:\Users\Ketek'\Desktop\qantum_universe>python tools/rename_images.py
-✔ fiora-headmistress-fiora-loading-308.jpeg → fiora_headmistress_fiora_loading_308.jpeg
-✔ fiora-nightraven-fiora-loading-308.jpeg → fiora_nightraven_fiora_loading_308.jpeg
-✔ fiora-project-fiora-loading-308.jpeg → fiora_project_fiora_loading_308.jpeg
-✔ fiora-royal-guard-fiora-loading-308.jpeg → fiora_royal_guard_fiora_loading_308.jpeg
+import os
+import re
 
-✅ Переименование завершено
+
+FOLDER = "assets/champions"
+
+
+def rename_image(name):
+
+    filename, ext = os.path.splitext(name)
+
+    # нижний регистр для обработки
+    low = filename.lower()
+
+
+    # убираем имя чемпиона в начале
+    parts = low.split("_")
+
+
+    if len(parts) > 2:
+
+        # первое слово - чемпион
+        parts = parts[1:]
+
+
+    filename = "_".join(parts)
+
+
+    # убираем loading и цифры
+    filename = re.sub(
+        r"_loading_\d+",
+        "",
+        filename
+    )
+
+
+    # делаем красиво
+    filename = "_".join(
+        word.capitalize()
+        for word in filename.split("_")
+    )
+
+
+    # исключение Base
+    if filename.lower().startswith("base"):
+
+        filename = "Base"
+
+
+    return filename + ".webp"
+
+
+
+def convert_and_rename(path):
+
+    for root, dirs, files in os.walk(path):
+
+        for file in files:
+
+            if not file.lower().endswith(
+                (".png",".jpg",".jpeg",".webp")
+            ):
+                continue
+
+
+            old = os.path.join(
+                root,
+                file
+            )
+
+
+            new_name = rename_image(
+                file
+            )
+
+
+            new = os.path.join(
+                root,
+                new_name
+            )
+
+
+            os.rename(
+                old,
+                new
+            )
+
+
+            print(
+                "✔",
+                file,
+                "→",
+                new_name
+            )
+
+
+
+convert_and_rename(
+    FOLDER
+)
+
+
+print(
+    "\n✅ Готово"
+)
