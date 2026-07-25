@@ -1,4 +1,4 @@
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, ImageFilter
 import os
 
 
@@ -53,36 +53,33 @@ FRAME_PATHS = {
 
 
 # =========================
-# КООРДИНАТЫ
+# ТЕКСТ
 # =========================
 
 CARD_LAYOUT = {
 
-    "number": (900, 90),
+    "number": (900,90),
 
-    "champion": (530, 1010),
+    "champion": (530,1010),
 
-    "skin": (530, 1080),
+    "skin": (530,1080),
 
-    "attack": (250, 1210),
+    "attack": (250,1210),
 
-    "health": (530, 1210),
+    "health": (530,1210),
 
-    "defense": (810, 1210),
+    "defense": (810,1210),
 
-    "region_text": (250, 1380),
+    "region": (250,1380),
 
-    "rarity": (820, 1380)
+    "rarity": (820,1380)
 
 }
 
 
 
-# =========================
-# ШРИФТ
-# =========================
 
-def get_font(path, size):
+def get_font(path,size):
 
     return ImageFont.truetype(
         path,
@@ -91,9 +88,6 @@ def get_font(path, size):
 
 
 
-# =========================
-# ТЕКСТ
-# =========================
 
 def draw_text(
     draw,
@@ -105,22 +99,21 @@ def draw_text(
 
     font = get_font(
 
-        FONT_BOLD if bold
-        else FONT_REGULAR,
+        FONT_BOLD if bold else FONT_REGULAR,
 
         size
 
     )
 
 
-    x, y = position
+    x,y = position
 
 
     draw.text(
 
         (
-            x + 3,
-            y + 3
+            x+3,
+            y+3
         ),
 
         text,
@@ -149,30 +142,38 @@ def draw_text(
 
 
 
+
+
 # =========================
-# АРТ С РАСШИРЕНИЕМ КРАЁВ
+# АРТ + ФОН
 # =========================
 
-def fit_image(image, size):
-
-    target_w, target_h = size
+def prepare_art(image):
 
 
-    # сохраняем оригинальные пропорции
+    # ---------- ФОН ----------
 
-    ratio = target_h / image.height
+    bg = image.copy()
 
 
-    new_w = int(
-        image.width * ratio
+
+    ratio = max(
+
+        CARD_WIDTH / bg.width,
+
+        CARD_HEIGHT / bg.height
+
     )
 
 
-    image = image.resize(
+    bg = bg.resize(
 
         (
-            new_w,
-            target_h
+
+            int(bg.width*ratio),
+
+            int(bg.height*ratio)
+
         ),
 
         Image.LANCZOS
@@ -180,82 +181,96 @@ def fit_image(image, size):
     )
 
 
+    left = (
 
-    # если арт шире карты
+        bg.width-CARD_WIDTH
 
-    if new_w >= target_w:
-
-
-        left = (
-            new_w - target_w
-        ) // 2
+    )//2
 
 
-        return image.crop(
+    top = (
 
-            (
-                left,
-                0,
-                left + target_w,
-                target_h
-            )
+        bg.height-CARD_HEIGHT
+
+    )//2
+
+
+
+    bg = bg.crop(
+
+        (
+
+            left,
+
+            top,
+
+            left+CARD_WIDTH,
+
+            top+CARD_HEIGHT
 
         )
 
+    )
 
 
-    # создаём новое полотно
+    bg = bg.filter(
+
+        ImageFilter.GaussianBlur(25)
+
+    )
+
+
+
+    # ---------- ОРИГИНАЛ ----------
+
+
+    fg = image.copy()
+
+
+
+    ratio = min(
+
+        CARD_WIDTH / fg.width,
+
+        CARD_HEIGHT / fg.height
+
+    )
+
+
+    fg = fg.resize(
+
+        (
+
+            int(fg.width*ratio),
+
+            int(fg.height*ratio)
+
+        ),
+
+        Image.LANCZOS
+
+    )
+
+
 
     result = Image.new(
 
         "RGBA",
 
         (
-            target_w,
-            target_h
+
+            CARD_WIDTH,
+
+            CARD_HEIGHT
+
         )
-
-    )
-
-
-
-    side = (
-
-        target_w - new_w
-
-    ) // 2
-
-
-
-    # левый край
-
-    left_part = image.crop(
-
-        (
-            0,
-            0,
-            20,
-            target_h
-        )
-
-    )
-
-
-    left_part = left_part.resize(
-
-        (
-            side,
-            target_h
-        ),
-
-        Image.LANCZOS
 
     )
 
 
     result.alpha_composite(
 
-        left_part,
+        bg,
 
         (
             0,
@@ -265,61 +280,35 @@ def fit_image(image, size):
     )
 
 
+    x = (
 
-    # центр
+        CARD_WIDTH-fg.width
 
-    result.alpha_composite(
-
-        image,
-
-        (
-            side,
-            0
-        )
-
-    )
+    )//2
 
 
+    y = (
 
-    # правый край
+        CARD_HEIGHT-fg.height
 
-    right_part = image.crop(
+    )//2
 
-        (
-            new_w-20,
-            0,
-            new_w,
-            target_h
-        )
-
-    )
-
-
-    right_part = right_part.resize(
-
-        (
-            side,
-            target_h
-        ),
-
-        Image.LANCZOS
-
-    )
 
 
     result.alpha_composite(
 
-        right_part,
+        fg,
 
         (
-            side + new_w,
-            0
+            x,
+            y
         )
 
     )
 
 
     return result
+
 
 
 
@@ -376,10 +365,6 @@ def create_card(
 
 
 
-    # =====================
-    # АРТ
-    # =====================
-
     art = Image.open(
 
         image_path
@@ -391,14 +376,10 @@ def create_card(
     )
 
 
-    art = fit_image(
 
-        art,
+    art = prepare_art(
 
-        (
-            CARD_WIDTH,
-            CARD_HEIGHT
-        )
+        art
 
     )
 
@@ -414,6 +395,7 @@ def create_card(
     # =====================
     # РАМКА
     # =====================
+
 
     frame_name = FRAME_PATHS.get(
 
@@ -482,6 +464,7 @@ def create_card(
     # ТЕКСТ
     # =====================
 
+
     draw_text(
 
         draw,
@@ -524,10 +507,6 @@ def create_card(
 
 
 
-    # =====================
-    # СТАТЫ
-    # =====================
-
     draw_text(
 
         draw,
@@ -568,15 +547,11 @@ def create_card(
 
 
 
-    # =====================
-    # НИЗ
-    # =====================
-
     draw_text(
 
         draw,
 
-        CARD_LAYOUT["region_text"],
+        CARD_LAYOUT["region"],
 
         region,
 
@@ -599,10 +574,6 @@ def create_card(
 
 
 
-    # =====================
-    # СОХРАНЕНИЕ
-    # =====================
-
     filename = (
 
         f"{champion}_{skin}_{card_number}.png"
@@ -614,6 +585,7 @@ def create_card(
         "_"
 
     )
+
 
 
     path = os.path.join(
