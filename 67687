@@ -15,27 +15,73 @@ REGIONS = [
 ]
 
 
-CHAMPIONS_JSON = "data/champions.json"
+CHAMPIONS_FILE = "data/champions.json"
 
 
 OUTPUT = "assets/champions"
 
 
-# CommunityDragon CDN
-BASE_URL = (
-    "https://raw.communitydragon.org/latest/"
-    "plugins/rcp-be-lol-game-data/global/"
-    "default/v1/champion/"
-)
+
+# CommunityDragon
+CDN = "https://raw.communitydragon.org/latest/"
 
 
 
 # =========================
-# ЗАГРУЗКА JSON
+# СЛОВАРЬ РЕГИОНОВ
+# =========================
+
+REGION_CHAMPIONS = {
+
+    "Demacia": [
+        "Fiora",
+        "Galio",
+        "Garen",
+        "Jarvan IV",
+        "Kayle",
+        "Lucian",
+        "Lux",
+        "Morgana",
+        "Poppy",
+        "Quinn",
+        "Senna",
+        "Shyvana",
+        "Sona",
+        "Sylas",
+        "Vayne",
+        "Xin Zhao"
+    ],
+
+
+    "Noxus": [
+        "Ambessa",
+        "Briar",
+        "Cassiopeia",
+        "Darius",
+        "Draven",
+        "Katarina",
+        "Kled",
+        "LeBlanc",
+        "Mordekaiser",
+        "Rell",
+        "Riven",
+        "Samira",
+        "Sion",
+        "Swain",
+        "Talon",
+        "Vladimir"
+    ]
+
+}
+
+
+
+# =========================
+# ЧИТАЕМ CHAMPIONS.JSON
 # =========================
 
 with open(
-    CHAMPIONS_JSON,
+    CHAMPIONS_FILE,
     "r",
     encoding="utf-8"
 ) as f:
@@ -45,59 +91,36 @@ with open(
 
 
 # =========================
-# ПОИСК РЕГИОНА
-# =========================
-
-def find_region(champion):
-
-    for region in REGIONS:
-
-        path = os.path.join(
-            OUTPUT,
-            region,
-            champion
-        )
-
-        if os.path.exists(path):
-
-            return region
-
-
-    return None
-
-
-
-# =========================
-# НОРМАЛЬНОЕ ИМЯ ФАЙЛА
+# ИМЯ ФАЙЛА
 # =========================
 
 def clean_name(name):
 
-    name = name.replace(
+    bad = [
+        ":",
+        "'",
+        "/"
+    ]
+
+    for x in bad:
+        name = name.replace(
+            x,
+            ""
+        )
+
+
+    return name.replace(
         " ",
         "_"
     )
 
-    name = name.replace(
-        ":",
-        ""
-    )
-
-    name = name.replace(
-        "'",
-        ""
-    )
-
-
-    return name
-
 
 
 # =========================
-# СКАЧИВАНИЕ
+# СОХРАНЕНИЕ
 # =========================
 
-def download_image(
+def save_image(
     url,
     path
 ):
@@ -111,9 +134,7 @@ def download_image(
 
 
         if r.status_code != 200:
-
             return False
-
 
 
         img = Image.open(
@@ -130,126 +151,147 @@ def download_image(
         return True
 
 
-    except Exception as e:
-
-        print(
-            "Ошибка:",
-            e
-        )
+    except Exception:
 
         return False
 
 
 
 # =========================
-# ОСНОВА
+# ЗАГРУЗКА
 # =========================
 
-for champion_id, data in champions.items():
+for region, champs in REGION_CHAMPIONS.items():
 
 
-    region = find_region(
-        champion_id
-    )
+    for champion in champs:
 
 
-    if not region:
-
-        continue
-
-
-
-    print(
-        f"\n🌍 {region} | {champion_id}"
-    )
-
-
-    champion_folder = os.path.join(
-
-        OUTPUT,
-
-        region,
-
-        champion_id
-
-    )
-
-
-    os.makedirs(
-        champion_folder,
-        exist_ok=True
-    )
-
-
-
-    for skin in data["skins"]:
-
-
-        skin_name = skin["name"]
-
-        skin_id = skin["id"]
-
-
-
-        if skin_name == "default":
-
-            filename = "Base.webp"
-
-        else:
-
-            filename = (
-                clean_name(
-                    skin_name
-                )
-                +
-                ".webp"
-            )
-
-
-
-        save_path = os.path.join(
-
-            champion_folder,
-
-            filename
-
-        )
-
-
-
-        if os.path.exists(save_path):
-
-            print(
-                "✔ Уже есть:",
-                filename
-            )
-
+        if champion not in champions:
             continue
 
 
 
-        # centered splash
-
-        url = (
-
-            BASE_URL
-
-            +
-
-            f"{skin_id}/"
-
-        )
-
-
-        # пока заглушка
-        # нужен точный путь ассета
-
-
         print(
-            "⬇",
-            skin_name
+            "\n🌍",
+            region,
+            champion
+        )
+
+
+        folder = os.path.join(
+
+            OUTPUT,
+
+            region,
+
+            champion
+
+        )
+
+
+        os.makedirs(
+            folder,
+            exist_ok=True
         )
 
 
 
-print("\n✅ Готово")
+        skins = champions[champion]["skins"]
+
+
+
+        for skin in skins:
+
+
+            skin_id = skin["id"]
+
+            skin_name = skin["name"]
+
+
+
+            if skin_name == "default":
+
+                filename = "Base.webp"
+
+            else:
+
+                filename = (
+                    clean_name(
+                        skin_name
+                    )
+                    +
+                    ".webp"
+                )
+
+
+
+            save_path = os.path.join(
+
+                folder,
+
+                filename
+
+            )
+
+
+
+            if os.path.exists(save_path):
+
+                print(
+                    "✔",
+                    filename
+                )
+
+                continue
+
+
+
+            # centered skin background
+            url = (
+                CDN
+                +
+                "plugins/rcp-be-lol-game-data/global/default/"
+                "assets/characters/"
+                + champion.lower()
+                +
+                "/skins/"
+                + str(skin_id)
+                +
+                "/"
+                + champion.lower()
+                +
+                "_splash_centered_"
+                + str(skin_id)
+                +
+                ".jpg"
+            )
+
+
+
+            print(
+                "⬇",
+                skin_name
+            )
+
+
+            if save_image(
+                url,
+                save_path
+            ):
+
+                print(
+                    "   OK"
+                )
+
+            else:
+
+                print(
+                    "   ❌ нет файла"
+                )
+
+
+
+print(
+    "\n✅ Загрузка завершена"
+)
