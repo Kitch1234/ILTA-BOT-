@@ -10,7 +10,9 @@ from data.loot import get_card_rarity
 from generators.card_generator import create_card
 
 
+
 PACK_SIZE = 3
+
 
 
 class PackView(discord.ui.View):
@@ -25,7 +27,8 @@ class PackView(discord.ui.View):
         self.index = 0
 
 
-    def get_embed(self):
+
+    def create_embed(self):
 
         card = self.cards[self.index]
 
@@ -44,7 +47,7 @@ class PackView(discord.ui.View):
                 f"🛡 Защита: {card['defense']}\n"
                 f"🌍 Регион: {card['region']}\n\n"
 
-                f"Карта {self.index+1}/{len(self.cards)}"
+                f"Карта {self.index + 1}/{len(self.cards)}"
 
             ),
 
@@ -53,7 +56,58 @@ class PackView(discord.ui.View):
         )
 
 
+        embed.set_image(
+
+            url=(
+
+                "attachment://"
+
+                +
+
+                os.path.basename(
+                    card["file"]
+                )
+
+            )
+
+        )
+
+
         return embed
+
+
+
+
+
+    async def update(
+
+        self,
+        interaction
+
+    ):
+
+        await interaction.response.defer()
+
+
+        await interaction.edit_original_response(
+
+            embed=self.create_embed(),
+
+            attachments=[
+
+                discord.File(
+
+                    self.cards[self.index]["file"]
+
+                )
+
+            ],
+
+            view=self
+
+        )
+
+
 
 
 
@@ -61,10 +115,14 @@ class PackView(discord.ui.View):
         emoji="⬅️",
         style=discord.ButtonStyle.secondary
     )
-    async def previous(
+    async def left(
+
         self,
+
         interaction: discord.Interaction,
+
         button: discord.ui.Button
+
     ):
 
 
@@ -76,23 +134,11 @@ class PackView(discord.ui.View):
             self.index = len(self.cards)-1
 
 
-        await interaction.response.edit_message(
-
-            embed=self.get_embed(),
-
-            attachments=[
-
-                discord.File(
-
-                    self.cards[self.index]["file"]
-
-                )
-
-            ],
-
-            view=self
-
+        await self.update(
+            interaction
         )
+
+
 
 
 
@@ -100,10 +146,14 @@ class PackView(discord.ui.View):
         emoji="➡️",
         style=discord.ButtonStyle.primary
     )
-    async def next(
+    async def right(
+
         self,
+
         interaction: discord.Interaction,
+
         button: discord.ui.Button
+
     ):
 
 
@@ -115,23 +165,10 @@ class PackView(discord.ui.View):
             self.index = 0
 
 
-        await interaction.response.edit_message(
-
-            embed=self.get_embed(),
-
-            attachments=[
-
-                discord.File(
-
-                    self.cards[self.index]["file"]
-
-                )
-
-            ],
-
-            view=self
-
+        await self.update(
+            interaction
         )
+
 
 
 
@@ -146,6 +183,8 @@ class Pack(commands.Cog):
         self.bot = bot
 
         self.champions = load_champions()
+
+
 
 
 
@@ -219,7 +258,6 @@ class Pack(commands.Cog):
             )
 
 
-
             code = (
 
                 f"{random.randint(1,9999):04}"
@@ -228,7 +266,7 @@ class Pack(commands.Cog):
 
 
 
-            card_path = create_card(
+            card_file = create_card(
 
                 champion=champion_name,
 
@@ -270,40 +308,22 @@ class Pack(commands.Cog):
 
                 "code": code,
 
-                "file": card_path
+                "file": card_file
 
             })
 
 
 
 
-        view = PackView(cards)
 
-
-
-        file = discord.File(
-
-            cards[0]["file"]
-
+        view = PackView(
+            cards
         )
 
 
-        embed = view.get_embed()
+        first_file = discord.File(
 
-
-        embed.set_image(
-
-            url=
-
-            "attachment://"
-
-            +
-
-            os.path.basename(
-
-                cards[0]["file"]
-
-            )
+            cards[0]["file"]
 
         )
 
@@ -311,9 +331,9 @@ class Pack(commands.Cog):
 
         await interaction.followup.send(
 
-            embed=embed,
+            embed=view.create_embed(),
 
-            file=file,
+            file=first_file,
 
             view=view
 
