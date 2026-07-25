@@ -1,109 +1,154 @@
-"""
-Массовая генерация карт ILTA RPG
-"""
-
-import random
-
-from data.champion_loader import load_champions
-from data.loot import get_card_rarity
-
-from generators.card_generator import create_card
+import os
 
 
+CHAMPIONS_PATH = "assets/champions"
 
-def calculate_stats():
 
-    return {
-
-        "attack": random.randint(20,100),
-
-        "health": random.randint(50,150),
-
-        "defense": random.randint(10,80)
-
-    }
+IMAGE_EXTENSIONS = (
+    ".png",
+    ".jpg",
+    ".jpeg",
+    ".webp"
+)
 
 
 
+def clean_name(name):
 
-
-def generate_all():
-
-
-    champions = load_champions()
-
-
-    total = 0
-
-
-
-    for champion_name, data in champions.items():
-
-
-        region = data["region"]
-
-
-        skins = data["skins"]
-
-
-
-        for skin in skins:
-
-
-            stats = calculate_stats()
-
-
-            rarity = get_card_rarity()
-
-
-
-            card_number = (
-                f"{random.randint(1,9999):04}"
-            )
-
-
-
-            path = create_card(
-
-                champion=champion_name,
-
-                skin=skin["name"],
-
-                rarity=rarity,
-
-                region=region,
-
-                attack=stats["attack"],
-
-                health=stats["health"],
-
-                defense=stats["defense"],
-
-                image_path=skin["file"],
-
-                card_number=card_number
-
-            )
-
-
-
-            total += 1
-
-
-            print(
-                "Создана:",
-                path
-            )
-
-
-
-    print(
-        f"\n✅ Всего карт создано: {total}"
+    return name.replace(
+        "_",
+        " "
     )
 
 
 
+def load_champions():
 
-if __name__ == "__main__":
+    champions = {}
 
-    generate_all()
+
+    if not os.path.exists(CHAMPIONS_PATH):
+
+        print(
+            "❌ Папка assets/champions не найдена"
+        )
+
+        return champions
+
+
+
+    # регионы
+
+    for region in sorted(
+        os.listdir(CHAMPIONS_PATH)
+    ):
+
+
+        region_path = os.path.join(
+            CHAMPIONS_PATH,
+            region
+        )
+
+
+        if not os.path.isdir(region_path):
+
+            continue
+
+
+
+
+        # чемпионы
+
+        for champion in sorted(
+            os.listdir(region_path)
+        ):
+
+
+            champion_path = os.path.join(
+                region_path,
+                champion
+            )
+
+
+            if not os.path.isdir(champion_path):
+
+                continue
+
+
+
+            skins = []
+
+
+
+            # изображения скинов
+
+            for image in sorted(
+                os.listdir(champion_path)
+            ):
+
+
+                if not image.lower().endswith(
+                    IMAGE_EXTENSIONS
+                ):
+
+                    continue
+
+
+
+                skin_name = os.path.splitext(
+                    image
+                )[0]
+
+
+
+                skins.append({
+
+                    "name": clean_name(
+                        skin_name
+                    ),
+
+                    "file": os.path.join(
+                        champion_path,
+                        image
+                    )
+
+                })
+
+
+
+            if not skins:
+
+                continue
+
+
+
+
+            champion_name = clean_name(
+                champion
+            )
+
+
+
+            champions[champion_name] = {
+
+                "region": region,
+
+                "skins": skins
+
+            }
+
+
+
+            print(
+                f"✅ Загружен {region}: {champion_name} ({len(skins)} скинов)"
+            )
+
+
+
+
+    print(
+        f"\n🌟 Всего чемпионов загружено: {len(champions)}"
+    )
+
+
+    return champions
