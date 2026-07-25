@@ -1,32 +1,21 @@
 from PIL import Image, ImageDraw, ImageFont
 import os
+import textwrap
 
-
-# =========================
-# РАЗМЕР КАРТЫ
-# =========================
 
 CARD_WIDTH = 1060
 CARD_HEIGHT = 1484
 
 
 ASSETS = "assets"
-
-
 OUTPUT = "generated_cards"
 
-
-
-# =========================
-# ШРИФТЫ
-# =========================
 
 FONT_BOLD = os.path.join(
     ASSETS,
     "fonts",
     "Beaufort-Bold.ttf"
 )
-
 
 FONT_REGULAR = os.path.join(
     ASSETS,
@@ -36,53 +25,50 @@ FONT_REGULAR = os.path.join(
 
 
 
-# =========================
-# РАМКИ
-# =========================
-
 FRAME_PATHS = {
 
-    "Common": "common.png",
-    "Rare": "rare.png",
-    "Epic": "epic.png",
-    "Legendary": "legendary.png",
-    "Mythic": "mythic.png"
+    "Обычный": "common.png",
+    "Редкий": "rare.png",
+    "Эпический": "epic.png",
+    "Легендарный": "legendary.png",
+    "Мифический": "mythic.png"
 
 }
 
 
-
-# =========================
-# КООРДИНАТЫ
-# =========================
 
 CARD_LAYOUT = {
 
-    "number": (900, 90),
 
-    "champion": (530, 1010),
+    "number": (900,90),
 
-    "skin": (530, 1080),
 
-    "attack": (250, 1210),
+    "champion": (530,1010),
 
-    "health": (530, 1210),
 
-    "defense": (810, 1210),
+    "skin": (530,1080),
 
-    "region_text": (250, 1380),
 
-    "rarity": (820, 1380)
+    "attack": (250,1210),
+
+
+    "health": (530,1210),
+
+
+    "defense": (810,1210),
+
+
+    "region": (250,1380),
+
+
+    "rarity": (820,1380)
 
 }
 
 
 
-# =========================
-# ШРИФТ
-# =========================
 
-def get_font(path, size):
+def get_font(path,size):
 
     return ImageFont.truetype(
         path,
@@ -91,90 +77,54 @@ def get_font(path, size):
 
 
 
-# =========================
-# ТЕКСТ
-# =========================
+
 
 def draw_text(
     draw,
-    position,
+    pos,
     text,
     size,
     bold=True
 ):
 
     font = get_font(
-
-        FONT_BOLD if bold
-        else FONT_REGULAR,
-
+        FONT_BOLD if bold else FONT_REGULAR,
         size
-
     )
 
 
-    x, y = position
+    x,y = pos
 
-
-    # тень
 
     draw.text(
-
-        (
-            x + 3,
-            y + 3
-        ),
-
+        (x+3,y+3),
         text,
-
         font=font,
-
         fill=(0,0,0,220)
-
     )
 
-
-    # основной текст
 
     draw.text(
-
-        (
-            x,
-            y
-        ),
-
+        (x,y),
         text,
-
         font=font,
-
         fill=(255,255,255)
-
     )
 
 
 
-# =========================
-# АРТ ЧЕМПИОНА
-# =========================
+
 
 def fit_image(
-
     image,
-
     size,
-
-    zoom=0.80
-
+    zoom=0.65
 ):
 
-
-    target_w, target_h = size
-
+    target_w,target_h=size
 
 
-    # масштаб под карту
-
-    ratio = max(
+    ratio = min(
 
         target_w / image.width,
 
@@ -183,74 +133,49 @@ def fit_image(
     )
 
 
-    # небольшой запас
-
     ratio *= zoom
 
 
+    new_size=(
 
-    new_size = (
+        int(image.width*ratio),
 
-        int(image.width * ratio),
-
-        int(image.height * ratio)
+        int(image.height*ratio)
 
     )
 
 
-
-    image = image.resize(
-
+    image=image.resize(
         new_size,
-
         Image.LANCZOS
-
     )
 
 
-
-    # центрирование
-
-    left = (
-
-        image.width - target_w
-
-    ) // 2
-
-
-
-    top = (
-
-        image.height - target_h
-
-    ) // 2
-
-
-
-    image = image.crop(
-
+    canvas=Image.new(
+        "RGBA",
         (
-
-            left,
-
-            top,
-
-            left + target_w,
-
-            top + target_h
-
-        )
-
+            target_w,
+            target_h
+        ),
+        (0,0,0,0)
     )
 
 
-    return image
+    x=(target_w-image.width)//2
+    y=(target_h-image.height)//2
+
+
+    canvas.alpha_composite(
+        image,
+        (x,y)
+    )
+
+
+    return canvas
 
 
 
-# =========================
-# СОЗДАНИЕ КАРТЫ
-# =========================
+
 
 def create_card(
 
@@ -276,20 +201,13 @@ def create_card(
 
 
     os.makedirs(
-
         OUTPUT,
-
         exist_ok=True
-
     )
 
 
 
-    # =====================
-    # ПРОЗРАЧНЫЙ ФОН
-    # =====================
-
-    card = Image.new(
+    card=Image.new(
 
         "RGBA",
 
@@ -304,23 +222,16 @@ def create_card(
 
 
 
-    # =====================
-    # АРТ
-    # =====================
+    # арт
 
-    art = Image.open(
-
+    art=Image.open(
         image_path
-
     ).convert(
-
         "RGBA"
-
     )
 
 
-
-    art = fit_image(
+    art=fit_image(
 
         art,
 
@@ -329,30 +240,20 @@ def create_card(
             CARD_HEIGHT
         ),
 
-        zoom=0.80
+        zoom=0.65
 
     )
-
 
 
     card.alpha_composite(
-
-        art,
-
-        (
-            0,
-            0
-        )
-
+        art
     )
 
 
 
-    # =====================
-    # РАМКА
-    # =====================
+    # рамка
 
-    frame_name = FRAME_PATHS.get(
+    frame_file=FRAME_PATHS.get(
 
         rarity,
 
@@ -361,210 +262,126 @@ def create_card(
     )
 
 
-
-    frame_path = os.path.join(
+    frame_path=os.path.join(
 
         ASSETS,
 
         "frames",
 
-        frame_name
+        frame_file
 
     )
-
 
 
     if os.path.exists(frame_path):
 
-
-        frame = Image.open(
-
+        frame=Image.open(
             frame_path
-
         ).convert(
-
             "RGBA"
-
         )
 
 
-
-        frame = frame.resize(
+        frame=frame.resize(
 
             (
                 CARD_WIDTH,
                 CARD_HEIGHT
-            ),
-
-            Image.LANCZOS
+            )
 
         )
-
 
 
         card.alpha_composite(
-
             frame
-
         )
 
 
 
-    draw = ImageDraw.Draw(
-
+    draw=ImageDraw.Draw(
         card
-
     )
 
 
 
-    # =====================
-    # ТЕКСТ
-    # =====================
-
-
     draw_text(
-
         draw,
-
         CARD_LAYOUT["number"],
-
         f"#{card_number}",
-
         36
-
     )
 
 
-
     draw_text(
-
         draw,
-
         CARD_LAYOUT["champion"],
-
         champion,
-
         54
-
     )
 
 
-
     draw_text(
-
         draw,
-
         CARD_LAYOUT["skin"],
-
         skin,
-
         38,
-
         False
-
     )
 
 
 
-    # =====================
-    # СТАТЫ
-    # =====================
-
-
     draw_text(
-
         draw,
-
         CARD_LAYOUT["attack"],
-
         str(attack),
-
         50
-
     )
 
 
     draw_text(
-
         draw,
-
         CARD_LAYOUT["health"],
-
         str(health),
-
         50
-
     )
 
 
     draw_text(
-
         draw,
-
         CARD_LAYOUT["defense"],
-
         str(defense),
-
         50
-
     )
 
 
-
-    # =====================
-    # НИЗ
-    # =====================
-
-
     draw_text(
-
         draw,
-
-        CARD_LAYOUT["region_text"],
-
+        CARD_LAYOUT["region"],
         region,
-
         34
-
     )
-
 
 
     draw_text(
-
         draw,
-
         CARD_LAYOUT["rarity"],
-
         rarity,
-
         34
-
     )
 
 
 
-    # =====================
-    # СОХРАНЕНИЕ
-    # =====================
-
-
-    filename = (
+    filename=(
 
         f"{champion}_{skin}_{card_number}.png"
 
     ).replace(
-
         " ",
-
         "_"
-
     )
 
 
-
-    path = os.path.join(
+    path=os.path.join(
 
         OUTPUT,
 
@@ -573,13 +390,9 @@ def create_card(
     )
 
 
-
     card.save(
-
         path
-
     )
-
 
 
     return path
