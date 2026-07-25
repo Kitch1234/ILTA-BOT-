@@ -1,120 +1,86 @@
-import discord
-from discord.ext import commands
-from discord import app_commands
+"""
+Массовая генерация карт ILTA RPG
+"""
 
-import random
 import os
+import random
 
-from database.cards import add_card
 
 from data.champion_loader import load_champions
-from data.loot import get_card_rarity
 
-from data.translations import (
-    get_skin_name,
-    get_champion_name
-)
+from data.loot import get_card_rarity
 
 from generators.card_generator import create_card
 
 
 
-# =========================
-# НАСТРОЙКИ PACK
-# =========================
-
-PACK_SIZE = 3
+OUTPUT = "generated_cards"
 
 
 
-class Pack(commands.Cog):
+def calculate_stats():
 
+    return {
 
-    def __init__(self, bot):
+        "attack": random.randint(
+            20,
+            100
+        ),
 
-        self.bot = bot
+        "health": random.randint(
+            50,
+            150
+        ),
 
-        self.champions = load_champions()
+        "defense": random.randint(
+            10,
+            80
+        )
 
-
-
-    @app_commands.command(
-        name="open_pack",
-        description="Открыть ILTA Pack"
-    )
-    async def open_pack(
-        self,
-        interaction: discord.Interaction
-    ):
-
-
-        await interaction.response.defer()
-
-
-
-        if not self.champions:
-
-            await interaction.followup.send(
-                "❌ Нет доступных чемпионов"
-            )
-
-            return
+    }
 
 
 
-        await interaction.followup.send(
 
-            f"🎁 **{interaction.user.name} открыл ILTA Pack ({PACK_SIZE} карты)**"
 
+def generate_all():
+
+
+    champions = load_champions()
+
+
+    if not champions:
+
+        print(
+            "❌ Чемпионы не найдены"
+        )
+
+        return
+
+
+
+    total = 0
+
+
+
+    for champion_id, data in champions.items():
+
+
+        region = data.get(
+            "region",
+            "Runeterra"
         )
 
 
 
-        for number in range(1, PACK_SIZE + 1):
-
-
-            # =====================
-            # ЧЕМПИОН
-            # =====================
-
-            champion_id = random.choice(
-
-                list(
-                    self.champions.keys()
-                )
-
-            )
-
-
-            champion = self.champions[champion_id]
+        skins = data.get(
+            "skins",
+            []
+        )
 
 
 
-            region = champion.get(
-                "region",
-                "Runeterra"
-            )
-
-
-
-            # =====================
-            # СКИН
-            # =====================
-
-            skins = champion.get(
-                "skins",
-                []
-            )
-
-
-            if not skins:
-                continue
-
-
-
-            skin = random.choice(
-                skins
-            )
+        for skin in skins:
 
 
             skin_name = skin["name"]
@@ -123,55 +89,26 @@ class Pack(commands.Cog):
 
 
 
-            # =====================
-            # ИМЕНА
-            # =====================
+            if not os.path.exists(
+                image_path
+            ):
 
-            champion_ru = get_champion_name(
-                champion_id
-            )
+                print(
+                    "❌ Нет файла:",
+                    image_path
+                )
 
-
-            skin_ru = get_skin_name(
-                skin_name
-            )
+                continue
 
 
 
-            # =====================
-            # РЕДКОСТЬ
-            # =====================
+            stats = calculate_stats()
+
+
 
             rarity = get_card_rarity()
 
 
-
-            # =====================
-            # СТАТЫ
-            # =====================
-
-            attack = random.randint(
-                20,
-                100
-            )
-
-
-            health = random.randint(
-                50,
-                150
-            )
-
-
-            defense = random.randint(
-                10,
-                80
-            )
-
-
-
-            # =====================
-            # ID
-            # =====================
 
             card_code = (
                 f"{random.randint(1,9999):04}"
@@ -179,53 +116,21 @@ class Pack(commands.Cog):
 
 
 
-            # =====================
-            # БАЗА
-            # =====================
+            card = create_card(
 
-            await add_card(
+                champion=champion_id,
 
-                interaction.user.id,
-
-                card_code,
-
-                champion_id,
-
-                skin_name,
-
-                region,
-
-                rarity,
-
-                attack,
-
-                defense,
-
-                health
-
-            )
-
-
-
-            # =====================
-            # КАРТА PNG
-            # =====================
-
-            card_file = create_card(
-
-                champion=champion_ru,
-
-                skin=skin_ru,
+                skin=skin_name,
 
                 rarity=rarity,
 
                 region=region,
 
-                attack=attack,
+                attack=stats["attack"],
 
-                health=health,
+                health=stats["health"],
 
-                defense=defense,
+                defense=stats["defense"],
 
                 image_path=image_path,
 
@@ -235,103 +140,25 @@ class Pack(commands.Cog):
 
 
 
-            # =====================
-            # EMBED
-            # =====================
+            total += 1
 
-            embed = discord.Embed(
 
-                title=(
 
-                    f"🎴 {rarity} | {champion_ru}"
-
-                ),
-
-                description=(
-
-                    f"✨ **{skin_ru}**\n"
-
-                    f"🆔 {card_code}"
-
-                ),
-
-                color=0xFFD700
-
+            print(
+                "✅ Создана:",
+                card
             )
 
 
 
-            embed.add_field(
-                name="⚔ Атака",
-                value=str(attack),
-                inline=True
-            )
-
-
-            embed.add_field(
-                name="❤️ Здоровье",
-                value=str(health),
-                inline=True
-            )
-
-
-            embed.add_field(
-                name="🛡 Защита",
-                value=str(defense),
-                inline=True
-            )
-
-
-            embed.add_field(
-                name="🌍 Регион",
-                value=region,
-                inline=True
-            )
-
-
-
-            file = discord.File(
-                card_file
-            )
-
-
-            embed.set_image(
-
-                url=(
-
-                    "attachment://"
-
-                    +
-
-                    os.path.basename(card_file)
-
-                )
-
-            )
-
-
-
-            embed.set_footer(
-
-                text=f"Карта {number}/{PACK_SIZE}"
-
-            )
-
-
-
-            await interaction.followup.send(
-
-                embed=embed,
-
-                file=file
-
-            )
-
-
-
-
-async def setup(bot):
-
-    await bot.add_cog(
-        Pack(bot)
+    print(
+        f"\n🎴 Всего карт создано: {total}"
     )
+
+
+
+
+
+if __name__ == "__main__":
+
+    generate_all()
