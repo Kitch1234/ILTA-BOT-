@@ -1,9 +1,12 @@
-import json
 import os
+import json
 import requests
 
 
 CHAMPIONS_JSON = "data/champions.json"
+
+ASSETS_PATH = "assets/champions"
+
 
 REGIONS = [
     "Demacia",
@@ -11,46 +14,76 @@ REGIONS = [
 ]
 
 
-ASSETS = "assets/champions"
+CDRAGON_URL = (
+    "https://raw.communitydragon.org/latest/"
+    "plugins/rcp-be-lol-game-data/global/default/"
+    "v1/champion/{champion_id}/skins/{skin_id}.jpg"
+)
 
 
-def get_champion_list():
 
-    url = (
-        "https://ddragon.leagueoflegends.com/"
-        "cdn/15.10.1/data/en_US/champion.json"
-    )
+def download(url, path):
 
-    data = requests.get(url).json()
+    try:
 
-    result = {}
-
-    for champ in data["data"].values():
-
-        result[champ["name"]] = int(
-            champ["key"]
+        response = requests.get(
+            url,
+            timeout=30
         )
 
-    return result
+
+        if response.status_code != 200:
+
+            print(
+                "❌ Не найден:",
+                url
+            )
+
+            return False
+
+
+
+        with open(
+            path,
+            "wb"
+        ) as file:
+
+            file.write(
+                response.content
+            )
+
+
+        return True
+
+
+
+    except Exception as e:
+
+        print(
+            "Ошибка:",
+            e
+        )
+
+        return False
+
+
 
 
 
 def main():
-
-    ids = get_champion_list()
 
 
     with open(
         CHAMPIONS_JSON,
         "r",
         encoding="utf-8"
-    ) as f:
+    ) as file:
 
-        champions = json.load(f)
+        champions = json.load(file)
 
 
 
-    updated = 0
+    total = 0
 
 
 
@@ -58,12 +91,13 @@ def main():
 
 
         region_path = os.path.join(
-            ASSETS,
+            ASSETS_PATH,
             region
         )
 
 
         if not os.path.exists(region_path):
+
             continue
 
 
@@ -72,59 +106,124 @@ def main():
 
 
             if folder not in champions:
+
                 continue
 
 
 
-            # ищем имя Riot
+            champion = champions[folder]
 
-            name = folder.replace(
-                "_",
-                " "
+
+            champion_id = champion.get(
+                "id"
             )
 
 
-            if name in ids:
-
-                champions[folder]["id"] = ids[name]
-
-                updated += 1
+            if not champion_id:
 
                 print(
-                    "✔",
-                    region,
-                    folder,
-                    ids[name]
-                )
-
-            else:
-
-                print(
-                    "⚠ Не найден:",
+                    "Нет ID:",
                     folder
                 )
 
+                continue
 
 
-    with open(
-        CHAMPIONS_JSON,
-        "w",
-        encoding="utf-8"
-    ) as f:
 
-        json.dump(
-            champions,
-            f,
-            ensure_ascii=False,
-            indent=4
-        )
+            champion_path = os.path.join(
+                region_path,
+                folder
+            )
+
+
+
+            os.makedirs(
+                champion_path,
+                exist_ok=True
+            )
+
+
+
+            print()
+            print(
+                "====",
+                folder,
+                "===="
+            )
+
+
+
+            for skin in champion.get("skins", []):
+
+
+                skin_id = skin["id"]
+
+                skin_name = skin["name"]
+
+
+                filename = (
+                    skin_name
+                    .replace(" ", "_")
+                    .replace("/", "_")
+                    + ".jpg"
+                )
+
+
+
+                save_path = os.path.join(
+                    champion_path,
+                    filename
+                )
+
+
+
+                if os.path.exists(save_path):
+
+                    print(
+                        "Есть:",
+                        filename
+                    )
+
+                    continue
+
+
+
+                url = CDRAGON_URL.format(
+
+                    champion_id=champion_id,
+
+                    skin_id=skin_id
+
+                )
+
+
+
+                print(
+                    "Скачивание:",
+                    skin_name
+                )
+
+
+
+                if download(
+                    url,
+                    save_path
+                ):
+
+                    total += 1
+
+                    print(
+                        "✔ Готово"
+                    )
+
 
 
     print()
     print(
-        "Готово. Обновлено:",
-        updated
+        "Всего скачано:",
+        total
     )
+
 
 
 
