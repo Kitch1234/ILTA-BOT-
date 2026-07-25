@@ -12,19 +12,8 @@ CARD_HEIGHT = 1484
 
 ASSETS = "assets"
 
+
 OUTPUT = "generated_cards"
-
-
-
-# =========================
-# ОБЛАСТЬ АРТА
-# =========================
-
-ART_X = 95
-ART_Y = 180
-
-ART_WIDTH = 870
-ART_HEIGHT = 720
 
 
 
@@ -64,7 +53,7 @@ FRAME_PATHS = {
 
 
 # =========================
-# ТЕКСТ
+# КООРДИНАТЫ
 # =========================
 
 CARD_LAYOUT = {
@@ -103,7 +92,7 @@ def get_font(path, size):
 
 
 # =========================
-# ТЕКСТ С ТЕНЬЮ
+# ТЕКСТ
 # =========================
 
 def draw_text(
@@ -115,48 +104,75 @@ def draw_text(
 ):
 
     font = get_font(
-        FONT_BOLD if bold else FONT_REGULAR,
+
+        FONT_BOLD if bold
+        else FONT_REGULAR,
+
         size
+
     )
 
 
     x, y = position
 
 
+    # тень
+
     draw.text(
+
         (
             x + 3,
             y + 3
         ),
+
         text,
+
         font=font,
+
         fill=(0,0,0,220)
+
     )
 
 
+    # основной текст
+
     draw.text(
+
         (
             x,
             y
         ),
+
         text,
+
         font=font,
-        fill=(255,255,255,255)
+
+        fill=(255,255,255)
+
     )
 
 
 
 # =========================
-# ЦЕНТРИРОВАННЫЙ CROP
+# АРТ ЧЕМПИОНА
 # =========================
 
 def fit_image(
+
     image,
-    size
+
+    size,
+
+    zoom=1.08
+
 ):
+
 
     target_w, target_h = size
 
+
+
+    # масштаб под карту
 
     ratio = max(
 
@@ -165,6 +181,12 @@ def fit_image(
         target_h / image.height
 
     )
+
+
+    # небольшой запас
+
+    ratio *= zoom
+
 
 
     new_size = (
@@ -176,6 +198,7 @@ def fit_image(
     )
 
 
+
     image = image.resize(
 
         new_size,
@@ -184,6 +207,9 @@ def fit_image(
 
     )
 
+
+
+    # центрирование
 
     left = (
 
@@ -293,16 +319,20 @@ def create_card(
     )
 
 
+
     art = fit_image(
 
         art,
 
         (
-            ART_WIDTH,
-            ART_HEIGHT
-        )
+            CARD_WIDTH,
+            CARD_HEIGHT
+        ),
+
+        zoom=1.08
 
     )
+
 
 
     card.alpha_composite(
@@ -310,8 +340,8 @@ def create_card(
         art,
 
         (
-            ART_X,
-            ART_Y
+            0,
+            0
         )
 
     )
@@ -322,7 +352,7 @@ def create_card(
     # РАМКА
     # =====================
 
-    frame_file = FRAME_PATHS.get(
+    frame_name = FRAME_PATHS.get(
 
         rarity,
 
@@ -331,13 +361,14 @@ def create_card(
     )
 
 
+
     frame_path = os.path.join(
 
         ASSETS,
 
         "frames",
 
-        frame_file
+        frame_name
 
     )
 
@@ -357,6 +388,7 @@ def create_card(
         )
 
 
+
         frame = frame.resize(
 
             (
@@ -367,6 +399,7 @@ def create_card(
             Image.LANCZOS
 
         )
+
 
 
         card.alpha_composite(
@@ -497,6 +530,7 @@ def create_card(
     )
 
 
+
     draw_text(
 
         draw,
@@ -529,6 +563,7 @@ def create_card(
     )
 
 
+
     path = os.path.join(
 
         OUTPUT,
@@ -538,13 +573,13 @@ def create_card(
     )
 
 
+
     card.save(
 
-        path,
-
-        "PNG"
+        path
 
     )
+
 
 
     return path
