@@ -1,1 +1,209 @@
-python -c "from data.champion_loader import load_champions; load_champions()"
+
+C:\Users\Ketek'\Desktop\qantum_universe>python main.py
+✅ База данных подключена
+✅ Загружен: auction
+✅ Загружен: balance
+✅ Загружен: contract
+✅ Загружен: daily
+✅ Загружен: inventory
+✅ Загружен: profile
+✅ Загружен: quest
+✅ Загружен: shop
+✅ Загружен: work
+🌍 Регионов загружено для чемпионов: 32
+✅ Загружен: travel
+✅ Загружен: quest_reward
+✅ Загружен: cards
+✅ Загружен: test_event
+✅ Загружен: deck
+✅ Загружен: battle
+⚠ Нет в JSON: Ambessa
+⚠ Нет в JSON: Ambessa
+⚠ Нет в JSON: Ambessa
+⚠ Нет в JSON: Locke
+⚠ Нет в JSON: Locke
+⚠ Нет в JSON: Mel
+⚠ Нет в JSON: Mel
+⚠ Нет в JSON: Mel
+⚠ Нет в JSON: Yunara
+⚠ Нет в JSON: Yunara
+⚠ Нет в JSON: Yunara
+⚠ Нет в JSON: Zaahen
+⚠ Нет в JSON: Zaahen
+
+✅ Aatrox: 13 артов
+✅ Ahri: 22 артов
+✅ Akali: 22 артов
+✅ Akshan: 5 артов
+✅ Alistar: 16 артов
+✅ Amumu: 15 артов
+✅ Anivia: 13 артов
+✅ Annie: 19 артов
+✅ Aphelios: 7 артов
+✅ Ashe: 21 артов
+✅ AurelionSol: 7 артов
+✅ Aurora: 4 артов
+✅ Azir: 8 артов
+✅ Bard: 9 артов
+✅ Belveth: 4 артов
+✅ Blitzcrank: 17 артов
+✅ Brand: 14 артов
+✅ Braum: 10 артов
+✅ Briar: 4 артов
+✅ Caitlyn: 21 артов
+✅ Camille: 9 артов
+✅ Cassiopeia: 10 артов
+✅ Chogath: 12 артов
+✅ Corki: 12 артов
+✅ Darius: 16 артов
+✅ Diana: 17 артов
+✅ Draven: 15 артов
+✅ DrMundo: 12 артов
+✅ Ekko: 13 артов
+✅ Elise: 10 артов
+✅ Evelynn: 17 артов
+✅ Ezreal: 22 артов
+✅ Fiddlesticks: 13 артов
+✅ Fiora: 17 артов
+✅ Fizz: 14 артов
+✅ Galio: 12 артов
+✅ Gangplank: 13 артов
+✅ Garen: 18 артов
+✅ Gnar: 11 артов
+✅ Gragas: 15 артов
+✅ Graves: 14 артов
+✅ Gwen: 6 артов
+✅ Hecarim: 13 артов
+✅ Heimerdinger: 10 артов
+✅ Hwei: 4 артов
+✅ Illaoi: 7 артов
+✅ Irelia: 17 артов
+✅ Ivern: 7 артов
+✅ Janna: 17 артов
+✅ JarvanIV: 16 артов
+✅ Jax: 17 артов
+✅ Jayce: 13 артов
+✅ Jhin: 14 артов
+✅ Jinx: 15 артов
+✅ Kaisa: 16 артов
+✅ Kalista: 7 артов
+✅ Karma: 16 артов
+✅ Karthus: 11 артов
+✅ Kassadin: 10 артов
+✅ Katarina: 20 артов
+✅ Kayle: 18 артов
+✅ Kayn: 8 артов
+✅ Kennen: 11 артов
+✅ Khazix: 9 артов
+✅ Kindred: 10 артов
+✅ Kled: 5 артов
+✅ KogMaw: 16 артов
+✅ KSante: 4 артов
+✅ Leblanc: 15 артов
+✅ LeeSin: 20 артов
+✅ Leona: 19 артов
+✅ Lillia: 7 артов
+✅ Lissandra: 10 артов
+✅ Lucian: 15 артов
+✅ Lulu: 14 артов
+✅ Lux: 23 артов
+✅ Malphite: 15 артов
+✅ Malzahar: 14 артов
+✅ Maokai: 12 артов
+✅ MasterYi: 19 артов
+✅ Milio: 4 артов
+✅ MissFortune: 24 артов
+✅ MonkeyKing: 10 артов
+✅ Mordekaiser: 14 артов
+✅ Morgana: 18 артов
+✅ Naafiri: 5 артов
+✅ Nami: 15 артов
+✅ Nasus: 14 артов
+✅ Nautilus: 12 артов
+✅ Neeko: 10 артов
+✅ Nidalee: 17 артов
+✅ Nilah: 4 артов
+✅ Nocturne: 11 артов
+✅ Nunu: 13 артов
+✅ Olaf: 12 артов
+✅ Orianna: 13 артов
+✅ Ornn: 6 артов
+✅ Pantheon: 14 артов
+✅ Poppy: 14 артов
+✅ Pyke: 13 артов
+✅ Qiyana: 10 артов
+✅ Quinn: 8 артов
+✅ Rakan: 13 артов
+✅ Rammus: 12 артов
+✅ RekSai: 6 артов
+✅ Rell: 5 артов
+✅ Renata: 6 артов
+✅ Renekton: 16 артов
+✅ Rengar: 10 артов
+✅ Riven: 18 артов
+✅ Rumble: 7 артов
+✅ Ryze: 15 артов
+✅ Samira: 7 артов
+✅ Sejuani: 14 артов
+✅ Senna: 12 артов
+✅ Seraphine: 13 артов
+✅ Sett: 11 артов
+✅ Shaco: 17 артов
+✅ Shen: 14 артов
+✅ Shyvana: 9 артов
+✅ Singed: 13 артов
+✅ Sion: 12 артов
+✅ Sivir: 20 артов
+✅ Skarner: 7 артов
+✅ Smolder: 3 артов
+✅ Sona: 17 артов
+✅ Soraka: 18 артов
+✅ Swain: 11 артов
+✅ Sylas: 10 артов
+✅ Syndra: 14 артов
+✅ TahmKench: 8 артов
+✅ Taliyah: 7 артов
+✅ Talon: 13 артов
+✅ Taric: 8 артов
+✅ Teemo: 16 артов
+✅ Thresh: 17 артов
+✅ Tristana: 17 артов
+✅ Trundle: 9 артов
+✅ Tryndamere: 14 артов
+✅ TwistedFate: 17 артов
+✅ Twitch: 15 артов
+✅ Udyr: 7 артов
+✅ Urgot: 8 артов
+✅ Varus: 16 артов
+✅ Vayne: 20 артов
+✅ Veigar: 16 артов
+✅ Velkoz: 8 артов
+✅ Vex: 5 артов
+✅ Viego: 8 артов
+✅ Viktor: 9 артов
+✅ Vi: 14 артов
+✅ Vladimir: 15 артов
+✅ Volibear: 11 артов
+✅ Warwick: 17 артов
+✅ Xayah: 13 артов
+✅ Xerath: 10 артов
+✅ XinZhao: 13 артов
+✅ Yasuo: 19 артов
+✅ Yone: 12 артов
+✅ Yorick: 10 артов
+✅ Yuumi: 11 артов
+✅ Zac: 8 артов
+✅ Zed: 15 артов
+✅ Zeri: 7 артов
+✅ Ziggs: 13 артов
+✅ Zilean: 9 артов
+✅ Zoe: 10 артов
+✅ Zyra: 13 артов
+
+🌟 Всего чемпионов: 168
+✅ Загружен: pack
+✅ Загружен: collection
+✅ Загружен: map
+✅ Синхронизировано команд: 24
+🟢 Бот запущен как ILTA BOT#7827
+
