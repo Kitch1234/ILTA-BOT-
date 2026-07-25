@@ -1,6 +1,5 @@
-from PIL import Image, ImageDraw, ImageFont, ImageFilter
+from PIL import Image, ImageDraw, ImageFont
 import os
-
 
 
 # =========================
@@ -27,7 +26,6 @@ FONT_BOLD = os.path.join(
     "Beaufort-Bold.ttf"
 )
 
-
 FONT_REGULAR = os.path.join(
     ASSETS,
     "fonts",
@@ -53,7 +51,7 @@ FRAME_PATHS = {
 
 
 # =========================
-# ТЕКСТ
+# КООРДИНАТЫ
 # =========================
 
 CARD_LAYOUT = {
@@ -78,6 +76,9 @@ CARD_LAYOUT = {
 
 
 
+# =========================
+# ШРИФТ
+# =========================
 
 def get_font(path,size):
 
@@ -88,6 +89,9 @@ def get_font(path,size):
 
 
 
+# =========================
+# ТЕКСТ
+# =========================
 
 def draw_text(
     draw,
@@ -142,38 +146,25 @@ def draw_text(
 
 
 
-
-
 # =========================
-# АРТ + ФОН
+# АРТ
 # =========================
 
 def prepare_art(image):
 
 
-    # ---------- ФОН ----------
+    # =====================
+    # ФОН
+    # =====================
 
     bg = image.copy()
-
-
-
-    ratio = max(
-
-        CARD_WIDTH / bg.width,
-
-        CARD_HEIGHT / bg.height
-
-    )
 
 
     bg = bg.resize(
 
         (
-
-            int(bg.width*ratio),
-
-            int(bg.height*ratio)
-
+            CARD_WIDTH,
+            CARD_HEIGHT
         ),
 
         Image.LANCZOS
@@ -181,51 +172,12 @@ def prepare_art(image):
     )
 
 
-    left = (
 
-        bg.width-CARD_WIDTH
-
-    )//2
-
-
-    top = (
-
-        bg.height-CARD_HEIGHT
-
-    )//2
-
-
-
-    bg = bg.crop(
-
-        (
-
-            left,
-
-            top,
-
-            left+CARD_WIDTH,
-
-            top+CARD_HEIGHT
-
-        )
-
-    )
-
-
-    bg = bg.filter(
-
-        ImageFilter.GaussianBlur(25)
-
-    )
-
-
-
-    # ---------- ОРИГИНАЛ ----------
-
+    # =====================
+    # ОСНОВНОЙ АРТ
+    # =====================
 
     fg = image.copy()
-
 
 
     ratio = min(
@@ -234,16 +186,16 @@ def prepare_art(image):
 
         CARD_HEIGHT / fg.height
 
-    )
+    ) * 0.82
+
 
 
     fg = fg.resize(
 
         (
+            int(fg.width * ratio),
 
-            int(fg.width*ratio),
-
-            int(fg.height*ratio)
+            int(fg.height * ratio)
 
         ),
 
@@ -258,15 +210,15 @@ def prepare_art(image):
         "RGBA",
 
         (
-
             CARD_WIDTH,
-
             CARD_HEIGHT
-
         )
 
     )
 
+
+
+    # фон
 
     result.alpha_composite(
 
@@ -280,18 +232,21 @@ def prepare_art(image):
     )
 
 
+
+    # центр
+
     x = (
 
-        CARD_WIDTH-fg.width
+        CARD_WIDTH - fg.width
 
-    )//2
+    ) // 2
 
 
     y = (
 
-        CARD_HEIGHT-fg.height
+        CARD_HEIGHT - fg.height
 
-    )//2
+    ) // 2
 
 
 
@@ -308,8 +263,6 @@ def prepare_art(image):
 
 
     return result
-
-
 
 
 
@@ -384,6 +337,7 @@ def create_card(
     )
 
 
+
     card.alpha_composite(
 
         art
@@ -395,7 +349,6 @@ def create_card(
     # =====================
     # РАМКА
     # =====================
-
 
     frame_name = FRAME_PATHS.get(
 
@@ -419,7 +372,6 @@ def create_card(
 
 
     if os.path.exists(frame_path):
-
 
         frame = Image.open(
 
@@ -464,7 +416,6 @@ def create_card(
     # ТЕКСТ
     # =====================
 
-
     draw_text(
 
         draw,
@@ -476,6 +427,7 @@ def create_card(
         36
 
     )
+
 
 
     draw_text(
@@ -544,7 +496,6 @@ def create_card(
         50
 
     )
-
 
 
     draw_text(
