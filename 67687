@@ -1,128 +1,204 @@
-import os
+"""
+Система добычи (Loot)
+ILTA RPG Card System
+"""
 
+import random
 
-CHAMPIONS_PATH = "assets/champions"
 
 
-IMAGE_EXTENSIONS = (
-    ".png",
-    ".jpg",
-    ".jpeg",
-    ".webp"
-)
+# =====================================
+# Редкость карт ILTA
+# =====================================
 
+CARD_RARITY = {
 
+    "Обычный": {
+        "chance": 60,
+        "color": "#808080"
+    },
 
-def load_champions():
+    "Редкий": {
+        "chance": 25,
+        "color": "#3498DB"
+    },
 
-    champions = {}
+    "Эпический": {
+        "chance": 10,
+        "color": "#9B59B6"
+    },
 
+    "Легендарный": {
+        "chance": 4,
+        "color": "#F39C12"
+    },
 
-    if not os.path.exists(CHAMPIONS_PATH):
+    "Мифический": {
+        "chance": 0.8,
+        "color": "#E91E63"
+    },
 
-        print(
-            "❌ Папка assets/champions не найдена"
-        )
+    "Престижный": {
+        "chance": 0.15,
+        "color": "#FFD700"
+    },
 
-        return champions
+    "Чемпионский": {
+        "chance": 0.05,
+        "color": "#FFFFFF"
+    }
 
+}
 
 
-    # регионы
 
-    for region in os.listdir(CHAMPIONS_PATH):
 
 
-        region_path = os.path.join(
-            CHAMPIONS_PATH,
-            region
-        )
+# =====================================
+# Получить редкость карты
+# =====================================
 
+def get_card_rarity():
 
-        if not os.path.isdir(region_path):
-
-            continue
-
-
-
-        # чемпионы
-
-        for champion in os.listdir(region_path):
-
-
-            champion_path = os.path.join(
-                region_path,
-                champion
-            )
-
-
-            if not os.path.isdir(champion_path):
-
-                continue
-
-
-
-            skins = []
-
-
-
-            # скины
-
-            for image in os.listdir(champion_path):
-
-
-                if not image.lower().endswith(
-                    IMAGE_EXTENSIONS
-                ):
-
-                    continue
-
-
-
-                skin_name = os.path.splitext(
-                    image
-                )[0]
-
-
-
-                skins.append({
-
-                    "name": skin_name,
-
-                    "file": os.path.join(
-                        champion_path,
-                        image
-                    )
-
-                })
-
-
-
-            if len(skins) == 0:
-
-                continue
-
-
-
-            champions[champion] = {
-
-                "region": region,
-
-                "skins": skins
-
-            }
-
-
-
-            print(
-                f"✅ Загружен {region}: {champion} ({len(skins)} картинок)"
-            )
-
-
-
-    print(
-        f"🌟 Всего чемпионов загружено: {len(champions)}"
+    roll = random.uniform(
+        0,
+        100
     )
 
 
-    return champions
+    total = 0
+
+
+    for rarity, data in CARD_RARITY.items():
+
+        total += data["chance"]
+
+
+        if roll <= total:
+
+            return rarity
+
+
+
+    return "Обычный"
+
+
+
+
+
+# =====================================
+# Старые функции Loot
+# =====================================
+
+
+LOOT_TABLE = {
+
+
+    "normal_monster": {
+
+        "gold": {
+            "min": 10,
+            "max": 50
+        },
+
+        "items": [
+            "Stone Fragment",
+            "Sharp Claw"
+        ],
+
+        "cards": {
+            "chance": 5
+        }
+
+    },
+
+
+
+    "elite_monster": {
+
+        "gold": {
+            "min": 100,
+            "max": 500
+        },
+
+        "items": [
+            "Rare Essence",
+            "Noxian Armor"
+        ],
+
+        "cards": {
+            "chance": 20
+        }
+
+    },
+
+
+
+    "boss": {
+
+        "gold": {
+            "min": 1000,
+            "max": 5000
+        },
+
+        "items": [
+            "Mythic Chest",
+            "Legendary Essence"
+        ],
+
+        "cards": {
+            "chance": 50
+        }
+
+    }
+
+}
+
+
+
+
+
+# =====================================
+# Монстры награды
+# =====================================
+
+def monster_drop(monster_type):
+
+    loot = LOOT_TABLE.get(
+        monster_type
+    )
+
+
+    if not loot:
+
+        return None
+
+
+
+    gold = random.randint(
+        loot["gold"]["min"],
+        loot["gold"]["max"]
+    )
+
+
+
+    card_drop = random.randint(
+        1,
+        100
+    )
+
+
+
+    return {
+
+        "gold": gold,
+
+        "card_drop":
+            card_drop <= loot["cards"]["chance"],
+
+        "items":
+            random.choice(
+                loot["items"]
+            )
+
+    }
