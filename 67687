@@ -1,10 +1,7 @@
-rosoft Windows [Version 10.0.26200.8894]
+Microsoft Windows [Version 10.0.26200.8894]
 (c) Корпорация Майкрософт (Microsoft Corporation). Все права защищены.
 
-C:\Users\Ketek'\Desktop\qantum_universe\generators>python generate_all_cards.py
-Traceback (most recent call last):
-  File "C:\Users\Ketek'\Desktop\qantum_universe\generators\generate_all_cards.py", line 9, in <module>
-    from data.champion_loader import load_champions
-ModuleNotFoundError: No module named 'data'
+C:\Users\Ketek'\Desktop\qantum_universe>python generators/generate_all_cards.p
+python: can't open file "C:\\Users\\Ketek'\\Desktop\\qantum_universe\\generators\\generate_all_cards.p": [Errno 2] No such file or directory
 
-C:\Users\Ketek'\Desktop\qantum_universe\generators>
+C:\Users\Ketek'\Desktop\qantum_universe>
