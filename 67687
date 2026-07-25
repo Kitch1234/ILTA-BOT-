@@ -1,105 +1,66 @@
 import os
 import re
 
-
 FOLDER = "assets/champions"
 
 
 def rename_image(name):
-
     filename, ext = os.path.splitext(name)
 
-    # нижний регистр для обработки
-    low = filename.lower()
+    # все разделители в _
+    filename = filename.replace("-", "_")
 
+    parts = filename.split("_")
 
-    # убираем имя чемпиона в начале
-    parts = low.split("_")
+    # имя чемпиона
+    champion = parts[0].lower()
 
+    # убрать имя чемпиона в начале
+    parts = parts[1:]
 
-    if len(parts) > 2:
+    # убрать повтор имени чемпиона в конце
+    while parts and parts[-1].lower() == champion:
+        parts.pop()
 
-        # первое слово - чемпион
-        parts = parts[1:]
+    # убрать loading
+    parts = [p for p in parts if p.lower() != "loading"]
 
+    # убрать цифры
+    parts = [p for p in parts if not p.isdigit()]
 
-    filename = "_".join(parts)
+    # default -> Base
+    if len(parts) == 1 and parts[0].lower() == "default":
+        return "Base.webp"
 
-
-    # убираем loading и цифры
-    filename = re.sub(
-        r"_loading_\d+",
-        "",
-        filename
-    )
-
-
-    # делаем красиво
-    filename = "_".join(
-        word.capitalize()
-        for word in filename.split("_")
-    )
-
-
-    # исключение Base
-    if filename.lower().startswith("base"):
-
-        filename = "Base"
-
+    filename = "_".join(word.capitalize() for word in parts)
 
     return filename + ".webp"
 
 
-
 def convert_and_rename(path):
-
     for root, dirs, files in os.walk(path):
 
         for file in files:
 
             if not file.lower().endswith(
-                (".png",".jpg",".jpeg",".webp")
+                (".png", ".jpg", ".jpeg", ".webp")
             ):
                 continue
 
+            old = os.path.join(root, file)
 
-            old = os.path.join(
-                root,
-                file
-            )
+            new_name = rename_image(file)
 
+            new = os.path.join(root, new_name)
 
-            new_name = rename_image(
-                file
-            )
+            if old == new:
+                continue
 
+            os.rename(old, new)
 
-            new = os.path.join(
-                root,
-                new_name
-            )
+            print(f"✔ {file} → {new_name}")
 
 
-            os.rename(
-                old,
-                new
-            )
+convert_and_rename(FOLDER)
 
-
-            print(
-                "✔",
-                file,
-                "→",
-                new_name
-            )
-
-
-
-convert_and_rename(
-    FOLDER
-)
-
-
-print(
-    "\n✅ Готово"
-)
+print("\n✅ Готово")
