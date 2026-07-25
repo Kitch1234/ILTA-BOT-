@@ -5,125 +5,30 @@ from PIL import Image
 from io import BytesIO
 
 
-# =========================
-# НАСТРОЙКИ
-# =========================
-
 REGIONS = [
     "Demacia",
     "Noxus"
 ]
 
 
-CHAMPIONS_FILE = "data/champions.json"
-
+CHAMPIONS_JSON = "data/champions.json"
 
 OUTPUT = "assets/champions"
 
 
 
-# CommunityDragon
-CDN = "https://raw.communitydragon.org/latest/"
-
-
-
-# =========================
-# СЛОВАРЬ РЕГИОНОВ
-# =========================
-
-REGION_CHAMPIONS = {
-
-    "Demacia": [
-        "Fiora",
-        "Galio",
-        "Garen",
-        "Jarvan IV",
-        "Kayle",
-        "Lucian",
-        "Lux",
-        "Morgana",
-        "Poppy",
-        "Quinn",
-        "Senna",
-        "Shyvana",
-        "Sona",
-        "Sylas",
-        "Vayne",
-        "Xin Zhao"
-    ],
-
-
-    "Noxus": [
-        "Ambessa",
-        "Briar",
-        "Cassiopeia",
-        "Darius",
-        "Draven",
-        "Katarina",
-        "Kled",
-        "LeBlanc",
-        "Mordekaiser",
-        "Rell",
-        "Riven",
-        "Samira",
-        "Sion",
-        "Swain",
-        "Talon",
-        "Vladimir"
-    ]
-
-}
-
-
-
-# =========================
-# ЧИТАЕМ CHAMPIONS.JSON
-# =========================
-
-with open(
-    CHAMPIONS_FILE,
-    "r",
-    encoding="utf-8"
-) as f:
-
-    champions = json.load(f)
-
-
-
-# =========================
-# ИМЯ ФАЙЛА
-# =========================
-
 def clean_name(name):
 
-    bad = [
-        ":",
-        "'",
-        "/"
-    ]
-
-    for x in bad:
-        name = name.replace(
-            x,
-            ""
-        )
-
-
-    return name.replace(
-        " ",
-        "_"
+    return (
+        name
+        .replace(" ", "_")
+        .replace(":", "")
+        .replace("'", "")
     )
 
 
 
-# =========================
-# СОХРАНЕНИЕ
-# =========================
-
-def save_image(
-    url,
-    path
-):
+def download(url, path):
 
     try:
 
@@ -151,144 +56,167 @@ def save_image(
         return True
 
 
-    except Exception:
+    except Exception as e:
+
+        print(
+            "Ошибка:",
+            e
+        )
 
         return False
 
 
 
-# =========================
-# ЗАГРУЗКА
-# =========================
+with open(
+    CHAMPIONS_JSON,
+    "r",
+    encoding="utf-8"
+) as f:
 
-for region, champs in REGION_CHAMPIONS.items():
+    champions = json.load(f)
 
 
-    for champion in champs:
+
+for champion, data in champions.items():
 
 
-        if champion not in champions:
+    region = None
+
+
+    for r in REGIONS:
+
+        test = os.path.join(
+            OUTPUT,
+            r,
+            champion
+        )
+
+
+        if os.path.exists(test):
+
+            region = r
+            break
+
+
+
+    if not region:
+        continue
+
+
+
+    print(
+        "\n🌍",
+        region,
+        champion
+    )
+
+
+    folder = os.path.join(
+        OUTPUT,
+        region,
+        champion
+    )
+
+
+    os.makedirs(
+        folder,
+        exist_ok=True
+    )
+
+
+
+    # Riot champion key
+
+    champion_key = data.get(
+        "key",
+        champion
+    )
+
+
+
+    for skin in data["skins"]:
+
+
+        skin_name = skin["name"]
+
+        skin_id = skin["id"]
+
+
+
+        if skin_name == "default":
+
+            filename = "Base.webp"
+
+        else:
+
+            filename = (
+                clean_name(
+                    skin_name
+                )
+                +
+                ".webp"
+            )
+
+
+
+        path = os.path.join(
+            folder,
+            filename
+        )
+
+
+
+        if os.path.exists(path):
+
+            print(
+                "✔",
+                filename
+            )
+
             continue
 
 
 
-        print(
-            "\n🌍",
-            region,
-            champion
-        )
+        # centered splash
 
+        if skin_id == 0:
 
-        folder = os.path.join(
-
-            OUTPUT,
-
-            region,
-
-            champion
-
-        )
-
-
-        os.makedirs(
-            folder,
-            exist_ok=True
-        )
-
-
-
-        skins = champions[champion]["skins"]
-
-
-
-        for skin in skins:
-
-
-            skin_id = skin["id"]
-
-            skin_name = skin["name"]
-
-
-
-            if skin_name == "default":
-
-                filename = "Base.webp"
-
-            else:
-
-                filename = (
-                    clean_name(
-                        skin_name
-                    )
-                    +
-                    ".webp"
-                )
-
-
-
-            save_path = os.path.join(
-
-                folder,
-
-                filename
-
-            )
-
-
-
-            if os.path.exists(save_path):
-
-                print(
-                    "✔",
-                    filename
-                )
-
-                continue
-
-
-
-            # centered skin background
             url = (
-                CDN
-                +
-                "plugins/rcp-be-lol-game-data/global/default/"
-                "assets/characters/"
-                + champion.lower()
-                +
-                "/skins/"
-                + str(skin_id)
-                +
-                "/"
-                + champion.lower()
-                +
-                "_splash_centered_"
-                + str(skin_id)
-                +
-                ".jpg"
+                f"https://ddragon.leagueoflegends.com/"
+                f"cdn/img/champion/splash/"
+                f"{champion}_0.jpg"
+            )
+
+        else:
+
+            url = (
+                f"https://ddragon.leagueoflegends.com/"
+                f"cdn/img/champion/splash/"
+                f"{champion}_{skin_id}.jpg"
             )
 
 
+
+        print(
+            "⬇",
+            skin_name
+        )
+
+
+        if download(
+            url,
+            path
+        ):
 
             print(
-                "⬇",
-                skin_name
+                "  OK"
             )
 
+        else:
 
-            if save_image(
-                url,
-                save_path
-            ):
-
-                print(
-                    "   OK"
-                )
-
-            else:
-
-                print(
-                    "   ❌ нет файла"
-                )
+            print(
+                "  ❌ Нет файла"
+            )
 
 
 
