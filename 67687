@@ -1,218 +1,42 @@
-import os
-import json
-
-
-CHAMPIONS_FILE = "data/champions.json"
-
-
-CHAMPIONS_PATH = r"C:\Users\Ketek'\Desktop\img\champion\centered"
-
-
-ALLOWED_REGIONS = [
-    "Demacia",
-    "Noxus"
-]
-
-
-IMAGE_EXTENSIONS = (
-    ".png",
-    ".jpg",
-    ".jpeg",
-    ".webp"
-)
-
-
-
-def load_champions():
-
-    champions = {}
-
-
-
-    if not os.path.exists(CHAMPIONS_FILE):
-
-        print("❌ Нет champions.json")
-
-        return champions
-
-
-
-    with open(
-        CHAMPIONS_FILE,
-        "r",
-        encoding="utf-8"
-    ) as file:
-
-        json_data = json.load(file)
-
-
-
-    if not os.path.exists(CHAMPIONS_PATH):
-
-        print("❌ Нет centered папки")
-
-        return champions
-
-
-
-
-    for image in os.listdir(CHAMPIONS_PATH):
-
-
-        if not image.lower().endswith(
-            IMAGE_EXTENSIONS
-        ):
-
-            continue
-
-
-
-        filename = os.path.splitext(
-            image
-        )[0]
-
-
-
-        try:
-
-            champion_raw, skin_id = filename.rsplit(
-                "_",
-                1
-            )
-
-            skin_id = int(
-                skin_id
-            )
-
-
-        except:
-
-            continue
-
-
-
-
-        # ищем имя чемпиона
-
-        champion_key = None
-
-
-        for name in json_data.keys():
-
-            if name.lower() == champion_raw.lower():
-
-                champion_key = name
-
-                break
-
-
-
-        if not champion_key:
-
-            print(
-                "⚠ Нет в JSON:",
-                champion_raw
-            )
-
-            continue
-
-
-
-
-        data = json_data[champion_key]
-
-
-
-        region = data.get(
-            "region"
-        )
-
-
-
-        # только Demacia и Noxus
-
-        if region not in ALLOWED_REGIONS:
-
-            continue
-
-
-
-
-        if champion_key not in champions:
-
-            champions[champion_key] = {
-
-                "id": data.get(
-                    "id"
-                ),
-
-                "region": region,
-
-                "skins": []
-
-            }
-
-
-
-
-
-        skin_name = "Unknown"
-
-
-
-        for skin in data.get(
-            "skins",
-            []
-        ):
-
-
-            if skin.get(
-                "id"
-            ) == skin_id:
-
-                skin_name = skin.get(
-                    "name"
-                )
-
-                break
-
-
-
-
-        champions[champion_key]["skins"].append({
-
-            "id": skin_id,
-
-            "name": skin_name,
-
-            "file": os.path.join(
-                CHAMPIONS_PATH,
-                image
-            )
-
-        })
-
-
-
-
-
-    print()
-
-
-    for name, data in champions.items():
-
-        print(
-            f"✅ {data['region']}: {name} ({len(data['skins'])} артов)"
-        )
-
-
-
-    print()
-
-    print(
-        f"🌟 Загружено Demacia/Noxus: {len(champions)}"
-    )
-
-
-
-    return champions
+Microsoft Windows [Version 10.0.26200.8894]
+(c) Корпорация Майкрософт (Microsoft Corporation). Все права защищены.
+
+C:\Users\Ketek'\Desktop\qantum_universe>python main.py
+✅ База данных подключена
+✅ Загружен: auction
+✅ Загружен: balance
+✅ Загружен: contract
+✅ Загружен: daily
+✅ Загружен: inventory
+✅ Загружен: profile
+✅ Загружен: quest
+✅ Загружен: shop
+✅ Загружен: work
+🌍 Регионов загружено для чемпионов: 32
+✅ Загружен: travel
+✅ Загружен: quest_reward
+✅ Загружен: cards
+✅ Загружен: test_event
+✅ Загружен: deck
+✅ Загружен: battle
+⚠ Нет в JSON: Ambessa
+⚠ Нет в JSON: Ambessa
+⚠ Нет в JSON: Ambessa
+⚠ Нет в JSON: Locke
+⚠ Нет в JSON: Locke
+⚠ Нет в JSON: Mel
+⚠ Нет в JSON: Mel
+⚠ Нет в JSON: Mel
+⚠ Нет в JSON: Yunara
+⚠ Нет в JSON: Yunara
+⚠ Нет в JSON: Yunara
+⚠ Нет в JSON: Zaahen
+⚠ Нет в JSON: Zaahen
+
+
+🌟 Загружено Demacia/Noxus: 0
+✅ Загружен: pack
+✅ Загружен: collection
+✅ Загружен: map
+✅ Синхронизировано команд: 24
+🟢 Бот запущен как ILTA BOT#7827
