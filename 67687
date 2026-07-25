@@ -1,547 +1,118 @@
-from PIL import Image, ImageDraw, ImageFont
 import os
+import requests
 
 
-
-# =========================
-# РАЗМЕР КАРТЫ
-# =========================
-
-CARD_WIDTH = 1064
-CARD_HEIGHT = 1478
+CHAMPIONS_PATH = "assets/champions"
 
 
-ASSETS = "assets"
-
-OUTPUT = "generated_cards"
-
-
-
-# =========================
-# ШРИФТЫ
-# =========================
-
-FONT_BOLD = os.path.join(
-    ASSETS,
-    "fonts",
-    "Beaufort-Bold.ttf"
-)
-
-FONT_REGULAR = os.path.join(
-    ASSETS,
-    "fonts",
-    "Beaufort-Regular.ttf"
+BASE_URL = (
+    "https://raw.communitydragon.org/"
+    "latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/"
 )
 
 
+def download_image(url, path):
 
-# =========================
-# РАМКИ
-# =========================
+    try:
 
-FRAME_PATHS = {
-
-    "Обычный": "common.png",
-    "Редкий": "rare.png",
-    "Эпический": "epic.png",
-    "Легендарный": "legendary.png",
-    "Мифический": "mythic.png"
-
-}
-
-
-
-# =========================
-# ОБЛАСТЬ АРТА
-# =========================
-
-ART_WIDTH = 850
-ART_HEIGHT = 1150
-
-
-
-ART_X = (
-
-    CARD_WIDTH - ART_WIDTH
-
-) // 2
-
-
-ART_Y = 80
-
-
-
-# =========================
-# ТЕКСТ
-# =========================
-
-CARD_LAYOUT = {
-
-    "number": (900,80),
-
-    "champion": (532,1180),
-
-    "skin": (532,1240),
-
-    "attack": (250,1340),
-
-    "health": (530,1340),
-
-    "defense": (810,1340),
-
-    "region": (250,1420),
-
-    "rarity": (820,1420)
-
-}
-
-
-
-# =========================
-# ФОНТ
-# =========================
-
-def get_font(path,size):
-
-    return ImageFont.truetype(
-        path,
-        size
-    )
-
-
-
-def draw_text(
-    draw,
-    position,
-    text,
-    size,
-    bold=True
-):
-
-    font = get_font(
-
-        FONT_BOLD if bold else FONT_REGULAR,
-
-        size
-
-    )
-
-
-    x,y = position
-
-
-    draw.text(
-
-        (
-            x+3,
-            y+3
-        ),
-
-        text,
-
-        font=font,
-
-        fill=(0,0,0,220)
-
-    )
-
-
-    draw.text(
-
-        (
-            x,
-            y
-        ),
-
-        text,
-
-        font=font,
-
-        fill=(255,255,255)
-
-    )
-
-
-
-# =========================
-# ПОДГОТОВКА АРТА
-# =========================
-
-def prepare_art(image):
-
-
-    # сохраняем пропорции
-
-    ratio = max(
-
-        ART_WIDTH / image.width,
-
-        ART_HEIGHT / image.height
-
-    )
-
-
-    new_size = (
-
-        int(image.width * ratio),
-
-        int(image.height * ratio)
-
-    )
-
-
-    image = image.resize(
-
-        new_size,
-
-        Image.LANCZOS
-
-    )
-
-
-
-    # обрезка по центру
-
-    left = (
-
-        image.width - ART_WIDTH
-
-    ) // 2
-
-
-    top = (
-
-        image.height - ART_HEIGHT
-
-    ) // 2
-
-
-
-    image = image.crop(
-
-        (
-
-            left,
-
-            top,
-
-            left + ART_WIDTH,
-
-            top + ART_HEIGHT
-
+        r = requests.get(
+            url,
+            timeout=20
         )
 
-    )
+        if r.status_code != 200:
+            return False
 
 
-    return image
+        with open(
+            path,
+            "wb"
+        ) as f:
 
+            f.write(
+                r.content
+            )
 
 
+        return True
 
-# =========================
-# СОЗДАНИЕ КАРТЫ
-# =========================
 
-def create_card(
+    except Exception as e:
 
-    champion,
+        print(e)
 
-    skin,
+        return False
 
-    rarity,
 
-    region,
 
-    attack,
+def scan_champions():
 
-    health,
+    champions = []
 
-    defense,
 
-    image_path,
+    for region in os.listdir(CHAMPIONS_PATH):
 
-    card_number
-
-):
-
-
-    os.makedirs(
-
-        OUTPUT,
-
-        exist_ok=True
-
-    )
-
-
-
-    card = Image.new(
-
-        "RGBA",
-
-        (
-            CARD_WIDTH,
-            CARD_HEIGHT
-        ),
-
-        (0,0,0,0)
-
-    )
-
-
-
-    # =====================
-    # АРТ
-    # =====================
-
-    art = Image.open(
-
-        image_path
-
-    ).convert(
-
-        "RGBA"
-
-    )
-
-
-    art = prepare_art(
-
-        art
-
-    )
-
-
-
-    card.alpha_composite(
-
-        art,
-
-        (
-            ART_X,
-            ART_Y
-        )
-
-    )
-
-
-
-    # =====================
-    # РАМКА
-    # =====================
-
-    frame_name = FRAME_PATHS.get(
-
-        rarity,
-
-        "common.png"
-
-    )
-
-
-
-    frame_path = os.path.join(
-
-        ASSETS,
-
-        "frames",
-
-        frame_name
-
-    )
-
-
-
-    if os.path.exists(frame_path):
-
-
-        frame = Image.open(
-
-            frame_path
-
-        ).convert(
-
-            "RGBA"
-
+        region_path = os.path.join(
+            CHAMPIONS_PATH,
+            region
         )
 
 
-        frame = frame.resize(
+        if not os.path.isdir(region_path):
+            continue
 
-            (
-                CARD_WIDTH,
-                CARD_HEIGHT
-            ),
 
-            Image.LANCZOS
 
+        for champion in os.listdir(region_path):
+
+            champion_path = os.path.join(
+                region_path,
+                champion
+            )
+
+
+            if os.path.isdir(champion_path):
+
+                champions.append(
+                    champion
+                )
+
+
+    return champions
+
+
+
+
+def main():
+
+    champions = scan_champions()
+
+
+    print(
+        f"Найдено чемпионов: {len(champions)}"
+    )
+
+
+    for champion in champions:
+
+
+        print(
+            "Обработка:",
+            champion
         )
 
 
-        card.alpha_composite(
+        # пока тестовый вариант
+        # создаём папку
 
-            frame
-
+        print(
+            "Готов:"
+            ,
+            champion
         )
 
 
 
-    draw = ImageDraw.Draw(
+if __name__ == "__main__":
 
-        card
-
-    )
-
-
-
-    # =====================
-    # ТЕКСТ
-    # =====================
-
-
-    draw_text(
-
-        draw,
-
-        CARD_LAYOUT["number"],
-
-        f"#{card_number}",
-
-        36
-
-    )
-
-
-
-    draw_text(
-
-        draw,
-
-        CARD_LAYOUT["champion"],
-
-        champion,
-
-        54
-
-    )
-
-
-
-    draw_text(
-
-        draw,
-
-        CARD_LAYOUT["skin"],
-
-        skin,
-
-        38,
-
-        False
-
-    )
-
-
-
-    draw_text(
-
-        draw,
-
-        CARD_LAYOUT["attack"],
-
-        str(attack),
-
-        50
-
-    )
-
-
-
-    draw_text(
-
-        draw,
-
-        CARD_LAYOUT["health"],
-
-        str(health),
-
-        50
-
-    )
-
-
-
-    draw_text(
-
-        draw,
-
-        CARD_LAYOUT["defense"],
-
-        str(defense),
-
-        50
-
-    )
-
-
-
-    draw_text(
-
-        draw,
-
-        CARD_LAYOUT["region"],
-
-        region,
-
-        34
-
-    )
-
-
-
-    draw_text(
-
-        draw,
-
-        CARD_LAYOUT["rarity"],
-
-        rarity,
-
-        34
-
-    )
-
-
-
-    filename = (
-
-        f"{champion}_{skin}_{card_number}.png"
-
-    ).replace(
-
-        " ",
-
-        "_"
-
-    )
-
-
-
-    path = os.path.join(
-
-        OUTPUT,
-
-        filename
-
-    )
-
-
-    card.save(
-
-        path
-
-    )
-
-
-    return path
+    main()
