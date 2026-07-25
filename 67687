@@ -1,114 +1,255 @@
 import os
+import json
+import requests
+from PIL import Image
+from io import BytesIO
 
 
-CHAMPION_PATH = "assets/champions"
+# =========================
+# НАСТРОЙКИ
+# =========================
+
+REGIONS = [
+    "Demacia",
+    "Noxus"
+]
+
+
+CHAMPIONS_JSON = "data/champions.json"
+
+
+OUTPUT = "assets/champions"
+
+
+# CommunityDragon CDN
+BASE_URL = (
+    "https://raw.communitydragon.org/latest/"
+    "plugins/rcp-be-lol-game-data/global/"
+    "default/v1/champion/"
+)
 
 
 
-def load_regions():
+# =========================
+# ЗАГРУЗКА JSON
+# =========================
 
-    champion_regions = {}
+with open(
+    CHAMPIONS_JSON,
+    "r",
+    encoding="utf-8"
+) as f:
+
+    champions = json.load(f)
 
 
 
-    if not os.path.exists(CHAMPION_PATH):
+# =========================
+# ПОИСК РЕГИОНА
+# =========================
+
+def find_region(champion):
+
+    for region in REGIONS:
+
+        path = os.path.join(
+            OUTPUT,
+            region,
+            champion
+        )
+
+        if os.path.exists(path):
+
+            return region
+
+
+    return None
+
+
+
+# =========================
+# НОРМАЛЬНОЕ ИМЯ ФАЙЛА
+# =========================
+
+def clean_name(name):
+
+    name = name.replace(
+        " ",
+        "_"
+    )
+
+    name = name.replace(
+        ":",
+        ""
+    )
+
+    name = name.replace(
+        "'",
+        ""
+    )
+
+
+    return name
+
+
+
+# =========================
+# СКАЧИВАНИЕ
+# =========================
+
+def download_image(
+    url,
+    path
+):
+
+    try:
+
+        r = requests.get(
+            url,
+            timeout=20
+        )
+
+
+        if r.status_code != 200:
+
+            return False
+
+
+
+        img = Image.open(
+            BytesIO(r.content)
+        )
+
+
+        img.save(
+            path,
+            "WEBP"
+        )
+
+
+        return True
+
+
+    except Exception as e:
 
         print(
-            "❌ Не найдена папка champions"
+            "Ошибка:",
+            e
         )
 
-        return {}
+        return False
 
 
 
+# =========================
+# ОСНОВА
+# =========================
 
-    for region in os.listdir(CHAMPION_PATH):
+for champion_id, data in champions.items():
 
 
-        region_path = os.path.join(
+    region = find_region(
+        champion_id
+    )
 
-            CHAMPION_PATH,
 
-            region
+    if not region:
+
+        continue
+
+
+
+    print(
+        f"\n🌍 {region} | {champion_id}"
+    )
+
+
+    champion_folder = os.path.join(
+
+        OUTPUT,
+
+        region,
+
+        champion_id
+
+    )
+
+
+    os.makedirs(
+        champion_folder,
+        exist_ok=True
+    )
+
+
+
+    for skin in data["skins"]:
+
+
+        skin_name = skin["name"]
+
+        skin_id = skin["id"]
+
+
+
+        if skin_name == "default":
+
+            filename = "Base.webp"
+
+        else:
+
+            filename = (
+                clean_name(
+                    skin_name
+                )
+                +
+                ".webp"
+            )
+
+
+
+        save_path = os.path.join(
+
+            champion_folder,
+
+            filename
 
         )
 
 
 
-        if not os.path.isdir(
-            region_path
-        ):
+        if os.path.exists(save_path):
+
+            print(
+                "✔ Уже есть:",
+                filename
+            )
 
             continue
 
 
 
+        # centered splash
+
+        url = (
+
+            BASE_URL
+
+            +
+
+            f"{skin_id}/"
+
+        )
 
 
-        for champion in os.listdir(region_path):
+        # пока заглушка
+        # нужен точный путь ассета
 
 
-            champion_path = os.path.join(
-
-                region_path,
-
-                champion
-
-            )
-
-
-
-            if not os.path.isdir(
-                champion_path
-            ):
-
-                continue
-
-
-
-            champion_regions[champion] = region
+        print(
+            "⬇",
+            skin_name
+        )
 
 
 
-
-
-    print(
-        f"🌍 Регионов загружено для чемпионов: {len(champion_regions)}"
-    )
-
-
-    return champion_regions
-
-
-
-
-
-# автоматическая загрузка
-
-champion_regions = load_regions()
-
-REGIONS = {
-
-    "Demacia": "Демасия",
-
-    "Noxus": "Ноксус",
-
-    "Freljord": "Фрельйорд",
-
-    "Ionia": "Иония",
-
-    "Shurima": "Шурима",
-
-    "Void": "Пустота",
-
-    "Shadow_Isles": "Теневые острова",
-
-    "Piltover_Zaun": "Пилтовер и Заун",
-
-    "Targon": "Таргон",
-
-    "Bilgewater": "Билджвотер",
-
-    "Bandle_City": "Бандл Сити"
-
-}
+print("\n✅ Готово")
