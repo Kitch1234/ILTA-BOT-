@@ -1,17 +1,6 @@
-== Fiora ====
-Скачивание: default
-Ошибка: HTTPSConnectionPool(host='raw.communitydragon.org', port=443): Max retries exceeded with url: /latest/plugins/rcp-be-lol-game-data/global/default/v1/champion/114/skins/0.jpg (Caused by NameResolutionError("HTTPSConnection(host='raw.communitydragon.org', port=443): Failed to resolve 'raw.communitydragon.org' ([Errno 11001] getaddrinfo failed)"))
-Скачивание: Royal Guard Fiora
-❌ Не найден: https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion/114/skins/1.jpg
-Скачивание: Nightraven Fiora
-❌ Не найден: https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion/114/skins/2.jpg
-Скачивание: Headmistress Fiora
-❌ Не найден: https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion/114/skins/3.jpg
-Скачивание: PROJECT: Fiora
-❌ Не найден: https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion/114/skins/4.jpg
-Скачивание: Pool Party Fiora
-❌ Не найден: https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion/114/skins/5.jpg
-Скачивание: Soaring Sword Fiora
-❌ Не найден: https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion/114/skins/22.jpg
-Скачивание: Heartpiercer Fiora
-❌ Не найден: https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion/114/skins/23.jpg
+CDRAGON_URL = (
+    "https://raw.communitydragon.org/latest/"
+    "plugins/rcp-be-lol-game-data/global/default/"
+    "assets/characters/{champion}/skins/{skin}/"
+    "{champion}loadscreen.jpg"
+)
