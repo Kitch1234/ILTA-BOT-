@@ -1,211 +1,128 @@
-# generate_all_cards.py
-
-"""
-Массовая генерация карт ILTA RPG
-"""
-
 import os
-import json
 
 
-from generators.card_generator import (
-    create_card
-)
+CHAMPIONS_PATH = "assets/champions"
 
 
-
-CHAMPIONS_FILE = (
-    "data/champions.json"
+IMAGE_EXTENSIONS = (
+    ".png",
+    ".jpg",
+    ".jpeg",
+    ".webp"
 )
 
 
 
 def load_champions():
 
-    if not os.path.exists(
-        CHAMPIONS_FILE
-    ):
+    champions = {}
+
+
+    if not os.path.exists(CHAMPIONS_PATH):
 
         print(
-            "Нет champions.json"
+            "❌ Папка assets/champions не найдена"
         )
 
-        return {}
+        return champions
 
 
 
-    with open(
+    # регионы
 
-        CHAMPIONS_FILE,
-
-        "r",
-
-        encoding="utf-8"
-
-    ) as file:
-
-        return json.load(file)
+    for region in os.listdir(CHAMPIONS_PATH):
 
 
-
-
-
-def calculate_stats(
-        champion
-):
-    """
-    Временная генерация характеристик
-
-    Потом заменим на реальные
-    """
-
-    return {
-
-        "attack": 50,
-
-        "defense": 50,
-
-        "health": 100
-
-    }
-
-
-
-
-
-def generate_all():
-
-
-    champions = load_champions()
-
-
-
-    total = 0
-
-
-
-    for name, data in champions.items():
-
-
-        skins = data.get(
-            "skins",
-            []
+        region_path = os.path.join(
+            CHAMPIONS_PATH,
+            region
         )
 
 
+        if not os.path.isdir(region_path):
 
-        stats = calculate_stats(
-            data
-        )
-
+            continue
 
 
-        for index, skin in enumerate(skins):
+
+        # чемпионы
+
+        for champion in os.listdir(region_path):
 
 
-            rarity = skin.get(
-
-                "rarity",
-
-                "Обычный"
-
+            champion_path = os.path.join(
+                region_path,
+                champion
             )
 
 
-
-            image = skin.get(
-                "local_image"
-            )
-
-
-
-            if not image:
-
-
-                if index == 0:
-
-                    image = (
-
-                    f"assets/champions/"
-                    f"{name.lower()}/base.jpg"
-
-                    )
-
-
-                else:
-
-                    image = (
-
-                    f"assets/champions/"
-                    f"{name.lower()}/"
-                    f"skin{index}.jpg"
-
-                    )
-
-
-
-
-            if not os.path.exists(
-                image
-            ):
-
-                print(
-                    "Нет изображения:",
-                    image
-                )
+            if not os.path.isdir(champion_path):
 
                 continue
 
 
 
-
-
-            filename = create_card(
-
-                champion_name=name,
-
-                image_path=image,
-
-                rarity=rarity,
-
-                attack=stats["attack"],
-
-                defense=stats["defense"],
-
-                health=stats["health"],
-
-                description=data.get(
-
-                    "title",
-
-                    "Чемпион Рунтерры"
-
-                )
-
-            )
+            skins = []
 
 
 
-            total += 1
+            # скины
+
+            for image in os.listdir(champion_path):
+
+
+                if not image.lower().endswith(
+                    IMAGE_EXTENSIONS
+                ):
+
+                    continue
+
+
+
+                skin_name = os.path.splitext(
+                    image
+                )[0]
+
+
+
+                skins.append({
+
+                    "name": skin_name,
+
+                    "file": os.path.join(
+                        champion_path,
+                        image
+                    )
+
+                })
+
+
+
+            if len(skins) == 0:
+
+                continue
+
+
+
+            champions[champion] = {
+
+                "region": region,
+
+                "skins": skins
+
+            }
+
 
 
             print(
-                "Создана:",
-                filename
+                f"✅ Загружен {region}: {champion} ({len(skins)} картинок)"
             )
-
-
 
 
 
     print(
-        f"Всего создано карт: {total}"
+        f"🌟 Всего чемпионов загружено: {len(champions)}"
     )
 
 
-
-
-
-if __name__ == "__main__":
-
-    generate_all()
+    return champions
