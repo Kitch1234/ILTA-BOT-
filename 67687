@@ -1,42 +1,114 @@
-Microsoft Windows [Version 10.0.26200.8894]
-(c) Корпорация Майкрософт (Microsoft Corporation). Все права защищены.
-
-C:\Users\Ketek'\Desktop\qantum_universe>python main.py
-✅ База данных подключена
-✅ Загружен: auction
-✅ Загружен: balance
-✅ Загружен: contract
-✅ Загружен: daily
-✅ Загружен: inventory
-✅ Загружен: profile
-✅ Загружен: quest
-✅ Загружен: shop
-✅ Загружен: work
-🌍 Регионов загружено для чемпионов: 32
-✅ Загружен: travel
-✅ Загружен: quest_reward
-✅ Загружен: cards
-✅ Загружен: test_event
-✅ Загружен: deck
-✅ Загружен: battle
-⚠ Нет в JSON: Ambessa
-⚠ Нет в JSON: Ambessa
-⚠ Нет в JSON: Ambessa
-⚠ Нет в JSON: Locke
-⚠ Нет в JSON: Locke
-⚠ Нет в JSON: Mel
-⚠ Нет в JSON: Mel
-⚠ Нет в JSON: Mel
-⚠ Нет в JSON: Yunara
-⚠ Нет в JSON: Yunara
-⚠ Нет в JSON: Yunara
-⚠ Нет в JSON: Zaahen
-⚠ Нет в JSON: Zaahen
+import os
 
 
-🌟 Загружено Demacia/Noxus: 0
-✅ Загружен: pack
-✅ Загружен: collection
-✅ Загружен: map
-✅ Синхронизировано команд: 24
-🟢 Бот запущен как ILTA BOT#7827
+CHAMPION_PATH = "assets/champions"
+
+
+
+def load_regions():
+
+    champion_regions = {}
+
+
+
+    if not os.path.exists(CHAMPION_PATH):
+
+        print(
+            "❌ Не найдена папка champions"
+        )
+
+        return {}
+
+
+
+
+    for region in os.listdir(CHAMPION_PATH):
+
+
+        region_path = os.path.join(
+
+            CHAMPION_PATH,
+
+            region
+
+        )
+
+
+
+        if not os.path.isdir(
+            region_path
+        ):
+
+            continue
+
+
+
+
+
+        for champion in os.listdir(region_path):
+
+
+            champion_path = os.path.join(
+
+                region_path,
+
+                champion
+
+            )
+
+
+
+            if not os.path.isdir(
+                champion_path
+            ):
+
+                continue
+
+
+
+            champion_regions[champion] = region
+
+
+
+
+
+    print(
+        f"🌍 Регионов загружено для чемпионов: {len(champion_regions)}"
+    )
+
+
+    return champion_regions
+
+
+
+
+
+# автоматическая загрузка
+
+champion_regions = load_regions()
+
+REGIONS = {
+
+    "Demacia": "Демасия",
+
+    "Noxus": "Ноксус",
+
+    "Freljord": "Фрельйорд",
+
+    "Ionia": "Иония",
+
+    "Shurima": "Шурима",
+
+    "Void": "Пустота",
+
+    "Shadow_Isles": "Теневые острова",
+
+    "Piltover_Zaun": "Пилтовер и Заун",
+
+    "Targon": "Таргон",
+
+    "Bilgewater": "Билджвотер",
+
+    "Bandle_City": "Бандл Сити"
+
+}
