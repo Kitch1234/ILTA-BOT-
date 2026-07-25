@@ -1,73 +1,52 @@
 import json
 import os
+import requests
 
 
-FILE = "data/champions.json"
+CHAMPIONS_JSON = "data/champions.json"
+
+REGIONS = [
+    "Demacia",
+    "Noxus"
+]
 
 
-# Riot Champion IDs
-CHAMPION_IDS = {
+ASSETS = "assets/champions"
 
-    "Aatrox": 266,
-    "Ahri": 103,
-    "Akali": 84,
-    "Akshan": 166,
-    "Alistar": 12,
-    "Amumu": 32,
-    "Anivia": 34,
-    "Annie": 1,
-    "Aphelios": 523,
-    "Ashe": 22,
 
-    "Darius": 122,
-    "Draven": 119,
-    "Katarina": 55,
-    "Kled": 240,
-    "LeBlanc": 7,
-    "Mordekaiser": 82,
-    "Riven": 92,
-    "Samira": 360,
-    "Sion": 14,
-    "Swain": 50,
-    "Talon": 91,
-    "Vladimir": 8,
+def get_champion_list():
 
-    "Fiora": 114,
-    "Garen": 86,
-    "JarvanIV": 59,
-    "Jarvan IV": 59,
-    "Lux": 99,
-    "Lucian": 236,
-    "Quinn": 133,
-    "Shyvana": 102,
-    "Sona": 37,
-    "Sylas": 517,
-    "XinZhao": 5,
-    "Xin Zhao": 5
-}
+    url = (
+        "https://ddragon.leagueoflegends.com/"
+        "cdn/15.10.1/data/en_US/champion.json"
+    )
+
+    data = requests.get(url).json()
+
+    result = {}
+
+    for champ in data["data"].values():
+
+        result[champ["name"]] = int(
+            champ["key"]
+        )
+
+    return result
 
 
 
 def main():
 
-    if not os.path.exists(FILE):
-
-        print(
-            "❌ Не найден:",
-            FILE
-        )
-
-        return
-
+    ids = get_champion_list()
 
 
     with open(
-        FILE,
+        CHAMPIONS_JSON,
         "r",
         encoding="utf-8"
     ) as f:
 
-        data = json.load(f)
+        champions = json.load(f)
 
 
 
@@ -75,49 +54,76 @@ def main():
 
 
 
-    for champion, info in data.items():
+    for region in REGIONS:
 
 
-        if champion in CHAMPION_IDS:
+        region_path = os.path.join(
+            ASSETS,
+            region
+        )
 
-            info["id"] = CHAMPION_IDS[champion]
 
-            updated += 1
+        if not os.path.exists(region_path):
+            continue
 
-            print(
-                "✔",
-                champion,
-                "→",
-                CHAMPION_IDS[champion]
+
+
+        for folder in os.listdir(region_path):
+
+
+            if folder not in champions:
+                continue
+
+
+
+            # ищем имя Riot
+
+            name = folder.replace(
+                "_",
+                " "
             )
 
-        else:
 
-            print(
-                "⚠ Нет ID:",
-                champion
-            )
+            if name in ids:
+
+                champions[folder]["id"] = ids[name]
+
+                updated += 1
+
+                print(
+                    "✔",
+                    region,
+                    folder,
+                    ids[name]
+                )
+
+            else:
+
+                print(
+                    "⚠ Не найден:",
+                    folder
+                )
 
 
 
     with open(
-        FILE,
+        CHAMPIONS_JSON,
         "w",
         encoding="utf-8"
     ) as f:
 
         json.dump(
-            data,
+            champions,
             f,
             ensure_ascii=False,
             indent=4
         )
 
 
-
     print()
     print(
-        f"✅ Обновлено чемпионов: {updated}"
+        "Готово. Обновлено:",
+        updated
     )
 
 
