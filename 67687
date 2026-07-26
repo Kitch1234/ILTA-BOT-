@@ -1,68 +1,896 @@
-# =============================
-# ОПТИМИЗАЦИЯ КАРТЫ
-# =============================
+from PIL import Image, ImageDraw, ImageFont
 
-# уменьшаем размер для Discord
+import os
 
-card = card.resize(
 
-    (
 
-        744,
+# =====================================
+# НАСТРОЙКИ
+# =====================================
 
-        1039
+CARD_WIDTH = 744
+CARD_HEIGHT = 1039
+
+
+ASSETS = "assets"
+
+
+OUTPUT = "generated_cards"
+
+
+
+
+
+# =====================================
+# КЭШИ
+# =====================================
+
+FONT_CACHE = {}
+
+FRAME_CACHE = {}
+
+REGION_CACHE = {}
+
+ART_CACHE = {}
+
+
+
+
+
+# =====================================
+# ШРИФТЫ
+# =====================================
+
+FONT_BOLD = os.path.join(
+    ASSETS,
+    "fonts",
+    "Beaufort-Bold.ttf"
+)
+
+
+FONT_REGULAR = os.path.join(
+    ASSETS,
+    "fonts",
+    "Beaufort-Regular.ttf"
+)
+
+
+
+
+
+# =====================================
+# РАМКИ
+# =====================================
+
+FRAME_PATHS = {
+
+    "Обычный": "common.png",
+
+    "Редкий": "rare.png",
+
+    "Эпический": "epic.png",
+
+    "Легендарный": "legendary.png",
+
+    "Мифический": "mythic.png",
+
+    "Престижный": "prestige.png",
+
+    "Чемпионский": "ultimate.png"
+
+}
+
+
+
+
+
+# =====================================
+# РЕГИОНЫ
+# =====================================
+
+REGION_ICONS = {
+
+    "Демасия": "Demacia.png",
+
+    "Ноксус": "Noxus.png"
+
+}
+
+
+REGION_PATH = os.path.join(
+
+    ASSETS,
+
+    "regions"
+
+)
+# =====================================
+# АРТ
+# =====================================
+
+ART_WIDTH = 650
+
+ART_HEIGHT = 650
+
+
+ART_X = (
+
+    CARD_WIDTH - ART_WIDTH
+
+) // 2
+
+
+ART_Y = 90
+
+
+
+
+
+# =====================================
+# ПОЗИЦИИ ТЕКСТА
+# =====================================
+
+CARD_LAYOUT = {
+
+
+    "number": (
+
+        620,
+
+        55
 
     ),
 
-    Image.LANCZOS
 
-)
+    "champion": (
 
+        372,
 
+        770
 
-# =============================
-# СОХРАНЕНИЕ
-# =============================
-
-filename = (
-
-    f"{champion}_{card_number}.png"
-
-)
+    ),
 
 
-filename = filename.replace(
+    "skin": (
 
-    " ",
+        372,
 
-    "_"
+        820
 
-)
-
-
-
-path = os.path.join(
-
-    OUTPUT,
-
-    filename
-
-)
+    ),
 
 
+    "attack": (
 
-# сжатие PNG
+        170,
 
-card.save(
+        930
 
-    path,
-
-    optimize=True,
-
-    compress_level=9
-
-)
+    ),
 
 
+    "health": (
 
-return path
+        372,
+
+        930
+
+    ),
+
+
+    "defense": (
+
+        570,
+
+        930
+
+    ),
+
+
+    "ability": (
+
+        372,
+
+        985
+
+    )
+
+}
+
+
+
+
+
+# =====================================
+# ШРИФТЫ
+# =====================================
+
+def get_font(path, size):
+
+
+    key = (
+
+        path,
+
+        size
+
+    )
+
+
+    if key not in FONT_CACHE:
+
+
+        FONT_CACHE[key] = ImageFont.truetype(
+
+            path,
+
+            size
+
+        )
+
+
+    return FONT_CACHE[key]
+
+
+
+
+
+# =====================================
+# ПОЛУЧИТЬ РАМКУ
+# =====================================
+
+def get_frame(rarity):
+
+
+    frame_name = FRAME_PATHS.get(
+
+        rarity,
+
+        "common.png"
+
+    )
+
+
+    path = os.path.join(
+
+        ASSETS,
+
+        "frames",
+
+        frame_name
+
+    )
+
+
+    if path not in FRAME_CACHE:
+
+
+        if not os.path.exists(path):
+
+            return None
+
+
+
+        frame = Image.open(
+
+            path
+
+        ).convert(
+
+            "RGBA"
+
+        )
+
+
+
+        frame = frame.resize(
+
+            (
+
+                CARD_WIDTH,
+
+                CARD_HEIGHT
+
+            ),
+
+            Image.LANCZOS
+
+        )
+
+
+        FRAME_CACHE[path] = frame
+
+
+
+    return FRAME_CACHE[path]
+# =====================================
+# ИКОНКА РЕГИОНА
+# =====================================
+
+def get_region_icon(region):
+
+
+    icon_name = REGION_ICONS.get(
+
+        region
+
+    )
+
+
+    if not icon_name:
+
+        return None
+
+
+
+    path = os.path.join(
+
+        REGION_PATH,
+
+        icon_name
+
+    )
+
+
+
+    if path not in REGION_CACHE:
+
+
+        if not os.path.exists(path):
+
+            return None
+
+
+
+        icon = Image.open(
+
+            path
+
+        ).convert(
+
+            "RGBA"
+
+        )
+
+
+
+        icon = icon.resize(
+
+            (
+
+                60,
+
+                60
+
+            ),
+
+            Image.LANCZOS
+
+        )
+
+
+        REGION_CACHE[path] = icon
+
+
+
+    return REGION_CACHE[path]
+
+
+
+
+
+# =====================================
+# ПОДГОТОВКА АРТА
+# =====================================
+
+def prepare_art(image):
+
+
+    ratio = max(
+
+        ART_WIDTH / image.width,
+
+        ART_HEIGHT / image.height
+
+    )
+
+
+    image = image.resize(
+
+        (
+
+            int(image.width * ratio),
+
+            int(image.height * ratio)
+
+        ),
+
+        Image.LANCZOS
+
+    )
+
+
+
+    left = (
+
+        image.width - ART_WIDTH
+
+    ) // 2
+
+
+
+    top = (
+
+        image.height - ART_HEIGHT
+
+    ) // 2
+
+
+
+    return image.crop(
+
+        (
+
+            left,
+
+            top,
+
+            left + ART_WIDTH,
+
+            top + ART_HEIGHT
+
+        )
+
+    )
+
+
+
+
+
+# =====================================
+# АРТ С КЭШЕМ
+# =====================================
+
+def get_art(path):
+
+
+    if path not in ART_CACHE:
+
+
+        image = Image.open(
+
+            path
+
+        ).convert(
+
+            "RGBA"
+
+        )
+
+
+        ART_CACHE[path] = prepare_art(
+
+            image
+
+        )
+
+
+
+    return ART_CACHE[path]
+# =====================================
+# ТЕКСТ ПО ЦЕНТРУ
+# =====================================
+
+def draw_center_text(
+
+    draw,
+
+    position,
+
+    text,
+
+    size,
+
+    bold=True
+
+):
+
+
+    font = get_font(
+
+        FONT_BOLD if bold else FONT_REGULAR,
+
+        size
+
+    )
+
+
+    box = draw.textbbox(
+
+        (0, 0),
+
+        text,
+
+        font=font
+
+    )
+
+
+    width = box[2] - box[0]
+
+
+    x = position[0] - width // 2
+
+
+
+    # тень
+
+    draw.text(
+
+        (
+
+            x + 2,
+
+            position[1] + 2
+
+        ),
+
+        text,
+
+        font=font,
+
+        fill=(0,0,0,220)
+
+    )
+
+
+
+    # основной текст
+
+    draw.text(
+
+        (
+
+            x,
+
+            position[1]
+
+        ),
+
+        text,
+
+        font=font,
+
+        fill=(255,255,255)
+
+    )
+
+
+
+
+
+# =====================================
+# СОЗДАНИЕ КАРТЫ
+# =====================================
+
+def create_card(
+
+    champion,
+
+    skin,
+
+    rarity,
+
+    region,
+
+    attack,
+
+    health,
+
+    defense,
+
+    ability,
+
+    image_path,
+
+    card_number
+
+):
+
+
+    os.makedirs(
+
+        OUTPUT,
+
+        exist_ok=True
+
+    )
+
+
+
+    # =============================
+    # ПОЛОТНО
+    # =============================
+
+    card = Image.new(
+
+        "RGBA",
+
+        (
+
+            CARD_WIDTH,
+
+            CARD_HEIGHT
+
+        ),
+
+        (
+
+            0,
+
+            0,
+
+            0,
+
+            0
+
+        )
+
+    )
+
+
+
+    # =============================
+    # АРТ
+    # =============================
+
+    art = get_art(
+
+        image_path
+
+    )
+
+
+    card.alpha_composite(
+
+        art,
+
+        (
+
+            ART_X,
+
+            ART_Y
+
+        )
+
+    )
+
+
+
+    # =============================
+    # РАМКА
+    # =============================
+
+    frame = get_frame(
+
+        rarity
+
+    )
+
+
+    if frame:
+
+        card.alpha_composite(
+
+            frame
+
+        )
+    # =============================
+    # РЕГИОН
+    # =============================
+
+    region_icon = get_region_icon(
+
+        region
+
+    )
+
+
+    if region_icon:
+
+        card.alpha_composite(
+
+            region_icon,
+
+            (
+
+                40,
+
+                40
+
+            )
+
+        )
+
+
+
+    draw = ImageDraw.Draw(
+
+        card
+
+    )
+
+
+
+    # =============================
+    # НОМЕР
+    # =============================
+
+    draw_center_text(
+
+        draw,
+
+        CARD_LAYOUT["number"],
+
+        f"#{card_number}",
+
+        28
+
+    )
+
+
+
+    # =============================
+    # ЧЕМПИОН
+    # =============================
+
+    draw_center_text(
+
+        draw,
+
+        CARD_LAYOUT["champion"],
+
+        champion,
+
+        38
+
+    )
+
+
+
+    # =============================
+    # СКИН
+    # =============================
+
+    if skin and skin.lower() != "default":
+
+
+        draw_center_text(
+
+            draw,
+
+            CARD_LAYOUT["skin"],
+
+            skin,
+
+            24,
+
+            False
+
+        )
+
+
+
+    # =============================
+    # СТАТЫ
+    # =============================
+
+    draw_center_text(
+
+        draw,
+
+        CARD_LAYOUT["attack"],
+
+        str(attack),
+
+        38
+
+    )
+
+
+    draw_center_text(
+
+        draw,
+
+        CARD_LAYOUT["health"],
+
+        str(health),
+
+        38
+
+    )
+
+
+    draw_center_text(
+
+        draw,
+
+        CARD_LAYOUT["defense"],
+
+        str(defense),
+
+        38
+
+    )
+
+
+
+    # =============================
+    # СПОСОБНОСТЬ
+    # =============================
+
+    if ability:
+
+
+        draw_center_text(
+
+            draw,
+
+            CARD_LAYOUT["ability"],
+
+            ability,
+
+            20,
+
+            False
+
+        )
+
+
+
+    # =============================
+    # СОХРАНЕНИЕ
+    # =============================
+
+    filename = (
+
+        f"{champion}_{card_number}.png"
+
+    )
+
+
+    filename = filename.replace(
+
+        " ",
+
+        "_"
+
+    )
+
+
+
+    path = os.path.join(
+
+        OUTPUT,
+
+        filename
+
+    )
+
+
+
+    # оптимизация размера
+
+    card.save(
+
+        path,
+
+        optimize=True,
+
+        compress_level=9
+
+    )
+
+
+
+    return path
