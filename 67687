@@ -1,815 +1,518 @@
-from PIL import Image, ImageDraw, ImageFont
+import discord
+from discord.ext import commands
+from discord import app_commands
+
+import random
 import os
 
+from io import BytesIO
 
+from database.cards import add_card
+from data.champion_loader import load_champions
+from generators.card_generator import create_card
 
-# =========================
-# РАЗМЕР КАРТЫ
-# =========================
 
-CARD_WIDTH = 1064
-CARD_HEIGHT = 1478
 
+# ==========================================
+# EMBED
+# ==========================================
 
-ASSETS = "assets"
+def create_embed(card, index):
 
-OUTPUT = "generated_cards"
-
-
-
-# =========================
-# ШРИФТЫ
-# =========================
-
-FONT_BOLD = os.path.join(
-    ASSETS,
-    "fonts",
-    "Beaufort-Bold.ttf"
-)
-
-
-FONT_REGULAR = os.path.join(
-    ASSETS,
-    "fonts",
-    "Beaufort-Regular.ttf"
-)
-
-
-
-# =========================
-# РАМКИ
-# =========================
-
-FRAME_PATHS = {
-
-    "Обычный": "common.png",
-
-    "Редкий": "rare.png",
-
-    "Эпический": "epic.png",
-
-    "Легендарный": "legendary.png",
-
-    "Мифический": "mythic.png",
-
-    "Престижный": "prestige.png",
-
-    "Чемпионский": "ultimate.png"
-
-}
-
-
-
-# =========================
-# РЕДКОСТЬ
-# =========================
-
-RARITY_NAMES = {
-
-    "Обычный": "COMMON",
-
-    "Редкий": "RARE",
-
-    "Эпический": "EPIC",
-
-    "Легендарный": "LEGENDARY",
-
-    "Мифический": "MYTHIC",
-
-    "Престижный": "PRESTIGE",
-
-    "Чемпионский": "ULTIMATE"
-
-}
-
-
-
-# =========================
-# ФОКУС АРТА
-# =========================
-
-ART_FOCUS = {
-
-    "Aatrox": 0.45,
-
-    "Ahri": 0.45,
-
-    "Garen": 0.50,
-
-    "Lux": 0.40,
-
-}
-
-
-
-DEFAULT_FOCUS = 0.55
-
-
-
-# =========================
-# ОБЛАСТЬ АРТА
-# =========================
-
-ART_WIDTH = 990
-
-ART_HEIGHT = 1000
-
-
-ART_X = (
-
-    CARD_WIDTH - ART_WIDTH
-
-) // 2
-
-
-ART_Y = 35
-
-
-
-# =========================
-# ТЕКСТ
-# =========================
-
-CARD_LAYOUT = {
-
-    "number": (900,80),
-
-    "champion": (532,1180),
-
-    "skin": (532,1240),
-
-    "attack": (250,1340),
-
-    "health": (530,1340),
-
-    "defense": (810,1340),
-
-    "region": (250,1420),
-
-    "rarity": (820,1420),
-
-    "ability_name": (532,150),
-
-    "ability_text": (532,0)
-
-}
-
-
-
-# =========================
-# ШРИФТ
-# =========================
-
-def get_font(path, size):
-
-    return ImageFont.truetype(
-
-        path,
-
-        size
-
+    embed = discord.Embed(
+        color=0xD4AF37
     )
 
 
-
-def draw_text(
-
-    draw,
-
-    position,
-
-    text,
-
-    size,
-
-    bold=True
-
-):
-
-    font = get_font(
-
-        FONT_BOLD if bold else FONT_REGULAR,
-
-        size
-
+    embed.add_field(
+        name="Чемпион",
+        value=card["champion"],
+        inline=True
     )
 
 
-    x, y = position
-
-
-    draw.text(
-
-        (
-            x + 3,
-            y + 3
-        ),
-
-        text,
-
-        font=font,
-
-        fill=(0,0,0,220)
-
+    embed.add_field(
+        name="Скин",
+        value=card["skin"],
+        inline=True
     )
 
 
-    draw.text(
-
-        (
-            x,
-            y
-        ),
-
-        text,
-
-        font=font,
-
-        fill=(255,255,255)
-
-    )
-# =========================
-# ПОДГОТОВКА АРТА
-# =========================
-
-def prepare_art(
-
-    image,
-
-    champion
-
-):
-
-
-    image = image.convert(
-        "RGBA"
+    embed.add_field(
+        name="Редкость",
+        value=card["rarity"],
+        inline=True
     )
 
 
-    ratio = max(
-
-        ART_WIDTH / image.width,
-
-        ART_HEIGHT / image.height
-
+    embed.add_field(
+        name="⚔ Атака",
+        value=str(card["attack"]),
+        inline=True
     )
 
 
-    new_size = (
-
-        int(image.width * ratio),
-
-        int(image.height * ratio)
-
+    embed.add_field(
+        name="❤️ Здоровье",
+        value=str(card["health"]),
+        inline=True
     )
 
 
-    image = image.resize(
-
-        new_size,
-
-        Image.LANCZOS
-
+    embed.add_field(
+        name="🛡 Защита",
+        value=str(card["defense"]),
+        inline=True
     )
 
 
-    focus = ART_FOCUS.get(
-
-        champion,
-
-        DEFAULT_FOCUS
-
+    embed.set_footer(
+        text=f"🎴 Карта {index + 1}/3"
     )
 
 
-    left = (
-
-        image.width - ART_WIDTH
-
-    ) // 2
+    return embed
 
 
 
-    top = int(
+# ==========================================
+# VIEW
+# ==========================================
 
-        (image.height - ART_HEIGHT)
-
-        *
-
-        focus
-
-    )
+class PackView(discord.ui.View):
 
 
-    image = image.crop(
+    def __init__(self, cards):
 
-        (
+        super().__init__(
+            timeout=180
+        )
 
-            left,
 
-            top,
+        self.cards = cards
 
-            left + ART_WIDTH,
+        self.index = 0
 
-            top + ART_HEIGHT
+
+        # ==========================
+        # КЭШ ИЗОБРАЖЕНИЙ
+        # ==========================
+
+        self.cache = {}
+
+
+        for card in cards:
+
+            with open(
+                card["file"],
+                "rb"
+            ) as f:
+
+                self.cache[card["file"]] = f.read()
+
+
+
+    async def update_card(
+        self,
+        interaction: discord.Interaction
+    ):
+
+
+        await interaction.response.defer()
+
+
+
+        card = self.cards[self.index]
+
+
+        embed = create_embed(
+
+            card,
+
+            self.index
 
         )
 
+
+
+        file_name = os.path.basename(
+
+            card["file"]
+
+        )
+
+
+
+        file = discord.File(
+
+            BytesIO(
+
+                self.cache[card["file"]]
+
+            ),
+
+            filename=file_name
+
+        )
+
+
+
+        embed.set_image(
+
+            url="attachment://" + file_name
+
+        )
+
+
+
+        await interaction.edit_original_response(
+
+            embed=embed,
+
+            attachments=[file],
+
+            view=self
+
+        )
+
+
+
+
+
+    @discord.ui.button(
+        emoji="⬅️",
+        style=discord.ButtonStyle.secondary
     )
+    async def left(
+
+        self,
+
+        interaction: discord.Interaction,
+
+        button: discord.ui.Button
+
+    ):
 
 
-    return image
+        self.index -= 1
 
 
+        if self.index < 0:
 
-
-
-# =========================
-# СПОСОБНОСТЬ
-# =========================
-
-def draw_ability(
-
-    draw,
-
-    ability
-
-):
-
-
-    if not ability:
-
-        return
+            self.index = len(self.cards) - 1
 
 
 
-    name = ability.get(
+        await self.update_card(
 
-        "name",
+            interaction
 
-        "Без способности"
+        )
+
+
+
+
+
+    @discord.ui.button(
+        emoji="➡️",
+        style=discord.ButtonStyle.secondary
+    )
+    async def right(
+
+        self,
+
+        interaction: discord.Interaction,
+
+        button: discord.ui.Button
+
+    ):
+
+
+        self.index += 1
+
+
+        if self.index >= len(self.cards):
+
+            self.index = 0
+
+
+
+        await self.update_card(
+
+            interaction
+
+        )
+
+
+
+
+
+# ==========================================
+# PACK COG
+# ==========================================
+
+class Pack(commands.Cog):
+
+
+    def __init__(self, bot):
+
+        self.bot = bot
+
+        self.champions = load_champions()
+
+
+
+    @app_commands.command(
+
+        name="open_pack",
+
+        description="Открыть ILTA Pack"
 
     )
+    async def open_pack(
+
+        self,
+
+        interaction: discord.Interaction
+
+    ):
 
 
-    description = ability.get(
+        await interaction.response.defer(
 
-        "description",
+            thinking=True
 
-        ""
-
-    )
+        )
 
 
+        await interaction.edit_original_response(
 
-    # название способности
+            content="🎴 Открываю ILTA Pack..."
 
-    draw_text(
-
-        draw,
-
-        (
-
-            532,
-
-            1160
-
-        ),
-
-        "◆ " + name,
-
-        32
-
-    )
+        )
 
 
 
-    # перенос описания
-
-    words = description.split()
-
-
-    lines = []
-
-    line = ""
+        cards = []
 
 
 
-    for word in words:
+        for _ in range(3):
 
 
-        test = line + " " + word
+            champion_id = random.choice(
 
-
-        if len(test) > 32:
-
-
-            lines.append(
-
-                line.strip()
+                list(self.champions.keys())
 
             )
 
 
-            line = word
 
-
-        else:
-
-
-            line = test
+            champion = self.champions[champion_id]
 
 
 
-    if line:
+            skin = random.choice(
 
-        lines.append(
+                champion["skins"]
 
-            line.strip()
+            )
+
+
+
+            # ==========================
+            # РЕДКОСТЬ ИЗ СКИНА
+            # ==========================
+
+            rarity = skin.get(
+
+                "tier",
+
+                "Обычный"
+
+            )
+
+
+
+            attack = random.randint(
+
+                20,
+
+                100
+
+            )
+
+
+            health = random.randint(
+
+                50,
+
+                150
+
+            )
+
+
+            defense = random.randint(
+
+                10,
+
+                80
+
+            )
+
+
+
+            code = f"{random.randint(1,9999):04}"
+
+
+
+            await add_card(
+
+                interaction.user.id,
+
+                code,
+
+                champion_id,
+
+                skin["name"],
+
+                champion["region"],
+
+                rarity,
+
+                attack,
+
+                defense,
+
+                health
+
+            )
+
+
+
+
+            card_file = create_card(
+
+                champion=champion_id,
+
+                skin=skin["name"],
+
+                rarity=rarity,
+
+                region=champion["region"],
+
+                attack=attack,
+
+                health=health,
+
+                defense=defense,
+
+                image_path=skin["file"],
+
+                card_number=code
+
+            )
+
+
+
+
+            cards.append({
+
+                "champion": champion_id,
+
+                "skin": skin["name"],
+
+                "rarity": rarity,
+
+                "region": champion["region"],
+
+                "attack": attack,
+
+                "health": health,
+
+                "defense": defense,
+
+                "code": code,
+
+                "file": card_file
+
+            })
+
+
+
+
+        first = cards[0]
+
+
+
+        embed = create_embed(
+
+            first,
+
+            0
 
         )
 
 
 
-    y = 1205
+        file_name = os.path.basename(
 
-
-
-    for text in lines[:2]:
-
-
-        draw_text(
-
-            draw,
-
-            (
-
-                532,
-
-                y
-
-            ),
-
-            text,
-
-            22,
-
-            False
+            first["file"]
 
         )
 
 
-        y += 28
 
+        file = discord.File(
 
+            first["file"],
 
-
-
-# =========================
-# СОЗДАНИЕ КАРТЫ
-# =========================
-
-def create_card(
-
-    champion,
-
-    skin,
-
-    rarity,
-
-    region,
-
-    attack,
-
-    health,
-
-    defense,
-
-    image_path,
-
-    card_number,
-
-    ability
-
-):
-
-
-    os.makedirs(
-
-        OUTPUT,
-
-        exist_ok=True
-
-    )
-
-
-
-    card = Image.new(
-
-        "RGBA",
-
-        (
-
-            CARD_WIDTH,
-
-            CARD_HEIGHT
-
-        ),
-
-        (0,0,0,0)
-
-    )
-
-
-
-    # =====================
-    # АРТ
-    # =====================
-
-    art = Image.open(
-
-        image_path
-
-    ).convert(
-
-        "RGBA"
-
-    )
-
-
-    art = prepare_art(
-
-        art,
-
-        champion
-
-    )
-
-
-    card.alpha_composite(
-
-        art,
-
-        (
-
-            ART_X,
-
-            ART_Y
-
-        )
-
-    )
-
-
-
-    # =====================
-    # РАМКА
-    # =====================
-
-    frame_name = FRAME_PATHS.get(
-
-        rarity,
-
-        "common.png"
-
-    )
-
-
-    frame_path = os.path.join(
-
-        ASSETS,
-
-        "frames",
-
-        frame_name
-
-    )
-
-
-
-    if os.path.exists(frame_path):
-
-
-        frame = Image.open(
-
-            frame_path
-
-        ).convert(
-
-            "RGBA"
-
-        )
-
-
-        frame = frame.resize(
-
-            (
-
-                CARD_WIDTH,
-
-                CARD_HEIGHT
-
-            ),
-
-            Image.LANCZOS
-
-        )
-
-
-        card.alpha_composite(
-
-            frame
+            filename=file_name
 
         )
 
 
 
-    draw = ImageDraw.Draw(
+        embed.set_image(
 
-        card
+            url="attachment://" + file_name
 
-    )
-
-
-
-    # =====================
-    # ОСНОВНОЙ ТЕКСТ
-    # =====================
-
-
-    draw_text(
-
-        draw,
-
-        CARD_LAYOUT["number"],
-
-        f"#{card_number}",
-
-        36
-
-    )
+        )
 
 
 
-    draw_text(
+        view = PackView(
 
-        draw,
+            cards
 
-        CARD_LAYOUT["champion"],
-
-        champion,
-
-        54
-
-    )
+        )
 
 
 
-    draw_text(
+        await interaction.edit_original_response(
 
-        draw,
+            content=None,
 
-        CARD_LAYOUT["skin"],
+            embed=embed,
 
-        skin,
+            attachments=[file],
 
-        38,
+            view=view
 
-        False
+        )
+
+
+
+
+
+# ==========================================
+# SETUP
+# ==========================================
+
+async def setup(bot):
+
+    await bot.add_cog(
+
+        Pack(bot)
 
     )
-
-
-
-    draw_text(
-
-        draw,
-
-        CARD_LAYOUT["attack"],
-
-        str(attack),
-
-        50
-
-    )
-
-
-
-    draw_text(
-
-        draw,
-
-        CARD_LAYOUT["health"],
-
-        str(health),
-
-        50
-
-    )
-
-
-
-    draw_text(
-
-        draw,
-
-        CARD_LAYOUT["defense"],
-
-        str(defense),
-
-        50
-
-    )
-
-
-
-    draw_text(
-
-        draw,
-
-        CARD_LAYOUT["region"],
-
-        region,
-
-        34
-
-    )
-
-
-
-    # =====================
-    # РЕДКОСТЬ
-    # =====================
-
-    draw_text(
-
-        draw,
-
-        CARD_LAYOUT["rarity"],
-
-        RARITY_NAMES.get(
-
-            rarity,
-
-            rarity
-
-        ),
-
-        34
-
-    )
-
-
-
-    # =====================
-    # СПОСОБНОСТЬ
-    # =====================
-
-    draw_ability(
-
-        draw,
-
-        ability
-
-    )
-
-
-
-    # =====================
-    # СОХРАНЕНИЕ
-    # =====================
-
-    filename = (
-
-        f"{champion}_{skin}_{card_number}.png"
-
-    ).replace(
-
-        " ",
-
-        "_"
-
-    )
-
-
-    path = os.path.join(
-
-        OUTPUT,
-
-        filename
-
-    )
-
-
-    card.save(
-
-        path,
-
-        optimize=True,
-
-        compress_level=9
-
-    )
-
-
-    return path
