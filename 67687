@@ -1,610 +1,204 @@
-from PIL import Image, ImageDraw, ImageFont
-import os
+"""
+Система добычи (Loot)
+ILTA RPG Card System
+"""
+
+import random
 
 
 
-# =========================
-# РАЗМЕР КАРТЫ
-# =========================
+# =====================================
+# Редкость карт ILTA
+# =====================================
 
-CARD_WIDTH = 1064
-CARD_HEIGHT = 1478
+CARD_RARITY = {
 
+    "Обычный": {
+        "chance": 60,
+        "color": "#808080"
+    },
 
-ASSETS = "assets"
+    "Редкий": {
+        "chance": 25,
+        "color": "#3498DB"
+    },
 
-OUTPUT = "generated_cards"
+    "Эпический": {
+        "chance": 10,
+        "color": "#9B59B6"
+    },
 
+    "Легендарный": {
+        "chance": 4,
+        "color": "#F39C12"
+    },
 
+    "Мифический": {
+        "chance": 0.8,
+        "color": "#E91E63"
+    },
 
-# =========================
-# ШРИФТЫ
-# =========================
+    "Престижный": {
+        "chance": 0.15,
+        "color": "#FFD700"
+    },
 
-FONT_BOLD = os.path.join(
-    ASSETS,
-    "fonts",
-    "Beaufort-Bold.ttf"
-)
-
-
-FONT_REGULAR = os.path.join(
-    ASSETS,
-    "fonts",
-    "Beaufort-Regular.ttf"
-)
-
-
-
-# =========================
-# РАМКИ
-# =========================
-
-FRAME_PATHS = {
-
-    "Обычный": "common.png",
-    "Редкий": "rare.png",
-    "Эпический": "epic.png",
-    "Легендарный": "legendary.png",
-    "Мифический": "mythic.png"
-
-}
-
-
-
-# =========================
-# РЕДКОСТЬ
-# =========================
-
-RARITY_NAMES = {
-
-    "Обычный": "COMMON",
-    "Редкий": "RARE",
-    "Эпический": "EPIC",
-    "Легендарный": "LEGENDARY",
-    "Мифический": "MYTHIC"
+    "Чемпионский": {
+        "chance": 0.05,
+        "color": "#FFFFFF"
+    }
 
 }
 
 
 
-# =========================
-# ФОКУС АРТА
-# =========================
-# 0.5 = центр
-# меньше = выше кадр
-# больше = ниже кадр
 
-ART_FOCUS = {
 
-    "Aatrox": 0.45,
-    "Ahri": 0.45,
-    "Garen": 0.50,
-    "Lux": 0.40,
+# =====================================
+# Получить редкость карты
+# =====================================
+
+def get_card_rarity():
+
+    roll = random.uniform(
+        0,
+        100
+    )
+
+
+    total = 0
+
+
+    for rarity, data in CARD_RARITY.items():
+
+        total += data["chance"]
+
+
+        if roll <= total:
+
+            return rarity
+
+
+
+    return "Обычный"
+
+
+
+
+
+# =====================================
+# Старые функции Loot
+# =====================================
+
+
+LOOT_TABLE = {
+
+
+    "normal_monster": {
+
+        "gold": {
+            "min": 10,
+            "max": 50
+        },
+
+        "items": [
+            "Stone Fragment",
+            "Sharp Claw"
+        ],
+
+        "cards": {
+            "chance": 5
+        }
+
+    },
+
+
+
+    "elite_monster": {
+
+        "gold": {
+            "min": 100,
+            "max": 500
+        },
+
+        "items": [
+            "Rare Essence",
+            "Noxian Armor"
+        ],
+
+        "cards": {
+            "chance": 20
+        }
+
+    },
+
+
+
+    "boss": {
+
+        "gold": {
+            "min": 1000,
+            "max": 5000
+        },
+
+        "items": [
+            "Mythic Chest",
+            "Legendary Essence"
+        ],
+
+        "cards": {
+            "chance": 50
+        }
+
+    }
 
 }
 
 
 
-DEFAULT_FOCUS = 0.45
+
+
+# =====================================
+# Монстры награды
+# =====================================
+
+def monster_drop(monster_type):
+
+    loot = LOOT_TABLE.get(
+        monster_type
+    )
+
+
+    if not loot:
+
+        return None
 
 
 
-# =========================
-# ОБЛАСТЬ АРТА
-# =========================
-
-ART_WIDTH = 953
-ART_HEIGHT = 900
-
-
-ART_X = (
-
-    CARD_WIDTH - ART_WIDTH
-
-) // 2
-
-
-ART_Y = 40
-# =========================
-# РАСПОЛОЖЕНИЕ ТЕКСТА
-# =========================
-
-CARD_LAYOUT = {
-
-    "number": (900,80),
-
-    "champion": (532,1180),
-
-    "skin": (532,1240),
-
-    "attack": (250,1340),
-
-    "health": (530,1340),
-
-    "defense": (810,1340),
-
-    "region": (250,1420),
-
-    "rarity": (820,1420)
-
-}
-
-
-
-# =========================
-# ШРИФТЫ
-# =========================
-
-def get_font(path, size):
-
-    return ImageFont.truetype(
-
-        path,
-
-        size
-
+    gold = random.randint(
+        loot["gold"]["min"],
+        loot["gold"]["max"]
     )
 
 
 
-def draw_text(
-
-    draw,
-
-    position,
-
-    text,
-
-    size,
-
-    bold=True
-
-):
-
-    font = get_font(
-
-        FONT_BOLD if bold else FONT_REGULAR,
-
-        size
-
-    )
-
-
-    x, y = position
-
-
-    draw.text(
-
-        (
-            x + 3,
-            y + 3
-        ),
-
-        text,
-
-        font=font,
-
-        fill=(0,0,0,220)
-
-    )
-
-
-    draw.text(
-
-        (
-            x,
-            y
-        ),
-
-        text,
-
-        font=font,
-
-        fill=(255,255,255)
-
+    card_drop = random.randint(
+        1,
+        100
     )
 
 
 
-# =========================
-# ПОДГОТОВКА АРТА
-# =========================
+    return {
 
-def prepare_art(image, champion):
+        "gold": gold,
 
+        "card_drop":
+            card_drop <= loot["cards"]["chance"],
 
-    image = image.convert(
+        "items":
+            random.choice(
+                loot["items"]
+            )
 
-        "RGBA"
-
-    )
-
-
-    ratio = max(
-
-        ART_WIDTH / image.width,
-
-        ART_HEIGHT / image.height
-
-    )
-
-
-    new_size = (
-
-        int(image.width * ratio),
-
-        int(image.height * ratio)
-
-    )
-
-
-    image = image.resize(
-
-        new_size,
-
-        Image.LANCZOS
-
-    )
-
-
-    focus = ART_FOCUS.get(
-
-        champion,
-
-        DEFAULT_FOCUS
-
-    )
-
-
-    left = (
-
-        image.width - ART_WIDTH
-
-    ) // 2
-
-
-
-    top = int(
-
-        (image.height - ART_HEIGHT) * focus
-
-    )
-
-
-
-    image = image.crop(
-
-        (
-
-            left,
-
-            top,
-
-            left + ART_WIDTH,
-
-            top + ART_HEIGHT
-
-        )
-
-    )
-
-
-    return image
-# =========================
-# СОЗДАНИЕ КАРТЫ
-# =========================
-
-def create_card(
-
-    champion,
-
-    skin,
-
-    rarity,
-
-    region,
-
-    attack,
-
-    health,
-
-    defense,
-
-    image_path,
-
-    card_number
-
-):
-
-
-    os.makedirs(
-
-        OUTPUT,
-
-        exist_ok=True
-
-    )
-
-
-    card = Image.new(
-
-        "RGBA",
-
-        (
-            CARD_WIDTH,
-            CARD_HEIGHT
-        ),
-
-        (0,0,0,0)
-
-    )
-
-
-
-    # =====================
-    # АРТ
-    # =====================
-
-    art = Image.open(
-
-        image_path
-
-    ).convert(
-
-        "RGBA"
-
-    )
-
-
-    art = prepare_art(
-
-        art,
-
-        champion
-
-    )
-
-
-    card.alpha_composite(
-
-        art,
-
-        (
-            ART_X,
-            ART_Y
-        )
-
-    )
-
-
-
-    # =====================
-    # РАМКА
-    # =====================
-
-    frame_name = FRAME_PATHS.get(
-
-        rarity,
-
-        "common.png"
-
-    )
-
-
-    frame_path = os.path.join(
-
-        ASSETS,
-
-        "frames",
-
-        frame_name
-
-    )
-
-
-    if os.path.exists(frame_path):
-
-
-        frame = Image.open(
-
-            frame_path
-
-        ).convert(
-
-            "RGBA"
-
-        )
-
-
-        frame = frame.resize(
-
-            (
-                CARD_WIDTH,
-                CARD_HEIGHT
-            ),
-
-            Image.LANCZOS
-
-        )
-
-
-        card.alpha_composite(
-
-            frame
-
-        )
-
-
-
-    draw = ImageDraw.Draw(
-
-        card
-
-    )
-
-
-
-    # =====================
-    # ТЕКСТ
-    # =====================
-
-    draw_text(
-
-        draw,
-
-        CARD_LAYOUT["number"],
-
-        f"#{card_number}",
-
-        36
-
-    )
-
-
-    draw_text(
-
-        draw,
-
-        CARD_LAYOUT["champion"],
-
-        champion,
-
-        54
-
-    )
-
-
-    draw_text(
-
-        draw,
-
-        CARD_LAYOUT["skin"],
-
-        skin,
-
-        38,
-
-        False
-
-    )
-
-
-    draw_text(
-
-        draw,
-
-        CARD_LAYOUT["attack"],
-
-        str(attack),
-
-        50
-
-    )
-
-
-    draw_text(
-
-        draw,
-
-        CARD_LAYOUT["health"],
-
-        str(health),
-
-        50
-
-    )
-
-
-    draw_text(
-
-        draw,
-
-        CARD_LAYOUT["defense"],
-
-        str(defense),
-
-        50
-
-    )
-
-
-    draw_text(
-
-        draw,
-
-        CARD_LAYOUT["region"],
-
-        region,
-
-        34
-
-    )
-
-
-
-    # =====================
-    # РЕДКОСТЬ
-    # =====================
-
-    rarity_text = RARITY_NAMES.get(
-
-        rarity,
-
-        rarity
-
-    )
-
-
-    draw_text(
-
-        draw,
-
-        CARD_LAYOUT["rarity"],
-
-        rarity_text,
-
-        34
-
-    )
-
-
-
-    # =====================
-    # СОХРАНЕНИЕ
-    # =====================
-
-    filename = (
-
-        f"{champion}_{skin}_{card_number}.png"
-
-    ).replace(
-
-        " ",
-
-        "_"
-
-    )
-
-
-    path = os.path.join(
-
-        OUTPUT,
-
-        filename
-
-    )
-
-
-    card.save(
-
-        path,
-
-        optimize=True,
-
-        compress_level=9
-
-    )
-
-
-    return path
+    }
