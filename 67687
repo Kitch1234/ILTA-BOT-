@@ -57,7 +57,7 @@ FRAME_PATHS = {
 
 
 # =========================
-# НАЗВАНИЯ РЕДКОСТИ
+# РЕДКОСТЬ
 # =========================
 
 RARITY_NAMES = {
@@ -91,7 +91,9 @@ ART_X = (
 ) // 2
 
 
-ART_Y = 65
+ART_Y = 55
+
+
 
 
 
@@ -122,7 +124,7 @@ CARD_LAYOUT = {
 
 
 # =========================
-# ШРИФТ
+# ФОНТ
 # =========================
 
 def get_font(path, size):
@@ -203,9 +205,7 @@ def draw_text(
 def prepare_art(image):
 
     image = image.convert(
-
         "RGBA"
-
     )
 
 
@@ -236,16 +236,19 @@ def prepare_art(image):
     )
 
 
+    # сдвиг кадра вверх,
+    # чтобы сохранить низ изображения
+
+    top = int(
+
+        (image.height - ART_HEIGHT) * 0.35
+
+    )
+
+
     left = (
 
         image.width - ART_WIDTH
-
-    ) // 2
-
-
-    top = (
-
-        image.height - ART_HEIGHT
 
     ) // 2
 
@@ -359,7 +362,7 @@ def create_card(
     # РАМКА
     # =====================
 
-    frame_file = FRAME_PATHS.get(
+    frame_name = FRAME_PATHS.get(
 
         rarity,
 
@@ -374,7 +377,7 @@ def create_card(
 
         "frames",
 
-        frame_file
+        frame_name
 
     )
 
@@ -519,7 +522,10 @@ def create_card(
     )
 
 
-    # правильная редкость
+
+    # =====================
+    # РЕДКОСТЬ
+    # =====================
 
     rarity_text = RARITY_NAMES.get(
 
@@ -561,7 +567,6 @@ def create_card(
     )
 
 
-
     path = os.path.join(
 
         OUTPUT,
@@ -569,7 +574,6 @@ def create_card(
         filename
 
     )
-
 
 
     card.save(
