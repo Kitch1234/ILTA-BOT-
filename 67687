@@ -4,8 +4,8 @@ from discord import app_commands
 
 import random
 import os
+import asyncio
 
-from io import BytesIO
 
 from database.cards import add_card
 from data.champion_loader import load_champions
@@ -31,7 +31,7 @@ def create_embed(card, index):
     )
 
 
-    if card["skin"]:
+    if card["skin"] and card["skin"].lower() != "default":
 
         embed.add_field(
             name="✨ Скин",
@@ -61,7 +61,7 @@ def create_embed(card, index):
     )
 
 
-    if card["ability"]:
+    if card.get("ability"):
 
         embed.add_field(
             name="✨ Способность",
@@ -76,11 +76,6 @@ def create_embed(card, index):
 
 
     return embed
-
-
-
-
-
 # =====================================
 # VIEW ПАКА
 # =====================================
@@ -100,26 +95,18 @@ class PackView(discord.ui.View):
         self.index = 0
 
 
-        self.cache = {}
 
 
-        for card in cards:
-
-
-            with open(
-                card["file"],
-                "rb"
-            ) as f:
-
-
-                self.cache[card["file"]] = f.read()
     # =====================================
     # ОБНОВЛЕНИЕ КАРТЫ
     # =====================================
 
     async def update_card(
+
         self,
+
         interaction: discord.Interaction
+
     ):
 
 
@@ -151,11 +138,7 @@ class PackView(discord.ui.View):
 
         file = discord.File(
 
-            BytesIO(
-
-                self.cache[card["file"]]
-
-            ),
+            card["file"],
 
             filename=file_name
 
@@ -186,7 +169,7 @@ class PackView(discord.ui.View):
 
 
     # =====================================
-    # КНОПКА НАЗАД
+    # НАЗАД
     # =====================================
 
     @discord.ui.button(
@@ -228,7 +211,7 @@ class PackView(discord.ui.View):
 
 
     # =====================================
-    # КНОПКА ВПЕРЁД
+    # ВПЕРЁД
     # =====================================
 
     @discord.ui.button(
@@ -307,19 +290,11 @@ class Pack(commands.Cog):
 
 
 
-        await interaction.edit_original_response(
-
-            content="🎴 Открываю ILTA Pack..."
-
-        )
-
-
-
         cards = []
 
 
 
-        # 3 карты
+        # создаём 3 карты
 
         for _ in range(3):
 
@@ -329,7 +304,6 @@ class Pack(commands.Cog):
                 list(self.champions.keys())
 
             )
-
 
 
             champion = self.champions[champion_id]
@@ -390,74 +364,63 @@ class Pack(commands.Cog):
 
 
 
-            # =============================
-            # СПОСОБНОСТЬ
-            # =============================
-
             ability = ""
 
 
 
-            card_file = create_card(
+            # =============================
+            # ГЕНЕРАЦИЯ КАРТЫ В ОТДЕЛЬНОМ ПОТОКЕ
+            # =============================
 
-                champion=champion["name"],
+            card_file = await asyncio.to_thread(
 
+                create_card,
 
-                skin=skin["name"],
+                champion["name"],
 
+                skin["name"],
 
-                rarity=rarity,
+                rarity,
 
+                champion["region"],
 
-                region=champion["region"],
+                attack,
 
+                health,
 
-                attack=attack,
+                defense,
 
+                ability,
 
-                health=health,
+                skin["file"],
 
-
-                defense=defense,
-
-
-                ability=ability,
-
-
-                image_path=skin["file"],
-
-
-                card_number=code
+                code
 
             )
 
 
 
+            # =============================
+            # СОХРАНЕНИЕ В POSTGRESQL
+            # =============================
+
             await add_card(
 
                 interaction.user.id,
 
-
                 code,
 
-
-                champion_id,
-
+                champion["name"],
 
                 skin["name"],
 
-
                 champion["region"],
-
 
                 rarity,
 
-
                 attack,
 
-
                 defense,
-
 
                 health
 
@@ -488,12 +451,9 @@ class Pack(commands.Cog):
                 "file": card_file
 
             })
-
-
-
-
-
-        # первая карта
+        # =====================================
+        # ПОКАЗ ПЕРВОЙ КАРТЫ
+        # =====================================
 
         first = cards[0]
 
