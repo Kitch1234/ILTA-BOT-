@@ -1,137 +1,36 @@
-import json
-import os
-
-# ==========================
-# ФАЙЛЫ
-# ==========================
-
-SKINS_FILE = "data/skins.json"
-
-OUTPUT = "data/cards_ru.json"
-
-# ==========================
-# ПЕРЕВОД ЧЕМПИОНОВ
-# ==========================
-
-CHAMPIONS_RU = {
-
-    # Демасия
-    "Garen": "Гарен",
-    "Lux": "Люкс",
-    "Fiora": "Фиора",
-    "JarvanIV": "Джарван IV",
-    "XinZhao": "Ксин Жао",
-    "Vayne": "Вейн",
-    "Galio": "Галлио",
-    "Poppy": "Поппи",
-    "Kayle": "Кейл",
-    "Morgana": "Моргана",
-    "Shyvana": "Шивана",
-    "Sylas": "Сайлас",
-    "Lucian": "Люциан",
-    "Senna": "Сенна",
-
-    # Ноксус
-    "Darius": "Дариус",
-    "Draven": "Дрейвен",
-    "Katarina": "Катарина",
-    "Swain": "Свейн",
-    "Leblanc": "ЛеБлан",
-    "Sion": "Сион",
-    "Vladimir": "Владимир",
-    "Talon": "Талон",
-    "Rell": "Релл",
-    "Kled": "Клед",
-    "Samira": "Самира",
-    "Cassiopeia": "Кассиопея",
-    "Briar": "Брайер",
-    "Ambessa": "Амбесса"
-
-}
-
-REGIONS_RU = {
-
-    "Demacia": "Демасия",
-    "Noxus": "Ноксус"
-
-}
-# ==========================
-# ЗАГРУЗКА СКИНОВ
-# ==========================
-
-with open(
-    SKINS_FILE,
-    "r",
-    encoding="utf-8"
-) as f:
-
-    skins = json.load(f)
+import requests
 
 
-cards_ru = {}
+VERSION = "16.14.1"
 
 
-# ==========================
-# СОЗДАНИЕ БАЗЫ
-# ==========================
-
-for skin_id, data in skins.items():
-
-    champion = data["champion"]
-
-    region = data["region"]
-
-    cards_ru[skin_id] = {
-
-        "champion": CHAMPIONS_RU.get(
-            champion,
-            champion
-        ),
-
-        "champion_en": champion,
-
-        "skin": data["name"],
-
-        "skin_en": data["name"],
-
-        "region": REGIONS_RU.get(
-            region,
-            region
-        ),
-
-        "region_en": region,
-
-        "rarity": "",
-
-        "ability": "",
-
-        "quote": ""
-
-    }
-# ==========================
-# СОХРАНЕНИЕ
-# ==========================
-
-os.makedirs(
-    "data",
-    exist_ok=True
+url = (
+    f"https://ddragon.leagueoflegends.com/cdn/"
+    f"{VERSION}/data/ru_RU/champion/Garen.json"
 )
 
-with open(
-    OUTPUT,
-    "w",
-    encoding="utf-8"
-) as f:
 
-    json.dump(
-        cards_ru,
-        f,
-        ensure_ascii=False,
-        indent=4
+response = requests.get(url)
+
+
+print(response.status_code)
+
+
+data = response.json()
+
+
+garen = data["data"]["Garen"]
+
+
+print(
+    "Чемпион:",
+    garen["name"]
+)
+
+
+for skin in garen["skins"]:
+
+    print(
+        skin["num"],
+        skin["name"]
     )
-
-print()
-print("=" * 40)
-print(f"✅ Создано карт: {len(cards_ru)}")
-print(f"✅ Файл сохранён: {OUTPUT}")
-print("=" * 40)
