@@ -1,12 +1,74 @@
-from data.ability_loader import get_ability
+"""
+ILTA Ability Loader
+
+Получение способности карты
+по чемпиону и названию образа.
+"""
 
 
-ability = get_ability(
-    "Garen",
-    "God King Garen"
-)
+from data.abilities import ABILITIES
 
 
-print(
-    ability
-)
+
+def get_ability(
+    champion,
+    skin
+):
+
+    champion_data = ABILITIES.get(
+        champion
+    )
+
+
+    # Если чемпион ещё не добавлен
+
+    if not champion_data:
+
+        return {
+
+            "name": "Без способности",
+
+            "description":
+                "Особая способность отсутствует.",
+
+            "effect": {
+
+                "type": "none",
+
+                "value": 0
+
+            }
+
+        }
+
+
+
+    ability = champion_data.get(
+        skin
+    )
+
+
+    # Если такого образа нет
+
+    if not ability:
+
+        return {
+
+            "name": "Боевой дух",
+
+            "description":
+                "Неизвестный образ получает базовое усиление.",
+
+            "effect": {
+
+                "type": "basic",
+
+                "value": 5
+
+            }
+
+        }
+
+
+
+    return ability
