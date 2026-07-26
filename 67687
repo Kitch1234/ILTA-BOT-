@@ -1,27 +1,83 @@
 # core/database.py
+
 import asyncpg
 import os
+
 from dotenv import load_dotenv
+
 
 load_dotenv()
 
+
+
 db = None
 
+
+
+# =====================================
+# ПОДКЛЮЧЕНИЕ К POSTGRESQL
+# =====================================
+
 async def connect_db():
+
     global db
+
+
+    if db:
+
+        return
+
+
+
     db = await asyncpg.create_pool(
+
         host=os.getenv("DB_HOST"),
+
         port=int(os.getenv("DB_PORT")),
+
         user=os.getenv("DB_USER"),
+
         password=os.getenv("DB_PASSWORD"),
+
         database=os.getenv("DB_NAME"),
+
+
+        # настройки пула
+
         min_size=1,
-        max_size=10
+
+        max_size=10,
+
+
+        # чтобы не зависал навсегда
+
+        timeout=5,
+
+        command_timeout=5
+
     )
+
+
     print("✅ База данных подключена")
 
+
+
+
+
+# =====================================
+# ЗАКРЫТИЕ БД
+# =====================================
+
 async def close_db():
+
     global db
+
+
     if db:
+
         await db.close()
+
+        db = None
+
+
         print("✅ База отключена")
