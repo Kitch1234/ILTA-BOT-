@@ -1,36 +1,234 @@
+import json
+import os
 import requests
 
+
+# ==================================
+# НАСТРОЙКИ
+# ==================================
 
 VERSION = "16.14.1"
 
 
-url = (
+DATA_DRAGON_RU = (
     f"https://ddragon.leagueoflegends.com/cdn/"
-    f"{VERSION}/data/ru_RU/champion/Garen.json"
+    f"{VERSION}/data/ru_RU/champion/"
 )
 
 
-response = requests.get(url)
+SKINS_FILE = "data/skins.json"
 
 
-print(response.status_code)
+OUTPUT = "data/cards_ru.json"
 
 
-data = response.json()
 
+# ==================================
+# СОЗДАНИЕ ПАПКИ
+# ==================================
 
-garen = data["data"]["Garen"]
-
-
-print(
-    "Чемпион:",
-    garen["name"]
+os.makedirs(
+    "data",
+    exist_ok=True
 )
 
 
-for skin in garen["skins"]:
 
-    print(
-        skin["num"],
-        skin["name"]
+# ==================================
+# ЗАГРУЗКА SKINS.JSON
+# ==================================
+
+with open(
+    SKINS_FILE,
+    "r",
+    encoding="utf-8"
+) as f:
+
+    skins_database = json.load(f)
+
+
+
+
+# ==================================
+# КЭШ DATA DRAGON
+# ==================================
+
+champion_cache = {}
+
+
+
+def get_champion_ru(champion):
+
+    if champion in champion_cache:
+
+        return champion_cache[champion]
+
+
+    url = (
+        DATA_DRAGON_RU
+        +
+        champion
+        +
+        ".json"
     )
+
+
+    response = requests.get(
+        url
+    )
+
+
+    if response.status_code != 200:
+
+        print(
+            "❌ Нет данных:",
+            champion
+        )
+
+        return None
+
+
+
+    data = response.json()
+
+
+    champion_data = (
+        data["data"][champion]
+    )
+
+
+    champion_cache[champion] = champion_data
+
+
+    return champion_data
+
+
+
+
+
+# ==================================
+# СОЗДАНИЕ CARDS
+# ==================================
+
+cards = {}
+
+
+
+for skin_id, skin_data in skins_database.items():
+
+
+    champion = skin_data["champion"]
+
+
+    num = skin_data["num"]
+
+
+
+    ru_data = get_champion_ru(
+
+        champion
+
+    )
+
+
+
+    if not ru_data:
+
+        continue
+
+
+
+
+    champion_ru = ru_data["name"]
+
+
+
+    skin_ru = skin_data["name"]
+
+
+
+    # ищем русский скин
+
+    for skin in ru_data["skins"]:
+
+
+        if skin["num"] == num:
+
+
+            skin_ru = skin["name"]
+
+
+            break
+
+
+
+
+    cards[skin_id] = {
+
+
+        "id": skin_id,
+
+
+        "champion_en": champion,
+
+
+        "champion": champion_ru,
+
+
+        "skin_en": skin_data["name"],
+
+
+        "skin": skin_ru,
+
+
+        "region": skin_data["region"],
+
+
+        "rarity": "",
+
+
+        "ability": "",
+
+
+        "quote": ""
+
+    }
+
+
+
+
+
+# ==================================
+# СОХРАНЕНИЕ
+# ==================================
+
+with open(
+    OUTPUT,
+    "w",
+    encoding="utf-8"
+) as f:
+
+
+    json.dump(
+
+        cards,
+
+        f,
+
+        ensure_ascii=False,
+
+        indent=4
+
+    )
+
+
+
+print()
+print("=" * 40)
+print(
+    f"✅ Создано карт: {len(cards)}"
+)
+print(
+    f"✅ Файл: {OUTPUT}"
+)
+print("=" * 40)
