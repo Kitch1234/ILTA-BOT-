@@ -1,83 +1,108 @@
-# core/database.py
+# database/cards.py
 
-import asyncpg
-import os
-
-from dotenv import load_dotenv
+from core.database import db
 
 
-load_dotenv()
+# Получить карты игрока
+async def get_player_cards(owner_id: int):
 
+    query = """
+    SELECT *
+    FROM cards
+    WHERE owner_id = $1
+    ORDER BY created_at DESC;
+    """
 
-
-db = None
-
-
-
-# =====================================
-# ПОДКЛЮЧЕНИЕ К POSTGRESQL
-# =====================================
-
-async def connect_db():
-
-    global db
-
-
-    if db:
-
-        return
+    async with db.acquire() as conn:
+        return await conn.fetch(
+            query,
+            owner_id
+        )
 
 
 
-    db = await asyncpg.create_pool(
+# Получить одну карту
+async def get_card(card_id: int):
 
-        host=os.getenv("DB_HOST"),
+    query = """
+    SELECT *
+    FROM cards
+    WHERE id = $1;
+    """
 
-        port=int(os.getenv("DB_PORT")),
-
-        user=os.getenv("DB_USER"),
-
-        password=os.getenv("DB_PASSWORD"),
-
-        database=os.getenv("DB_NAME"),
-
-
-        # настройки пула
-
-        min_size=1,
-
-        max_size=10,
+    async with db.acquire() as conn:
+        return await conn.fetchrow(
+            query,
+            card_id
+        )
 
 
-        # чтобы не зависал навсегда
 
-        timeout=5,
+# Добавить карту игроку
+async def add_card(
+    owner_id: int,
+    card_code: str,
+    champion: str,
+    skin: str,
+    region: str,
+    rarity: str,
+    attack: int,
+    defense: int,
+    health: int
+):
 
-        command_timeout=5
-
+    query = """
+    INSERT INTO cards
+    (
+        owner_id,
+        card_code,
+        champion,
+        skin,
+        region,
+        rarity,
+        attack,
+        defense,
+        health
     )
 
-
-    print("✅ База данных подключена")
-
-
-
-
-
-# =====================================
-# ЗАКРЫТИЕ БД
-# =====================================
-
-async def close_db():
-
-    global db
+    VALUES
+    (
+        $1,$2,$3,$4,$5,$6,$7,$8,$9
+    );
+    """
 
 
-    if db:
+    async with db.acquire() as conn:
 
-        await db.close()
+        await conn.execute(
+            query,
+            owner_id,
+            card_code,
+            champion,
+            skin,
+            region,
+            rarity,
+            attack,
+            defense,
+            health
+        )
 
-        db = None
 
 
-        print("✅ База отключена")
+# Получить количество карт игрока
+async def get_cards_count(owner_id: int):
+
+    query = """
+    SELECT COUNT(*)
+    FROM cards
+    WHERE owner_id = $1;
+    """
+
+    async with db.acquire() as conn:
+
+        result = await conn.fetchval(
+            query,
+            owner_id
+        )
+
+        return result
