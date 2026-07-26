@@ -1,1 +1,45 @@
+import os
+import json
+import requests
 
+
+
+# ==================================
+# НАСТРОЙКИ
+# ==================================
+
+VERSION = "16.14.1"
+
+
+DATA_DRAGON = (
+    f"https://ddragon.leagueoflegends.com/cdn/{VERSION}/data/en_US/champion/"
+)
+
+
+CHAMPION_PATH = "assets/champions"
+
+
+OUTPUT_SKINS = "data/skins.json"
+
+OUTPUT_TRANSLATE = "data/skin_translate.json"
+
+
+
+# ==================================
+# ПАПКА ДАННЫХ
+# ==================================
+
+os.makedirs(
+    "data",
+    exist_ok=True
+)
+
+
+
+# ==================================
+# БАЗА
+# ==================================
+
+skins_database = {}
+
+translate_database = {}
