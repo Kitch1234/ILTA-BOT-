@@ -1,174 +1,422 @@
+import discord
+from discord.ext import commands
+from discord import app_commands
+
+import random
 import os
 
+from io import BytesIO
 
-CHAMPION_PATH = "assets/champions"
-
-
-
-# =====================================
-# Определение редкости скина
-# =====================================
-
-def detect_skin_tier(skin_name):
-
-    name = skin_name.lower()
-
-
-    if "prestige" in name:
-        return "Престижный"
-
-
-    if "ultimate" in name:
-        return "Чемпионский"
-
-
-    if "legendary" in name:
-        return "Легендарный"
-
-
-    if "mythic" in name:
-        return "Мифический"
-
-
-    if "epic" in name:
-        return "Эпический"
-
-
-    if "rare" in name:
-        return "Редкий"
-
-
-    # Classic / базовый скин
-    return "Обычный"
+from database.cards import add_card
+from data.champion_loader import load_champions
+from data.loot import get_final_rarity
+from generators.card_generator import create_card
 
 
 
+# ==========================================
+# EMBED
+# ==========================================
+
+def create_embed(card, index):
+
+    embed = discord.Embed(
+        color=0xD4AF37
+    )
+
+    embed.set_footer(
+        text=f"🎴 Карта {index + 1}/3"
+    )
+
+    return embed
 
 
-# =====================================
-# Загрузка чемпионов
-# =====================================
 
-def load_champions():
+# ==========================================
+# VIEW
+# ==========================================
 
-    champions = {}
+class PackView(discord.ui.View):
 
+    def __init__(self, cards):
 
-    if not os.path.exists(CHAMPION_PATH):
-
-        print(
-            "❌ Папка champions не найдена"
+        super().__init__(
+            timeout=180
         )
 
-        return {}
+        self.cards = cards
+        self.index = 0
+
+        # Кэш изображений
+        self.cache = {}
+
+        for card in cards:
+
+            with open(
+                card["file"],
+                "rb"
+            ) as f:
+
+                self.cache[card["file"]] = f.read()
 
 
 
-    for region in os.listdir(CHAMPION_PATH):
+    async def update_card(
+        self,
+        interaction: discord.Interaction
+    ):
+
+        # сразу отвечаем Discord
+        await interaction.response.defer()
 
 
-        region_path = os.path.join(
+        card = self.cards[self.index]
 
-            CHAMPION_PATH,
 
-            region
+        embed = create_embed(
+            card,
+            self.index
+        )
+
+
+        file_name = os.path.basename(
+            card["file"]
+        )
+
+
+        file = discord.File(
+
+            BytesIO(
+                self.cache[card["file"]]
+            ),
+
+            filename=file_name
 
         )
 
 
-        if not os.path.isdir(region_path):
+        embed.set_image(
 
-            continue
+            url="attachment://" + file_name
 
-
-
-
-        for champion in os.listdir(region_path):
+        )
 
 
-            champion_path = os.path.join(
+        await interaction.edit_original_response(
 
-                region_path,
+            embed=embed,
 
-                champion
+            attachments=[file],
+
+            view=self
+
+        )
+
+
+
+    @discord.ui.button(
+
+        emoji="⬅️",
+
+        style=discord.ButtonStyle.secondary
+
+    )
+    async def left(
+
+        self,
+
+        interaction: discord.Interaction,
+
+        button: discord.ui.Button
+
+    ):
+
+
+        self.index -= 1
+
+
+        if self.index < 0:
+
+            self.index = len(self.cards) - 1
+
+
+        await self.update_card(
+            interaction
+        )
+
+
+
+    @discord.ui.button(
+
+        emoji="➡️",
+
+        style=discord.ButtonStyle.secondary
+
+    )
+    async def right(
+
+        self,
+
+        interaction: discord.Interaction,
+
+        button: discord.ui.Button
+
+    ):
+
+
+        self.index += 1
+
+
+        if self.index >= len(self.cards):
+
+            self.index = 0
+
+
+        await self.update_card(
+            interaction
+        )
+# ==========================================
+# PACK COG
+# ==========================================
+
+class Pack(commands.Cog):
+
+
+    def __init__(self, bot):
+
+        self.bot = bot
+
+        self.champions = load_champions()
+
+
+
+    @app_commands.command(
+
+        name="open_pack",
+
+        description="Открыть ILTA Pack"
+
+    )
+    async def open_pack(
+
+        self,
+
+        interaction: discord.Interaction
+
+    ):
+
+
+        await interaction.response.defer(
+            thinking=True
+        )
+
+
+        await interaction.edit_original_response(
+
+            content="🎴 Открываю ILTA Pack..."
+
+        )
+
+
+
+        cards = []
+
+
+
+        for _ in range(3):
+
+
+            champion_id = random.choice(
+
+                list(
+                    self.champions.keys()
+                )
 
             )
 
 
-            if not os.path.isdir(champion_path):
-
-                continue
+            champion = self.champions[champion_id]
 
 
+            skin = random.choice(
 
-            skins = []
+                champion["skins"]
 
-
-
-            for file in os.listdir(champion_path):
-
-
-                if not file.lower().endswith(
-
-                    (".png", ".jpg", ".jpeg")
-
-                ):
-
-                    continue
+            )
 
 
+            rarity = get_final_rarity(
 
-                skin_name = os.path.splitext(
+            "tier",
+            "common"
 
-                    file
+            )
 
-                )[0]
+            attack = random.randint(
+                20,
+                100
+            )
 
 
+            health = random.randint(
+                50,
+                150
+            )
 
-                skins.append({
 
-                    "name": skin_name,
-
-                    "file": os.path.join(
-
-                        champion_path,
-
-                        file
-
-                    ),
-
-                    "tier": detect_skin_tier(
-
-                        skin_name
-
-                    )
-
-                })
+            defense = random.randint(
+                10,
+                80
+            )
 
 
 
-            if skins:
-
-
-                champions[champion] = {
-
-
-                    "region": region,
-
-
-                    "skins": skins
-
-                }
+            code = f"{random.randint(1,9999):04}"
 
 
 
+            await add_card(
 
-    print(
+                interaction.user.id,
 
-        f"🌟 Загружено чемпионов: {len(champions)}"
+                code,
+
+                champion_id,
+
+                skin["name"],
+
+                champion["region"],
+
+                rarity,
+
+                attack,
+
+                defense,
+
+                health
+
+            )
+
+
+
+            card_file = create_card(
+
+                champion=champion_id,
+
+                skin=skin["name"],
+
+                rarity=rarity,
+
+                region=champion["region"],
+
+                attack=attack,
+
+                health=health,
+
+                defense=defense,
+
+                image_path=skin["file"],
+
+                card_number=code
+
+            )
+
+
+
+            cards.append({
+
+                "champion": champion_id,
+
+                "skin": skin["name"],
+
+                "rarity": rarity,
+
+                "region": champion["region"],
+
+                "attack": attack,
+
+                "health": health,
+
+                "defense": defense,
+
+                "code": code,
+
+                "file": card_file
+
+            })
+
+
+
+        first = cards[0]
+
+
+
+        embed = create_embed(
+
+            first,
+
+            0
+
+        )
+
+
+
+        file_name = os.path.basename(
+
+            first["file"]
+
+        )
+
+
+        file = discord.File(
+
+            first["file"],
+
+            filename=file_name
+
+        )
+
+
+        embed.set_image(
+
+            url="attachment://" + file_name
+
+        )
+
+
+
+        view = PackView(
+
+            cards
+
+        )
+
+
+
+        await interaction.edit_original_response(
+
+            content=None,
+
+            embed=embed,
+
+            attachments=[file],
+
+            view=view
+
+        )
+
+
+
+
+
+# ==========================================
+# SETUP
+# ==========================================
+
+async def setup(bot):
+
+    await bot.add_cog(
+
+        Pack(bot)
 
     )
-
-
-    return champions
