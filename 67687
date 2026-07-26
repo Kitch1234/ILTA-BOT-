@@ -1,62 +1,74 @@
-import discord
-from discord.ext import commands
+import asyncpg
 import os
-import asyncio
+
 from dotenv import load_dotenv
 
-from core.database import connect_db, close_db
 
 load_dotenv()
 
-TOKEN = os.getenv("TOKEN")
 
-intents = discord.Intents.default()
-intents.message_content = True
+db = None
 
-class QuantumBot(commands.Bot):
-    def __init__(self):
-        super().__init__(
-            command_prefix="!",
-            intents=intents
-        )
 
-    async def setup_hook(self):
-        await connect_db()
 
-        cogs = [
-            "auction", "balance", "contract", "daily", "inventory",
-            "profile", "quest", "shop", "work", "travel", "quest_reward",
-            "cards", "test_event", "deck", "battle", "pack", "collection", "map"
-        ]
+# =====================================
+# ПОДКЛЮЧЕНИЕ
+# =====================================
 
-        for cog in cogs:
-            try:
-                await self.load_extension(f"cogs.{cog}")
-                print(f"✅ Загружен: {cog}")
-            except Exception as e:
-                print(f"❌ Ошибка загрузки {cog}: {e}")
+async def connect_db():
 
-        try:
-            synced = await self.tree.sync()
-            print(f"✅ Синхронизировано команд: {len(synced)}")
-        except Exception as e:
-            print(f"❌ Ошибка синхронизации: {e}")
+    global db
 
-    async def close(self):
-        await close_db()
-        await super().close()
 
-bot = QuantumBot()
+    if db:
 
-@bot.event
-async def on_ready():
-    print(f"🟢 Бот запущен как {bot.user}")
-
-async def main():
-    if not TOKEN:
-        print("❌ TOKEN не найден в .env")
         return
-    await bot.start(TOKEN)
 
-if __name__ == "__main__":
-    asyncio.run(main())
+
+
+    db = await asyncpg.create_pool(
+
+        host=os.getenv("DB_HOST"),
+
+        port=int(os.getenv("DB_PORT")),
+
+        user=os.getenv("DB_USER"),
+
+        password=os.getenv("DB_PASSWORD"),
+
+        database=os.getenv("DB_NAME"),
+
+        min_size=1,
+
+        max_size=10,
+
+        timeout=5,
+
+        command_timeout=5
+
+    )
+
+
+    print("✅ База данных подключена")
+
+
+
+
+
+# =====================================
+# ЗАКРЫТИЕ
+# =====================================
+
+async def close_db():
+
+    global db
+
+
+    if db:
+
+        await db.close()
+
+        db = None
+
+
+        print("✅ База отключена")
