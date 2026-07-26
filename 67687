@@ -5,6 +5,8 @@ from discord import app_commands
 import random
 import os
 
+from io import BytesIO
+
 from database.cards import add_card
 from data.champion_loader import load_champions
 from data.loot import get_card_rarity
@@ -45,12 +47,28 @@ class PackView(discord.ui.View):
         self.cards = cards
         self.index = 0
 
+        # Кэш изображений
+        self.cache = {}
+
+        for card in cards:
+
+            with open(
+                card["file"],
+                "rb"
+            ) as f:
+
+                self.cache[card["file"]] = f.read()
+
 
 
     async def update_card(
         self,
-        interaction
+        interaction: discord.Interaction
     ):
+
+        # сразу отвечаем Discord
+        await interaction.response.defer()
+
 
         card = self.cards[self.index]
 
@@ -61,34 +79,28 @@ class PackView(discord.ui.View):
         )
 
 
+        file_name = os.path.basename(
+            card["file"]
+        )
+
+
         file = discord.File(
 
-            card["file"],
+            BytesIO(
+                self.cache[card["file"]]
+            ),
 
-            filename=os.path.basename(
-                card["file"]
-            )
+            filename=file_name
 
         )
 
 
         embed.set_image(
 
-            url="attachment://" +
-
-            os.path.basename(
-                card["file"]
-            )
+            url="attachment://" + file_name
 
         )
 
-
-        # сначала отвечаем Discord
-
-        await interaction.response.defer()
-
-
-        # потом меняем сообщение
 
         await interaction.edit_original_response(
 
@@ -129,9 +141,7 @@ class PackView(discord.ui.View):
 
 
         await self.update_card(
-
             interaction
-
         )
 
 
@@ -163,15 +173,8 @@ class PackView(discord.ui.View):
 
 
         await self.update_card(
-
             interaction
-
         )
-
-
-
-
-
 # ==========================================
 # PACK COG
 # ==========================================
@@ -213,6 +216,7 @@ class Pack(commands.Cog):
             content="🎴 Открываю ILTA Pack..."
 
         )
+
 
 
         cards = []
@@ -353,24 +357,26 @@ class Pack(commands.Cog):
         )
 
 
+
+        file_name = os.path.basename(
+
+            first["file"]
+
+        )
+
+
         file = discord.File(
 
             first["file"],
 
-            filename=os.path.basename(
-                first["file"]
-            )
+            filename=file_name
 
         )
 
 
         embed.set_image(
 
-            url="attachment://" +
-
-            os.path.basename(
-                first["file"]
-            )
+            url="attachment://" + file_name
 
         )
 
