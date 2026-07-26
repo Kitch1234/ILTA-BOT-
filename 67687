@@ -57,7 +57,7 @@ FRAME_PATHS = {
 
 
 # =========================
-# ТЕКСТ РЕДКОСТИ
+# НАЗВАНИЯ РЕДКОСТИ
 # =========================
 
 RARITY_NAMES = {
@@ -81,13 +81,7 @@ RARITY_NAMES = {
 # =========================
 
 ART_WIDTH = 953
-ART_HEIGHT = 884
-
-
-# немного отдаляем изображение
-
-ART_SCALE = 0.92
-
+ART_HEIGHT = 900
 
 
 ART_X = (
@@ -97,15 +91,12 @@ ART_X = (
 ) // 2
 
 
-
-ART_Y = 80
-
-
+ART_Y = 65
 
 
 
 # =========================
-# РАСПОЛОЖЕНИЕ ТЕКСТА
+# ТЕКСТ
 # =========================
 
 CARD_LAYOUT = {
@@ -130,29 +121,34 @@ CARD_LAYOUT = {
 
 
 
-
-
 # =========================
-# FONT
+# ШРИФТ
 # =========================
 
 def get_font(path, size):
 
     return ImageFont.truetype(
+
         path,
+
         size
+
     )
 
 
 
-
-
 def draw_text(
+
     draw,
+
     position,
+
     text,
+
     size,
+
     bold=True
+
 ):
 
     font = get_font(
@@ -165,7 +161,6 @@ def draw_text(
 
 
     x, y = position
-
 
 
     draw.text(
@@ -201,8 +196,6 @@ def draw_text(
 
 
 
-
-
 # =========================
 # ПОДГОТОВКА АРТА
 # =========================
@@ -210,25 +203,17 @@ def draw_text(
 def prepare_art(image):
 
     image = image.convert(
+
         "RGBA"
+
     )
 
 
-    target_width = int(
-        ART_WIDTH * ART_SCALE
-    )
+    ratio = max(
 
+        ART_WIDTH / image.width,
 
-    target_height = int(
-        ART_HEIGHT * ART_SCALE
-    )
-
-
-    ratio = min(
-
-        target_width / image.width,
-
-        target_height / image.height
+        ART_HEIGHT / image.height
 
     )
 
@@ -251,47 +236,38 @@ def prepare_art(image):
     )
 
 
-    canvas = Image.new(
+    left = (
 
-        "RGBA",
-
-        (
-            ART_WIDTH,
-            ART_HEIGHT
-        ),
-
-        (0,0,0,0)
-
-    )
-
-
-    x = (
-
-        ART_WIDTH - image.width
+        image.width - ART_WIDTH
 
     ) // 2
 
 
-    y = (
+    top = (
 
-        ART_HEIGHT - image.height
+        image.height - ART_HEIGHT
 
     ) // 2
 
 
-    canvas.alpha_composite(
-
-        image,
+    image = image.crop(
 
         (
-            x,
-            y
+
+            left,
+
+            top,
+
+            left + ART_WIDTH,
+
+            top + ART_HEIGHT
+
         )
 
     )
 
 
-    return canvas
+    return image
 # =========================
 # СОЗДАНИЕ КАРТЫ
 # =========================
@@ -366,7 +342,6 @@ def create_card(
     )
 
 
-
     card.alpha_composite(
 
         art,
@@ -384,7 +359,7 @@ def create_card(
     # РАМКА
     # =====================
 
-    frame_name = FRAME_PATHS.get(
+    frame_file = FRAME_PATHS.get(
 
         rarity,
 
@@ -393,17 +368,15 @@ def create_card(
     )
 
 
-
     frame_path = os.path.join(
 
         ASSETS,
 
         "frames",
 
-        frame_name
+        frame_file
 
     )
-
 
 
     if os.path.exists(frame_path):
@@ -466,7 +439,6 @@ def create_card(
     )
 
 
-
     draw_text(
 
         draw,
@@ -478,7 +450,6 @@ def create_card(
         54
 
     )
-
 
 
     draw_text(
@@ -496,7 +467,6 @@ def create_card(
     )
 
 
-
     draw_text(
 
         draw,
@@ -508,7 +478,6 @@ def create_card(
         50
 
     )
-
 
 
     draw_text(
@@ -524,7 +493,6 @@ def create_card(
     )
 
 
-
     draw_text(
 
         draw,
@@ -536,7 +504,6 @@ def create_card(
         50
 
     )
-
 
 
     draw_text(
@@ -552,10 +519,7 @@ def create_card(
     )
 
 
-
-    # =====================
-    # ИСПРАВЛЕНИЕ РЕДКОСТИ
-    # =====================
+    # правильная редкость
 
     rarity_text = RARITY_NAMES.get(
 
@@ -617,7 +581,6 @@ def create_card(
         compress_level=9
 
     )
-
 
 
     return path
