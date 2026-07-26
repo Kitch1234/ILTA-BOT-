@@ -291,3 +291,320 @@ def prepare_art(image, champion):
 
 
     return image
+# =========================
+# СОЗДАНИЕ КАРТЫ
+# =========================
+
+def create_card(
+
+    champion,
+
+    skin,
+
+    rarity,
+
+    region,
+
+    attack,
+
+    health,
+
+    defense,
+
+    image_path,
+
+    card_number
+
+):
+
+
+    os.makedirs(
+
+        OUTPUT,
+
+        exist_ok=True
+
+    )
+
+
+    card = Image.new(
+
+        "RGBA",
+
+        (
+            CARD_WIDTH,
+            CARD_HEIGHT
+        ),
+
+        (0,0,0,0)
+
+    )
+
+
+
+    # =====================
+    # АРТ
+    # =====================
+
+    art = Image.open(
+
+        image_path
+
+    ).convert(
+
+        "RGBA"
+
+    )
+
+
+    art = prepare_art(
+
+        art,
+
+        champion
+
+    )
+
+
+    card.alpha_composite(
+
+        art,
+
+        (
+            ART_X,
+            ART_Y
+        )
+
+    )
+
+
+
+    # =====================
+    # РАМКА
+    # =====================
+
+    frame_name = FRAME_PATHS.get(
+
+        rarity,
+
+        "common.png"
+
+    )
+
+
+    frame_path = os.path.join(
+
+        ASSETS,
+
+        "frames",
+
+        frame_name
+
+    )
+
+
+    if os.path.exists(frame_path):
+
+
+        frame = Image.open(
+
+            frame_path
+
+        ).convert(
+
+            "RGBA"
+
+        )
+
+
+        frame = frame.resize(
+
+            (
+                CARD_WIDTH,
+                CARD_HEIGHT
+            ),
+
+            Image.LANCZOS
+
+        )
+
+
+        card.alpha_composite(
+
+            frame
+
+        )
+
+
+
+    draw = ImageDraw.Draw(
+
+        card
+
+    )
+
+
+
+    # =====================
+    # ТЕКСТ
+    # =====================
+
+    draw_text(
+
+        draw,
+
+        CARD_LAYOUT["number"],
+
+        f"#{card_number}",
+
+        36
+
+    )
+
+
+    draw_text(
+
+        draw,
+
+        CARD_LAYOUT["champion"],
+
+        champion,
+
+        54
+
+    )
+
+
+    draw_text(
+
+        draw,
+
+        CARD_LAYOUT["skin"],
+
+        skin,
+
+        38,
+
+        False
+
+    )
+
+
+    draw_text(
+
+        draw,
+
+        CARD_LAYOUT["attack"],
+
+        str(attack),
+
+        50
+
+    )
+
+
+    draw_text(
+
+        draw,
+
+        CARD_LAYOUT["health"],
+
+        str(health),
+
+        50
+
+    )
+
+
+    draw_text(
+
+        draw,
+
+        CARD_LAYOUT["defense"],
+
+        str(defense),
+
+        50
+
+    )
+
+
+    draw_text(
+
+        draw,
+
+        CARD_LAYOUT["region"],
+
+        region,
+
+        34
+
+    )
+
+
+
+    # =====================
+    # РЕДКОСТЬ
+    # =====================
+
+    rarity_text = RARITY_NAMES.get(
+
+        rarity,
+
+        rarity
+
+    )
+
+
+    draw_text(
+
+        draw,
+
+        CARD_LAYOUT["rarity"],
+
+        rarity_text,
+
+        34
+
+    )
+
+
+
+    # =====================
+    # СОХРАНЕНИЕ
+    # =====================
+
+    filename = (
+
+        f"{champion}_{skin}_{card_number}.png"
+
+    ).replace(
+
+        " ",
+
+        "_"
+
+    )
+
+
+    path = os.path.join(
+
+        OUTPUT,
+
+        filename
+
+    )
+
+
+    card.save(
+
+        path,
+
+        optimize=True,
+
+        compress_level=9
+
+    )
+
+
+    return path
