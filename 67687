@@ -1,43 +1,272 @@
-Champion Splash Assets
-https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Aatrox_0.jpg
+import os
+import json
+import requests
 
-The number at the end of the filename corresponds to the skin number. You can find the skin number for each skin in the file for each individual champion in Data Dragon. Each champion contains a skins array and the skin number is indicated by the num field.
 
-Note that not all entries in the skins array will have a corresponding splash art. Some entries represent chromas, which do not have associated splash images.
 
-Entries in the skins array that are not base skins will include a parentSkin field. This field can be used to identify and filter out chromas, as base skins do not contain it.
+# ==================================
+# НАСТРОЙКИ
+# ==================================
 
-/* Aatrox (id: 266) */
-"skins": [
-  {
-    "id": 266000,
-    "name": "default",
-    "num": 0,
-    "chromas": false
-  },
-  {
-    "id": 266001,
-    "name": "Justicar Aatrox",
-    "num": 1,
-    "chromas": false
-  },
-  {
-    "id": 266002,
-    "name": "Mecha Aatrox",
-    "num": 2,
-    "chromas": true
-  },
-  {
-    "id": "266003",
-    "num": 3,
-    "name": "Sea Hunter Aatrox",
-    "chromas": false
-  },
-  {
-    "id": "266004",
-    "num": 4,
-    "name": "Mecha Aatrox (Obsidian)",
-    "chromas": false,
-    "parentSkin": 2
-  }
-]
+VERSION = "16.14.1"
+
+
+DATA_DRAGON = (
+    f"https://ddragon.leagueoflegends.com/cdn/{VERSION}/data/en_US/champion/"
+)
+
+
+CHAMPION_PATH = "assets/champions"
+
+
+OUTPUT = "data/skins.json"
+
+
+
+
+
+# ==================================
+# СОЗДАНИЕ ПАПКИ
+# ==================================
+
+os.makedirs(
+    "data",
+    exist_ok=True
+)
+
+
+
+
+
+# ==================================
+# ПОЛУЧИТЬ JSON ЧЕМПИОНА
+# ==================================
+
+def get_champion_data(champion):
+
+
+    url = DATA_DRAGON + champion + ".json"
+
+
+    response = requests.get(
+        url
+    )
+
+
+    if response.status_code != 200:
+
+        print(
+            "Ошибка:",
+            champion
+        )
+
+        return None
+
+
+
+    return response.json()
+
+
+
+
+
+# ==================================
+# СОЗДАТЬ БАЗУ СКИНОВ
+# ==================================
+
+def extract():
+
+
+    skins = {}
+
+
+
+    for region in os.listdir(CHAMPION_PATH):
+
+
+        region_path = os.path.join(
+
+            CHAMPION_PATH,
+
+            region
+
+        )
+
+
+        if not os.path.isdir(region_path):
+
+            continue
+
+
+
+
+        for champion in os.listdir(region_path):
+
+
+            champion_path = os.path.join(
+
+                region_path,
+
+                champion
+
+            )
+
+
+            if not os.path.isdir(champion_path):
+
+                continue
+
+
+
+            print(
+                "Проверяю:",
+                champion
+            )
+
+
+
+            data = get_champion_data(
+
+                champion
+
+            )
+
+
+
+            if not data:
+
+                continue
+
+
+
+            champ = data["data"][champion]
+
+
+
+            for skin in champ["skins"]:
+
+
+                num = skin["num"]
+
+
+                skin_id = (
+
+                    f"{champion}_{num}"
+
+                )
+
+
+
+                # пропускаем хромы
+
+                if skin.get(
+
+                    "chromas",
+
+                    False
+
+                ):
+
+                    continue
+
+
+
+                # проверяем наличие картинки
+
+                found = False
+
+
+
+                for file in os.listdir(champion_path):
+
+
+                    name = os.path.splitext(
+
+                        file
+
+                    )[0]
+
+
+
+                    if name == skin_id:
+
+                        found = True
+
+                        break
+
+
+
+                if not found:
+
+                    continue
+
+
+
+
+                skins[skin_id] = {
+
+
+                    "champion": champion,
+
+
+                    "region": region,
+
+
+                    "name": skin["name"],
+
+
+                    "num": num
+
+                }
+
+
+
+
+    return skins
+
+
+
+
+
+# ==================================
+# ЗАПУСК
+# ==================================
+
+if __name__ == "__main__":
+
+
+    result = extract()
+
+
+
+    with open(
+
+        OUTPUT,
+
+        "w",
+
+        encoding="utf-8"
+
+    ) as f:
+
+
+        json.dump(
+
+            result,
+
+            f,
+
+            ensure_ascii=False,
+
+            indent=4
+
+        )
+
+
+
+    print()
+
+    print(
+        "✅ Создано скинов:",
+        len(result)
+    )
