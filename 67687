@@ -1,9 +1,13 @@
 # database/cards.py
 
-from core.database import db
+import core.database as database
 
 
+
+# =====================================
 # Получить карты игрока
+# =====================================
+
 async def get_player_cards(owner_id: int):
 
     query = """
@@ -13,7 +17,9 @@ async def get_player_cards(owner_id: int):
     ORDER BY created_at DESC;
     """
 
-    async with db.acquire() as conn:
+
+    async with database.db.acquire() as conn:
+
         return await conn.fetch(
             query,
             owner_id
@@ -21,7 +27,12 @@ async def get_player_cards(owner_id: int):
 
 
 
+
+
+# =====================================
 # Получить одну карту
+# =====================================
+
 async def get_card(card_id: int):
 
     query = """
@@ -30,7 +41,9 @@ async def get_card(card_id: int):
     WHERE id = $1;
     """
 
-    async with db.acquire() as conn:
+
+    async with database.db.acquire() as conn:
+
         return await conn.fetchrow(
             query,
             card_id
@@ -38,7 +51,12 @@ async def get_card(card_id: int):
 
 
 
+
+
+# =====================================
 # Добавить карту игроку
+# =====================================
+
 async def add_card(
     owner_id: int,
     card_code: str,
@@ -72,10 +90,12 @@ async def add_card(
     """
 
 
-    async with db.acquire() as conn:
+    async with database.db.acquire() as conn:
 
         await conn.execute(
+
             query,
+
             owner_id,
             card_code,
             champion,
@@ -85,11 +105,17 @@ async def add_card(
             attack,
             defense,
             health
+
         )
 
 
 
-# Получить количество карт игрока
+
+
+# =====================================
+# Количество карт игрока
+# =====================================
+
 async def get_cards_count(owner_id: int):
 
     query = """
@@ -98,11 +124,16 @@ async def get_cards_count(owner_id: int):
     WHERE owner_id = $1;
     """
 
-    async with db.acquire() as conn:
+
+    async with database.db.acquire() as conn:
 
         result = await conn.fetchval(
+
             query,
+
             owner_id
+
         )
+
 
         return result
