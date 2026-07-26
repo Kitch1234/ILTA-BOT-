@@ -67,10 +67,18 @@ FRAME_PATHS = {
 RARITY_NAMES = {
 
     "Обычный": "COMMON",
+
     "Редкий": "RARE",
+
     "Эпический": "EPIC",
+
     "Легендарный": "LEGENDARY",
-    "Мифический": "MYTHIC"
+
+    "Мифический": "MYTHIC",
+
+    "Престижный": "PRESTIGE",
+
+    "Чемпионский": "ULTIMATE"
 
 }
 
@@ -79,15 +87,15 @@ RARITY_NAMES = {
 # =========================
 # ФОКУС АРТА
 # =========================
-# 0.5 = центр
-# меньше = выше кадр
-# больше = ниже кадр
 
 ART_FOCUS = {
 
     "Aatrox": 0.45,
+
     "Ahri": 0.45,
+
     "Garen": 0.50,
+
     "Lux": 0.40,
 
 }
@@ -103,6 +111,7 @@ DEFAULT_FOCUS = 0.55
 # =========================
 
 ART_WIDTH = 990
+
 ART_HEIGHT = 1000
 
 
@@ -114,8 +123,11 @@ ART_X = (
 
 
 ART_Y = 35
+
+
+
 # =========================
-# РАСПОЛОЖЕНИЕ ТЕКСТА
+# ТЕКСТ
 # =========================
 
 CARD_LAYOUT = {
@@ -134,14 +146,18 @@ CARD_LAYOUT = {
 
     "region": (250,1420),
 
-    "rarity": (820,1420)
+    "rarity": (820,1420),
+
+    "ability_name": (532,150),
+
+    "ability_text": (532,0)
 
 }
 
 
 
 # =========================
-# ШРИФТЫ
+# ШРИФТ
 # =========================
 
 def get_font(path, size):
@@ -212,20 +228,21 @@ def draw_text(
         fill=(255,255,255)
 
     )
-
-
-
 # =========================
 # ПОДГОТОВКА АРТА
 # =========================
 
-def prepare_art(image, champion):
+def prepare_art(
+
+    image,
+
+    champion
+
+):
 
 
     image = image.convert(
-
         "RGBA"
-
     )
 
 
@@ -275,10 +292,13 @@ def prepare_art(image, champion):
 
     top = int(
 
-        (image.height - ART_HEIGHT) * focus
+        (image.height - ART_HEIGHT)
+
+        *
+
+        focus
 
     )
-
 
 
     image = image.crop(
@@ -299,6 +319,152 @@ def prepare_art(image, champion):
 
 
     return image
+
+
+
+
+
+# =========================
+# СПОСОБНОСТЬ
+# =========================
+
+def draw_ability(
+
+    draw,
+
+    ability
+
+):
+
+
+    if not ability:
+
+        return
+
+
+
+    name = ability.get(
+
+        "name",
+
+        "Без способности"
+
+    )
+
+
+    description = ability.get(
+
+        "description",
+
+        ""
+
+    )
+
+
+
+    # название способности
+
+    draw_text(
+
+        draw,
+
+        (
+
+            532,
+
+            1160
+
+        ),
+
+        "◆ " + name,
+
+        32
+
+    )
+
+
+
+    # перенос описания
+
+    words = description.split()
+
+
+    lines = []
+
+    line = ""
+
+
+
+    for word in words:
+
+
+        test = line + " " + word
+
+
+        if len(test) > 32:
+
+
+            lines.append(
+
+                line.strip()
+
+            )
+
+
+            line = word
+
+
+        else:
+
+
+            line = test
+
+
+
+    if line:
+
+        lines.append(
+
+            line.strip()
+
+        )
+
+
+
+    y = 1205
+
+
+
+    for text in lines[:2]:
+
+
+        draw_text(
+
+            draw,
+
+            (
+
+                532,
+
+                y
+
+            ),
+
+            text,
+
+            22,
+
+            False
+
+        )
+
+
+        y += 28
+
+
+
+
+
 # =========================
 # СОЗДАНИЕ КАРТЫ
 # =========================
@@ -321,7 +487,9 @@ def create_card(
 
     image_path,
 
-    card_number
+    card_number,
+
+    ability
 
 ):
 
@@ -335,13 +503,17 @@ def create_card(
     )
 
 
+
     card = Image.new(
 
         "RGBA",
 
         (
+
             CARD_WIDTH,
+
             CARD_HEIGHT
+
         ),
 
         (0,0,0,0)
@@ -379,8 +551,11 @@ def create_card(
         art,
 
         (
+
             ART_X,
+
             ART_Y
+
         )
 
     )
@@ -411,6 +586,7 @@ def create_card(
     )
 
 
+
     if os.path.exists(frame_path):
 
 
@@ -428,8 +604,11 @@ def create_card(
         frame = frame.resize(
 
             (
+
                 CARD_WIDTH,
+
                 CARD_HEIGHT
+
             ),
 
             Image.LANCZOS
@@ -454,8 +633,9 @@ def create_card(
 
 
     # =====================
-    # ТЕКСТ
+    # ОСНОВНОЙ ТЕКСТ
     # =====================
+
 
     draw_text(
 
@@ -470,6 +650,7 @@ def create_card(
     )
 
 
+
     draw_text(
 
         draw,
@@ -481,6 +662,7 @@ def create_card(
         54
 
     )
+
 
 
     draw_text(
@@ -498,6 +680,7 @@ def create_card(
     )
 
 
+
     draw_text(
 
         draw,
@@ -509,6 +692,7 @@ def create_card(
         50
 
     )
+
 
 
     draw_text(
@@ -524,6 +708,7 @@ def create_card(
     )
 
 
+
     draw_text(
 
         draw,
@@ -535,6 +720,7 @@ def create_card(
         50
 
     )
+
 
 
     draw_text(
@@ -555,24 +741,35 @@ def create_card(
     # РЕДКОСТЬ
     # =====================
 
-    rarity_text = RARITY_NAMES.get(
-
-        rarity,
-
-        rarity
-
-    )
-
-
     draw_text(
 
         draw,
 
         CARD_LAYOUT["rarity"],
 
-        rarity_text,
+        RARITY_NAMES.get(
+
+            rarity,
+
+            rarity
+
+        ),
 
         34
+
+    )
+
+
+
+    # =====================
+    # СПОСОБНОСТЬ
+    # =====================
+
+    draw_ability(
+
+        draw,
+
+        ability
 
     )
 
