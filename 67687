@@ -1,518 +1,242 @@
-import discord
-from discord.ext import commands
-from discord import app_commands
+"""
+ILTA Ability System
 
-import random
-import os
+Способности карточек.
+Привязка идёт к образу (скину), а не к редкости.
+"""
 
-from io import BytesIO
 
-from database.cards import add_card
-from data.champion_loader import load_champions
-from generators.card_generator import create_card
+ABILITIES = {
 
 
+    # =====================================
+    # ДЕМАСИЯ
+    # =====================================
 
-# ==========================================
-# EMBED
-# ==========================================
 
-def create_embed(card, index):
+    "Garen": {
 
-    embed = discord.Embed(
-        color=0xD4AF37
-    )
 
+        "Classic": {
 
-    embed.add_field(
-        name="Чемпион",
-        value=card["champion"],
-        inline=True
-    )
+            "name": "Стойкость Демасии",
 
+            "description":
+                "Получает дополнительную защиту в начале боя.",
 
-    embed.add_field(
-        name="Скин",
-        value=card["skin"],
-        inline=True
-    )
+            "effect": {
 
+                "type": "defense_bonus",
 
-    embed.add_field(
-        name="Редкость",
-        value=card["rarity"],
-        inline=True
-    )
+                "value": 5
 
+            }
 
-    embed.add_field(
-        name="⚔ Атака",
-        value=str(card["attack"]),
-        inline=True
-    )
+        },
 
 
-    embed.add_field(
-        name="❤️ Здоровье",
-        value=str(card["health"]),
-        inline=True
-    )
+        "God King Garen": {
 
+            "name": "Королевский приговор",
 
-    embed.add_field(
-        name="🛡 Защита",
-        value=str(card["defense"]),
-        inline=True
-    )
+            "description":
+                "Первый удар игнорирует часть защиты врага.",
 
+            "effect": {
 
-    embed.set_footer(
-        text=f"🎴 Карта {index + 1}/3"
-    )
+                "type": "ignore_defense",
 
+                "value": 25
 
-    return embed
+            }
 
+        }
 
+    },
 
-# ==========================================
-# VIEW
-# ==========================================
 
-class PackView(discord.ui.View):
 
+    "Lux": {
 
-    def __init__(self, cards):
 
-        super().__init__(
-            timeout=180
-        )
+        "Classic": {
 
+            "name": "Луч света",
 
-        self.cards = cards
+            "description":
+                "Первая атака ослепляет противника.",
 
-        self.index = 0
+            "effect": {
 
+                "type": "blind",
 
-        # ==========================
-        # КЭШ ИЗОБРАЖЕНИЙ
-        # ==========================
+                "value": 1
 
-        self.cache = {}
+            }
 
+        },
 
-        for card in cards:
 
-            with open(
-                card["file"],
-                "rb"
-            ) as f:
+        "Elementalist Lux": {
 
-                self.cache[card["file"]] = f.read()
+            "name": "Абсолютная стихия",
 
+            "description":
+                "Получает случайное усиление стихии.",
 
+            "effect": {
 
-    async def update_card(
-        self,
-        interaction: discord.Interaction
-    ):
+                "type": "random_buff",
 
+                "value": 1
 
-        await interaction.response.defer()
+            }
 
+        }
 
+    },
 
-        card = self.cards[self.index]
 
 
-        embed = create_embed(
+    "Fiora": {
 
-            card,
 
-            self.index
+        "Classic": {
 
-        )
+            "name": "Мастерство дуэли",
 
+            "description":
+                "Увеличивает шанс критического удара.",
 
+            "effect": {
 
-        file_name = os.path.basename(
+                "type": "critical_chance",
 
-            card["file"]
+                "value": 10
 
-        )
+            }
 
+        }
 
+    },
 
-        file = discord.File(
 
-            BytesIO(
 
-                self.cache[card["file"]]
+    "Jarvan IV": {
 
-            ),
 
-            filename=file_name
+        "Classic": {
 
-        )
+            "name": "Королевский щит",
 
+            "description":
+                "Защищает союзников от первого удара.",
 
+            "effect": {
 
-        embed.set_image(
+                "type": "shield",
 
-            url="attachment://" + file_name
+                "value": 10
 
-        )
+            }
 
+        }
 
+    },
 
-        await interaction.edit_original_response(
 
-            embed=embed,
 
-            attachments=[file],
+    # =====================================
+    # НОКСУС
+    # =====================================
 
-            view=self
 
-        )
+    "Darius": {
 
 
+        "Classic": {
 
+            "name": "Кровавый путь",
 
+            "description":
+                "Каждая атака усиливает следующий удар.",
 
-    @discord.ui.button(
-        emoji="⬅️",
-        style=discord.ButtonStyle.secondary
-    )
-    async def left(
+            "effect": {
 
-        self,
+                "type": "attack_stack",
 
-        interaction: discord.Interaction,
+                "value": 5
 
-        button: discord.ui.Button
+            }
 
-    ):
+        },
 
 
-        self.index -= 1
+        "God King Darius": {
 
+            "name": "Воля завоевателя",
 
-        if self.index < 0:
+            "description":
+                "Получает усиление после победы над врагом.",
 
-            self.index = len(self.cards) - 1
+            "effect": {
 
+                "type": "power_up",
 
+                "value": 15
 
-        await self.update_card(
+            }
 
-            interaction
+        }
 
-        )
+    },
 
 
 
+    "Katarina": {
 
 
-    @discord.ui.button(
-        emoji="➡️",
-        style=discord.ButtonStyle.secondary
-    )
-    async def right(
+        "Classic": {
 
-        self,
+            "name": "Кинжальный вихрь",
 
-        interaction: discord.Interaction,
+            "description":
+                "Имеет шанс нанести дополнительный удар.",
 
-        button: discord.ui.Button
+            "effect": {
 
-    ):
+                "type": "extra_attack",
 
+                "value": 15
 
-        self.index += 1
+            }
 
+        }
 
-        if self.index >= len(self.cards):
+    },
 
-            self.index = 0
 
 
+    "Draven": {
 
-        await self.update_card(
 
-            interaction
+        "Classic": {
 
-        )
+            "name": "Шоу Дрейвена",
 
+            "description":
+                "Получает больше урона при успешных атаках.",
 
+            "effect": {
 
+                "type": "damage_bonus",
 
+                "value": 10
 
-# ==========================================
-# PACK COG
-# ==========================================
+            }
 
-class Pack(commands.Cog):
+        }
 
+    }
 
-    def __init__(self, bot):
-
-        self.bot = bot
-
-        self.champions = load_champions()
-
-
-
-    @app_commands.command(
-
-        name="open_pack",
-
-        description="Открыть ILTA Pack"
-
-    )
-    async def open_pack(
-
-        self,
-
-        interaction: discord.Interaction
-
-    ):
-
-
-        await interaction.response.defer(
-
-            thinking=True
-
-        )
-
-
-        await interaction.edit_original_response(
-
-            content="🎴 Открываю ILTA Pack..."
-
-        )
-
-
-
-        cards = []
-
-
-
-        for _ in range(3):
-
-
-            champion_id = random.choice(
-
-                list(self.champions.keys())
-
-            )
-
-
-
-            champion = self.champions[champion_id]
-
-
-
-            skin = random.choice(
-
-                champion["skins"]
-
-            )
-
-
-
-            # ==========================
-            # РЕДКОСТЬ ИЗ СКИНА
-            # ==========================
-
-            rarity = skin.get(
-
-                "tier",
-
-                "Обычный"
-
-            )
-
-
-
-            attack = random.randint(
-
-                20,
-
-                100
-
-            )
-
-
-            health = random.randint(
-
-                50,
-
-                150
-
-            )
-
-
-            defense = random.randint(
-
-                10,
-
-                80
-
-            )
-
-
-
-            code = f"{random.randint(1,9999):04}"
-
-
-
-            await add_card(
-
-                interaction.user.id,
-
-                code,
-
-                champion_id,
-
-                skin["name"],
-
-                champion["region"],
-
-                rarity,
-
-                attack,
-
-                defense,
-
-                health
-
-            )
-
-
-
-
-            card_file = create_card(
-
-                champion=champion_id,
-
-                skin=skin["name"],
-
-                rarity=rarity,
-
-                region=champion["region"],
-
-                attack=attack,
-
-                health=health,
-
-                defense=defense,
-
-                image_path=skin["file"],
-
-                card_number=code
-
-            )
-
-
-
-
-            cards.append({
-
-                "champion": champion_id,
-
-                "skin": skin["name"],
-
-                "rarity": rarity,
-
-                "region": champion["region"],
-
-                "attack": attack,
-
-                "health": health,
-
-                "defense": defense,
-
-                "code": code,
-
-                "file": card_file
-
-            })
-
-
-
-
-        first = cards[0]
-
-
-
-        embed = create_embed(
-
-            first,
-
-            0
-
-        )
-
-
-
-        file_name = os.path.basename(
-
-            first["file"]
-
-        )
-
-
-
-        file = discord.File(
-
-            first["file"],
-
-            filename=file_name
-
-        )
-
-
-
-        embed.set_image(
-
-            url="attachment://" + file_name
-
-        )
-
-
-
-        view = PackView(
-
-            cards
-
-        )
-
-
-
-        await interaction.edit_original_response(
-
-            content=None,
-
-            embed=embed,
-
-            attachments=[file],
-
-            view=view
-
-        )
-
-
-
-
-
-# ==========================================
-# SETUP
-# ==========================================
-
-async def setup(bot):
-
-    await bot.add_cog(
-
-        Pack(bot)
-
-    )
+}
