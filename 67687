@@ -13,6 +13,7 @@ from generators.card_generator import create_card
 
 
 
+
 # =====================================
 # EMBED КАРТЫ
 # =====================================
@@ -93,6 +94,7 @@ class PackView(discord.ui.View):
         self.cards = cards
 
         self.index = 0
+
 
 
 
@@ -262,6 +264,8 @@ class Pack(commands.Cog):
 
 
 
+
+
     # =====================================
     # OPEN PACK
     # =====================================
@@ -294,8 +298,6 @@ class Pack(commands.Cog):
 
 
 
-        # создаём 3 карты
-
         for _ in range(3):
 
 
@@ -304,6 +306,7 @@ class Pack(commands.Cog):
                 list(self.champions.keys())
 
             )
+
 
 
             champion = self.champions[champion_id]
@@ -356,11 +359,7 @@ class Pack(commands.Cog):
 
 
 
-            code = (
-
-                f"{random.randint(1,9999):04}"
-
-            )
+            code = f"{random.randint(1,9999):04}"
 
 
 
@@ -368,66 +367,116 @@ class Pack(commands.Cog):
 
 
 
-            # =============================
-            # ГЕНЕРАЦИЯ КАРТЫ В ОТДЕЛЬНОМ ПОТОКЕ
-            # =============================
+            # =================================
+            # ГЕНЕРАЦИЯ КАРТЫ
+            # =================================
 
-            card_file = await asyncio.to_thread(
-
-                create_card,
-
-                champion["name"],
-
-                skin["name"],
-
-                rarity,
-
-                champion["region"],
-
-                attack,
-
-                health,
-
-                defense,
-
-                ability,
-
-                skin["file"],
-
-                code
-
-            )
+            try:
 
 
+                card_file = await asyncio.wait_for(
 
-            # =============================
-            # СОХРАНЕНИЕ В POSTGRESQL
-            # =============================
+                    asyncio.to_thread(
 
-            await add_card(
+                        create_card,
 
-                interaction.user.id,
+                        champion["name"],
 
-                code,
+                        skin["name"],
 
-                champion["name"],
+                        rarity,
 
-                skin["name"],
+                        champion["region"],
 
-                champion["region"],
+                        attack,
 
-                rarity,
+                        health,
 
-                attack,
+                        defense,
 
-                defense,
+                        ability,
 
-                health
+                        skin["file"],
 
-            )
+                        code
+
+                    ),
+
+                    timeout=15
+
+                )
 
 
 
+            except asyncio.TimeoutError:
+
+
+                await interaction.edit_original_response(
+
+                    content="❌ Генерация карты заняла больше 15 секунд"
+
+                )
+
+                return
+
+
+
+            except Exception as e:
+
+
+                await interaction.edit_original_response(
+
+                    content=f"❌ Ошибка генерации карты:\n```{e}```"
+
+                )
+
+                return
+
+
+
+
+
+            # =================================
+            # СОХРАНЕНИЕ В БД
+            # =================================
+
+            try:
+
+
+                await add_card(
+
+                    interaction.user.id,
+
+                    code,
+
+                    champion["name"],
+
+                    skin["name"],
+
+                    champion["region"],
+
+                    rarity,
+
+                    attack,
+
+                    defense,
+
+                    health
+
+                )
+
+
+
+            except Exception as e:
+
+
+                await interaction.edit_original_response(
+
+                    content=f"❌ Ошибка PostgreSQL:\n```{e}```"
+
+                )
+
+                return
             cards.append({
 
                 "champion": champion["name"],
@@ -451,6 +500,11 @@ class Pack(commands.Cog):
                 "file": card_file
 
             })
+
+
+
+
+
         # =====================================
         # ПОКАЗ ПЕРВОЙ КАРТЫ
         # =====================================
