@@ -9,7 +9,6 @@ from io import BytesIO
 
 from database.cards import add_card
 from data.champion_loader import load_champions
-from data.loot import get_final_rarity
 from generators.card_generator import create_card
 
 
@@ -24,9 +23,53 @@ def create_embed(card, index):
         color=0xD4AF37
     )
 
+
+    embed.add_field(
+        name="Чемпион",
+        value=card["champion"],
+        inline=True
+    )
+
+
+    embed.add_field(
+        name="Скин",
+        value=card["skin"],
+        inline=True
+    )
+
+
+    embed.add_field(
+        name="Редкость",
+        value=card["rarity"],
+        inline=True
+    )
+
+
+    embed.add_field(
+        name="⚔ Атака",
+        value=str(card["attack"]),
+        inline=True
+    )
+
+
+    embed.add_field(
+        name="❤️ Здоровье",
+        value=str(card["health"]),
+        inline=True
+    )
+
+
+    embed.add_field(
+        name="🛡 Защита",
+        value=str(card["defense"]),
+        inline=True
+    )
+
+
     embed.set_footer(
         text=f"🎴 Карта {index + 1}/3"
     )
+
 
     return embed
 
@@ -38,17 +81,25 @@ def create_embed(card, index):
 
 class PackView(discord.ui.View):
 
+
     def __init__(self, cards):
 
         super().__init__(
             timeout=180
         )
 
+
         self.cards = cards
+
         self.index = 0
 
-        # Кэш изображений
+
+        # ==========================
+        # КЭШ ИЗОБРАЖЕНИЙ
+        # ==========================
+
         self.cache = {}
+
 
         for card in cards:
 
@@ -66,28 +117,38 @@ class PackView(discord.ui.View):
         interaction: discord.Interaction
     ):
 
-        # сразу отвечаем Discord
+
         await interaction.response.defer()
+
 
 
         card = self.cards[self.index]
 
 
         embed = create_embed(
+
             card,
+
             self.index
+
         )
+
 
 
         file_name = os.path.basename(
+
             card["file"]
+
         )
+
 
 
         file = discord.File(
 
             BytesIO(
+
                 self.cache[card["file"]]
+
             ),
 
             filename=file_name
@@ -95,11 +156,13 @@ class PackView(discord.ui.View):
         )
 
 
+
         embed.set_image(
 
             url="attachment://" + file_name
 
         )
+
 
 
         await interaction.edit_original_response(
@@ -114,12 +177,11 @@ class PackView(discord.ui.View):
 
 
 
+
+
     @discord.ui.button(
-
         emoji="⬅️",
-
         style=discord.ButtonStyle.secondary
-
     )
     async def left(
 
@@ -140,18 +202,20 @@ class PackView(discord.ui.View):
             self.index = len(self.cards) - 1
 
 
+
         await self.update_card(
+
             interaction
+
         )
 
 
 
+
+
     @discord.ui.button(
-
         emoji="➡️",
-
         style=discord.ButtonStyle.secondary
-
     )
     async def right(
 
@@ -172,9 +236,17 @@ class PackView(discord.ui.View):
             self.index = 0
 
 
+
         await self.update_card(
+
             interaction
+
         )
+
+
+
+
+
 # ==========================================
 # PACK COG
 # ==========================================
@@ -207,7 +279,9 @@ class Pack(commands.Cog):
 
 
         await interaction.response.defer(
+
             thinking=True
+
         )
 
 
@@ -228,14 +302,14 @@ class Pack(commands.Cog):
 
             champion_id = random.choice(
 
-                list(
-                    self.champions.keys()
-                )
+                list(self.champions.keys())
 
             )
 
 
+
             champion = self.champions[champion_id]
+
 
 
             skin = random.choice(
@@ -245,28 +319,45 @@ class Pack(commands.Cog):
             )
 
 
-            rarity = get_final_rarity(
 
-            "tier",
-            "common"
+            # ==========================
+            # РЕДКОСТЬ ИЗ СКИНА
+            # ==========================
+
+            rarity = skin.get(
+
+                "tier",
+
+                "Обычный"
 
             )
 
+
+
             attack = random.randint(
+
                 20,
+
                 100
+
             )
 
 
             health = random.randint(
+
                 50,
+
                 150
+
             )
 
 
             defense = random.randint(
+
                 10,
+
                 80
+
             )
 
 
@@ -299,6 +390,7 @@ class Pack(commands.Cog):
 
 
 
+
             card_file = create_card(
 
                 champion=champion_id,
@@ -320,6 +412,7 @@ class Pack(commands.Cog):
                 card_number=code
 
             )
+
 
 
 
@@ -347,6 +440,7 @@ class Pack(commands.Cog):
 
 
 
+
         first = cards[0]
 
 
@@ -368,6 +462,7 @@ class Pack(commands.Cog):
         )
 
 
+
         file = discord.File(
 
             first["file"],
@@ -375,6 +470,7 @@ class Pack(commands.Cog):
             filename=file_name
 
         )
+
 
 
         embed.set_image(
