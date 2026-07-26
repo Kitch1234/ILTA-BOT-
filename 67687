@@ -31,7 +31,7 @@ def create_embed(card, index):
 
 
 # ==========================================
-# BUTTONS
+# VIEW
 # ==========================================
 
 class PackView(discord.ui.View):
@@ -83,7 +83,14 @@ class PackView(discord.ui.View):
         )
 
 
-        await interaction.response.edit_message(
+        # сначала отвечаем Discord
+
+        await interaction.response.defer()
+
+
+        # потом меняем сообщение
+
+        await interaction.edit_original_response(
 
             embed=embed,
 
@@ -96,8 +103,11 @@ class PackView(discord.ui.View):
 
 
     @discord.ui.button(
+
         emoji="⬅️",
+
         style=discord.ButtonStyle.secondary
+
     )
     async def left(
 
@@ -119,14 +129,19 @@ class PackView(discord.ui.View):
 
 
         await self.update_card(
+
             interaction
+
         )
 
 
 
     @discord.ui.button(
+
         emoji="➡️",
+
         style=discord.ButtonStyle.secondary
+
     )
     async def right(
 
@@ -148,8 +163,11 @@ class PackView(discord.ui.View):
 
 
         await self.update_card(
+
             interaction
+
         )
+
 
 
 
@@ -195,7 +213,6 @@ class Pack(commands.Cog):
             content="🎴 Открываю ILTA Pack..."
 
         )
-
 
 
         cards = []
@@ -356,6 +373,7 @@ class Pack(commands.Cog):
             )
 
         )
+
 
 
         view = PackView(
