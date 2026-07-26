@@ -1,12 +1,2 @@
-from data.ability_loader import get_ability
-
-
-ability = get_ability(
-    "Garen",
-    "God King Garen"
-)
-
-
-print(
-    ability
-)
+C:\Users\Ketek'\Desktop\qantum_universe>python test_ability.py
+{'name': 'Королевский приговор', 'description': 'Первый удар игнорирует часть защиты врага.', 'effect': {'type': 'ignore_defense', 'value': 25}}
