@@ -7,9 +7,15 @@ import os
 
 from io import BytesIO
 
+
 from database.cards import add_card
+
 from data.champion_loader import load_champions
+
+from data.ability_loader import get_ability
+
 from generators.card_generator import create_card
+
 
 
 
@@ -25,21 +31,21 @@ def create_embed(card, index):
 
 
     embed.add_field(
-        name="Чемпион",
+        name="🧙 Чемпион",
         value=card["champion"],
         inline=True
     )
 
 
     embed.add_field(
-        name="Скин",
+        name="🎭 Образ",
         value=card["skin"],
         inline=True
     )
 
 
     embed.add_field(
-        name="Редкость",
+        name="✨ Редкость",
         value=card["rarity"],
         inline=True
     )
@@ -66,12 +72,35 @@ def create_embed(card, index):
     )
 
 
+    if card.get("ability"):
+
+        embed.add_field(
+
+            name="✨ Способность",
+
+            value=(
+
+                f"**{card['ability']['name']}**\n"
+
+                f"{card['ability']['description']}"
+
+            ),
+
+            inline=False
+
+        )
+
+
     embed.set_footer(
+
         text=f"🎴 Карта {index + 1}/3"
+
     )
 
 
     return embed
+
+
 
 
 
@@ -94,32 +123,34 @@ class PackView(discord.ui.View):
         self.index = 0
 
 
+
         # ==========================
-        # КЭШ ИЗОБРАЖЕНИЙ
+        # КЭШ КАРТОК
         # ==========================
 
         self.cache = {}
 
 
+
         for card in cards:
 
+
             with open(
+
                 card["file"],
+
                 "rb"
+
             ) as f:
 
+
                 self.cache[card["file"]] = f.read()
-
-
-
     async def update_card(
         self,
         interaction: discord.Interaction
     ):
 
-
         await interaction.response.defer()
-
 
 
         card = self.cards[self.index]
@@ -134,13 +165,11 @@ class PackView(discord.ui.View):
         )
 
 
-
         file_name = os.path.basename(
 
             card["file"]
 
         )
-
 
 
         file = discord.File(
@@ -156,13 +185,11 @@ class PackView(discord.ui.View):
         )
 
 
-
         embed.set_image(
 
             url="attachment://" + file_name
 
         )
-
 
 
         await interaction.edit_original_response(
@@ -178,10 +205,16 @@ class PackView(discord.ui.View):
 
 
 
+    # ==========================
+    # НАЗАД
+    # ==========================
 
     @discord.ui.button(
+
         emoji="⬅️",
+
         style=discord.ButtonStyle.secondary
+
     )
     async def left(
 
@@ -212,10 +245,16 @@ class PackView(discord.ui.View):
 
 
 
+    # ==========================
+    # ВПЕРЕД
+    # ==========================
 
     @discord.ui.button(
+
         emoji="➡️",
+
         style=discord.ButtonStyle.secondary
+
     )
     async def right(
 
@@ -254,11 +293,19 @@ class PackView(discord.ui.View):
 class Pack(commands.Cog):
 
 
-    def __init__(self, bot):
+    def __init__(
+
+        self,
+
+        bot
+
+    ):
 
         self.bot = bot
 
         self.champions = load_champions()
+
+
 
 
 
@@ -285,6 +332,7 @@ class Pack(commands.Cog):
         )
 
 
+
         await interaction.edit_original_response(
 
             content="🎴 Открываю ILTA Pack..."
@@ -302,7 +350,11 @@ class Pack(commands.Cog):
 
             champion_id = random.choice(
 
-                list(self.champions.keys())
+                list(
+
+                    self.champions.keys()
+
+                )
 
             )
 
@@ -321,7 +373,21 @@ class Pack(commands.Cog):
 
 
             # ==========================
-            # РЕДКОСТЬ ИЗ СКИНА
+            # СПОСОБНОСТЬ
+            # ==========================
+
+            ability = get_ability(
+
+                champion_id,
+
+                skin["name"]
+
+            )
+
+
+
+            # ==========================
+            # РЕДКОСТЬ
             # ==========================
 
             rarity = skin.get(
@@ -390,7 +456,6 @@ class Pack(commands.Cog):
 
 
 
-
             card_file = create_card(
 
                 champion=champion_id,
@@ -409,10 +474,11 @@ class Pack(commands.Cog):
 
                 image_path=skin["file"],
 
-                card_number=code
+                card_number=code,
+
+                ability=ability
 
             )
-
 
 
 
@@ -432,12 +498,13 @@ class Pack(commands.Cog):
 
                 "defense": defense,
 
+                "ability": ability,
+
                 "code": code,
 
                 "file": card_file
 
             })
-
 
 
 
