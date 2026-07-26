@@ -1,108 +1,572 @@
-# database/cards.py
+import discord
+from discord.ext import commands
+from discord import app_commands
 
-from core.database import db
+import random
+import os
 
+from io import BytesIO
 
-# Получить карты игрока
-async def get_player_cards(owner_id: int):
-
-    query = """
-    SELECT *
-    FROM cards
-    WHERE owner_id = $1
-    ORDER BY created_at DESC;
-    """
-
-    async with db.acquire() as conn:
-        return await conn.fetch(
-            query,
-            owner_id
-        )
+from database.cards import add_card
+from data.champion_loader import load_champions
+from generators.card_generator import create_card
 
 
 
-# Получить одну карту
-async def get_card(card_id: int):
+# =====================================
+# EMBED КАРТЫ
+# =====================================
 
-    query = """
-    SELECT *
-    FROM cards
-    WHERE id = $1;
-    """
+def create_embed(card, index):
 
-    async with db.acquire() as conn:
-        return await conn.fetchrow(
-            query,
-            card_id
-        )
-
-
-
-# Добавить карту игроку
-async def add_card(
-    owner_id: int,
-    card_code: str,
-    champion: str,
-    skin: str,
-    region: str,
-    rarity: str,
-    attack: int,
-    defense: int,
-    health: int
-):
-
-    query = """
-    INSERT INTO cards
-    (
-        owner_id,
-        card_code,
-        champion,
-        skin,
-        region,
-        rarity,
-        attack,
-        defense,
-        health
+    embed = discord.Embed(
+        color=0xD4AF37
     )
 
-    VALUES
-    (
-        $1,$2,$3,$4,$5,$6,$7,$8,$9
-    );
-    """
+
+    embed.add_field(
+        name="🛡 Чемпион",
+        value=card["champion"],
+        inline=True
+    )
 
 
-    async with db.acquire() as conn:
+    if card["skin"]:
 
-        await conn.execute(
-            query,
-            owner_id,
-            card_code,
-            champion,
-            skin,
-            region,
-            rarity,
-            attack,
-            defense,
-            health
+        embed.add_field(
+            name="✨ Скин",
+            value=card["skin"],
+            inline=True
+        )
+
+
+    embed.add_field(
+        name="⚔ Атака",
+        value=str(card["attack"]),
+        inline=True
+    )
+
+
+    embed.add_field(
+        name="❤️ Здоровье",
+        value=str(card["health"]),
+        inline=True
+    )
+
+
+    embed.add_field(
+        name="🛡 Защита",
+        value=str(card["defense"]),
+        inline=True
+    )
+
+
+    if card["ability"]:
+
+        embed.add_field(
+            name="✨ Способность",
+            value=card["ability"],
+            inline=False
+        )
+
+
+    embed.set_footer(
+        text=f"🎴 Карта {index + 1}/3"
+    )
+
+
+    return embed
+
+
+
+
+
+# =====================================
+# VIEW ПАКА
+# =====================================
+
+class PackView(discord.ui.View):
+
+
+    def __init__(self, cards):
+
+        super().__init__(
+            timeout=180
+        )
+
+
+        self.cards = cards
+
+        self.index = 0
+
+
+        self.cache = {}
+
+
+        for card in cards:
+
+
+            with open(
+                card["file"],
+                "rb"
+            ) as f:
+
+
+                self.cache[card["file"]] = f.read()
+    # =====================================
+    # ОБНОВЛЕНИЕ КАРТЫ
+    # =====================================
+
+    async def update_card(
+        self,
+        interaction: discord.Interaction
+    ):
+
+
+        await interaction.response.defer()
+
+
+
+        card = self.cards[self.index]
+
+
+
+        embed = create_embed(
+
+            card,
+
+            self.index
+
         )
 
 
 
-# Получить количество карт игрока
-async def get_cards_count(owner_id: int):
+        file_name = os.path.basename(
 
-    query = """
-    SELECT COUNT(*)
-    FROM cards
-    WHERE owner_id = $1;
-    """
+            card["file"]
 
-    async with db.acquire() as conn:
-
-        result = await conn.fetchval(
-            query,
-            owner_id
         )
 
-        return result
+
+
+        file = discord.File(
+
+            BytesIO(
+
+                self.cache[card["file"]]
+
+            ),
+
+            filename=file_name
+
+        )
+
+
+
+        embed.set_image(
+
+            url="attachment://" + file_name
+
+        )
+
+
+
+        await interaction.edit_original_response(
+
+            embed=embed,
+
+            attachments=[file],
+
+            view=self
+
+        )
+
+
+
+
+
+    # =====================================
+    # КНОПКА НАЗАД
+    # =====================================
+
+    @discord.ui.button(
+
+        emoji="⬅️",
+
+        style=discord.ButtonStyle.secondary
+
+    )
+    async def left(
+
+        self,
+
+        interaction: discord.Interaction,
+
+        button: discord.ui.Button
+
+    ):
+
+
+        self.index -= 1
+
+
+
+        if self.index < 0:
+
+            self.index = len(self.cards) - 1
+
+
+
+        await self.update_card(
+
+            interaction
+
+        )
+
+
+
+
+
+    # =====================================
+    # КНОПКА ВПЕРЁД
+    # =====================================
+
+    @discord.ui.button(
+
+        emoji="➡️",
+
+        style=discord.ButtonStyle.secondary
+
+    )
+    async def right(
+
+        self,
+
+        interaction: discord.Interaction,
+
+        button: discord.ui.Button
+
+    ):
+
+
+        self.index += 1
+
+
+
+        if self.index >= len(self.cards):
+
+            self.index = 0
+
+
+
+        await self.update_card(
+
+            interaction
+
+        )
+# =====================================
+# PACK COG
+# =====================================
+
+class Pack(commands.Cog):
+
+
+    def __init__(self, bot):
+
+        self.bot = bot
+
+        self.champions = load_champions()
+
+
+
+    # =====================================
+    # OPEN PACK
+    # =====================================
+
+    @app_commands.command(
+
+        name="open_pack",
+
+        description="Открыть ILTA Pack"
+
+    )
+    async def open_pack(
+
+        self,
+
+        interaction: discord.Interaction
+
+    ):
+
+
+        await interaction.response.defer(
+
+            thinking=True
+
+        )
+
+
+
+        await interaction.edit_original_response(
+
+            content="🎴 Открываю ILTA Pack..."
+
+        )
+
+
+
+        cards = []
+
+
+
+        # 3 карты
+
+        for _ in range(3):
+
+
+            champion_id = random.choice(
+
+                list(self.champions.keys())
+
+            )
+
+
+
+            champion = self.champions[champion_id]
+
+
+
+            skin = random.choice(
+
+                champion["skins"]
+
+            )
+
+
+
+            rarity = skin.get(
+
+                "tier",
+
+                "Обычный"
+
+            )
+
+
+
+            attack = random.randint(
+
+                20,
+
+                100
+
+            )
+
+
+            health = random.randint(
+
+                50,
+
+                150
+
+            )
+
+
+            defense = random.randint(
+
+                10,
+
+                80
+
+            )
+
+
+
+            code = (
+
+                f"{random.randint(1,9999):04}"
+
+            )
+
+
+
+            # =============================
+            # СПОСОБНОСТЬ
+            # =============================
+
+            ability = ""
+
+
+
+            card_file = create_card(
+
+                champion=champion["name"],
+
+
+                skin=skin["name"],
+
+
+                rarity=rarity,
+
+
+                region=champion["region"],
+
+
+                attack=attack,
+
+
+                health=health,
+
+
+                defense=defense,
+
+
+                ability=ability,
+
+
+                image_path=skin["file"],
+
+
+                card_number=code
+
+            )
+
+
+
+            await add_card(
+
+                interaction.user.id,
+
+
+                code,
+
+
+                champion_id,
+
+
+                skin["name"],
+
+
+                champion["region"],
+
+
+                rarity,
+
+
+                attack,
+
+
+                defense,
+
+
+                health
+
+            )
+
+
+
+            cards.append({
+
+                "champion": champion["name"],
+
+                "skin": skin["name"],
+
+                "rarity": rarity,
+
+                "region": champion["region"],
+
+                "attack": attack,
+
+                "health": health,
+
+                "defense": defense,
+
+                "ability": ability,
+
+                "code": code,
+
+                "file": card_file
+
+            })
+
+
+
+
+
+        # первая карта
+
+        first = cards[0]
+
+
+
+        embed = create_embed(
+
+            first,
+
+            0
+
+        )
+
+
+
+        file_name = os.path.basename(
+
+            first["file"]
+
+        )
+
+
+
+        file = discord.File(
+
+            first["file"],
+
+            filename=file_name
+
+        )
+
+
+
+        embed.set_image(
+
+            url="attachment://" + file_name
+
+        )
+
+
+
+        view = PackView(
+
+            cards
+
+        )
+
+
+
+        await interaction.edit_original_response(
+
+            content=None,
+
+            embed=embed,
+
+            attachments=[file],
+
+            view=view
+
+        )
+
+
+
+
+
+# =====================================
+# SETUP
+# =====================================
+
+async def setup(bot):
+
+    await bot.add_cog(
+
+        Pack(bot)
+
+    )
