@@ -9,7 +9,6 @@ import requests
 
 VERSION = "16.14.1"
 
-
 DATA_DRAGON_RU = (
     f"https://ddragon.leagueoflegends.com/cdn/"
     f"{VERSION}/data/ru_RU/champion/"
@@ -17,7 +16,6 @@ DATA_DRAGON_RU = (
 
 
 SKINS_FILE = "data/skins.json"
-
 
 OUTPUT = "data/cards_ru.json"
 
@@ -48,9 +46,8 @@ with open(
 
 
 
-
 # ==================================
-# КЭШ DATA DRAGON
+# КЭШ ЧЕМПИОНОВ
 # ==================================
 
 champion_cache = {}
@@ -81,20 +78,16 @@ def get_champion_ru(champion):
     if response.status_code != 200:
 
         print(
-            "❌ Нет данных:",
-            champion
+            f"❌ Нет данных: {champion}"
         )
 
         return None
 
 
-
     data = response.json()
 
 
-    champion_data = (
-        data["data"][champion]
-    )
+    champion_data = data["data"][champion]
 
 
     champion_cache[champion] = champion_data
@@ -104,10 +97,22 @@ def get_champion_ru(champion):
 
 
 
+# ==================================
+# РЕГИОНЫ ILTA
+# ==================================
+
+REGIONS = {
+
+    "Demacia": "Демасия",
+
+    "Noxus": "Ноксус"
+
+}
+
 
 
 # ==================================
-# СОЗДАНИЕ CARDS
+# СОЗДАНИЕ БАЗЫ
 # ==================================
 
 cards = {}
@@ -131,11 +136,9 @@ for skin_id, skin_data in skins_database.items():
     )
 
 
-
     if not ru_data:
 
         continue
-
 
 
 
@@ -147,19 +150,37 @@ for skin_id, skin_data in skins_database.items():
 
 
 
-    # ищем русский скин
+    # ищем русский вариант скина
 
     for skin in ru_data["skins"]:
 
 
         if skin["num"] == num:
 
-
             skin_ru = skin["name"]
-
 
             break
 
+
+
+    # ==============================
+    # БАЗОВЫЙ СКИН
+    # ==============================
+
+    if num == 0 or skin_ru.lower() == "default":
+
+        skin_ru = ""
+
+        rarity = "Обычный"
+
+        show_rarity = False
+
+
+    else:
+
+        rarity = ""
+
+        show_rarity = False
 
 
 
@@ -169,31 +190,52 @@ for skin_id, skin_data in skins_database.items():
         "id": skin_id,
 
 
+        # английские данные
+
         "champion_en": champion,
-
-
-        "champion": champion_ru,
-
 
         "skin_en": skin_data["name"],
 
 
+
+        # русские данные
+
+        "champion": champion_ru,
+
         "skin": skin_ru,
 
 
-        "region": skin_data["region"],
+
+        # регион
+
+        "region": REGIONS.get(
+
+            skin_data["region"],
+
+            skin_data["region"]
+
+        ),
 
 
-        "rarity": "",
 
+        # редкость
+
+        "rarity": rarity,
+
+
+        # писать ли редкость на карте
+
+        "show_rarity": show_rarity,
+
+
+
+        # будущие системы
 
         "ability": "",
-
 
         "quote": ""
 
     }
-
 
 
 
