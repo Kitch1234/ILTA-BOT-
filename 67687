@@ -1,3 +1,19 @@
-await interaction.edit_original_response(
-    content="🎴 Открываю ILTA Pack..."
-)
+   async def open_pack(
+        self,
+        interaction: discord.Interaction
+    ):
+
+        await interaction.response.defer(thinking=True)
+
+	await interaction.edit_original_response(
+    	content="🎴 Открываю ILTA Pack..."
+	)
+
+        cards = []
+
+        for _ in range(3):
+
+            champion_id = random.choice(
+                list(self.champions.keys())
+            )
+
