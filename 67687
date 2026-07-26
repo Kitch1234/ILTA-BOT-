@@ -14,7 +14,7 @@ import random
 CARD_RARITY = {
 
     "Обычный": {
-        "chance": 60,
+        "chance": 59,
         "color": "#808080"
     },
 
@@ -39,12 +39,12 @@ CARD_RARITY = {
     },
 
     "Престижный": {
-        "chance": 0.15,
+        "chance": 1,
         "color": "#FFD700"
     },
 
     "Чемпионский": {
-        "chance": 0.05,
+        "chance": 0.2,
         "color": "#FFFFFF"
     }
 
@@ -52,26 +52,79 @@ CARD_RARITY = {
 
 
 
+# =====================================
+# Редкость скинов League
+# =====================================
+
+SKIN_RARITY = {
+
+    "prestige": "Престижный",
+
+    "ultimate": "Чемпионский",
+
+    "legendary": "Легендарный",
+
+    "mythic": "Мифический",
+
+    "epic": "Эпический",
+
+    "rare": "Редкий"
+
+}
+
 
 
 # =====================================
-# Получить редкость карты
+# Определение редкости скина
+# =====================================
+
+def get_skin_rarity(skin_name):
+
+
+    name = skin_name.lower()
+
+
+
+    for key, rarity in SKIN_RARITY.items():
+
+
+        if key in name:
+
+            return rarity
+
+
+
+    return None
+
+
+
+
+
+# =====================================
+# Получить случайную редкость карты
 # =====================================
 
 def get_card_rarity():
 
+
     roll = random.uniform(
+
         0,
+
         100
+
     )
 
 
     total = 0
 
 
+
     for rarity, data in CARD_RARITY.items():
 
+
         total += data["chance"]
+
 
 
         if roll <= total:
@@ -87,6 +140,37 @@ def get_card_rarity():
 
 
 # =====================================
+# Финальная редкость карты
+# =====================================
+# Если скин особый -
+# он получает свою редкость
+# иначе обычный рандом
+
+
+def get_final_rarity(skin_name):
+
+
+    skin_rarity = get_skin_rarity(
+
+        skin_name
+
+    )
+
+
+
+    if skin_rarity:
+
+        return skin_rarity
+
+
+
+    return get_card_rarity()
+
+
+
+
+
+# =====================================
 # Старые функции Loot
 # =====================================
 
@@ -96,61 +180,102 @@ LOOT_TABLE = {
 
     "normal_monster": {
 
+
         "gold": {
+
             "min": 10,
+
             "max": 50
+
         },
 
+
         "items": [
+
             "Stone Fragment",
+
             "Sharp Claw"
+
         ],
 
+
         "cards": {
+
             "chance": 5
+
         }
 
+
     },
+
+
 
 
 
     "elite_monster": {
 
+
         "gold": {
+
             "min": 100,
+
             "max": 500
+
         },
 
+
         "items": [
+
             "Rare Essence",
+
             "Noxian Armor"
+
         ],
 
+
         "cards": {
+
             "chance": 20
+
         }
+
 
     },
 
 
 
+
+
     "boss": {
 
+
         "gold": {
+
             "min": 1000,
+
             "max": 5000
+
         },
 
+
         "items": [
+
             "Mythic Chest",
+
             "Legendary Essence"
+
         ],
 
+
         "cards": {
+
             "chance": 50
+
         }
 
+
     }
+
 
 }
 
@@ -159,14 +284,19 @@ LOOT_TABLE = {
 
 
 # =====================================
-# Монстры награды
+# Награды монстров
 # =====================================
+
 
 def monster_drop(monster_type):
 
+
     loot = LOOT_TABLE.get(
+
         monster_type
+
     )
+
 
 
     if not loot:
@@ -175,30 +305,45 @@ def monster_drop(monster_type):
 
 
 
+
     gold = random.randint(
+
         loot["gold"]["min"],
+
         loot["gold"]["max"]
+
     )
 
 
 
     card_drop = random.randint(
+
         1,
+
         100
+
     )
 
 
 
     return {
 
+
         "gold": gold,
 
+
         "card_drop":
+
             card_drop <= loot["cards"]["chance"],
 
+
+
         "items":
+
             random.choice(
+
                 loot["items"]
+
             )
 
     }
