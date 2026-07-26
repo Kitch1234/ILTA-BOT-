@@ -1,34 +1,16 @@
 import json
-import os
 
 
-INPUT = "data/cards_ru.json"
-
-OUTPUT = "data/skin_rarity.json"
-
-
-# ==================================
-# ОСОБЫЕ РЕДКОСТИ
-# ==================================
-
-SPECIAL_RARITY = {
-
-    # Престижные
-    "Garen_43": "Престижный",
-
-    # Легендарные
-    "Garen_24": "Легендарный"
-
-}
+CARDS_FILE = "data/cards_ru.json"
+RARITY_FILE = "data/skin_rarity.json"
 
 
-
-# ==================================
+# ==========================
 # ЗАГРУЗКА
-# ==================================
+# ==========================
 
 with open(
-    INPUT,
+    CARDS_FILE,
     "r",
     encoding="utf-8"
 ) as f:
@@ -37,54 +19,47 @@ with open(
 
 
 
-rarity = {}
+with open(
+    RARITY_FILE,
+    "r",
+    encoding="utf-8"
+) as f:
+
+    rarity = json.load(f)
 
 
 
-for card_id, data in cards.items():
+# ==========================
+# ДОБАВЛЯЕМ РЕДКОСТЬ
+# ==========================
 
+for card_id, card in cards.items():
 
-    # базовый чемпион
+    if card_id in rarity:
 
-    if data["skin"] == "":
-
-        rarity[card_id] = "Обычный"
-
-
-    # если есть ручное значение
-
-    elif card_id in SPECIAL_RARITY:
-
-        rarity[card_id] = SPECIAL_RARITY[card_id]
-
-
-    else:
-
-        # пока все остальные
-        # ставим временно
-
-        rarity[card_id] = "Редкий"
+        card["rarity"] = rarity[card_id]
 
 
 
-# ==================================
+# ==========================
 # СОХРАНЕНИЕ
-# ==================================
+# ==========================
 
 with open(
-    OUTPUT,
+    CARDS_FILE,
     "w",
     encoding="utf-8"
 ) as f:
 
     json.dump(
-        rarity,
+        cards,
         f,
         ensure_ascii=False,
         indent=4
     )
 
 
+
 print(
-    f"✅ Создано редкостей: {len(rarity)}"
+    f"✅ Редкость добавлена для {len(cards)} карт"
 )
