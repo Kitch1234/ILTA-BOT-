@@ -1,242 +1,69 @@
 import json
 import os
-import requests
+
+
+INPUT = "data/cards_ru.json"
+
+OUTPUT = "data/skin_rarity.json"
 
 
 # ==================================
-# НАСТРОЙКИ
+# ОСОБЫЕ РЕДКОСТИ
 # ==================================
 
-VERSION = "16.14.1"
+SPECIAL_RARITY = {
 
-DATA_DRAGON_RU = (
-    f"https://ddragon.leagueoflegends.com/cdn/"
-    f"{VERSION}/data/ru_RU/champion/"
-)
+    # Престижные
+    "Garen_43": "Престижный",
 
-
-SKINS_FILE = "data/skins.json"
-
-OUTPUT = "data/cards_ru.json"
-
-
-
-# ==================================
-# СОЗДАНИЕ ПАПКИ
-# ==================================
-
-os.makedirs(
-    "data",
-    exist_ok=True
-)
-
-
-
-# ==================================
-# ЗАГРУЗКА SKINS.JSON
-# ==================================
-
-with open(
-    SKINS_FILE,
-    "r",
-    encoding="utf-8"
-) as f:
-
-    skins_database = json.load(f)
-
-
-
-# ==================================
-# КЭШ ЧЕМПИОНОВ
-# ==================================
-
-champion_cache = {}
-
-
-
-def get_champion_ru(champion):
-
-    if champion in champion_cache:
-
-        return champion_cache[champion]
-
-
-    url = (
-        DATA_DRAGON_RU
-        +
-        champion
-        +
-        ".json"
-    )
-
-
-    response = requests.get(
-        url
-    )
-
-
-    if response.status_code != 200:
-
-        print(
-            f"❌ Нет данных: {champion}"
-        )
-
-        return None
-
-
-    data = response.json()
-
-
-    champion_data = data["data"][champion]
-
-
-    champion_cache[champion] = champion_data
-
-
-    return champion_data
-
-
-
-# ==================================
-# РЕГИОНЫ ILTA
-# ==================================
-
-REGIONS = {
-
-    "Demacia": "Демасия",
-
-    "Noxus": "Ноксус"
+    # Легендарные
+    "Garen_24": "Легендарный"
 
 }
 
 
 
 # ==================================
-# СОЗДАНИЕ БАЗЫ
+# ЗАГРУЗКА
 # ==================================
 
-cards = {}
+with open(
+    INPUT,
+    "r",
+    encoding="utf-8"
+) as f:
+
+    cards = json.load(f)
 
 
 
-for skin_id, skin_data in skins_database.items():
-
-
-    champion = skin_data["champion"]
-
-
-    num = skin_data["num"]
+rarity = {}
 
 
 
-    ru_data = get_champion_ru(
-
-        champion
-
-    )
+for card_id, data in cards.items():
 
 
-    if not ru_data:
+    # базовый чемпион
 
-        continue
+    if data["skin"] == "":
 
-
-
-    champion_ru = ru_data["name"]
+        rarity[card_id] = "Обычный"
 
 
+    # если есть ручное значение
 
-    skin_ru = skin_data["name"]
+    elif card_id in SPECIAL_RARITY:
 
-
-
-    # ищем русский вариант скина
-
-    for skin in ru_data["skins"]:
-
-
-        if skin["num"] == num:
-
-            skin_ru = skin["name"]
-
-            break
-
-
-
-    # ==============================
-    # БАЗОВЫЙ СКИН
-    # ==============================
-
-    if num == 0 or skin_ru.lower() == "default":
-
-        skin_ru = ""
-
-        rarity = "Обычный"
-
-        show_rarity = False
+        rarity[card_id] = SPECIAL_RARITY[card_id]
 
 
     else:
 
-        rarity = ""
+        # пока все остальные
+        # ставим временно
 
-        show_rarity = False
-
-
-
-    cards[skin_id] = {
-
-
-        "id": skin_id,
-
-
-        # английские данные
-
-        "champion_en": champion,
-
-        "skin_en": skin_data["name"],
-
-
-
-        # русские данные
-
-        "champion": champion_ru,
-
-        "skin": skin_ru,
-
-
-
-        # регион
-
-        "region": REGIONS.get(
-
-            skin_data["region"],
-
-            skin_data["region"]
-
-        ),
-
-
-
-        # редкость
-
-        "rarity": rarity,
-
-
-        # писать ли редкость на карте
-
-        "show_rarity": show_rarity,
-
-
-
-        # будущие системы
-
-        "ability": "",
-
-        "quote": ""
-
-    }
-
+        rarity[card_id] = "Редкий"
 
 
 
@@ -250,27 +77,14 @@ with open(
     encoding="utf-8"
 ) as f:
 
-
     json.dump(
-
-        cards,
-
+        rarity,
         f,
-
         ensure_ascii=False,
-
         indent=4
-
     )
 
 
-
-print()
-print("=" * 40)
 print(
-    f"✅ Создано карт: {len(cards)}"
+    f"✅ Создано редкостей: {len(rarity)}"
 )
-print(
-    f"✅ Файл: {OUTPUT}"
-)
-print("=" * 40)
