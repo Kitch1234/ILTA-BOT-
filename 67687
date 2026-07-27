@@ -1,43 +1,53 @@
 def prepare_art(image):
 
 
-    # увеличиваем картинку так,
-    # чтобы она полностью закрыла область
+    # дополнительное приближение арта
+
+    zoom = 1.25
+
+
+    target_width = int(
+        ART_WIDTH * zoom
+    )
+
+    target_height = int(
+        ART_HEIGHT * zoom
+    )
+
+
 
     scale = max(
 
-        ART_WIDTH / image.width,
+        target_width / image.width,
 
-        ART_HEIGHT / image.height
-
-    )
-
-
-    new_size = (
-
-        int(image.width * scale),
-
-        int(image.height * scale)
+        target_height / image.height
 
     )
+
 
 
     image = image.resize(
 
-        new_size,
+        (
+
+            int(image.width * scale),
+
+            int(image.height * scale)
+
+        ),
 
         Image.LANCZOS
 
     )
 
 
-    # центрируем кадр
 
     left = (
 
         image.width - ART_WIDTH
 
     ) // 2
+
 
 
     top = (
