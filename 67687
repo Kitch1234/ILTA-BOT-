@@ -1,896 +1,594 @@
-from PIL import Image, ImageDraw, ImageFont
+import discord
+from discord.ext import commands
+from discord import app_commands
 
+import random
 import os
+import asyncio
+
+
+from database.cards import add_card
+from data.champion_loader import load_champions
+from generators.card_generator import create_card
 
 
 
 # =====================================
-# НАСТРОЙКИ
+# EMBED КАРТЫ
 # =====================================
 
-CARD_WIDTH = 744
-CARD_HEIGHT = 1039
+def create_embed(card, index):
 
-
-ASSETS = "assets"
-
-
-OUTPUT = "generated_cards"
-
-
-
-
-
-# =====================================
-# КЭШИ
-# =====================================
-
-FONT_CACHE = {}
-
-FRAME_CACHE = {}
-
-REGION_CACHE = {}
-
-ART_CACHE = {}
-
-
-
-
-
-# =====================================
-# ШРИФТЫ
-# =====================================
-
-FONT_BOLD = os.path.join(
-    ASSETS,
-    "fonts",
-    "Beaufort-Bold.ttf"
-)
-
-
-FONT_REGULAR = os.path.join(
-    ASSETS,
-    "fonts",
-    "Beaufort-Regular.ttf"
-)
-
-
-
-
-
-# =====================================
-# РАМКИ
-# =====================================
-
-FRAME_PATHS = {
-
-    "Обычный": "common.png",
-
-    "Редкий": "rare.png",
-
-    "Эпический": "epic.png",
-
-    "Легендарный": "legendary.png",
-
-    "Мифический": "mythic.png",
-
-    "Престижный": "prestige.png",
-
-    "Чемпионский": "ultimate.png"
-
-}
-
-
-
-
-
-# =====================================
-# РЕГИОНЫ
-# =====================================
-
-REGION_ICONS = {
-
-    "Демасия": "Demacia.png",
-
-    "Ноксус": "Noxus.png"
-
-}
-
-
-REGION_PATH = os.path.join(
-
-    ASSETS,
-
-    "regions"
-
-)
-# =====================================
-# АРТ
-# =====================================
-
-ART_WIDTH = 650
-
-ART_HEIGHT = 650
-
-
-ART_X = (
-
-    CARD_WIDTH - ART_WIDTH
-
-) // 2
-
-
-ART_Y = 90
-
-
-
-
-
-# =====================================
-# ПОЗИЦИИ ТЕКСТА
-# =====================================
-
-CARD_LAYOUT = {
-
-
-    "number": (
-
-        620,
-
-        55
-
-    ),
-
-
-    "champion": (
-
-        372,
-
-        770
-
-    ),
-
-
-    "skin": (
-
-        372,
-
-        820
-
-    ),
-
-
-    "attack": (
-
-        170,
-
-        930
-
-    ),
-
-
-    "health": (
-
-        372,
-
-        930
-
-    ),
-
-
-    "defense": (
-
-        570,
-
-        930
-
-    ),
-
-
-    "ability": (
-
-        372,
-
-        985
-
-    )
-
-}
-
-
-
-
-
-# =====================================
-# ШРИФТЫ
-# =====================================
-
-def get_font(path, size):
-
-
-    key = (
-
-        path,
-
-        size
-
+    embed = discord.Embed(
+        color=0xD4AF37
     )
 
 
-    if key not in FONT_CACHE:
+    embed.add_field(
+        name="🛡 Чемпион",
+        value=card["champion"],
+        inline=True
+    )
 
 
-        FONT_CACHE[key] = ImageFont.truetype(
+    if card["skin"] and card["skin"].lower() != "default":
 
-            path,
-
-            size
-
+        embed.add_field(
+            name="✨ Скин",
+            value=card["skin"],
+            inline=True
         )
 
 
-    return FONT_CACHE[key]
-
-
-
-
-
-# =====================================
-# ПОЛУЧИТЬ РАМКУ
-# =====================================
-
-def get_frame(rarity):
-
-
-    frame_name = FRAME_PATHS.get(
-
-        rarity,
-
-        "common.png"
-
+    embed.add_field(
+        name="⚔ Атака",
+        value=str(card["attack"]),
+        inline=True
     )
 
 
-    path = os.path.join(
-
-        ASSETS,
-
-        "frames",
-
-        frame_name
-
+    embed.add_field(
+        name="❤️ Здоровье",
+        value=str(card["health"]),
+        inline=True
     )
 
 
-    if path not in FRAME_CACHE:
+    embed.add_field(
+        name="🛡 Защита",
+        value=str(card["defense"]),
+        inline=True
+    )
 
 
-        if not os.path.exists(path):
+    if card.get("ability"):
 
-            return None
+        embed.add_field(
+            name="✨ Способность",
+            value=card["ability"],
+            inline=False
+        )
+
+
+    embed.set_footer(
+        text=f"🎴 Карта {index + 1}/3"
+    )
+
+
+    return embed
+# =====================================
+# VIEW ПАКА
+# =====================================
+
+class PackView(discord.ui.View):
+
+
+    def __init__(self, cards):
+
+        super().__init__(
+            timeout=180
+        )
+
+
+        self.cards = cards
+
+        self.index = 0
 
 
 
-        frame = Image.open(
 
-            path
 
-        ).convert(
+    # =====================================
+    # ОБНОВЛЕНИЕ КАРТЫ
+    # =====================================
 
-            "RGBA"
+    async def update_card(
+
+        self,
+
+        interaction: discord.Interaction
+
+    ):
+
+
+        await interaction.response.defer()
+
+
+
+        card = self.cards[self.index]
+
+
+
+        embed = create_embed(
+
+            card,
+
+            self.index
 
         )
 
 
 
-        frame = frame.resize(
+        file_name = os.path.basename(
 
-            (
-
-                CARD_WIDTH,
-
-                CARD_HEIGHT
-
-            ),
-
-            Image.LANCZOS
-
-        )
-
-
-        FRAME_CACHE[path] = frame
-
-
-
-    return FRAME_CACHE[path]
-# =====================================
-# ИКОНКА РЕГИОНА
-# =====================================
-
-def get_region_icon(region):
-
-
-    icon_name = REGION_ICONS.get(
-
-        region
-
-    )
-
-
-    if not icon_name:
-
-        return None
-
-
-
-    path = os.path.join(
-
-        REGION_PATH,
-
-        icon_name
-
-    )
-
-
-
-    if path not in REGION_CACHE:
-
-
-        if not os.path.exists(path):
-
-            return None
-
-
-
-        icon = Image.open(
-
-            path
-
-        ).convert(
-
-            "RGBA"
+            card["file"]
 
         )
 
 
 
-        icon = icon.resize(
+        file = discord.File(
 
-            (
+            card["file"],
 
-                60,
-
-                60
-
-            ),
-
-            Image.LANCZOS
+            filename=file_name
 
         )
 
 
-        REGION_CACHE[path] = icon
 
+        embed.set_image(
 
-
-    return REGION_CACHE[path]
-
-
-
-
-
-# =====================================
-# ПОДГОТОВКА АРТА
-# =====================================
-
-def prepare_art(image):
-
-
-    ratio = max(
-
-        ART_WIDTH / image.width,
-
-        ART_HEIGHT / image.height
-
-    )
-
-
-    image = image.resize(
-
-        (
-
-            int(image.width * ratio),
-
-            int(image.height * ratio)
-
-        ),
-
-        Image.LANCZOS
-
-    )
-
-
-
-    left = (
-
-        image.width - ART_WIDTH
-
-    ) // 2
-
-
-
-    top = (
-
-        image.height - ART_HEIGHT
-
-    ) // 2
-
-
-
-    return image.crop(
-
-        (
-
-            left,
-
-            top,
-
-            left + ART_WIDTH,
-
-            top + ART_HEIGHT
-
-        )
-
-    )
-
-
-
-
-
-# =====================================
-# АРТ С КЭШЕМ
-# =====================================
-
-def get_art(path):
-
-
-    if path not in ART_CACHE:
-
-
-        image = Image.open(
-
-            path
-
-        ).convert(
-
-            "RGBA"
-
-        )
-
-
-        ART_CACHE[path] = prepare_art(
-
-            image
+            url="attachment://" + file_name
 
         )
 
 
 
-    return ART_CACHE[path]
+        await interaction.edit_original_response(
+
+            embed=embed,
+
+            attachments=[file],
+
+            view=self
+
+        )
+
+
+
+
+
+    # =====================================
+    # КНОПКА НАЗАД
+    # =====================================
+
+    @discord.ui.button(
+
+        emoji="⬅️",
+
+        style=discord.ButtonStyle.secondary
+
+    )
+    async def left(
+
+        self,
+
+        interaction: discord.Interaction,
+
+        button: discord.ui.Button
+
+    ):
+
+
+        self.index -= 1
+
+
+
+        if self.index < 0:
+
+            self.index = len(self.cards) - 1
+
+
+
+        await self.update_card(
+
+            interaction
+
+        )
+
+
+
+
+
+    # =====================================
+    # КНОПКА ВПЕРЁД
+    # =====================================
+
+    @discord.ui.button(
+
+        emoji="➡️",
+
+        style=discord.ButtonStyle.secondary
+
+    )
+    async def right(
+
+        self,
+
+        interaction: discord.Interaction,
+
+        button: discord.ui.Button
+
+    ):
+
+
+        self.index += 1
+
+
+
+        if self.index >= len(self.cards):
+
+            self.index = 0
+
+
+
+        await self.update_card(
+
+            interaction
+
+        )
 # =====================================
-# ТЕКСТ ПО ЦЕНТРУ
+# PACK COG
 # =====================================
 
-def draw_center_text(
-
-    draw,
-
-    position,
-
-    text,
-
-    size,
-
-    bold=True
-
-):
+class Pack(commands.Cog):
 
 
-    font = get_font(
+    def __init__(self, bot):
 
-        FONT_BOLD if bold else FONT_REGULAR,
+        self.bot = bot
 
-        size
-
-    )
+        self.champions = load_champions()
 
 
-    box = draw.textbbox(
 
-        (0, 0),
 
-        text,
 
-        font=font
+    # =====================================
+    # OPEN PACK
+    # =====================================
+
+    @app_commands.command(
+
+        name="open_pack",
+
+        description="Открыть ILTA Pack"
 
     )
+    async def open_pack(
+
+        self,
+
+        interaction: discord.Interaction
+
+    ):
 
 
-    width = box[2] - box[0]
+        await interaction.response.defer(
 
+            thinking=True
 
-    x = position[0] - width // 2
-
-
-
-    # тень
-
-    draw.text(
-
-        (
-
-            x + 2,
-
-            position[1] + 2
-
-        ),
-
-        text,
-
-        font=font,
-
-        fill=(0,0,0,220)
-
-    )
+        )
 
 
 
-    # основной текст
-
-    draw.text(
-
-        (
-
-            x,
-
-            position[1]
-
-        ),
-
-        text,
-
-        font=font,
-
-        fill=(255,255,255)
-
-    )
+        cards = []
 
 
 
+        # создаём 3 карты
+
+        for _ in range(3):
 
 
-# =====================================
-# СОЗДАНИЕ КАРТЫ
-# =====================================
+            # выбираем чемпиона
 
-def create_card(
+            champion_id = random.choice(
 
-    champion,
+                list(self.champions.keys())
 
-    skin,
-
-    rarity,
-
-    region,
-
-    attack,
-
-    health,
-
-    defense,
-
-    ability,
-
-    image_path,
-
-    card_number
-
-):
+            )
 
 
-    os.makedirs(
+            champion = self.champions[champion_id]
 
-        OUTPUT,
 
-        exist_ok=True
+            # имя чемпиона из ключа
 
-    )
+            champion_name = champion_id
 
 
 
-    # =============================
-    # ПОЛОТНО
-    # =============================
+            # выбираем скин
 
-    card = Image.new(
+            skin = random.choice(
 
-        "RGBA",
+                champion["skins"]
 
-        (
+            )
 
-            CARD_WIDTH,
 
-            CARD_HEIGHT
 
-        ),
+            rarity = skin.get(
 
-        (
+                "tier",
 
-            0,
+                "Обычный"
 
-            0,
+            )
 
-            0,
+
+
+            attack = random.randint(
+
+                20,
+
+                100
+
+            )
+
+
+            health = random.randint(
+
+                50,
+
+                150
+
+            )
+
+
+            defense = random.randint(
+
+                10,
+
+                80
+
+            )
+
+
+
+            code = f"{random.randint(1,9999):04}"
+
+
+
+            ability = ""
+
+
+
+
+
+            # =================================
+            # ГЕНЕРАЦИЯ КАРТЫ
+            # =================================
+
+            try:
+
+
+                card_file = await asyncio.wait_for(
+
+                    asyncio.to_thread(
+
+                        create_card,
+
+                        champion_name,
+
+                        skin["name"],
+
+                        rarity,
+
+                        champion["region"],
+
+                        attack,
+
+                        health,
+
+                        defense,
+
+                        ability,
+
+                        skin["file"],
+
+                        code
+
+                    ),
+
+                    timeout=15
+
+                )
+
+
+
+            except asyncio.TimeoutError:
+
+
+                await interaction.edit_original_response(
+
+                    content="❌ Генерация карты слишком долго"
+
+                )
+
+                return
+
+
+
+            except Exception as e:
+
+
+                await interaction.edit_original_response(
+
+                    content=f"❌ Ошибка генерации карты:\n```{e}```"
+
+                )
+
+                return
+            # =================================
+            # СОХРАНЕНИЕ В POSTGRESQL
+            # =================================
+
+            try:
+
+                await add_card(
+
+                    interaction.user.id,
+
+                    code,
+
+                    champion_name,
+
+                    skin["name"],
+
+                    champion["region"],
+
+                    rarity,
+
+                    attack,
+
+                    defense,
+
+                    health
+
+                )
+
+
+            except Exception as e:
+
+
+                await interaction.edit_original_response(
+
+                    content=f"❌ Ошибка PostgreSQL:\n```{e}```"
+
+                )
+
+                return
+
+
+
+
+
+            # =================================
+            # ДОБАВЛЕНИЕ КАРТЫ В ПАК
+            # =================================
+
+            cards.append({
+
+                "champion": champion_name,
+
+                "skin": skin["name"],
+
+                "rarity": rarity,
+
+                "region": champion["region"],
+
+                "attack": attack,
+
+                "health": health,
+
+                "defense": defense,
+
+                "ability": ability,
+
+                "code": code,
+
+                "file": card_file
+
+            })
+
+
+
+
+
+        # =====================================
+        # ПОКАЗ ПЕРВОЙ КАРТЫ
+        # =====================================
+
+        first = cards[0]
+
+
+        embed = create_embed(
+
+            first,
 
             0
 
         )
 
-    )
 
+        file_name = os.path.basename(
 
-
-    # =============================
-    # АРТ
-    # =============================
-
-    art = get_art(
-
-        image_path
-
-    )
-
-
-    card.alpha_composite(
-
-        art,
-
-        (
-
-            ART_X,
-
-            ART_Y
+            first["file"]
 
         )
 
-    )
 
+        file = discord.File(
 
+            first["file"],
 
-    # =============================
-    # РАМКА
-    # =============================
-
-    frame = get_frame(
-
-        rarity
-
-    )
-
-
-    if frame:
-
-        card.alpha_composite(
-
-            frame
+            filename=file_name
 
         )
-    # =============================
-    # РЕГИОН
-    # =============================
-
-    region_icon = get_region_icon(
-
-        region
-
-    )
 
 
-    if region_icon:
+        embed.set_image(
 
-        card.alpha_composite(
+            url="attachment://" + file_name
 
-            region_icon,
+        )
 
-            (
 
-                40,
+        view = PackView(
 
-                40
-
-            )
+            cards
 
         )
 
 
 
-    draw = ImageDraw.Draw(
+        await interaction.edit_original_response(
 
-        card
+            content=None,
 
-    )
+            embed=embed,
 
+            attachments=[file],
 
-
-    # =============================
-    # НОМЕР
-    # =============================
-
-    draw_center_text(
-
-        draw,
-
-        CARD_LAYOUT["number"],
-
-        f"#{card_number}",
-
-        28
-
-    )
-
-
-
-    # =============================
-    # ЧЕМПИОН
-    # =============================
-
-    draw_center_text(
-
-        draw,
-
-        CARD_LAYOUT["champion"],
-
-        champion,
-
-        38
-
-    )
-
-
-
-    # =============================
-    # СКИН
-    # =============================
-
-    if skin and skin.lower() != "default":
-
-
-        draw_center_text(
-
-            draw,
-
-            CARD_LAYOUT["skin"],
-
-            skin,
-
-            24,
-
-            False
+            view=view
 
         )
 
 
 
-    # =============================
-    # СТАТЫ
-    # =============================
 
-    draw_center_text(
 
-        draw,
+# =====================================
+# SETUP
+# =====================================
 
-        CARD_LAYOUT["attack"],
+async def setup(bot):
 
-        str(attack),
+    await bot.add_cog(
 
-        38
+        Pack(bot)
 
     )
-
-
-    draw_center_text(
-
-        draw,
-
-        CARD_LAYOUT["health"],
-
-        str(health),
-
-        38
-
-    )
-
-
-    draw_center_text(
-
-        draw,
-
-        CARD_LAYOUT["defense"],
-
-        str(defense),
-
-        38
-
-    )
-
-
-
-    # =============================
-    # СПОСОБНОСТЬ
-    # =============================
-
-    if ability:
-
-
-        draw_center_text(
-
-            draw,
-
-            CARD_LAYOUT["ability"],
-
-            ability,
-
-            20,
-
-            False
-
-        )
-
-
-
-    # =============================
-    # СОХРАНЕНИЕ
-    # =============================
-
-    filename = (
-
-        f"{champion}_{card_number}.png"
-
-    )
-
-
-    filename = filename.replace(
-
-        " ",
-
-        "_"
-
-    )
-
-
-
-    path = os.path.join(
-
-        OUTPUT,
-
-        filename
-
-    )
-
-
-
-    # оптимизация размера
-
-    card.save(
-
-        path,
-
-        optimize=True,
-
-        compress_level=9
-
-    )
-
-
-
-    return path
