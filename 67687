@@ -1,17 +1,18 @@
-# смещение кадра
-OFFSET_X = 0
-OFFSET_Y = -80
+    # смещение кадра
+
+    OFFSET_X = 0
+    OFFSET_Y = -80
 
 
-left = (
+    left = (
 
-    image.width - ART_WIDTH
+        image.width - ART_WIDTH
 
-) // 2 + OFFSET_X
+    ) // 2 + OFFSET_X
 
 
-top = (
+    top = (
 
-    image.height - ART_HEIGHT
+        image.height - ART_HEIGHT
 
-) // 2 + OFFSET_Y
+    ) // 2 + OFFSET_Y
