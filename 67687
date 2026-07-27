@@ -1,111 +1,41 @@
-import json
-import os
-
-
 # =====================================
-# НАСТРОЙКИ
+# ПОДГОТОВКА АРТА
 # =====================================
 
-FILE = "cards.json"
+def prepare_art(image):
 
+    image = image.resize(
 
-REGION_MAP = {
+        (
+            ART_WIDTH,
+            ART_HEIGHT
+        ),
 
-    "Демасия": "Demacia",
-
-    "Ноксус": "Noxus"
-
-}
-
-
-
-
-
-# =====================================
-# ОБНОВЛЕНИЕ
-# =====================================
-
-def update_cards():
-
-
-    if not os.path.exists(FILE):
-
-        print(
-            "❌ cards.json не найден"
-        )
-
-        return
-
-
-
-    with open(
-
-        FILE,
-
-        "r",
-
-        encoding="utf-8"
-
-    ) as f:
-
-        cards = json.load(f)
-
-
-
-    count = 0
-
-
-
-    for card_id, card in cards.items():
-
-
-        region = card.get(
-            "region"
-        )
-
-
-        if region in REGION_MAP:
-
-
-            card["region_en"] = REGION_MAP[region]
-
-            count += 1
-
-
-
-    with open(
-
-        FILE,
-
-        "w",
-
-        encoding="utf-8"
-
-    ) as f:
-
-
-        json.dump(
-
-            cards,
-
-            f,
-
-            ensure_ascii=False,
-
-            indent=4
-
-        )
-
-
-
-    print(
-        f"✅ Обновлено карт: {count}"
+        Image.LANCZOS
     )
 
+    return image
 
 
 
 
-if __name__ == "__main__":
 
-    update_cards()
+# =====================================
+# АРТ С КЭШЕМ
+# =====================================
+
+def get_art(path):
+
+    if path not in ART_CACHE:
+
+        image = Image.open(
+            path
+        ).convert(
+            "RGBA"
+        )
+
+        ART_CACHE[path] = prepare_art(
+            image
+        )
+
+    return ART_CACHE[path]
