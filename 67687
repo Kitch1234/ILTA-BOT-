@@ -1,108 +1,50 @@
-{
-    "Fiora_0": {
-        "champion": "Fiora",
-        "region": "Demacia",
-        "name": "default",
-        "num": 0
-    },
-    "Fiora_1": {
-        "champion": "Fiora",
-        "region": "Demacia",
-        "name": "Royal Guard Fiora",
-        "num": 1
-    },
-    "Fiora_2": {
-        "champion": "Fiora",
-        "region": "Demacia",
-        "name": "Nightraven Fiora",
-        "num": 2
-    },
-    "Fiora_22": {
-        "champion": "Fiora",
-        "region": "Demacia",
-        "name": "Soaring Sword Fiora",
-        "num": 22
-    },
-    "Fiora_41": {
-        "champion": "Fiora",
-        "region": "Demacia",
-        "name": "Pulsefire Fiora",
-        "num": 41
-    },
-    "Fiora_50": {
-        "champion": "Fiora",
-        "region": "Demacia",
-        "name": "Lunar Beast Fiora",
-        "num": 50
-    },
-    "Fiora_51": {
-        "champion": "Fiora",
-        "region": "Demacia",
-        "name": "Prestige Lunar Beast Fiora",
-        "num": 51
-    },
-    "Fiora_60": {
-        "champion": "Fiora",
-        "region": "Demacia",
-        "name": "Bewitching Fiora",
-        "num": 60
-    },
-    "Fiora_80": {
-        "champion": "Fiora",
-        "region": "Demacia",
-        "name": "Dragonmancer Fiora",
-        "num": 80
-    },
-    "Galio_0": {
-        "champion": "Galio",
-        "region": "Demacia",
-        "name": "default",
-        "num": 0
-    },
-    "Galio_1": {
-        "champion": "Galio",
-        "region": "Demacia",
-        "name": "Enchanted Galio",
-        "num": 1
-    },
-    "Galio_2": {
-        "champion": "Galio",
-        "region": "Demacia",
-        "name": "Hextech Galio",
-        "num": 2
-    },
-    "Galio_3": {
-        "champion": "Galio",
-        "region": "Demacia",
-        "name": "Commando Galio",
-        "num": 3
-    },
-    "Galio_4": {
-        "champion": "Galio",
-        "region": "Demacia",
-        "name": "Gatekeeper Galio",
-        "num": 4
-    },
-    "Galio_5": {
-        "champion": "Galio",
-        "region": "Demacia",
-        "name": "Debonair Galio",
-        "num": 5
-    },
-    "Garen_1": {
-        "champion": "Garen",
-        "region": "Demacia",
-        "name": "Sanguine Garen",
-        "num": 1
-    },
-    "Garen_2": {
-        "champion": "Garen",
-        "region": "Demacia",
-        "name": "Desert Trooper Garen",
-        "num": 2
-    },
-    "Garen_3": {
-        "champion": "Garen",
-        "region": "Demacia",
-        "name": "Commando Garen",
-        "num": 3
+
+C:\Users\Ketek'\Desktop\qantum_universe\data>tree /F
+Структура папок тома Local Disk
+Серийный номер тома: 0000000B 46A3:5EF7
+C:.
+│   abilities.py
+│   ability_loader.py
+│   cards_ru.json
+│   card_layout.py
+│   champions.json
+│   champions.py
+│   champions_ru.json
+│   champion_assets.py
+│   champion_loader.py
+│   init.py
+│   Items.py
+│   loot.py
+│   monsters.py
+│   quests.json
+│   quests.py
+│   regions.py
+│   shop.json
+│   skins.json
+│   skin_rarity.json
+│   skin_translate.json
+│   translations.py
+│   translation_loader.py
+│   update_champions.py
+│   world_map.json
+│   __init__.py
+│
+├───champions
+├───items
+├───mobs
+├───quests
+├───regions
+└───__pycache__
+        abilities.cpython-312.pyc
+        ability_loader.cpython-312.pyc
+        card_layout.cpython-312.pyc
+        champion_assets.cpython-312.pyc
+        champion_loader.cpython-312.pyc
+        loot.cpython-312.pyc
+        monsters.cpython-312.pyc
+        regions.cpython-312.pyc
+        translations.cpython-312.pyc
+        __init__.cpython-312.pyc
+
+
+C:\Users\Ketek'\Desktop\qantum_universe\data>
