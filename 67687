@@ -793,3 +793,391 @@ def wrap_text(
 
 
     return lines
+# =====================================
+# СОЗДАНИЕ КАРТЫ
+# =====================================
+
+def create_card(
+
+    champion,
+
+    skin,
+
+    rarity,
+
+    region,
+
+    attack,
+
+    health,
+
+    defense,
+
+    ability,
+
+    image_path,
+
+    card_number
+
+):
+
+
+    os.makedirs(
+
+        OUTPUT,
+
+        exist_ok=True
+
+    )
+
+
+
+    # =================================
+    # ПОЛОТНО
+    # =================================
+
+    card = Image.new(
+
+        "RGBA",
+
+        (
+
+            CARD_WIDTH,
+
+            CARD_HEIGHT
+
+        ),
+
+        (
+
+            0,
+
+            0,
+
+            0,
+
+            0
+
+        )
+
+    )
+
+
+
+    # =================================
+    # АРТ
+    # =================================
+
+    art = get_art(
+
+        image_path
+
+    )
+
+
+    card.alpha_composite(
+
+        art,
+
+        (
+
+            ART_X,
+
+            ART_Y
+
+        )
+
+    )
+
+
+
+
+
+    # =================================
+    # РАМКА
+    # =================================
+
+    frame = get_frame(
+
+        rarity
+
+    )
+
+
+    if frame:
+
+        card.alpha_composite(
+
+            frame
+
+        )
+
+
+
+
+
+    # =================================
+    # ИКОНКА РЕГИОНА
+    # =================================
+
+    region_icon = get_region_icon(
+
+        region
+
+    )
+
+
+    if region_icon:
+
+
+        card.alpha_composite(
+
+            region_icon,
+
+            (
+
+                45,
+
+                45
+
+            )
+
+        )
+
+
+
+
+
+    draw = ImageDraw.Draw(
+
+        card
+
+    )
+
+
+
+
+
+    # =================================
+    # НОМЕР
+    # =================================
+
+    draw_center_text(
+
+        draw,
+
+        CARD_LAYOUT["number"],
+
+        f"#{card_number}",
+
+        30,
+
+        rarity
+
+    )
+
+
+
+
+
+    # =================================
+    # ЧЕМПИОН
+    # =================================
+
+    draw_center_text(
+
+        draw,
+
+        CARD_LAYOUT["champion"],
+
+        champion,
+
+        42,
+
+        rarity,
+
+        True,
+
+        2
+
+    )
+
+
+
+
+
+    # =================================
+    # СКИН
+    # =================================
+
+    if skin and skin.lower() != "default":
+
+
+        draw_center_text(
+
+            draw,
+
+            CARD_LAYOUT["skin"],
+
+            skin,
+
+            28,
+
+            rarity,
+
+            False
+
+        )
+
+
+
+
+
+    # =================================
+    # СТАТЫ
+    # =================================
+
+    draw_center_text(
+
+        draw,
+
+        CARD_LAYOUT["attack"],
+
+        str(attack),
+
+        42,
+
+        rarity
+
+    )
+
+
+    draw_center_text(
+
+        draw,
+
+        CARD_LAYOUT["health"],
+
+        str(health),
+
+        42,
+
+        rarity
+
+    )
+
+
+    draw_center_text(
+
+        draw,
+
+        CARD_LAYOUT["defense"],
+
+        str(defense),
+
+        42,
+
+        rarity
+
+    )
+    # =================================
+    # СПОСОБНОСТЬ
+    # =================================
+
+    if ability:
+
+
+        lines = wrap_text(
+
+            ability,
+
+            32
+
+        )
+
+
+        y = CARD_LAYOUT["ability"][1]
+
+
+        for line in lines:
+
+
+            draw_center_text(
+
+                draw,
+
+                (
+
+                    CARD_LAYOUT["ability"][0],
+
+                    y
+
+                ),
+
+                line,
+
+                22,
+
+                rarity,
+
+                False
+
+            )
+
+
+            y += 35
+
+
+
+
+
+    # =================================
+    # СОХРАНЕНИЕ
+    # =================================
+
+    filename = (
+
+        f"{champion}_{card_number}.png"
+
+    )
+
+
+    filename = filename.replace(
+
+        " ",
+
+        "_"
+
+    )
+
+
+
+    path = os.path.join(
+
+        OUTPUT,
+
+        filename
+
+    )
+
+
+
+    # =================================
+    # ОПТИМИЗАЦИЯ
+    # =================================
+
+    card.save(
+
+        path,
+
+        "PNG",
+
+        optimize=True,
+
+        compress_level=9
+
+    )
+
+
+
+    return path
