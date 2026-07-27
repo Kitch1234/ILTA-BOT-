@@ -1,59 +1,13 @@
-def prepare_art(image):
+# =====================================
+# АРТ
+# =====================================
+
+ART_WIDTH = 776
+
+ART_HEIGHT = 699
 
 
-    ratio = max(
-
-        ART_WIDTH / image.width,
-
-        ART_HEIGHT / image.height
-
-    )
+ART_X = 60
 
 
-    image = image.resize(
-
-        (
-
-            int(image.width * ratio),
-
-            int(image.height * ratio)
-
-        ),
-
-        Image.LANCZOS
-
-    )
-
-
-
-    left = (
-
-        image.width - ART_WIDTH
-
-    ) // 2
-
-
-
-    top = (
-
-        image.height - ART_HEIGHT
-
-    ) // 2
-
-
-
-    return image.crop(
-
-        (
-
-            left,
-
-            top,
-
-            left + ART_WIDTH,
-
-            top + ART_HEIGHT
-
-        )
-
-    )
+ART_Y = 93
