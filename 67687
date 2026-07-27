@@ -1,6 +1,10 @@
 def prepare_art(image):
 
-    ratio = max(
+
+    # увеличиваем картинку так,
+    # чтобы она полностью закрыла область
+
+    scale = max(
 
         ART_WIDTH / image.width,
 
@@ -9,35 +13,37 @@ def prepare_art(image):
     )
 
 
-    new_width = int(
-        image.width * ratio
-    )
+    new_size = (
 
+        int(image.width * scale),
 
-    new_height = int(
-        image.height * ratio
+        int(image.height * scale)
+
     )
 
 
     image = image.resize(
 
-        (
-            new_width,
-            new_height
-        ),
+        new_size,
 
         Image.LANCZOS
 
     )
 
 
+    # центрируем кадр
+
     left = (
-        new_width - ART_WIDTH
+
+        image.width - ART_WIDTH
+
     ) // 2
 
 
     top = (
-        new_height - ART_HEIGHT
+
+        image.height - ART_HEIGHT
+
     ) // 2
 
 
@@ -45,10 +51,15 @@ def prepare_art(image):
     return image.crop(
 
         (
+
             left,
+
             top,
+
             left + ART_WIDTH,
+
             top + ART_HEIGHT
+
         )
 
     )
