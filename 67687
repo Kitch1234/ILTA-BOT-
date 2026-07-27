@@ -1,1 +1,80 @@
-https://developer.riotgames.com/docs/lol#data-dragon
+import json
+import os
+import random
+
+CARDS_PATH = os.path.join(
+    os.path.dirname(__file__),
+    "cards.json"
+)
+
+_cards = None
+
+
+def load_cards():
+
+    global _cards
+
+    if _cards is None:
+
+        with open(
+            CARDS_PATH,
+            "r",
+            encoding="utf-8"
+        ) as f:
+
+            _cards = json.load(f)
+
+    return _cards
+
+
+def get_card(card_id):
+
+    return load_cards().get(card_id)
+
+
+def get_random_card():
+
+    cards = list(load_cards().values())
+
+    return random.choice(cards)
+
+
+def get_art_path(card):
+
+    champion = card["champion_en"]
+
+    card_id = card["id"]
+
+    base = os.path.join(
+        "assets",
+        "champions",
+        champion
+    )
+
+    png = os.path.join(
+        base,
+        card_id + ".png"
+    )
+
+    jpg = os.path.join(
+        base,
+        card_id + ".jpg"
+    )
+
+    jpeg = os.path.join(
+        base,
+        card_id + ".jpeg"
+    )
+
+    if os.path.exists(png):
+        return png
+
+    if os.path.exists(jpg):
+        return jpg
+
+    if os.path.exists(jpeg):
+        return jpeg
+
+    raise FileNotFoundError(
+        f"Не найден арт: {card_id}"
+    )
