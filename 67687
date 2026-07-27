@@ -1,80 +1,125 @@
-import json
-import os
-import random
+import discord
+from discord.ext import commands
+from discord import app_commands
 
-CARDS_PATH = os.path.join(
-    os.path.dirname(__file__),
-    "cards.json"
+import random
+import os
+import asyncio
+
+from database.cards import add_card
+
+from data.translation_loader import (
+    get_random_card,
+    get_art_path
 )
 
-_cards = None
+from data.ability_loader import get_ability
+
+from generators.card_generator import create_card
 
 
-def load_cards():
+# =====================================
+# EMBED КАРТЫ
+# =====================================
 
-    global _cards
+def create_embed(card, index):
 
-    if _cards is None:
-
-        with open(
-            CARDS_PATH,
-            "r",
-            encoding="utf-8"
-        ) as f:
-
-            _cards = json.load(f)
-
-    return _cards
-
-
-def get_card(card_id):
-
-    return load_cards().get(card_id)
-
-
-def get_random_card():
-
-    cards = list(load_cards().values())
-
-    return random.choice(cards)
-
-
-def get_art_path(card):
-
-    champion = card["champion_en"]
-
-    card_id = card["id"]
-
-    base = os.path.join(
-        "assets",
-        "champions",
-        champion
+    embed = discord.Embed(
+        color=0xD4AF37
     )
 
-    png = os.path.join(
-        base,
-        card_id + ".png"
+    embed.add_field(
+        name="🛡 Чемпион",
+        value=card["champion"],
+        inline=True
     )
 
-    jpg = os.path.join(
-        base,
-        card_id + ".jpg"
+    if card["skin"]:
+
+        embed.add_field(
+            name="✨ Образ",
+            value=card["skin"],
+            inline=True
+        )
+
+    embed.add_field(
+        name="⚔ Атака",
+        value=str(card["attack"]),
+        inline=True
     )
 
-    jpeg = os.path.join(
-        base,
-        card_id + ".jpeg"
+    embed.add_field(
+        name="❤️ Здоровье",
+        value=str(card["health"]),
+        inline=True
     )
 
-    if os.path.exists(png):
-        return png
-
-    if os.path.exists(jpg):
-        return jpg
-
-    if os.path.exists(jpeg):
-        return jpeg
-
-    raise FileNotFoundError(
-        f"Не найден арт: {card_id}"
+    embed.add_field(
+        name="🛡 Защита",
+        value=str(card["defense"]),
+        inline=True
     )
+
+    if card["ability"]:
+
+        embed.add_field(
+            name="✨ Способность",
+            value=card["ability"],
+            inline=False
+        )
+
+    embed.set_footer(
+        text=f"🎴 Карта {index + 1}/3"
+    )
+
+    return embed
+
+
+# =====================================
+# VIEW ПАКА
+# =====================================
+
+class PackView(discord.ui.View):
+
+    def __init__(self, cards):
+
+        super().__init__(
+            timeout=180
+        )
+
+        self.cards = cards
+        self.index = 0
+
+
+    async def update_card(
+        self,
+        interaction: discord.Interaction
+    ):
+
+        await interaction.response.defer()
+
+        card = self.cards[self.index]
+
+        embed = create_embed(
+            card,
+            self.index
+        )
+
+        file_name = os.path.basename(
+            card["file"]
+        )
+
+        file = discord.File(
+            card["file"],
+            filename=file_name
+        )
+
+        embed.set_image(
+            url="attachment://" + file_name
+        )
+
+        await interaction.edit_original_response(
+            embed=embed,
+            attachments=[file],
+            view=self
+        )
