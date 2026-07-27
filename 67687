@@ -1,73 +1,111 @@
-{
-    "Fiora_0": {
-        "id": "Fiora_0",
-        "champion_en": "Fiora",
-        "skin_en": "default",
-        "champion": "Фиора",
-        "skin": "",
-        "region": "Демасия",
-        "rarity": "Обычный",
-        "show_rarity": false,
-        "ability": "",
-        "quote": ""
-    },
-    "Fiora_1": {
-        "id": "Fiora_1",
-        "champion_en": "Fiora",
-        "skin_en": "Royal Guard Fiora",
-        "champion": "Фиора",
-        "skin": "Фиора из королевской гвардии",
-        "region": "Демасия",
-        "rarity": "Редкий",
-        "show_rarity": false,
-        "ability": "",
-        "quote": ""
-    },
-    "Fiora_2": {
-        "id": "Fiora_2",
-        "champion_en": "Fiora",
-        "skin_en": "Nightraven Fiora",
-        "champion": "Фиора",
-        "skin": "Фиора Ночной Ворон",
-        "region": "Демасия",
-        "rarity": "Редкий",
-        "show_rarity": false,
-        "ability": "",
-        "quote": ""
-    },
-    "Fiora_22": {
-        "id": "Fiora_22",
-        "champion_en": "Fiora",
-        "skin_en": "Soaring Sword Fiora",
-        "champion": "Фиора",
-        "skin": "Парящий клинок Фиора",
-        "region": "Демасия",
-        "rarity": "Редкий",
-        "show_rarity": false,
-        "ability": "",
-        "quote": ""
-    },
-    "Fiora_41": {
-        "id": "Fiora_41",
-        "champion_en": "Fiora",
-        "skin_en": "Pulsefire Fiora",
-        "champion": "Фиора",
-        "skin": "Фиора Импульсный Огонь",
-        "region": "Демасия",
-        "rarity": "Редкий",
-        "show_rarity": false,
-        "ability": "",
-        "quote": ""
-    },
-    "Fiora_50": {
-        "id": "Fiora_50",
-        "champion_en": "Fiora",
-        "skin_en": "Lunar Beast Fiora",
-        "champion": "Фиора",
-        "skin": "Лунный зверь Фиора",
-        "region": "Демасия",
-        "rarity": "Редкий",
-        "show_rarity": false,
-        "ability": "",
-        "quote": ""
-    },
+import json
+import os
+
+
+# =====================================
+# НАСТРОЙКИ
+# =====================================
+
+FILE = "cards.json"
+
+
+REGION_MAP = {
+
+    "Демасия": "Demacia",
+
+    "Ноксус": "Noxus"
+
+}
+
+
+
+
+
+# =====================================
+# ОБНОВЛЕНИЕ
+# =====================================
+
+def update_cards():
+
+
+    if not os.path.exists(FILE):
+
+        print(
+            "❌ cards.json не найден"
+        )
+
+        return
+
+
+
+    with open(
+
+        FILE,
+
+        "r",
+
+        encoding="utf-8"
+
+    ) as f:
+
+        cards = json.load(f)
+
+
+
+    count = 0
+
+
+
+    for card_id, card in cards.items():
+
+
+        region = card.get(
+            "region"
+        )
+
+
+        if region in REGION_MAP:
+
+
+            card["region_en"] = REGION_MAP[region]
+
+            count += 1
+
+
+
+    with open(
+
+        FILE,
+
+        "w",
+
+        encoding="utf-8"
+
+    ) as f:
+
+
+        json.dump(
+
+            cards,
+
+            f,
+
+            ensure_ascii=False,
+
+            indent=4
+
+        )
+
+
+
+    print(
+        f"✅ Обновлено карт: {count}"
+    )
+
+
+
+
+
+if __name__ == "__main__":
+
+    update_cards()
