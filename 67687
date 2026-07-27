@@ -1,2 +1,17 @@
-print("ART PREPARE:", image.size)
-print("ZOOM:", zoom)
+# смещение кадра
+OFFSET_X = 0
+OFFSET_Y = -80
+
+
+left = (
+
+    image.width - ART_WIDTH
+
+) // 2 + OFFSET_X
+
+
+top = (
+
+    image.height - ART_HEIGHT
+
+) // 2 + OFFSET_Y
