@@ -1,286 +1,795 @@
-import json
+from PIL import Image, ImageDraw, ImageFont
 import os
-import random
 
 
 # =====================================
-# ПУТЬ К CARDS.JSON
+# НАСТРОЙКИ
 # =====================================
 
-CARDS_PATH = os.path.join(
-    os.path.dirname(__file__),
-    "cards.json"
+CARD_WIDTH = 1060
+CARD_HEIGHT = 1484
+
+
+ASSETS = "assets"
+
+OUTPUT = "generated_cards"
+
+
+
+# =====================================
+# КЭШИ
+# =====================================
+
+FONT_CACHE = {}
+
+FRAME_CACHE = {}
+
+REGION_CACHE = {}
+
+ART_CACHE = {}
+
+
+
+
+
+# =====================================
+# ШРИФТЫ
+# =====================================
+
+FONT_BOLD = os.path.join(
+    ASSETS,
+    "fonts",
+    "Beaufort-Bold.ttf"
 )
 
 
-# Кэш карт
-
-_cards = None
-
-
-
-# =====================================
-# ЗАГРУЗКА КАРТ
-# =====================================
-
-def load_cards():
-
-    global _cards
-
-
-    if _cards is None:
-
-        if not os.path.exists(CARDS_PATH):
-
-            print(
-                "❌ cards.json не найден"
-            )
-
-            return {}
-
-
-        with open(
-
-            CARDS_PATH,
-
-            "r",
-
-            encoding="utf-8"
-
-        ) as file:
-
-            _cards = json.load(file)
-
-
-
-    return _cards
+FONT_REGULAR = os.path.join(
+    ASSETS,
+    "fonts",
+    "Beaufort-Regular.ttf"
+)
 
 
 
 
 
 # =====================================
-# ПОЛУЧИТЬ КАРТУ ПО ID
+# ЦВЕТА РЕДКОСТИ
 # =====================================
 
-def get_card(card_id):
-
-    cards = load_cards()
+RARITY_COLORS = {
 
 
-    return cards.get(
+    "Обычный":
+        (220, 220, 220),
 
-        card_id
+
+    "Редкий":
+        (80, 180, 255),
+
+
+    "Эпический":
+        (180, 80, 255),
+
+
+    "Легендарный":
+        (255, 170, 40),
+
+
+    "Мифический":
+        (255, 70, 180),
+
+
+    "Престижный":
+        (255, 220, 80),
+
+
+    "Чемпионский":
+        (255, 80, 80)
+
+}
+
+
+
+
+
+# =====================================
+# РАМКИ
+# =====================================
+
+FRAME_PATHS = {
+
+
+    "Обычный":
+        "common.png",
+
+
+    "Редкий":
+        "rare.png",
+
+
+    "Эпический":
+        "epic.png",
+
+
+    "Легендарный":
+        "legendary.png",
+
+
+    "Мифический":
+        "mythic.png",
+
+
+    "Престижный":
+        "prestige.png",
+
+
+    "Чемпионский":
+        "ultimate.png"
+
+}
+
+
+
+
+
+# =====================================
+# РЕГИОНЫ
+# =====================================
+
+REGION_ICONS = {
+
+
+    "Демасия":
+        "Demacia.png",
+
+
+    "Ноксус":
+        "Noxus.png"
+
+}
+
+
+REGION_PATH = os.path.join(
+    ASSETS,
+    "regions"
+)
+
+
+
+
+
+# =====================================
+# АРТ
+# =====================================
+
+ART_WIDTH = 870
+
+ART_HEIGHT = 710
+
+
+ART_X = (
+    CARD_WIDTH - ART_WIDTH
+) // 2
+
+
+ART_Y = 185
+# =====================================
+# ПОЗИЦИИ ЭЛЕМЕНТОВ
+# =====================================
+
+CARD_LAYOUT = {
+
+
+    # номер карты
+
+    "number": (
+
+        900,
+
+        90
+
+    ),
+
+
+
+    # чемпион
+
+    "champion": (
+
+        530,
+
+        1010
+
+    ),
+
+
+
+    # скин
+
+    "skin": (
+
+        530,
+
+        1080
+
+    ),
+
+
+
+    # статы
+
+    "attack": (
+
+        250,
+
+        1210
+
+    ),
+
+
+    "health": (
+
+        530,
+
+        1210
+
+    ),
+
+
+    "defense": (
+
+        810,
+
+        1210
+
+    ),
+
+
+
+    # способность
+
+    "ability":
+
+    (
+
+        530,
+
+        1320
+
+    )
+
+}
+
+
+
+
+
+# =====================================
+# ЗАГРУЗКА ШРИФТОВ
+# =====================================
+
+def get_font(
+
+    path,
+
+    size
+
+):
+
+
+    key = (
+
+        path,
+
+        size
+
+    )
+
+
+    if key not in FONT_CACHE:
+
+
+        FONT_CACHE[key] = ImageFont.truetype(
+
+            path,
+
+            size
+
+        )
+
+
+    return FONT_CACHE[key]
+
+
+
+
+
+
+
+# =====================================
+# РАМКА
+# =====================================
+
+def get_frame(
+
+    rarity
+
+):
+
+
+    frame_name = FRAME_PATHS.get(
+
+        rarity,
+
+        "common.png"
+
+    )
+
+
+    path = os.path.join(
+
+        ASSETS,
+
+        "frames",
+
+        frame_name
 
     )
 
 
 
+    if path not in FRAME_CACHE:
+
+
+        if not os.path.exists(path):
+
+            return None
+
+
+
+        frame = Image.open(
+
+            path
+
+        ).convert(
+
+            "RGBA"
+
+        )
+
+
+
+        frame = frame.resize(
+
+            (
+
+                CARD_WIDTH,
+
+                CARD_HEIGHT
+
+            ),
+
+            Image.LANCZOS
+
+        )
+
+
+
+        FRAME_CACHE[path] = frame
+
+
+
+    return FRAME_CACHE[path]
+
+
+
+
+
 
 
 # =====================================
-# СЛУЧАЙНАЯ КАРТА
+# ИКОНКА РЕГИОНА
 # =====================================
 
-def get_random_card():
+def get_region_icon(
 
-    cards = list(
+    region
 
-        load_cards().values()
+):
+
+
+    icon_name = REGION_ICONS.get(
+
+        region
 
     )
 
 
-    if not cards:
+    if not icon_name:
 
         return None
 
 
 
-    return random.choice(
+    path = os.path.join(
 
-        cards
+        REGION_PATH,
 
-    )
-
-
-
-
-
-# =====================================
-# КАРТЫ РЕГИОНА
-# =====================================
-
-def get_cards_by_region(region):
-
-    result = []
-
-
-    for card in load_cards().values():
-
-        if card.get("region") == region:
-
-            result.append(card)
-
-
-
-    return result
-
-
-
-
-
-# =====================================
-# КАРТЫ РЕДКОСТИ
-# =====================================
-
-def get_cards_by_rarity(rarity):
-
-    result = []
-
-
-    for card in load_cards().values():
-
-        if card.get("rarity") == rarity:
-
-            result.append(card)
-
-
-
-    return result
-
-
-
-
-
-# =====================================
-# КАРТЫ ЧЕМПИОНА
-# =====================================
-
-def get_cards_by_champion(champion):
-
-    result = []
-
-
-    for card in load_cards().values():
-
-        if card.get("champion") == champion:
-
-            result.append(card)
-
-
-
-    return result
-
-
-
-
-
-# =====================================
-# ПОИСК АРТА КАРТЫ
-# =====================================
-
-def get_art_path(card):
-
-
-    region_en = card.get(
-
-        "region_en"
+        icon_name
 
     )
 
 
-    champion_en = card.get(
 
-        "champion_en"
-
-    )
+    if path not in REGION_CACHE:
 
 
-    card_id = card.get(
+        if not os.path.exists(path):
 
-        "id"
-
-    )
+            return None
 
 
-    if not region_en:
 
-        raise ValueError(
+        icon = Image.open(
 
-            "В cards.json нет region_en"
+            path
 
-        )
+        ).convert(
 
-
-    if not champion_en:
-
-        raise ValueError(
-
-            "В cards.json нет champion_en"
-
-        )
-
-
-    if not card_id:
-
-        raise ValueError(
-
-            "В cards.json нет id"
+            "RGBA"
 
         )
 
 
 
-    base_path = os.path.join(
+        icon = icon.resize(
 
-        "assets",
+            (
 
-        "champions",
+                70,
 
-        region_en,
+                70
 
-        champion_en
+            ),
 
-    )
-
-
-
-    extensions = [
-
-        ".png",
-
-        ".jpg",
-
-        ".jpeg",
-
-        ".webp"
-
-    ]
-
-
-
-    for ext in extensions:
-
-
-        path = os.path.join(
-
-            base_path,
-
-            card_id + ext
+            Image.LANCZOS
 
         )
 
 
 
-        if os.path.exists(path):
-
-            return path
+        REGION_CACHE[path] = icon
 
 
 
-    raise FileNotFoundError(
+    return REGION_CACHE[path]
+# =====================================
+# ПОДГОТОВКА АРТА
+# =====================================
 
-        f"❌ Арт не найден: {base_path}/{card_id}"
+def prepare_art(image):
+
+
+    ratio = max(
+
+        ART_WIDTH / image.width,
+
+        ART_HEIGHT / image.height
 
     )
+
+
+    image = image.resize(
+
+        (
+
+            int(image.width * ratio),
+
+            int(image.height * ratio)
+
+        ),
+
+        Image.LANCZOS
+
+    )
+
+
+    left = (
+
+        image.width - ART_WIDTH
+
+    ) // 2
+
+
+
+    top = (
+
+        image.height - ART_HEIGHT
+
+    ) // 2
+
+
+
+    return image.crop(
+
+        (
+
+            left,
+
+            top,
+
+            left + ART_WIDTH,
+
+            top + ART_HEIGHT
+
+        )
+
+    )
+
+
+
+
+
+# =====================================
+# АРТ С КЭШЕМ
+# =====================================
+
+def get_art(path):
+
+
+    if path not in ART_CACHE:
+
+
+        image = Image.open(
+
+            path
+
+        ).convert(
+
+            "RGBA"
+
+        )
+
+
+        ART_CACHE[path] = prepare_art(
+
+            image
+
+        )
+
+
+
+    return ART_CACHE[path]
+
+
+
+
+
+
+
+# =====================================
+# РАЗРЯДКА ТЕКСТА
+# =====================================
+
+def spaced_text(text, spacing=3):
+
+
+    return " ".join(
+
+        list(text)
+
+    ) if spacing else text
+
+
+
+
+
+
+
+# =====================================
+# РИСОВАНИЕ ТЕКСТА ПО ЦЕНТРУ
+# =====================================
+
+def draw_center_text(
+
+    draw,
+
+    position,
+
+    text,
+
+    size,
+
+    rarity="Обычный",
+
+    bold=True,
+
+    spacing=0
+
+):
+
+
+    if not text:
+
+        return
+
+
+
+    if spacing:
+
+        text = spaced_text(
+
+            text,
+
+            spacing
+
+        )
+
+
+
+    font = get_font(
+
+        FONT_BOLD if bold else FONT_REGULAR,
+
+        size
+
+    )
+
+
+
+    # уменьшаем длинный текст
+
+    while True:
+
+
+        box = draw.textbbox(
+
+            (0,0),
+
+            text,
+
+            font=font
+
+        )
+
+
+        width = box[2] - box[0]
+
+
+        if width <= 850:
+
+            break
+
+
+
+        size -= 2
+
+
+        font = get_font(
+
+            FONT_BOLD if bold else FONT_REGULAR,
+
+            size
+
+        )
+
+
+
+    x = position[0] - width // 2
+
+
+
+    color = RARITY_COLORS.get(
+
+        rarity,
+
+        (255,255,255)
+
+    )
+
+
+
+    # тень
+
+    draw.text(
+
+        (
+
+            x + 3,
+
+            position[1] + 3
+
+        ),
+
+        text,
+
+        font=font,
+
+        fill=(0,0,0,220)
+
+    )
+
+
+
+    # основной текст
+
+    draw.text(
+
+        (
+
+            x,
+
+            position[1]
+
+        ),
+
+        text,
+
+        font=font,
+
+        fill=color
+
+    )
+
+
+
+
+
+# =====================================
+# МНОГОСТРОЧНАЯ СПОСОБНОСТЬ
+# =====================================
+
+def wrap_text(
+
+    text,
+
+    max_chars=35
+
+):
+
+
+    words = text.split()
+
+
+    lines = []
+
+    current = ""
+
+
+
+    for word in words:
+
+
+        if len(current) + len(word) + 1 <= max_chars:
+
+
+            current += " " + word
+
+
+
+        else:
+
+
+            lines.append(
+
+                current.strip()
+
+            )
+
+
+            current = word
+
+
+
+    if current:
+
+        lines.append(
+
+            current.strip()
+
+        )
+
+
+
+    return lines
