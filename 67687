@@ -1,18 +1,79 @@
-    # смещение кадра
+def prepare_art(image):
 
-    OFFSET_X = 0
-    OFFSET_Y = -80
+
+    # дополнительный зум
+
+    ZOOM = 1.6
+
+
+    target_width = int(
+
+        ART_WIDTH * ZOOM
+
+    )
+
+
+    target_height = int(
+
+        ART_HEIGHT * ZOOM
+
+    )
+
+
+    ratio = max(
+
+        target_width / image.width,
+
+        target_height / image.height
+
+    )
+
+
+
+    image = image.resize(
+
+        (
+
+            int(image.width * ratio),
+
+            int(image.height * ratio)
+
+        ),
+
+        Image.LANCZOS
+
+    )
+
 
 
     left = (
 
         image.width - ART_WIDTH
 
-    ) // 2 + OFFSET_X
+    ) // 2
+
 
 
     top = (
 
         image.height - ART_HEIGHT
 
-    ) // 2 + OFFSET_Y
+    ) // 2
+
+
+
+    return image.crop(
+
+        (
+
+            left,
+
+            top,
+
+            left + ART_WIDTH,
+
+            top + ART_HEIGHT
+
+        )
+
+    )
