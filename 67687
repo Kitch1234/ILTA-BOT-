@@ -1,74 +1,99 @@
-"""
-ILTA Ability Loader
+import json
+import os
 
-Получение способности карты
-по чемпиону и названию образа.
-"""
+CARDS_PATH = os.path.join(
+    os.path.dirname(__file__),
+    "cards.json"
+)
 
-
-from data.abilities import ABILITIES
-
-
-
-def get_ability(
-    champion,
-    skin
-):
-
-    champion_data = ABILITIES.get(
-        champion
-    )
+_cards = None
 
 
-    # Если чемпион ещё не добавлен
+def load_cards():
+    """
+    Загружает cards.json один раз.
+    """
 
-    if not champion_data:
+    global _cards
 
-        return {
+    if _cards is None:
 
-            "name": "Без способности",
+        with open(
+            CARDS_PATH,
+            "r",
+            encoding="utf-8"
+        ) as f:
 
-            "description":
-                "Особая способность отсутствует.",
+            _cards = json.load(f)
 
-            "effect": {
-
-                "type": "none",
-
-                "value": 0
-
-            }
-
-        }
+    return _cards
 
 
+def get_card(card_id):
+    """
+    Получить карту по ID.
+    """
 
-    ability = champion_data.get(
-        skin
-    )
+    cards = load_cards()
 
-
-    # Если такого образа нет
-
-    if not ability:
-
-        return {
-
-            "name": "Боевой дух",
-
-            "description":
-                "Неизвестный образ получает базовое усиление.",
-
-            "effect": {
-
-                "type": "basic",
-
-                "value": 5
-
-            }
-
-        }
+    return cards.get(card_id)
 
 
+def get_random_card():
+    """
+    Получить случайную карту.
+    """
 
-    return ability
+    import random
+
+    cards = list(load_cards().values())
+
+    return random.choice(cards)
+
+
+def get_cards_by_region(region):
+    """
+    Все карты региона.
+    """
+
+    cards = []
+
+    for card in load_cards().values():
+
+        if card["region"] == region:
+
+            cards.append(card)
+
+    return cards
+
+
+def get_cards_by_rarity(rarity):
+    """
+    Все карты указанной редкости.
+    """
+
+    cards = []
+
+    for card in load_cards().values():
+
+        if card["rarity"] == rarity:
+
+            cards.append(card)
+
+    return cards
+
+
+def get_cards_by_champion(champion):
+    """
+    Все карты чемпиона.
+    """
+
+    cards = []
+
+    for card in load_cards().values():
+
+        if card["champion"] == champion:
+
+            cards.append(card)
+
+    return cards
