@@ -1,41 +1,54 @@
-# =====================================
-# ПОДГОТОВКА АРТА
-# =====================================
-
 def prepare_art(image):
+
+    ratio = max(
+
+        ART_WIDTH / image.width,
+
+        ART_HEIGHT / image.height
+
+    )
+
+
+    new_width = int(
+        image.width * ratio
+    )
+
+
+    new_height = int(
+        image.height * ratio
+    )
+
 
     image = image.resize(
 
         (
-            ART_WIDTH,
-            ART_HEIGHT
+            new_width,
+            new_height
         ),
 
         Image.LANCZOS
+
     )
 
-    return image
+
+    left = (
+        new_width - ART_WIDTH
+    ) // 2
+
+
+    top = (
+        new_height - ART_HEIGHT
+    ) // 2
 
 
 
+    return image.crop(
 
-
-# =====================================
-# АРТ С КЭШЕМ
-# =====================================
-
-def get_art(path):
-
-    if path not in ART_CACHE:
-
-        image = Image.open(
-            path
-        ).convert(
-            "RGBA"
+        (
+            left,
+            top,
+            left + ART_WIDTH,
+            top + ART_HEIGHT
         )
 
-        ART_CACHE[path] = prepare_art(
-            image
-        )
-
-    return ART_CACHE[path]
+    )
