@@ -1,33 +1,13 @@
 def prepare_art(image):
 
 
-    # дополнительный зум
-
-    ZOOM = 1.6
-
-
-    target_width = int(
-
-        ART_WIDTH * ZOOM
-
-    )
-
-
-    target_height = int(
-
-        ART_HEIGHT * ZOOM
-
-    )
-
-
     ratio = max(
 
-        target_width / image.width,
+        ART_WIDTH / image.width,
 
-        target_height / image.height
+        ART_HEIGHT / image.height
 
     )
-
 
 
     image = image.resize(
