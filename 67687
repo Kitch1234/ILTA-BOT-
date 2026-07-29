@@ -1,5 +1,8 @@
-    if region_icon:
-        card.alpha_composite(
-            region_icon,
-            layout["region_icon"]
-        )
+    draw_center_text(
+        draw,
+        layout["number"],
+        f"#{card_number}",
+        32,
+        bold=True,
+        max_width=160
+    )
