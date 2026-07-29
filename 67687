@@ -1,5 +1,4 @@
-DEFAULT_LAYOUT = RARITY_SETTINGS["Обычный"]["layout"]
-
-for settings in RARITY_SETTINGS.values():
-    if not settings["layout"]:
-        settings["layout"] = DEFAULT_LAYOUT.copy()
+settings = RARITY_SETTINGS.get(rarity, RARITY_SETTINGS["Обычный"])
+layout = settings["layout"]
+text_color = settings["text_color"]
+shadow_color = settings["shadow_color"]
