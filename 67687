@@ -1,14 +1,5 @@
-    draw = ImageDraw.Draw(card)
-
-    settings = RARITY_SETTINGS.get(
-        rarity,
-        RARITY_SETTINGS["Обычный"]
-    )
-
-    layout = settings["layout"]
-    text_color = settings["text_color"]
-    shadow_color = settings["shadow_color"]
-
-    # =============================
-    # НОМЕР
-    # =============================
+    if region_icon:
+        card.alpha_composite(
+            region_icon,
+            layout["region_icon"]
+        )
