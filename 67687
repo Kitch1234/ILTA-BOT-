@@ -1,4 +1,14 @@
-settings = RARITY_SETTINGS.get(rarity, RARITY_SETTINGS["Обычный"])
-layout = settings["layout"]
-text_color = settings["text_color"]
-shadow_color = settings["shadow_color"]
+    draw = ImageDraw.Draw(card)
+
+    settings = RARITY_SETTINGS.get(
+        rarity,
+        RARITY_SETTINGS["Обычный"]
+    )
+
+    layout = settings["layout"]
+    text_color = settings["text_color"]
+    shadow_color = settings["shadow_color"]
+
+    # =============================
+    # НОМЕР
+    # =============================
