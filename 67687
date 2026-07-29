@@ -1,4 +1,29 @@
-draw_center_text(
+# =============================
+    # ИКОНКА РЕГИОНА
+    # =============================
+    region_icon = get_region_icon(region)
+
+        if region_icon:
+        card.alpha_composite(
+            region_icon,
+            layout["region_icon"]
+        )
+
+        draw = ImageDraw.Draw(card)
+
+    settings = RARITY_SETTINGS.get(
+        rarity,
+        RARITY_SETTINGS["Обычный"]
+    )
+
+    layout = settings["layout"]
+    text_color = settings["text_color"]
+    shadow_color = settings["shadow_color"]
+
+    # =============================
+    # НОМЕР
+    # =============================
+    draw_center_text(
     draw,
     layout["number"],
     f"#{card_number}",
@@ -7,4 +32,58 @@ draw_center_text(
     max_width=160,
     fill=text_color,
     shadow_fill=shadow_color
-)
+    )
+
+    # =============================
+    # ЧЕМПИОН
+    # =============================
+    draw_center_text(
+        draw,
+        layout["champion"],
+        champion,
+        60,
+        bold=True,
+        max_width=860,
+        spacing=2
+    fill=text_color,
+    shadow_fill=shadow_color
+    )
+
+    # =============================
+    # СКИН
+    # =============================
+    if skin and skin.lower() != "default":
+        draw_center_text(
+            draw,
+            layout["skin"],
+            skin,
+            36,
+            bold=False,
+            max_width=860
+    fill=text_color,
+    shadow_fill=shadow_color
+        )
+
+    # =============================
+    # СТАТЫ
+    # =============================
+    draw_stat(
+        draw,
+        layout["attack"],
+        attack
+    )
+
+    draw_stat(
+        draw,
+        layout["health"],
+        health
+    )
+
+    draw_stat(
+        draw,
+        layout["defense"],
+        defense
+    )
+    # =============================
+    # СПОСОБНОСТЬ
+    # =============================
