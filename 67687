@@ -1,15 +1,9 @@
-# =============================
+    # =============================
     # ИКОНКА РЕГИОНА
     # =============================
     region_icon = get_region_icon(region)
 
-        if region_icon:
-        card.alpha_composite(
-            region_icon,
-            layout["region_icon"]
-        )
-
-        draw = ImageDraw.Draw(card)
+    draw = ImageDraw.Draw(card)
 
     settings = RARITY_SETTINGS.get(
         rarity,
@@ -20,18 +14,24 @@
     text_color = settings["text_color"]
     shadow_color = settings["shadow_color"]
 
+    if region_icon:
+        card.alpha_composite(
+            region_icon,
+            layout["region_icon"]
+        )
+
     # =============================
     # НОМЕР
     # =============================
     draw_center_text(
-    draw,
-    layout["number"],
-    f"#{card_number}",
-    32,
-    bold=True,
-    max_width=160,
-    fill=text_color,
-    shadow_fill=shadow_color
+        draw,
+        layout["number"],
+        f"#{card_number}",
+        32,
+        bold=True,
+        max_width=160,
+        fill=text_color,
+        shadow_fill=shadow_color
     )
 
     # =============================
@@ -44,9 +44,9 @@
         60,
         bold=True,
         max_width=860,
-        spacing=2
-    fill=text_color,
-    shadow_fill=shadow_color
+        spacing=2,
+        fill=text_color,
+        shadow_fill=shadow_color
     )
 
     # =============================
@@ -59,9 +59,9 @@
             skin,
             36,
             bold=False,
-            max_width=860
-    fill=text_color,
-    shadow_fill=shadow_color
+            max_width=860,
+            fill=text_color,
+            shadow_fill=shadow_color
         )
 
     # =============================
@@ -84,6 +84,3 @@
         layout["defense"],
         defense
     )
-    # =============================
-    # СПОСОБНОСТЬ
-    # =============================
