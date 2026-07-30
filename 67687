@@ -1,9 +1,31 @@
-✅ Синхронизировано команд: 24
-🟢 Бот запущен как ILTA BOT#7827
-1. Получили карту
-2. Карт загружено: 227
-3. Выбрана карта: Fiora_50
-4. Получаем путь к арту
-5. Получаем способность
-5.1
-ОШИБКА get_ability: Extra data: line 122 column 1 (char 2667)
+   "cooldown": 4,
+    "duration": 2
+  },
+
+  "Galio_47": {
+    "name": "Крылья правосудия",
+    "description": "Наносит 45 ед. магического урона всем врагам.",
+    "type": "magic",
+    "target": "all_enemies",
+    "trigger": "active",
+    "cooldown": 5,
+    "duration": 0
+  }
+}
+{
+  "Fiora_0": {
+    "name": "Вызов на дуэль",
+    "description": "Следующая атака наносит на 50% больше урона.",
+    "type": "buff",
+    "target": "self",
+    "trigger": "active",
+    "cooldown": 3,
+    "duration": 1
+  },
+
+  "Fiora_1": {
+    "name": "Парирование",
+    "description": "Полностью блокирует следующую атаку и наносит противнику 40 ед. истинного урона.",
+    "type": "counter",
+    "target": "self",
+    "trigger": "active",
