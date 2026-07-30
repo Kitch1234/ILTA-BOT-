@@ -1,4 +1,57 @@
-✅ Загружен: battle
-❌ Ошибка загрузки pack: Extension 'cogs.pack' raised an error: IndentationError: unexpected indent (pack.py, line 207)
-✅ Загружен: collection
-✅ Загружен: map
+# =====================================
+# PACK
+# =====================================
+
+class Pack(commands.Cog):
+
+    def __init__(self, bot):
+
+        self.bot = bot
+
+    # =====================================
+    # OPEN PACK
+    # =====================================
+
+    @app_commands.command(
+        name="open_pack",
+        description="Открыть ILTA Pack"
+    )
+    async def open_pack(
+        self,
+        interaction: discord.Interaction
+    ):
+
+        await interaction.response.defer(
+            thinking=True
+        )
+
+        cards = []
+
+            # -----------------------------
+            # Случайная карта из cards.json
+            # -----------------------------
+            print("1. Получили карту")
+            card_data = get_random_card()
+
+            print(f"ID карты: {card_data['id']}")
+
+            champion_name = card_data["champion"]
+            skin_name = card_data["skin"]
+            rarity = card_data["rarity"]
+            region = card_data["region"]
+
+            print("2. Получаем путь к арту")
+            image_path = get_art_path(card_data)
+
+            print("3. Получаем способность")
+            ability_data = get_ability(
+                card_data["id"],
+            )
+
+            ability = ability_data
+
+            print("4. До этого места всё работает")
+
+            # -----------------------------
+            # Статы
+            # -----------------------------
