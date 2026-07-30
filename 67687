@@ -1,27 +1,37 @@
 {
-  "JarvanIV_0": {
-    "name": "Катаклизм",
-    "description": "Наносит 80 ед. физического урона и оглушает цель на 1 ход.",
-    "type": "stun",
-    "target": "enemy",
+  "Kayle_0": {
+    "name": "Божественное вознесение",
+    "description": "Получает +30% к атаке и +20% к защите на 3 хода.",
+    "type": "buff",
+    "target": "self",
     "trigger": "active",
-    "cooldown": 5,
-    "duration": 1
+    "cooldown": 4,
+    "duration": 3
   },
 
-  "JarvanIV_1": {
-    "name": "Знамя Демасии",
-    "description": "Все союзники получают +25% к атаке на 2 хода.",
-    "type": "buff",
-    "target": "all_allies",
+  "Kayle_1": {
+    "name": "Серебряное правосудие",
+    "description": "Получает щит 100 ед. и восстанавливает 50 ед. здоровья.",
+    "type": "shield",
+    "target": "self",
     "trigger": "active",
     "cooldown": 4,
     "duration": 2
   },
 
-  "JarvanIV_2": {
-    "name": "Удар дракона",
-    "description": "Наносит 70 ед. физического урона, игнорируя 30% защиты цели.",
+  "Kayle_2": {
+    "name": "Боевое крещение",
+    "description": "Следующие две атаки наносят на 25% больше урона.",
+    "type": "buff",
+    "target": "self",
+    "trigger": "active",
+    "cooldown": 4,
+    "duration": 2
+  },
+
+  "Kayle_3": {
+    "name": "Небесный меч",
+    "description": "Наносит 75 ед. физического урона и игнорирует 30% защиты цели.",
     "type": "physical",
     "target": "enemy",
     "trigger": "active",
@@ -29,39 +39,39 @@
     "duration": 0
   },
 
-  "JarvanIV_3": {
-    "name": "Золотой эгид",
-    "description": "Получает щит 90 ед. и провоцирует врагов атаковать себя.",
-    "type": "taunt",
-    "target": "self",
+  "Kayle_4": {
+    "name": "Огнекрыл",
+    "description": "Поджигает цель на 3 хода, нанося 20 ед. урона каждый ход.",
+    "type": "burn",
+    "target": "enemy",
+    "trigger": "active",
+    "cooldown": 4,
+    "duration": 3
+  },
+
+  "Kayle_5": {
+    "name": "Железный инквизитор",
+    "description": "Оглушает цель на 1 ход и наносит 60 ед. физического урона.",
+    "type": "stun",
+    "target": "enemy",
+    "trigger": "active",
+    "cooldown": 4,
+    "duration": 1
+  },
+
+  "Kayle_6": {
+    "name": "Крылья эфира",
+    "description": "Все союзники получают щит 60 ед.",
+    "type": "shield",
+    "target": "all_allies",
     "trigger": "active",
     "cooldown": 5,
     "duration": 2
   },
 
-  "JarvanIV_4": {
-    "name": "Королевский натиск",
-    "description": "Следующая атака наносит на 60% больше урона.",
-    "type": "buff",
-    "target": "self",
-    "trigger": "active",
-    "cooldown": 3,
-    "duration": 1
-  },
-
-  "JarvanIV_5": {
-    "name": "Стальной авангард",
-    "description": "Все союзники получают щит 50 ед.",
-    "type": "shield",
-    "target": "all_allies",
-    "trigger": "active",
-    "cooldown": 4,
-    "duration": 2
-  },
-
-  "JarvanIV_6": {
-    "name": "Копьё драконоборца",
-    "description": "Наносит 90 ед. физического урона и накладывает кровотечение на 2 хода.",
+  "Kayle_7": {
+    "name": "Драконоборец",
+    "description": "Наносит 95 ед. физического урона и накладывает кровотечение на 2 хода.",
     "type": "bleed",
     "target": "enemy",
     "trigger": "active",
@@ -69,9 +79,9 @@
     "duration": 2
   },
 
-  "JarvanIV_7": {
-    "name": "Тьма звёзд",
-    "description": "Наносит 55 ед. магического урона всем врагам.",
+  "Kayle_8": {
+    "name": "Священное пламя",
+    "description": "Наносит 65 ед. магического урона всем врагам.",
     "type": "magic",
     "target": "all_enemies",
     "trigger": "active",
@@ -79,59 +89,30 @@
     "duration": 0
   },
 
-  "JarvanIV_8": {
-    "name": "Лунное благословение",
-    "description": "Лечит всех союзников на 40 ед. здоровья.",
-    "type": "heal",
-    "target": "all_allies",
-    "trigger": "active",
-    "cooldown": 5,
-    "duration": 0
-  },
-
-  "JarvanIV_9": {
-    "name": "Ночной владыка",
-    "description": "Получает +35% к атаке и +20% к защите на 3 хода.",
-    "type": "buff",
-    "target": "self",
-    "trigger": "active",
-    "cooldown": 5,
-    "duration": 3
-  },
-
-  "JarvanIV_11": {
-    "name": "Коммандир авангарда",
-    "description": "Все союзники получают +15% к скорости и атакуют первыми в следующем раунде.",
-    "type": "buff",
-    "target": "all_allies",
-    "trigger": "active",
-    "cooldown": 4,
-    "duration": 1
-  },
-
-  "JarvanIV_21": {
-    "name": "Воин царств",
-    "description": "Наносит 100 ед. физического урона выбранному врагу.",
-    "type": "physical",
+  "Kayle_9": {
+    "name": "Приговор небес",
+    "description": "Наносит 120 ед. истинного урона выбранному врагу.",
+    "type": "true",
     "target": "enemy",
     "trigger": "active",
-    "cooldown": 5,
+    "cooldown": 6,
     "duration": 0
-  },
-
-  "JarvanIV_30": {
-    "name": "Чемпион мира",
-    "description": "Получает щит 120 ед. и отражает 30% входящего урона.",
-    "type": "reflect",
-    "target": "self",
+  }
+}
+{
+  "Kayle_15": {
+    "name": "Пентакилл: Потерянная глава",
+    "description": "Наносит 80 ед. магического урона всем врагам и накладывает горение на 2 хода.",
+    "type": "burn",
+    "target": "all_enemies",
     "trigger": "active",
     "cooldown": 5,
     "duration": 2
   },
 
-  "JarvanIV_35": {
-    "name": "Хекстек-прорыв",
-    "description": "Наносит 85 ед. магического урона и оглушает цель.",
+  "Kayle_24": {
+    "name": "Псионический импульс",
+    "description": "Оглушает выбранного врага на 1 ход и наносит 70 ед. магического урона.",
     "type": "stun",
     "target": "enemy",
     "trigger": "active",
@@ -139,23 +120,63 @@
     "duration": 1
   },
 
-  "JarvanIV_44": {
-    "name": "Мифическое знамя",
-    "description": "Все союзники получают +30% к атаке и защите на 3 хода.",
+  "Kayle_33": {
+    "name": "Пожирательница солнца",
+    "description": "Получает +40% к атаке и восстанавливает 80 ед. здоровья.",
     "type": "buff",
-    "target": "all_allies",
+    "target": "self",
     "trigger": "active",
-    "cooldown": 6,
+    "cooldown": 5,
     "duration": 3
   },
 
-  "JarvanIV_54": {
-    "name": "Павший король",
-    "description": "Наносит 140 ед. истинного урона. Если цель имеет меньше 30% здоровья, способность добивает её.",
-    "type": "execute",
+  "Kayle_42": {
+    "name": "Эмпирейское вознесение",
+    "description": "Наносит 140 ед. истинного урона выбранному врагу.",
+    "type": "true",
     "target": "enemy",
     "trigger": "active",
-    "cooldown": 7,
+    "cooldown": 6,
     "duration": 0
+  },
+
+  "Kayle_57": {
+    "name": "Бессмертное путешествие",
+    "description": "Все союзники восстанавливают по 70 ед. здоровья и получают щит 50 ед.",
+    "type": "heal",
+    "target": "all_allies",
+    "trigger": "active",
+    "cooldown": 6,
+    "duration": 2
+  },
+
+  "Kayle_66": {
+    "name": "Престиж Эмпирея",
+    "description": "Следующие две атаки наносят гарантированный критический удар.",
+    "type": "buff",
+    "target": "self",
+    "trigger": "active",
+    "cooldown": 6,
+    "duration": 2
+  },
+
+  "Kayle_67": {
+    "name": "Цветение духов",
+    "description": "Исцеляет всех союзников на 90 ед. здоровья и снимает с них отрицательные эффекты.",
+    "type": "heal",
+    "target": "all_allies",
+    "trigger": "active",
+    "cooldown": 6,
+    "duration": 0
+  },
+
+  "Kayle_78": {
+    "name": "Трансцендентность",
+    "description": "До конца боя получает +50% к атаке, +30% к защите и иммунитет к оглушению на 2 хода.",
+    "type": "buff",
+    "target": "self",
+    "trigger": "active",
+    "cooldown": 7,
+    "duration": 999
   }
 }
