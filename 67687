@@ -11,6 +11,11 @@ def load_abilities():
     global _abilities
 
     if _abilities is None:
+        if not ABILITIES_FILE.exists():
+            raise FileNotFoundError(
+                f"Файл способностей не найден: {ABILITIES_FILE}"
+            )
+
         with open(ABILITIES_FILE, "r", encoding="utf-8") as f:
             _abilities = json.load(f)
 
