@@ -1,16 +1,24 @@
-print("4. Получаем путь к арту")
-image_path = get_art_path(card_data)
+        print("4. Получаем путь к арту")
+        image_path = get_art_path(card_data)
 
-print("5. Получаем способность")
+        print("5. Получаем способность")
 
-try:
-    print("5.1")
-    ability_data = get_ability(card_data["id"])
-    print("5.2")
-except Exception as e:
-    print("ОШИБКА:", e)
-    raise
+        try:
 
-ability = ability_data
+            print("5.1")
 
-print("6. До этого места всё работает")
+            ability_data = get_ability(
+                card_data["id"]
+            )
+
+            print("5.2")
+
+        except Exception as e:
+
+            print(f"ОШИБКА get_ability: {e}")
+
+            raise
+
+        ability = ability_data
+
+        print("6. До этого места всё работает")
