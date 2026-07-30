@@ -1,37 +1,27 @@
-        cards = []
+import json
+from pathlib import Path
 
-        # -----------------------------
-        # Случайная карта из cards.json
-        # -----------------------------
-        print("1. Получили карту")
+BASE_DIR = Path(__file__).resolve().parent
+ABILITIES_FILE = BASE_DIR / "abilities.json"
 
-        from data.translation_loader import load_cards
+_abilities = None
 
-        all_cards = load_cards()
-        print(f"2. Карт загружено: {len(all_cards)}")
 
-        if not all_cards:
-            await interaction.edit_original_response(
-                content="❌ cards.json пустой или не загрузился."
+def load_abilities():
+    global _abilities
+
+    if _abilities is None:
+        if not ABILITIES_FILE.exists():
+            raise FileNotFoundError(
+                f"Файл способностей не найден: {ABILITIES_FILE}"
             )
-            return
 
-        card_data = random.choice(list(all_cards.values()))
-        print(f"3. Выбрана карта: {card_data['id']}")
+        with open(ABILITIES_FILE, "r", encoding="utf-8") as f:
+            _abilities = json.load(f)
 
-        champion_name = card_data["champion"]
-        skin_name = card_data["skin"]
-        rarity = card_data["rarity"]
-        region = card_data["region"]
+    return _abilities
 
-        print("4. Получаем путь к арту")
-        image_path = get_art_path(card_data)
 
-        print("5. Получаем способность")
-        ability_data = get_ability(
-            card_data["id"]
-        )
-
-        ability = ability_data
-
-        print("6. До этого места всё работает")
+def get_ability(card_id):
+    abilities = load_abilities()
+    return abilities.get(card_id)
