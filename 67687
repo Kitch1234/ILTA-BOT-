@@ -1,22 +1,24 @@
-# -----------------------------
-# Случайная карта из cards.json
-# -----------------------------
-print("1. Получили карту")
-card_data = get_random_card()
+            # -----------------------------
+            # Случайная карта из cards.json
+            # -----------------------------
+            print("1. Получили карту")
+            card_data = get_random_card()
 
-print(card_data["id"])
+            print(f"ID карты: {card_data['id']}")
 
-champion_name = card_data["champion"]
-skin_name = card_data["skin"]
-rarity = card_data["rarity"]
-region = card_data["region"]
+            champion_name = card_data["champion"]
+            skin_name = card_data["skin"]
+            rarity = card_data["rarity"]
+            region = card_data["region"]
 
-print("2. Получаем путь к арту")
-image_path = get_art_path(card_data)
+            print("2. Получаем путь к арту")
+            image_path = get_art_path(card_data)
 
-print("3. Получаем способность")
-ability_data = get_ability(card_data["id"])
+            print("3. Получаем способность")
+            ability_data = get_ability(
+                card_data["id"],
+            )
 
-ability = ability_data
+            ability = ability_data
 
-print("4. Всё успешно до этого места")
+            print("4. До этого места всё работает")
