@@ -1,7 +1,17 @@
 {
-  "Fiora_0": {
-    "name": "Вызов на дуэль",
-    "description": "Следующая атака наносит на 50% больше урона.",
+  "Garen_0": {
+    "name": "Правосудие Демасии",
+    "description": "Наносит 80 ед. физического урона. Если здоровье цели ниже 35%, урон удваивается.",
+    "type": "execute",
+    "target": "enemy",
+    "trigger": "active",
+    "cooldown": 5,
+    "duration": 0
+  },
+
+  "Garen_1": {
+    "name": "Решающий удар",
+    "description": "Следующая атака наносит на 60% больше урона.",
     "type": "buff",
     "target": "self",
     "trigger": "active",
@@ -9,59 +19,9 @@
     "duration": 1
   },
 
-  "Fiora_1": {
-    "name": "Парирование",
-    "description": "Полностью блокирует следующую атаку и наносит противнику 40 ед. истинного урона.",
-    "type": "counter",
-    "target": "self",
-    "trigger": "active",
-    "cooldown": 4,
-    "duration": 1
-  },
-
-  "Fiora_2": {
-    "name": "Точный выпад",
-    "description": "Наносит 55 ед. физического урона, игнорируя 40% защиты цели.",
-    "type": "physical",
-    "target": "enemy",
-    "trigger": "active",
-    "cooldown": 2,
-    "duration": 0
-  },
-
-  "Fiora_3": {
-    "name": "Танец клинков",
-    "description": "Мгновенно атакует цель дважды по 30 ед. урона.",
-    "type": "physical",
-    "target": "enemy",
-    "trigger": "active",
-    "cooldown": 3,
-    "duration": 0
-  },
-
-  "Fiora_4": {
-    "name": "Кровоточащая рана",
-    "description": "Накладывает кровотечение на 3 хода.",
-    "type": "bleed",
-    "target": "enemy",
-    "trigger": "active",
-    "cooldown": 3,
-    "duration": 3
-  },
-
-  "Fiora_5": {
-    "name": "Мастер клинка",
-    "description": "Увеличивает шанс критического удара на 25% на 3 хода.",
-    "type": "buff",
-    "target": "self",
-    "trigger": "active",
-    "cooldown": 4,
-    "duration": 3
-  },
-
-  "Fiora_22": {
-    "name": "Королевская грация",
-    "description": "Получает щит 60 ед. и лечится на 30 ед.",
+  "Garen_2": {
+    "name": "Храброе сердце",
+    "description": "Получает щит 80 ед. и +25% защиты на 2 хода.",
     "type": "shield",
     "target": "self",
     "trigger": "active",
@@ -69,9 +29,49 @@
     "duration": 2
   },
 
-  "Fiora_23": {
-    "name": "Очаровательная дуэль",
-    "description": "Оглушает цель на 1 ход и наносит 40 ед. физического урона.",
+  "Garen_3": {
+    "name": "Вихрь клинков",
+    "description": "Наносит 35 ед. физического урона всем врагам.",
+    "type": "physical",
+    "target": "all_enemies",
+    "trigger": "active",
+    "cooldown": 4,
+    "duration": 0
+  },
+
+  "Garen_4": {
+    "name": "Стальная дисциплина",
+    "description": "Все союзники получают +20% к защите на 2 хода.",
+    "type": "buff",
+    "target": "all_allies",
+    "trigger": "active",
+    "cooldown": 4,
+    "duration": 2
+  },
+
+  "Garen_5": {
+    "name": "Несгибаемая воля",
+    "description": "Лечится на 70 ед. здоровья.",
+    "type": "heal",
+    "target": "self",
+    "trigger": "active",
+    "cooldown": 4,
+    "duration": 0
+  },
+
+  "Garen_6": {
+    "name": "Легион Демасии",
+    "description": "Все союзники получают +20% к атаке на 2 хода.",
+    "type": "buff",
+    "target": "all_allies",
+    "trigger": "active",
+    "cooldown": 4,
+    "duration": 2
+  },
+
+  "Garen_10": {
+    "name": "Коммандос",
+    "description": "Оглушает выбранного врага на 1 ход.",
     "type": "stun",
     "target": "enemy",
     "trigger": "active",
@@ -79,59 +79,59 @@
     "duration": 1
   },
 
-  "Fiora_31": {
-    "name": "Импульсный рывок",
-    "description": "Атакует первой в следующем раунде и получает +20% уклонения.",
-    "type": "buff",
-    "target": "self",
-    "trigger": "active",
-    "cooldown": 3,
-    "duration": 1
-  },
-
-  "Fiora_41": {
-    "name": "Лунный танец",
-    "description": "Лечится на 50 ед. и получает +25% к атаке на 2 хода.",
-    "type": "heal",
-    "target": "self",
+  "Garen_11": {
+    "name": "Песчаный марш",
+    "description": "Накладывает кровотечение на цель на 3 хода.",
+    "type": "bleed",
+    "target": "enemy",
     "trigger": "active",
     "cooldown": 4,
-    "duration": 2
+    "duration": 3
   },
 
-  "Fiora_50": {
-    "name": "Проект: Перехват",
-    "description": "Отражает 40% получаемого урона в течение 2 ходов.",
+  "Garen_13": {
+    "name": "Темный рыцарь",
+    "description": "Отражает 35% входящего урона в течение 2 ходов.",
     "type": "reflect",
-    "target": "self",
-    "trigger": "active",
-    "cooldown": 4,
-    "duration": 2
-  },
-
-  "Fiora_51": {
-    "name": "Совершенный алгоритм",
-    "description": "Следующие две атаки гарантированно становятся критическими.",
-    "type": "buff",
     "target": "self",
     "trigger": "active",
     "cooldown": 5,
     "duration": 2
   },
 
-  "Fiora_60": {
-    "name": "Пульс времени",
-    "description": "Наносит 70 ед. магического урона и замедляет цель на 2 хода.",
-    "type": "magic",
-    "target": "enemy",
+  "Garen_14": {
+    "name": "Адмиральский приказ",
+    "description": "Провоцирует всех врагов атаковать Гарена 2 хода.",
+    "type": "taunt",
+    "target": "self",
     "trigger": "active",
-    "cooldown": 4,
+    "cooldown": 5,
     "duration": 2
   },
 
-  "Fiora_69": {
-    "name": "Драконье искусство",
-    "description": "Наносит 65 ед. физического урона всем врагам.",
+  "Garen_22": {
+    "name": "Божественный король",
+    "description": "Получает +40% к атаке на 3 хода.",
+    "type": "buff",
+    "target": "self",
+    "trigger": "active",
+    "cooldown": 5,
+    "duration": 3
+  },
+
+  "Garen_23": {
+    "name": "Падший бог-король",
+    "description": "Наносит 90 ед. физического урона и накладывает кровотечение.",
+    "type": "physical",
+    "target": "enemy",
+    "trigger": "active",
+    "cooldown": 5,
+    "duration": 3
+  },
+
+  "Garen_24": {
+    "name": "Меха-королевства",
+    "description": "Наносит 55 ед. физического урона всем врагам.",
     "type": "physical",
     "target": "all_enemies",
     "trigger": "active",
@@ -139,9 +139,29 @@
     "duration": 0
   },
 
-  "Fiora_80": {
-    "name": "Крылья феи",
-    "description": "Все союзники восстанавливают по 35 ед. здоровья.",
+  "Garen_33": {
+    "name": "Престиж чемпиона",
+    "description": "Получает щит 120 ед. и восстанавливает 60 ед. здоровья.",
+    "type": "shield",
+    "target": "self",
+    "trigger": "active",
+    "cooldown": 5,
+    "duration": 2
+  },
+
+  "Garen_43": {
+    "name": "Видение павших",
+    "description": "Наносит 120 ед. истинного урона выбранному врагу.",
+    "type": "true",
+    "target": "enemy",
+    "trigger": "active",
+    "cooldown": 6,
+    "duration": 0
+  },
+
+  "Garen_44": {
+    "name": "Мифотворец",
+    "description": "Все союзники восстанавливают по 50 ед. здоровья.",
     "type": "heal",
     "target": "all_allies",
     "trigger": "active",
@@ -149,23 +169,13 @@
     "duration": 0
   },
 
-  "Fiora_89": {
-    "name": "Небесный клинок",
-    "description": "Наносит 90 ед. истинного урона выбранной цели.",
-    "type": "true",
-    "target": "enemy",
-    "trigger": "active",
-    "cooldown": 5,
-    "duration": 0
-  },
-
-  "Fiora_98": {
-    "name": "Абсолютная дуэль",
-    "description": "Если здоровье цели ниже 30%, способность наносит двойной урон.",
-    "type": "execute",
-    "target": "enemy",
-    "trigger": "active",
-    "cooldown": 6,
-    "duration": 0
+  "Garen_46": {
+    "name": "Последний защитник",
+    "description": "Если здоровье ниже 25%, автоматически получает щит 150 ед.",
+    "type": "shield",
+    "target": "self",
+    "trigger": "passive",
+    "cooldown": 7,
+    "duration": 2
   }
 }
