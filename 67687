@@ -1,27 +1,161 @@
-import json
-from pathlib import Path
+{
+  "Galio_0": {
+    "name": "Вход героя",
+    "description": "Получает щит 60 ед. и наносит 30 ед. магического урона всем врагам.",
+    "type": "shield",
+    "target": "self",
+    "trigger": "active",
+    "cooldown": 3,
+    "duration": 2
+  },
 
-BASE_DIR = Path(__file__).resolve().parent
-ABILITIES_FILE = BASE_DIR / "abilities.json"
+  "Galio_1": {
+    "name": "Зачарованный бастион",
+    "description": "Повышает защиту всех союзников на 20% на 2 хода.",
+    "type": "buff",
+    "target": "all_allies",
+    "trigger": "active",
+    "cooldown": 3,
+    "duration": 2
+  },
 
-_abilities = None
+  "Galio_2": {
+    "name": "Хекстек-разряд",
+    "description": "Наносит 55 ед. магического урона выбранному врагу.",
+    "type": "magic",
+    "target": "enemy",
+    "trigger": "active",
+    "cooldown": 2,
+    "duration": 0
+  },
 
+  "Galio_3": {
+    "name": "Военная дисциплина",
+    "description": "Провоцирует врага атаковать Галио 2 хода.",
+    "type": "taunt",
+    "target": "enemy",
+    "trigger": "active",
+    "cooldown": 3,
+    "duration": 2
+  },
 
-def load_abilities():
-    global _abilities
+  "Galio_4": {
+    "name": "Огненный монолит",
+    "description": "Поджигает всех врагов на 3 хода.",
+    "type": "burn",
+    "target": "all_enemies",
+    "trigger": "active",
+    "cooldown": 4,
+    "duration": 3
+  },
 
-    if _abilities is None:
-        if not ABILITIES_FILE.exists():
-            raise FileNotFoundError(
-                f"Файл способностей не найден: {ABILITIES_FILE}"
-            )
+  "Galio_5": {
+    "name": "Каменная стена",
+    "description": "Снижает получаемый урон на 35% на 2 хода.",
+    "type": "buff",
+    "target": "self",
+    "trigger": "active",
+    "cooldown": 3,
+    "duration": 2
+  },
 
-        with open(ABILITIES_FILE, "r", encoding="utf-8") as f:
-            _abilities = json.load(f)
+  "Galio_6": {
+    "name": "Драконий рев",
+    "description": "Оглушает выбранного врага на 1 ход.",
+    "type": "stun",
+    "target": "enemy",
+    "trigger": "active",
+    "cooldown": 4,
+    "duration": 1
+  },
 
-    return _abilities
+  "Galio_13": {
+    "name": "Небесный молот",
+    "description": "Наносит 70 ед. магического урона.",
+    "type": "magic",
+    "target": "enemy",
+    "trigger": "active",
+    "cooldown": 4,
+    "duration": 0
+  },
 
+  "Galio_19": {
+    "name": "Страж врат",
+    "description": "Получает щит 100 ед.",
+    "type": "shield",
+    "target": "self",
+    "trigger": "active",
+    "cooldown": 4,
+    "duration": 3
+  },
 
-def get_ability(card_id):
-    abilities = load_abilities()
-    return abilities.get(card_id)
+  "Galio_28": {
+    "name": "Мифическое сияние",
+    "description": "Лечит всех союзников на 35 ед.",
+    "type": "heal",
+    "target": "all_allies",
+    "trigger": "active",
+    "cooldown": 4,
+    "duration": 0
+  },
+
+  "Galio_40": {
+    "name": "Щит Эгиды",
+    "description": "Отражает 30% получаемого урона 2 хода.",
+    "type": "reflect",
+    "target": "self",
+    "trigger": "active",
+    "cooldown": 4,
+    "duration": 2
+  },
+
+  "Galio_47": {
+    "name": "Крылья правосудия",
+    "description": "Наносит 45 ед. магического урона всем врагам.",
+    "type": "magic",
+    "target": "all_enemies",
+    "trigger": "active",
+    "cooldown": 5,
+    "duration": 0
+  }
+}
+{
+  "Fiora_0": {
+    "name": "Вызов на дуэль",
+    "description": "Следующая атака наносит на 50% больше урона.",
+    "type": "buff",
+    "target": "self",
+    "trigger": "active",
+    "cooldown": 3,
+    "duration": 1
+  },
+
+  "Fiora_1": {
+    "name": "Парирование",
+    "description": "Полностью блокирует следующую атаку и наносит противнику 40 ед. истинного урона.",
+    "type": "counter",
+    "target": "self",
+    "trigger": "active",
+    "cooldown": 4,
+    "duration": 1
+  },
+
+  "Fiora_2": {
+    "name": "Точный выпад",
+    "description": "Наносит 55 ед. физического урона, игнорируя 40% защиты цели.",
+    "type": "physical",
+    "target": "enemy",
+    "trigger": "active",
+    "cooldown": 2,
+    "duration": 0
+  },
+
+  "Fiora_3": {
+    "name": "Танец клинков",
+    "description": "Мгновенно атакует цель дважды по 30 ед. урона.",
+    "type": "physical",
+    "target": "enemy",
+    "trigger": "active",
+    "cooldown": 3,
+    "duration": 0
+  },
