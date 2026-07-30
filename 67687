@@ -1,24 +1,9 @@
-        print("4. Получаем путь к арту")
-        image_path = get_art_path(card_data)
-
-        print("5. Получаем способность")
-
-        try:
-
-            print("5.1")
-
-            ability_data = get_ability(
-                card_data["id"]
-            )
-
-            print("5.2")
-
-        except Exception as e:
-
-            print(f"ОШИБКА get_ability: {e}")
-
-            raise
-
-        ability = ability_data
-
-        print("6. До этого места всё работает")
+✅ Синхронизировано команд: 24
+🟢 Бот запущен как ILTA BOT#7827
+1. Получили карту
+2. Карт загружено: 227
+3. Выбрана карта: Fiora_50
+4. Получаем путь к арту
+5. Получаем способность
+5.1
+ОШИБКА get_ability: Extra data: line 122 column 1 (char 2667)
