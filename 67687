@@ -1,29 +1,22 @@
-    # -----------------------------
-            # Случайная карта из cards.json
-            # -----------------------------
-            print("1. Получили карту")
-            card_data = get_random_card()
+# -----------------------------
+# Случайная карта из cards.json
+# -----------------------------
+print("1. Получили карту")
+card_data = get_random_card()
 
-            champion_name = card_data["champion"]
+print(card_data["id"])
 
-            skin_name = card_data["skin"]
+champion_name = card_data["champion"]
+skin_name = card_data["skin"]
+rarity = card_data["rarity"]
+region = card_data["region"]
 
-            rarity = card_data["rarity"]
+print("2. Получаем путь к арту")
+image_path = get_art_path(card_data)
 
-            region = card_data["region"]
+print("3. Получаем способность")
+ability_data = get_ability(card_data["id"])
 
-            image_path = get_art_path(card_data)
+ability = ability_data
 
-            # -----------------------------
-            # Способность
-            # -----------------------------
-
-            ability_data = get_ability(
-
-                card_data["id"],
-
-
-            )
-
-            ability = ability_data
-
+print("4. Всё успешно до этого места")
