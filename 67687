@@ -1,78 +1,27 @@
 {
-  "Lucian_0": {
-    "name": "Парные пистолеты",
-    "description": "Атакует цель дважды, нанося по 35 ед. физического урона.",
-    "type": "physical",
+  "Lux_0": {
+    "name": "Призма света",
+    "description": "Наносит 80 ед. магического урона и ослепляет цель, снижая её атаку на 25% на 2 хода.",
+    "type": "debuff",
     "target": "enemy",
     "trigger": "active",
     "cooldown": 3,
-    "duration": 0
-  },
-
-  "Lucian_1": {
-    "name": "Наемник",
-    "description": "Следующая атака наносит на 70% больше урона.",
-    "type": "buff",
-    "target": "self",
-    "trigger": "active",
-    "cooldown": 4,
-    "duration": 1
-  },
-
-  "Lucian_2": {
-    "name": "Меткий стрелок",
-    "description": "Наносит 80 ед. физического урона, игнорируя 35% защиты цели.",
-    "type": "physical",
-    "target": "enemy",
-    "trigger": "active",
-    "cooldown": 3,
-    "duration": 0
-  },
-
-  "Lucian_6": {
-    "name": "Пульс времени",
-    "description": "Наносит 70 ед. магического урона и получает щит 50 ед.",
-    "type": "magic",
-    "target": "enemy",
-    "trigger": "active",
-    "cooldown": 4,
     "duration": 2
   },
 
-  "Lucian_7": {
-    "name": "Престиж Пульсара",
-    "description": "Следующие две атаки становятся критическими.",
+  "Lux_1": {
+    "name": "Имперское сияние",
+    "description": "Все союзники получают +20% к защите на 3 хода.",
     "type": "buff",
-    "target": "self",
-    "trigger": "active",
-    "cooldown": 5,
-    "duration": 2
-  },
-
-  "Lucian_8": {
-    "name": "Высокий полдень",
-    "description": "Поджигает цель на 3 хода и наносит 75 ед. физического урона.",
-    "type": "burn",
-    "target": "enemy",
+    "target": "all_allies",
     "trigger": "active",
     "cooldown": 4,
     "duration": 3
   },
 
-  "Lucian_9": {
-    "name": "Свет очистителя",
-    "description": "Все союзники получают +20% к атаке на 2 хода.",
-    "type": "buff",
-    "target": "all_allies",
-    "trigger": "active",
-    "cooldown": 4,
-    "duration": 2
-  }
-}
-{
-  "Lucian_18": {
-    "name": "Сердцеискатель",
-    "description": "Очаровывает цель на 1 ход и наносит 65 ед. магического урона.",
+  "Lux_2": {
+    "name": "Коммандос",
+    "description": "Оглушает цель на 1 ход и наносит 65 ед. магического урона.",
     "type": "stun",
     "target": "enemy",
     "trigger": "active",
@@ -80,73 +29,205 @@
     "duration": 1
   },
 
-  "Lucian_19": {
-    "name": "Аркана",
-    "description": "Наносит 95 ед. магического урона и восстанавливает себе 45 ед. здоровья.",
-    "type": "lifesteal",
-    "target": "enemy",
-    "trigger": "active",
-    "cooldown": 4,
-    "duration": 0
-  },
-
-  "Lucian_25": {
-    "name": "Вице-Демасия",
-    "description": "Все союзники получают +25% к скорости атаки на 3 хода.",
+  "Lux_3": {
+    "name": "Похитительница заклинаний",
+    "description": "Копирует последнее положительное усиление противника и накладывает его на себя.",
     "type": "buff",
-    "target": "all_allies",
-    "trigger": "active",
-    "cooldown": 5,
-    "duration": 3
-  },
-
-  "Lucian_31": {
-    "name": "PROJECT: Люциан",
-    "description": "Выпускает очередь, нанося 120 ед. физического урона и накладывая кровотечение на 2 хода.",
-    "type": "bleed",
     "target": "enemy",
     "trigger": "active",
     "cooldown": 5,
     "duration": 2
   },
 
-  "Lucian_40": {
-    "name": "Замаскированный правосудием",
-    "description": "Получает невосприимчивость к следующей атаке противника.",
-    "type": "shield",
+  "Lux_4": {
+    "name": "Чародейка",
+    "description": "Восстанавливает 90 ед. здоровья выбранному союзнику и снимает с него один отрицательный эффект.",
+    "type": "heal",
+    "target": "ally",
+    "trigger": "active",
+    "cooldown": 4,
+    "duration": 0
+  },
+
+  "Lux_5": {
+    "name": "Стальной легион",
+    "description": "Создает щит прочностью 130 ед. и отражает 30% получаемого урона в течение 2 ходов.",
+    "type": "reflect",
     "target": "self",
+    "trigger": "active",
+    "cooldown": 5,
+    "duration": 2
+  },
+
+  "Lux_6": {
+    "name": "Звёздная защитница",
+    "description": "Все союзники восстанавливают 70 ед. здоровья и получают +15% к атаке на 2 хода.",
+    "type": "heal",
+    "target": "all_allies",
+    "trigger": "active",
+    "cooldown": 5,
+    "duration": 2
+  },
+
+  "Lux_7": {
+    "name": "Космическое сияние",
+    "description": "Наносит 120 ед. магического урона всем врагам.",
+    "type": "magic",
+    "target": "all_enemies",
+    "trigger": "active",
+    "cooldown": 6,
+    "duration": 0
+  }
+}
+{
+  "Lux_8": {
+    "name": "Тёмный космос",
+    "description": "Наносит 140 ед. магического урона и накладывает немоту на 1 ход.",
+    "type": "silence",
+    "target": "enemy",
+    "trigger": "active",
+    "cooldown": 6,
+    "duration": 1
+  },
+
+  "Lux_14": {
+    "name": "Лунная императрица",
+    "description": "Все союзники получают щит прочностью 90 ед. и восстанавливают 40 ед. здоровья.",
+    "type": "shield",
+    "target": "all_allies",
+    "trigger": "active",
+    "cooldown": 5,
+    "duration": 2
+  },
+
+  "Lux_15": {
+    "name": "Боевой университет",
+    "description": "Следующие две способности наносят на 35% больше урона.",
+    "type": "buff",
+    "target": "self",
+    "trigger": "active",
+    "cooldown": 5,
+    "duration": 2
+  },
+
+  "Lux_16": {
+    "name": "Престиж: Боевой университет",
+    "description": "Наносит 160 ед. истинного урона и игнорирует все щиты цели.",
+    "type": "true",
+    "target": "enemy",
+    "trigger": "active",
+    "cooldown": 7,
+    "duration": 0
+  },
+
+  "Lux_17": {
+    "name": "Элементалистка",
+    "description": "Случайным образом получает один из эффектов: лечение, щит, усиление атаки или усиление защиты.",
+    "type": "buff",
+    "target": "self",
+    "trigger": "active",
+    "cooldown": 4,
+    "duration": 3
+  },
+
+  "Lux_18": {
+    "name": "Фарфоровая чародейка",
+    "description": "Замораживает цель на 1 ход и наносит 95 ед. магического урона.",
+    "type": "freeze",
+    "target": "enemy",
     "trigger": "active",
     "cooldown": 5,
     "duration": 1
   },
 
-  "Lucian_52": {
-    "name": "Паладин удара",
-    "description": "Наносит 130 ед. физического урона. Если цель оглушена, урон увеличивается на 50%.",
-    "type": "physical",
+  "Lux_19": {
+    "name": "Престиж: Фарфор",
+    "description": "Все союзники получают +30% к атаке и +20% к защите на 3 хода.",
+    "type": "buff",
+    "target": "all_allies",
+    "trigger": "active",
+    "cooldown": 6,
+    "duration": 3
+  },
+
+  "Lux_29": {
+    "name": "Сад фей",
+    "description": "Исцеляет всех союзников на 100 ед. здоровья и снимает все отрицательные эффекты.",
+    "type": "heal",
+    "target": "all_allies",
+    "trigger": "active",
+    "cooldown": 6,
+    "duration": 0
+  }
+}
+{
+  "Lux_38": {
+    "name": "Душеборец",
+    "description": "Наносит 150 ед. магического урона. Если здоровье цели ниже 35%, урон становится истинным.",
+    "type": "execute",
     "target": "enemy",
     "trigger": "active",
-    "cooldown": 5,
+    "cooldown": 6,
     "duration": 0
   },
 
-  "Lucian_62": {
-    "name": "Погребённые тени",
-    "description": "Ослабляет врага, снижая его атаку на 30% на 3 хода.",
+  "Lux_39": {
+    "name": "Эмпирейское сияние",
+    "description": "Наносит 90 ед. магического урона всем врагам и уменьшает их защиту на 20% на 3 хода.",
     "type": "debuff",
-    "target": "enemy",
+    "target": "all_enemies",
     "trigger": "active",
     "cooldown": 5,
     "duration": 3
   },
 
-  "Lucian_72": {
-    "name": "Благословение зимы",
-    "description": "Замораживает цель на 1 ход и наносит 100 ед. магического урона.",
-    "type": "freeze",
-    "target": "enemy",
+  "Lux_40": {
+    "name": "Космическая гармония",
+    "description": "Все союзники получают щит прочностью 120 ед. и иммунитет к отрицательным эффектам на 1 ход.",
+    "type": "shield",
+    "target": "all_allies",
     "trigger": "active",
     "cooldown": 6,
-    "duration": 1
+    "duration": 2
+  },
+
+  "Lux_42": {
+    "name": "Панда-помощник",
+    "description": "Призывает духа-панду, который восстанавливает владельцу 35 ед. здоровья в начале каждого хода в течение 3 ходов.",
+    "type": "summon",
+    "target": "self",
+    "trigger": "active",
+    "cooldown": 6,
+    "duration": 3
+  },
+
+  "Lux_61": {
+    "name": "Космический грув",
+    "description": "Все враги получают 70 ед. магического урона и теряют 25% атаки на 2 хода.",
+    "type": "debuff",
+    "target": "all_enemies",
+    "trigger": "active",
+    "cooldown": 5,
+    "duration": 2
+  },
+
+  "Lux_70": {
+    "name": "Цветение духов",
+    "description": "Воскрешает одного павшего союзника с 40% здоровья. Если павших нет, исцеляет всю команду на 120 ед.",
+    "type": "revive",
+    "target": "ally",
+    "trigger": "active",
+    "cooldown": 8,
+    "duration": 0
+  },
+
+  "Lux_72": {
+    "name": "Престиж: Цветение духов",
+    "description": "Все союзники получают +35% к атаке, +35% к защите и восстанавливают 80 ед. здоровья.",
+    "type": "buff",
+    "target": "all_allies",
+    "trigger": "active",
+    "cooldown": 7,
+    "duration": 3
   }
 }
