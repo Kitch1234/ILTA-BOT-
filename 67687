@@ -1,151 +1,169 @@
 {
-  "DEM-001": {
-    "name": "Правосудие Демасии",
-    "description": "Наносит 45 ед. физического урона выбранному врагу.",
-    "type": "physical",
-    "target": "enemy",
-    "trigger": "active",
-    "cooldown": 2,
-    "duration": 0
-  },
-
-  "DEM-002": {
-    "name": "Финальная искра",
-    "description": "Наносит 55 ед. магического урона выбранному врагу.",
-    "type": "magic",
-    "target": "enemy",
-    "trigger": "active",
-    "cooldown": 3,
-    "duration": 0
-  },
-
-  "DEM-003": {
-    "name": "Катаклизм",
-    "description": "Наносит 35 ед. физического урона и снижает защиту врага на 15% на 2 хода.",
-    "type": "physical",
-    "target": "enemy",
-    "trigger": "active",
-    "cooldown": 3,
-    "duration": 2
-  },
-
-  "DEM-004": {
-    "name": "Дуэлянт",
-    "description": "Следующая атака наносит на 40% больше урона.",
-    "type": "buff",
-    "target": "self",
-    "trigger": "active",
-    "cooldown": 2,
-    "duration": 1
-  },
-
-  "DEM-005": {
-    "name": "Серебряные болты",
-    "description": "Каждая третья атака наносит дополнительные 50 ед. истинного урона.",
-    "type": "true",
-    "target": "enemy",
-    "trigger": "passive",
-    "cooldown": 0,
-    "duration": 0
-  },
-
-  "DEM-006": {
-    "name": "Облик дракона",
-    "description": "Увеличивает атаку на 30 и здоровье на 40 на 3 хода.",
-    "type": "buff",
-    "target": "self",
-    "trigger": "active",
-    "cooldown": 4,
-    "duration": 3
-  },
-
-  "DEM-007": {
-    "name": "Атака Валора",
-    "description": "Наносит 30 ед. физического урона и ослабляет атаку врага на 20% на 2 хода.",
-    "type": "physical",
-    "target": "enemy",
-    "trigger": "active",
-    "cooldown": 3,
-    "duration": 2
-  },
-
-  "DEM-008": {
-    "name": "Кресчендо",
-    "description": "Оглушает выбранного врага на 1 ход.",
-    "type": "control",
-    "target": "enemy",
-    "trigger": "active",
-    "cooldown": 4,
-    "duration": 1
-  },
-
-  "DEM-009": {
-    "name": "Вход героя",
-    "description": "Получает щит 60 ед. и наносит 25 ед. магического урона всем врагам.",
-    "type": "magic",
-    "target": "all_enemies",
-    "trigger": "active",
-    "cooldown": 4,
-    "duration": 0
-  },
-
-  "DEM-010": {
-    "name": "Молот хранительницы",
-    "description": "Наносит 40 ед. физического урона и отбрасывает врага, лишая его следующей атаки.",
-    "type": "physical",
-    "target": "enemy",
-    "trigger": "active",
-    "cooldown": 3,
-    "duration": 1
-  },
-
-  "DEM-011": {
-    "name": "Щит рассвета",
-    "description": "Получает щит 50 ед. и провоцирует врагов атаковать себя 2 хода.",
-    "type": "tank",
-    "target": "self",
-    "trigger": "active",
-    "cooldown": 3,
-    "duration": 2
-  },
-
-  "DEM-012": {
-    "name": "Небесное благословение",
-    "description": "Исцеляет союзника на 70 ед. здоровья.",
-    "type": "heal",
-    "target": "ally",
-    "trigger": "active",
-    "cooldown": 3,
-    "duration": 0
-  },
-
-  "DEM-013": {
-    "name": "Удар молнии",
-    "description": "Наносит 45 ед. магического урона и имеет 30% шанс оглушить врага.",
-    "type": "magic",
-    "target": "enemy",
-    "trigger": "active",
-    "cooldown": 3,
-    "duration": 1
-  },
-
-  "DEM-014": {
-    "name": "Стойкость",
-    "description": "Пассивно снижает получаемый урон на 15%.",
-    "type": "passive",
-    "target": "self",
-    "trigger": "passive",
-    "cooldown": 0,
-    "duration": 0
-  },
-
-  "DEM-015": {
-    "name": "Магический барьер",
-    "description": "В начале боя получает щит 40 ед.",
-    "type": "shield",
-    "target": "self",
-    "trigger": "battle_start",
-    "cooldown": 0,
-    "duration": 0
-  }
-}
+    "Fiora_0": {
+        "id": "Fiora_0",
+        "champion_en": "Fiora",
+        "skin_en": "default",
+        "champion": "Фиора",
+        "skin": "",
+        "region": "Демасия",
+        "rarity": "Обычный",
+        "show_rarity": false,
+        "ability": "",
+        "quote": "",
+        "region_en": "Demacia"
+    },
+    "Fiora_1": {
+        "id": "Fiora_1",
+        "champion_en": "Fiora",
+        "skin_en": "Royal Guard Fiora",
+        "champion": "Фиора",
+        "skin": "Фиора из королевской гвардии",
+        "region": "Демасия",
+        "rarity": "Редкий",
+        "show_rarity": false,
+        "ability": "",
+        "quote": "",
+        "region_en": "Demacia"
+    },
+    "Fiora_2": {
+        "id": "Fiora_2",
+        "champion_en": "Fiora",
+        "skin_en": "Nightraven Fiora",
+        "champion": "Фиора",
+        "skin": "Фиора Ночной Ворон",
+        "region": "Демасия",
+        "rarity": "Редкий",
+        "show_rarity": false,
+        "ability": "",
+        "quote": "",
+        "region_en": "Demacia"
+    },
+    "Fiora_22": {
+        "id": "Fiora_22",
+        "champion_en": "Fiora",
+        "skin_en": "Soaring Sword Fiora",
+        "champion": "Фиора",
+        "skin": "Парящий клинок Фиора",
+        "region": "Демасия",
+        "rarity": "Редкий",
+        "show_rarity": false,
+        "ability": "",
+        "quote": "",
+        "region_en": "Demacia"
+    },
+    "Fiora_41": {
+        "id": "Fiora_41",
+        "champion_en": "Fiora",
+        "skin_en": "Pulsefire Fiora",
+        "champion": "Фиора",
+        "skin": "Фиора Импульсный Огонь",
+        "region": "Демасия",
+        "rarity": "Редкий",
+        "show_rarity": false,
+        "ability": "",
+        "quote": "",
+        "region_en": "Demacia"
+    },
+    "Fiora_50": {
+        "id": "Fiora_50",
+        "champion_en": "Fiora",
+        "skin_en": "Lunar Beast Fiora",
+        "champion": "Фиора",
+        "skin": "Лунный зверь Фиора",
+        "region": "Демасия",
+        "rarity": "Редкий",
+        "show_rarity": false,
+        "ability": "",
+        "quote": "",
+        "region_en": "Demacia"
+    },
+    "Fiora_51": {
+        "id": "Fiora_51",
+        "champion_en": "Fiora",
+        "skin_en": "Prestige Lunar Beast Fiora",
+        "champion": "Фиора",
+        "skin": "Лунный зверь Фиора (престижный)",
+        "region": "Демасия",
+        "rarity": "Редкий",
+        "show_rarity": false,
+        "ability": "",
+        "quote": "",
+        "region_en": "Demacia"
+    },
+    "Fiora_60": {
+        "id": "Fiora_60",
+        "champion_en": "Fiora",
+        "skin_en": "Bewitching Fiora",
+        "champion": "Фиора",
+        "skin": "Ведьма Фиора",
+        "region": "Демасия",
+        "rarity": "Редкий",
+        "show_rarity": false,
+        "ability": "",
+        "quote": "",
+        "region_en": "Demacia"
+    },
+    "Fiora_80": {
+        "id": "Fiora_80",
+        "champion_en": "Fiora",
+        "skin_en": "Dragonmancer Fiora",
+        "champion": "Фиора",
+        "skin": "Дракомант Фиора",
+        "region": "Демасия",
+        "rarity": "Редкий",
+        "show_rarity": false,
+        "ability": "",
+        "quote": "",
+        "region_en": "Demacia"
+    },
+    "Galio_0": {
+        "id": "Galio_0",
+        "champion_en": "Galio",
+        "skin_en": "default",
+        "champion": "Галио",
+        "skin": "",
+        "region": "Демасия",
+        "rarity": "Обычный",
+        "show_rarity": false,
+        "ability": "",
+        "quote": "",
+        "region_en": "Demacia"
+    },
+    "Galio_1": {
+        "id": "Galio_1",
+        "champion_en": "Galio",
+        "skin_en": "Enchanted Galio",
+        "champion": "Галио",
+        "skin": "Зачарованный Галио",
+        "region": "Демасия",
+        "rarity": "Редкий",
+        "show_rarity": false,
+        "ability": "",
+        "quote": "",
+        "region_en": "Demacia"
+    },
+    "Galio_2": {
+        "id": "Galio_2",
+        "champion_en": "Galio",
+        "skin_en": "Hextech Galio",
+        "champion": "Галио",
+        "skin": "Хекстек-Галио",
+        "region": "Демасия",
+        "rarity": "Редкий",
+        "show_rarity": false,
+        "ability": "",
+        "quote": "",
+        "region_en": "Demacia"
+    },
+    "Galio_3": {
+        "id": "Galio_3",
+        "champion_en": "Galio",
+        "skin_en": "Commando Galio",
+        "champion": "Галио",
+        "skin": "Коммандо Галио",
+        "region": "Демасия",
+        "rarity": "Редкий",
+        "show_rarity": false,
+        "ability": "",
+        "quote": "",
+        "region_en": "Demacia"
