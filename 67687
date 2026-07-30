@@ -1,11 +1,22 @@
-{
-    "DEM-001": {
-        "name": "Мощный удар",
-        "description": "Наносит 40 ед. физического урона выбранному врагу.",
-        "type": "physical",
-        "target": "enemy",
-        "trigger": "active",
-        "cooldown": 2,
-        "duration": 0
-    }
-}
+import json
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent
+ABILITIES_FILE = BASE_DIR / "abilities.json"
+
+_abilities = None
+
+
+def load_abilities():
+    global _abilities
+
+    if _abilities is None:
+        with open(ABILITIES_FILE, "r", encoding="utf-8") as f:
+            _abilities = json.load(f)
+
+    return _abilities
+
+
+def get_ability(card_id):
+    abilities = load_abilities()
+    return abilities.get(card_id)
