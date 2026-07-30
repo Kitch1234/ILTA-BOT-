@@ -1,54 +1,151 @@
-def create_embed(card, index):
+{
+  "DEM-001": {
+    "name": "Правосудие Демасии",
+    "description": "Наносит 45 ед. физического урона выбранному врагу.",
+    "type": "physical",
+    "target": "enemy",
+    "trigger": "active",
+    "cooldown": 2,
+    "duration": 0
+  },
 
-    embed = discord.Embed(
-        color=0xD4AF37
-    )
+  "DEM-002": {
+    "name": "Финальная искра",
+    "description": "Наносит 55 ед. магического урона выбранному врагу.",
+    "type": "magic",
+    "target": "enemy",
+    "trigger": "active",
+    "cooldown": 3,
+    "duration": 0
+  },
 
-    embed.add_field(
-        name="🛡 Чемпион",
-        value=card["champion"],
-        inline=True
-    )
+  "DEM-003": {
+    "name": "Катаклизм",
+    "description": "Наносит 35 ед. физического урона и снижает защиту врага на 15% на 2 хода.",
+    "type": "physical",
+    "target": "enemy",
+    "trigger": "active",
+    "cooldown": 3,
+    "duration": 2
+  },
 
-    if card["skin"]:
-        embed.add_field(
-            name="✨ Образ",
-            value=card["skin"],
-            inline=True
-        )
+  "DEM-004": {
+    "name": "Дуэлянт",
+    "description": "Следующая атака наносит на 40% больше урона.",
+    "type": "buff",
+    "target": "self",
+    "trigger": "active",
+    "cooldown": 2,
+    "duration": 1
+  },
 
-    embed.add_field(
-        name="⚔ Атака",
-        value=str(card["attack"]),
-        inline=True
-    )
+  "DEM-005": {
+    "name": "Серебряные болты",
+    "description": "Каждая третья атака наносит дополнительные 50 ед. истинного урона.",
+    "type": "true",
+    "target": "enemy",
+    "trigger": "passive",
+    "cooldown": 0,
+    "duration": 0
+  },
 
-    embed.add_field(
-        name="❤️ Здоровье",
-        value=str(card["health"]),
-        inline=True
-    )
+  "DEM-006": {
+    "name": "Облик дракона",
+    "description": "Увеличивает атаку на 30 и здоровье на 40 на 3 хода.",
+    "type": "buff",
+    "target": "self",
+    "trigger": "active",
+    "cooldown": 4,
+    "duration": 3
+  },
 
-    embed.add_field(
-        name="🛡 Защита",
-        value=str(card["defense"]),
-        inline=True
-    )
+  "DEM-007": {
+    "name": "Атака Валора",
+    "description": "Наносит 30 ед. физического урона и ослабляет атаку врага на 20% на 2 хода.",
+    "type": "physical",
+    "target": "enemy",
+    "trigger": "active",
+    "cooldown": 3,
+    "duration": 2
+  },
 
-    ability = card.get("ability")
+  "DEM-008": {
+    "name": "Кресчендо",
+    "description": "Оглушает выбранного врага на 1 ход.",
+    "type": "control",
+    "target": "enemy",
+    "trigger": "active",
+    "cooldown": 4,
+    "duration": 1
+  },
 
-    if ability:
-        name = ability.get("name", "Без названия")
-        description = ability.get("description", "Нет описания")
+  "DEM-009": {
+    "name": "Вход героя",
+    "description": "Получает щит 60 ед. и наносит 25 ед. магического урона всем врагам.",
+    "type": "magic",
+    "target": "all_enemies",
+    "trigger": "active",
+    "cooldown": 4,
+    "duration": 0
+  },
 
-        embed.add_field(
-            name=f"✨ {name}",
-            value=description,
-            inline=False
-        )
+  "DEM-010": {
+    "name": "Молот хранительницы",
+    "description": "Наносит 40 ед. физического урона и отбрасывает врага, лишая его следующей атаки.",
+    "type": "physical",
+    "target": "enemy",
+    "trigger": "active",
+    "cooldown": 3,
+    "duration": 1
+  },
 
-    embed.set_footer(
-        text=f"🎴 Карта {index + 1}/3"
-    )
+  "DEM-011": {
+    "name": "Щит рассвета",
+    "description": "Получает щит 50 ед. и провоцирует врагов атаковать себя 2 хода.",
+    "type": "tank",
+    "target": "self",
+    "trigger": "active",
+    "cooldown": 3,
+    "duration": 2
+  },
 
-    return embed
+  "DEM-012": {
+    "name": "Небесное благословение",
+    "description": "Исцеляет союзника на 70 ед. здоровья.",
+    "type": "heal",
+    "target": "ally",
+    "trigger": "active",
+    "cooldown": 3,
+    "duration": 0
+  },
+
+  "DEM-013": {
+    "name": "Удар молнии",
+    "description": "Наносит 45 ед. магического урона и имеет 30% шанс оглушить врага.",
+    "type": "magic",
+    "target": "enemy",
+    "trigger": "active",
+    "cooldown": 3,
+    "duration": 1
+  },
+
+  "DEM-014": {
+    "name": "Стойкость",
+    "description": "Пассивно снижает получаемый урон на 15%.",
+    "type": "passive",
+    "target": "self",
+    "trigger": "passive",
+    "cooldown": 0,
+    "duration": 0
+  },
+
+  "DEM-015": {
+    "name": "Магический барьер",
+    "description": "В начале боя получает щит 40 ед.",
+    "type": "shield",
+    "target": "self",
+    "trigger": "battle_start",
+    "cooldown": 0,
+    "duration": 0
+  }
+}
