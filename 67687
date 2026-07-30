@@ -1,37 +1,7 @@
 {
-  "Kayle_0": {
-    "name": "Божественное вознесение",
-    "description": "Получает +30% к атаке и +20% к защите на 3 хода.",
-    "type": "buff",
-    "target": "self",
-    "trigger": "active",
-    "cooldown": 4,
-    "duration": 3
-  },
-
-  "Kayle_1": {
-    "name": "Серебряное правосудие",
-    "description": "Получает щит 100 ед. и восстанавливает 50 ед. здоровья.",
-    "type": "shield",
-    "target": "self",
-    "trigger": "active",
-    "cooldown": 4,
-    "duration": 2
-  },
-
-  "Kayle_2": {
-    "name": "Боевое крещение",
-    "description": "Следующие две атаки наносят на 25% больше урона.",
-    "type": "buff",
-    "target": "self",
-    "trigger": "active",
-    "cooldown": 4,
-    "duration": 2
-  },
-
-  "Kayle_3": {
-    "name": "Небесный меч",
-    "description": "Наносит 75 ед. физического урона и игнорирует 30% защиты цели.",
+  "Lucian_0": {
+    "name": "Парные пистолеты",
+    "description": "Атакует цель дважды, нанося по 35 ед. физического урона.",
     "type": "physical",
     "target": "enemy",
     "trigger": "active",
@@ -39,9 +9,49 @@
     "duration": 0
   },
 
-  "Kayle_4": {
-    "name": "Огнекрыл",
-    "description": "Поджигает цель на 3 хода, нанося 20 ед. урона каждый ход.",
+  "Lucian_1": {
+    "name": "Наемник",
+    "description": "Следующая атака наносит на 70% больше урона.",
+    "type": "buff",
+    "target": "self",
+    "trigger": "active",
+    "cooldown": 4,
+    "duration": 1
+  },
+
+  "Lucian_2": {
+    "name": "Меткий стрелок",
+    "description": "Наносит 80 ед. физического урона, игнорируя 35% защиты цели.",
+    "type": "physical",
+    "target": "enemy",
+    "trigger": "active",
+    "cooldown": 3,
+    "duration": 0
+  },
+
+  "Lucian_6": {
+    "name": "Пульс времени",
+    "description": "Наносит 70 ед. магического урона и получает щит 50 ед.",
+    "type": "magic",
+    "target": "enemy",
+    "trigger": "active",
+    "cooldown": 4,
+    "duration": 2
+  },
+
+  "Lucian_7": {
+    "name": "Престиж Пульсара",
+    "description": "Следующие две атаки становятся критическими.",
+    "type": "buff",
+    "target": "self",
+    "trigger": "active",
+    "cooldown": 5,
+    "duration": 2
+  },
+
+  "Lucian_8": {
+    "name": "Высокий полдень",
+    "description": "Поджигает цель на 3 хода и наносит 75 ед. физического урона.",
     "type": "burn",
     "target": "enemy",
     "trigger": "active",
@@ -49,9 +59,20 @@
     "duration": 3
   },
 
-  "Kayle_5": {
-    "name": "Железный инквизитор",
-    "description": "Оглушает цель на 1 ход и наносит 60 ед. физического урона.",
+  "Lucian_9": {
+    "name": "Свет очистителя",
+    "description": "Все союзники получают +20% к атаке на 2 хода.",
+    "type": "buff",
+    "target": "all_allies",
+    "trigger": "active",
+    "cooldown": 4,
+    "duration": 2
+  }
+}
+{
+  "Lucian_18": {
+    "name": "Сердцеискатель",
+    "description": "Очаровывает цель на 1 ход и наносит 65 ед. магического урона.",
     "type": "stun",
     "target": "enemy",
     "trigger": "active",
@@ -59,19 +80,29 @@
     "duration": 1
   },
 
-  "Kayle_6": {
-    "name": "Крылья эфира",
-    "description": "Все союзники получают щит 60 ед.",
-    "type": "shield",
+  "Lucian_19": {
+    "name": "Аркана",
+    "description": "Наносит 95 ед. магического урона и восстанавливает себе 45 ед. здоровья.",
+    "type": "lifesteal",
+    "target": "enemy",
+    "trigger": "active",
+    "cooldown": 4,
+    "duration": 0
+  },
+
+  "Lucian_25": {
+    "name": "Вице-Демасия",
+    "description": "Все союзники получают +25% к скорости атаки на 3 хода.",
+    "type": "buff",
     "target": "all_allies",
     "trigger": "active",
     "cooldown": 5,
-    "duration": 2
+    "duration": 3
   },
 
-  "Kayle_7": {
-    "name": "Драконоборец",
-    "description": "Наносит 95 ед. физического урона и накладывает кровотечение на 2 хода.",
+  "Lucian_31": {
+    "name": "PROJECT: Люциан",
+    "description": "Выпускает очередь, нанося 120 ед. физического урона и накладывая кровотечение на 2 хода.",
     "type": "bleed",
     "target": "enemy",
     "trigger": "active",
@@ -79,104 +110,43 @@
     "duration": 2
   },
 
-  "Kayle_8": {
-    "name": "Священное пламя",
-    "description": "Наносит 65 ед. магического урона всем врагам.",
-    "type": "magic",
-    "target": "all_enemies",
-    "trigger": "active",
-    "cooldown": 5,
-    "duration": 0
-  },
-
-  "Kayle_9": {
-    "name": "Приговор небес",
-    "description": "Наносит 120 ед. истинного урона выбранному врагу.",
-    "type": "true",
-    "target": "enemy",
-    "trigger": "active",
-    "cooldown": 6,
-    "duration": 0
-  }
-}
-{
-  "Kayle_15": {
-    "name": "Пентакилл: Потерянная глава",
-    "description": "Наносит 80 ед. магического урона всем врагам и накладывает горение на 2 хода.",
-    "type": "burn",
-    "target": "all_enemies",
-    "trigger": "active",
-    "cooldown": 5,
-    "duration": 2
-  },
-
-  "Kayle_24": {
-    "name": "Псионический импульс",
-    "description": "Оглушает выбранного врага на 1 ход и наносит 70 ед. магического урона.",
-    "type": "stun",
-    "target": "enemy",
+  "Lucian_40": {
+    "name": "Замаскированный правосудием",
+    "description": "Получает невосприимчивость к следующей атаке противника.",
+    "type": "shield",
+    "target": "self",
     "trigger": "active",
     "cooldown": 5,
     "duration": 1
   },
 
-  "Kayle_33": {
-    "name": "Пожирательница солнца",
-    "description": "Получает +40% к атаке и восстанавливает 80 ед. здоровья.",
-    "type": "buff",
-    "target": "self",
+  "Lucian_52": {
+    "name": "Паладин удара",
+    "description": "Наносит 130 ед. физического урона. Если цель оглушена, урон увеличивается на 50%.",
+    "type": "physical",
+    "target": "enemy",
+    "trigger": "active",
+    "cooldown": 5,
+    "duration": 0
+  },
+
+  "Lucian_62": {
+    "name": "Погребённые тени",
+    "description": "Ослабляет врага, снижая его атаку на 30% на 3 хода.",
+    "type": "debuff",
+    "target": "enemy",
     "trigger": "active",
     "cooldown": 5,
     "duration": 3
   },
 
-  "Kayle_42": {
-    "name": "Эмпирейское вознесение",
-    "description": "Наносит 140 ед. истинного урона выбранному врагу.",
-    "type": "true",
+  "Lucian_72": {
+    "name": "Благословение зимы",
+    "description": "Замораживает цель на 1 ход и наносит 100 ед. магического урона.",
+    "type": "freeze",
     "target": "enemy",
     "trigger": "active",
     "cooldown": 6,
-    "duration": 0
-  },
-
-  "Kayle_57": {
-    "name": "Бессмертное путешествие",
-    "description": "Все союзники восстанавливают по 70 ед. здоровья и получают щит 50 ед.",
-    "type": "heal",
-    "target": "all_allies",
-    "trigger": "active",
-    "cooldown": 6,
-    "duration": 2
-  },
-
-  "Kayle_66": {
-    "name": "Престиж Эмпирея",
-    "description": "Следующие две атаки наносят гарантированный критический удар.",
-    "type": "buff",
-    "target": "self",
-    "trigger": "active",
-    "cooldown": 6,
-    "duration": 2
-  },
-
-  "Kayle_67": {
-    "name": "Цветение духов",
-    "description": "Исцеляет всех союзников на 90 ед. здоровья и снимает с них отрицательные эффекты.",
-    "type": "heal",
-    "target": "all_allies",
-    "trigger": "active",
-    "cooldown": 6,
-    "duration": 0
-  },
-
-  "Kayle_78": {
-    "name": "Трансцендентность",
-    "description": "До конца боя получает +50% к атаке, +30% к защите и иммунитет к оглушению на 2 хода.",
-    "type": "buff",
-    "target": "self",
-    "trigger": "active",
-    "cooldown": 7,
-    "duration": 999
+    "duration": 1
   }
 }
