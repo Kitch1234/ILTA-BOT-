@@ -1,17 +1,29 @@
-print("1. Получили карту")
+    # -----------------------------
+            # Случайная карта из cards.json
+            # -----------------------------
+            print("1. Получили карту")
+            card_data = get_random_card()
 
-card_data = get_random_card()
+            champion_name = card_data["champion"]
 
-print("2. Получили способность")
+            skin_name = card_data["skin"]
 
-ability = get_ability(card_data["id"])
+            rarity = card_data["rarity"]
 
-print("3. Генерируем карту")
+            region = card_data["region"]
 
-card_file = await asyncio.wait_for(...)
+            image_path = get_art_path(card_data)
 
-print("4. Карта сгенерирована")
+            # -----------------------------
+            # Способность
+            # -----------------------------
 
-await add_card(...)
+            ability_data = get_ability(
 
-print("5. Сохранили в БД")
+                card_data["id"],
+
+
+            )
+
+            ability = ability_data
+
