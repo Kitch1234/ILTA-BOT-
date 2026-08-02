@@ -1,31 +1,80 @@
-   "cooldown": 4,
-    "duration": 2
-  },
+import json
+from pathlib import Path
 
-  "Galio_47": {
-    "name": "Крылья правосудия",
-    "description": "Наносит 45 ед. магического урона всем врагам.",
-    "type": "magic",
-    "target": "all_enemies",
-    "trigger": "active",
-    "cooldown": 5,
-    "duration": 0
-  }
+CARDS_FILE = Path("data/cards.json")
+
+RARITY_MAP = {
+    "Ultimate": "Чемпионский",
+    "Exalted": "Чемпионский",
+
+    "Prestige": "Престижный",
+
+    "Mythic": "Мифический",
+    "Hextech": "Мифический",
+    "Crystalis": "Мифический",
+    "Ashen": "Мифический",
+
+    "Legendary": "Легендарный",
+
+    "Epic": "Эпический",
+
+    "default": "Обычный",
 }
-{
-  "Fiora_0": {
-    "name": "Вызов на дуэль",
-    "description": "Следующая атака наносит на 50% больше урона.",
-    "type": "buff",
-    "target": "self",
-    "trigger": "active",
-    "cooldown": 3,
-    "duration": 1
-  },
 
-  "Fiora_1": {
-    "name": "Парирование",
-    "description": "Полностью блокирует следующую атаку и наносит противнику 40 ед. истинного урона.",
-    "type": "counter",
-    "target": "self",
-    "trigger": "active",
+
+def detect_rarity(skin_name: str):
+
+    if not skin_name:
+        return "Обычный"
+
+    if skin_name.lower() == "default":
+        return "Обычный"
+
+    for key, rarity in RARITY_MAP.items():
+        if key.lower() in skin_name.lower():
+            return rarity
+
+    return "Редкий"
+
+
+def main():
+
+    with open(CARDS_FILE, "r", encoding="utf-8") as f:
+        cards = json.load(f)
+
+    changed = 0
+
+    print("=" * 60)
+    print("ПРОВЕРКА РЕДКОСТЕЙ")
+    print("=" * 60)
+
+    for card_id, card in cards.items():
+
+        old = card["rarity"]
+
+        new = detect_rarity(card["skin_en"])
+
+        if old != new:
+
+            print(f"\n{card_id}")
+            print(f" {card['skin_en']}")
+            print(f" {old}  →  {new}")
+
+            card["rarity"] = new
+            changed += 1
+
+    with open(CARDS_FILE, "w", encoding="utf-8") as f:
+        json.dump(
+            cards,
+            f,
+            ensure_ascii=False,
+            indent=4,
+        )
+
+    print("\n" + "=" * 60)
+    print(f"Исправлено: {changed}")
+    print("=" * 60)
+
+
+if __name__ == "__main__":
+    main()
