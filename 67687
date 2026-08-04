@@ -2,28 +2,120 @@ import discord
 from discord.ext import commands
 from discord import app_commands
 
+
+# -------------------- МОДАЛЬНОЕ ОКНО --------------------
+
+class ChangelogModal(discord.ui.Modal, title="Создать Change Log"):
+
+    version = discord.ui.TextInput(
+        label="Версия",
+        placeholder="Например: v0.1.0",
+        required=True,
+        max_length=30
+    )
+
+    new = discord.ui.TextInput(
+        label="✨ Что нового",
+        style=discord.TextStyle.paragraph,
+        placeholder="Каждый пункт с новой строки",
+        required=False,
+        max_length=1000
+    )
+
+    changed = discord.ui.TextInput(
+        label="⚖️ Что изменено",
+        style=discord.TextStyle.paragraph,
+        placeholder="Каждый пункт с новой строки",
+        required=False,
+        max_length=1000
+    )
+
+    fixed = discord.ui.TextInput(
+        label="🛠️ Что исправлено",
+        style=discord.TextStyle.paragraph,
+        placeholder="Каждый пункт с новой строки",
+        required=False,
+        max_length=1000
+    )
+
+    development = discord.ui.TextInput(
+        label="🚧 В разработке",
+        style=discord.TextStyle.paragraph,
+        placeholder="Каждый пункт с новой строки",
+        required=False,
+        max_length=1000
+    )
+
+    async def on_submit(self, interaction: discord.Interaction):
+
+        embed = discord.Embed(
+            title=f"📜 ILTA BOT — {self.version}",
+            colour=0x8A2BE2
+        )
+
+        if self.new.value.strip():
+            embed.add_field(
+                name="✨ Новое",
+                value=self.new.value,
+                inline=False
+            )
+
+        if self.changed.value.strip():
+            embed.add_field(
+                name="⚖️ Изменения",
+                value=self.changed.value,
+                inline=False
+            )
+
+        if self.fixed.value.strip():
+            embed.add_field(
+                name="🛠️ Исправления",
+                value=self.fixed.value,
+                inline=False
+            )
+
+        if self.development.value.strip():
+            embed.add_field(
+                name="🚧 В разработке",
+                value=self.development.value,
+                inline=False
+            )
+
+        embed.set_footer(
+            text=f"Опубликовано {interaction.user.display_name}",
+            icon_url=interaction.user.display_avatar.url
+        )
+
+        embed.timestamp = discord.utils.utcnow()
+
+        await interaction.channel.send(embed=embed)
+
+        await interaction.response.send_message(
+            "✅ Change Log опубликован!",
+            ephemeral=True
+        )
+
+
+# -------------------- COG --------------------
+
 class Changelog(commands.Cog):
+
     def __init__(self, bot):
         self.bot = bot
 
     @app_commands.command(
         name="changelog",
-        description="Отправить changelog в чат"
+        description="Создать новый Change Log"
     )
+    @app_commands.default_permissions(administrator=True)
     async def changelog(self, interaction: discord.Interaction):
-        text = (
-            "# 📜 ILTA BOT — Обновление v0.1.0\n\n"
-            "## ✨ Новое\n"
-            "• Добавлена система Королевства.\n"
-            "• Добавлены Дома игроков.\n\n"
-            "## ⚖️ Изменения\n"
-            "• Обновлён интерфейс.\n\n"
-            "## 🛠️ Исправления\n"
-            "• Исправлены ошибки открытия паков."
+
+        await interaction.response.send_modal(
+            ChangelogModal()
         )
 
-        await interaction.response.send_message("✅ Changelog отправлен.", ephemeral=True)
-        await interaction.channel.send(text)
 
 async def setup(bot):
-    await bot.add_cog(Changelog(bot))
+    await bot.add_cog(
+        Changelog(bot)
+    )
