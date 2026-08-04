@@ -1,80 +1,29 @@
-import json
-from pathlib import Path
+import discord
+from discord.ext import commands
+from discord import app_commands
 
-CARDS_FILE = Path("data/cards.json")
+class Changelog(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
 
-RARITY_MAP = {
-    "Ultimate": "Чемпионский",
-    "Exalted": "Чемпионский",
-
-    "Prestige": "Престижный",
-
-    "Mythic": "Мифический",
-    "Hextech": "Мифический",
-    "Crystalis": "Мифический",
-    "Ashen": "Мифический",
-
-    "Legendary": "Легендарный",
-
-    "Epic": "Эпический",
-
-    "default": "Обычный",
-}
-
-
-def detect_rarity(skin_name: str):
-
-    if not skin_name:
-        return "Обычный"
-
-    if skin_name.lower() == "default":
-        return "Обычный"
-
-    for key, rarity in RARITY_MAP.items():
-        if key.lower() in skin_name.lower():
-            return rarity
-
-    return "Редкий"
-
-
-def main():
-
-    with open(CARDS_FILE, "r", encoding="utf-8") as f:
-        cards = json.load(f)
-
-    changed = 0
-
-    print("=" * 60)
-    print("ПРОВЕРКА РЕДКОСТЕЙ")
-    print("=" * 60)
-
-    for card_id, card in cards.items():
-
-        old = card["rarity"]
-
-        new = detect_rarity(card["skin_en"])
-
-        if old != new:
-
-            print(f"\n{card_id}")
-            print(f" {card['skin_en']}")
-            print(f" {old}  →  {new}")
-
-            card["rarity"] = new
-            changed += 1
-
-    with open(CARDS_FILE, "w", encoding="utf-8") as f:
-        json.dump(
-            cards,
-            f,
-            ensure_ascii=False,
-            indent=4,
+    @app_commands.command(
+        name="changelog",
+        description="Отправить changelog в чат"
+    )
+    async def changelog(self, interaction: discord.Interaction):
+        text = (
+            "# 📜 ILTA BOT — Обновление v0.1.0\n\n"
+            "## ✨ Новое\n"
+            "• Добавлена система Королевства.\n"
+            "• Добавлены Дома игроков.\n\n"
+            "## ⚖️ Изменения\n"
+            "• Обновлён интерфейс.\n\n"
+            "## 🛠️ Исправления\n"
+            "• Исправлены ошибки открытия паков."
         )
 
-    print("\n" + "=" * 60)
-    print(f"Исправлено: {changed}")
-    print("=" * 60)
+        await interaction.response.send_message("✅ Changelog отправлен.", ephemeral=True)
+        await interaction.channel.send(text)
 
-
-if __name__ == "__main__":
-    main()
+async def setup(bot):
+    await bot.add_cog(Changelog(bot))
