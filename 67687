@@ -1,115 +1,20 @@
-import os
-import asyncio
-import traceback
-
-import discord
-from discord.ext import commands
-from dotenv import load_dotenv
-
-
-from core.database import connect_db, close_db
-
-
-load_dotenv()
-
-TOKEN = os.getenv("TOKEN")
-
-
-intents = discord.Intents.default()
-intents.message_content = True
-
-
-class QuantumBot(commands.Bot):
-
-    def __init__(self):
-        super().__init__(
-            command_prefix="!",
-            intents=intents,
-        )
-
-    async def setup_hook(self):
-
-        await connect_db()
-
-        cogs = [
-            "auction",
-            "balance",
-            "contract",
-            "daily",
-            "inventory",
-            "profile",
-            "quest",
-            "shop",
-            "work",
-            "travel",
-            "quest_reward",
-            "cards",
-            "test_event",
-            "deck",
-            "battle",
-            "pack",
-            "collection",
-            "valdibot",
-            "map",
-        ]
-
-        for cog in cogs:
-
-            try:
-
-                await self.load_extension(
-                    f"cogs.{cog}"
-                )
-
-                print(f"✅ Загружен: {cog}")
-
-            except Exception:
-
-                print(f"❌ Ошибка загрузки {cog}")
-
-                traceback.print_exc()
-
-        try:
-
-            synced = await self.tree.sync()
-
-            print(
-                f"✅ Синхронизировано команд: {len(synced)}"
-            )
-
-        except Exception:
-
-            print("❌ Ошибка синхронизации")
-
-            traceback.print_exc()
-
-    async def close(self):
-
-        await close_db()
-
-        await super().close()
-
-
-bot = QuantumBot()
-
-
-@bot.event
-async def on_ready():
-
-    print(f"🟢 Бот запущен как {bot.user}")
-
-
-async def main():
-
-    if not TOKEN:
-
-        print("❌ TOKEN не найден в .env")
-
-        return
-
-    await bot.start(TOKEN)
-
-
-if __name__ == "__main__":
-
-    asyncio.run(main())
+ужен: work
+🌍 Регионов загружено для чемпионов: 32
+✅ Загружен: travel
+✅ Загружен: quest_reward
+✅ Загружен: cards
+✅ Загружен: test_event
+✅ Загружен: deck
+✅ Загружен: battle
+✅ Загружен: pack
+✅ Загружен: collection
+❌ Ошибка загрузки changelog
+Traceback (most recent call last):
+  File "C:\Users\Ketek'\Desktop\qantum_universe\main.py", line 60, in setup_hook
+    await self.load_extension(
+  File "C:\Users\Ketek'\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\discord\ext\commands\bot.py", line 1038, in load_extension
+    raise errors.ExtensionNotFound(name)
+discord.ext.commands.errors.ExtensionNotFound: Extension 'cogs.changelog' could not be loaded or found.
+✅ Загружен: map
+✅ Синхронизировано команд: 24
+🟢 Бот запущен как ILTA BOT#7827
