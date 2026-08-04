@@ -1,85 +1,476 @@
-"""
-Координаты интерфейса коллекции ILTA
-"""
+Microsoft Windows [Version 10.0.26200.8973]
+(c) Корпорация Майкрософт (Microsoft Corporation). Все права защищены.
 
-# =====================================
-# Размер изображения
-# =====================================
-
-IMAGE_WIDTH = 1536
-IMAGE_HEIGHT = 1024
-
-# =====================================
-# Размер карты
-# =====================================
-
-CARD_WIDTH = 260
-CARD_HEIGHT = 380
-
-# =====================================
-# Сетка карт
-# =====================================
-
-CARDS_PER_ROW = 3
-ROWS = 2
-
-START_X = 170
-START_Y = 190
-
-GAP_X = 65
-GAP_Y = 48
-
-CARD_POSITIONS = []
-
-TOP_ROW_OFFSET = 10        # верхний ряд вниз
-BOTTOM_ROW_OFFSET = 20    # нижний ряд вниз
-
-for row in range(ROWS):
-    for col in range(CARDS_PER_ROW):
-
-        x = START_X + col * (CARD_WIDTH + GAP_X)
-        y = START_Y + row * (CARD_HEIGHT + GAP_Y)
-
-        if row == 0:
-            y += TOP_ROW_OFFSET
-
-        if row == 1:
-            y += BOTTOM_ROW_OFFSET
-
-        CARD_POSITIONS.append((x, y))
-
-
-# =====================================
-# Правая информационная панель
-# =====================================
-
-COLLECTED_POSITION = (
-    800,
-    420,
-)
-
-PROGRESS_POSITION = (
-    800,
-    490,
-)
-
-# =====================================
-# Редкости
-# =====================================
-
-RARITY_ICON_X = 1185
-
-RARITY_COUNT_X = 1390
-
-RARITY_START_Y = 615
-
-RARITY_STEP = 44
-
-# =====================================
-# Номер страницы
-# =====================================
-
-PAGE_POSITION = (
-    768,
-    980,
-)
+C:\zapret-v72.13>tree /F
+Структура папок тома Local Disk
+Серийный номер тома: 0000004F 46A3:5EF7
+C:.
+│   blockcheck.sh
+│   config.default
+│   install_bin.sh
+│   install_easy.sh
+│   install_prereq.sh
+│   Makefile
+│   uninstall_easy.sh
+│
+├───binaries
+│   ├───android-arm
+│   │       ip2net
+│   │       mdig
+│   │       nfqws
+│   │       tpws
+│   │
+│   ├───android-arm64
+│   │       ip2net
+│   │       mdig
+│   │       nfqws
+│   │       tpws
+│   │
+│   ├───android-x86
+│   │       ip2net
+│   │       mdig
+│   │       nfqws
+│   │       tpws
+│   │
+│   ├───android-x86_64
+│   │       ip2net
+│   │       mdig
+│   │       nfqws
+│   │       tpws
+│   │
+│   ├───freebsd-x86_64
+│   │       dvtws
+│   │       ip2net
+│   │       mdig
+│   │       tpws
+│   │
+│   ├───linux-arm
+│   │       ip2net
+│   │       mdig
+│   │       nfqws
+│   │       tpws
+│   │
+│   ├───linux-arm64
+│   │       ip2net
+│   │       mdig
+│   │       nfqws
+│   │       tpws
+│   │
+│   ├───linux-lexra
+│   │       ip2net
+│   │       mdig
+│   │       nfqws
+│   │       tpws
+│   │
+│   ├───linux-mips
+│   │       ip2net
+│   │       mdig
+│   │       nfqws
+│   │       tpws
+│   │
+│   ├───linux-mips64
+│   │       ip2net
+│   │       mdig
+│   │       nfqws
+│   │       tpws
+│   │
+│   ├───linux-mipsel
+│   │       ip2net
+│   │       mdig
+│   │       nfqws
+│   │       tpws
+│   │
+│   ├───linux-ppc
+│   │       ip2net
+│   │       mdig
+│   │       nfqws
+│   │       tpws
+│   │
+│   ├───linux-x86
+│   │       ip2net
+│   │       mdig
+│   │       nfqws
+│   │       tpws
+│   │
+│   ├───linux-x86_64
+│   │       ip2net
+│   │       mdig
+│   │       nfqws
+│   │       tpws
+│   │       tpws_wsl.tgz
+│   │
+│   ├───mac64
+│   │       ip2net
+│   │       mdig
+│   │       tpws
+│   │
+│   ├───windows-x86
+│   │       cygwin1.dll
+│   │       ip2net.exe
+│   │       killall.exe
+│   │       mdig.exe
+│   │       WinDivert.dll
+│   │       WinDivert32.sys
+│   │       winws.exe
+│   │
+│   └───windows-x86_64
+│           cygwin1.dll
+│           ip2net.exe
+│           killall.exe
+│           mdig.exe
+│           WinDivert.dll
+│           WinDivert64.sys
+│           winws.exe
+│
+├───common
+│       base.sh
+│       custom.sh
+│       dialog.sh
+│       elevate.sh
+│       fwtype.sh
+│       installer.sh
+│       ipt.sh
+│       linux_daemons.sh
+│       linux_fw.sh
+│       linux_iphelper.sh
+│       list.sh
+│       nft.sh
+│       pf.sh
+│       virt.sh
+│
+├───docs
+│   │   bsd.en.md
+│   │   bsd.md
+│   │   bsdfw.txt
+│   │   changes.txt
+│   │   iptables.txt
+│   │   LICENSE.txt
+│   │   nftables.txt
+│   │   nftables_notes.txt
+│   │   quick_start.md
+│   │   quick_start_windows.md
+│   │   readme.en.md
+│   │   readme.md
+│   │   redsocks.txt
+│   │   windows.en.md
+│   │   windows.md
+│   │   wireguard_iproute_openwrt.txt
+│   │
+│   └───compile
+│       │   build_howto_openwrt.txt
+│       │   build_howto_unix.txt
+│       │   build_howto_windows.txt
+│       │
+│       └───openwrt
+│           └───package
+│               └───zapret
+│                   ├───ip2net
+│                   │       Makefile
+│                   │       readme.txt
+│                   │
+│                   ├───mdig
+│                   │       Makefile
+│                   │       readme.txt
+│                   │
+│                   ├───nfqws
+│                   │       Makefile
+│                   │       readme.txt
+│                   │
+│                   └───tpws
+│                           Makefile
+│                           readme.txt
+│
+├───files
+│   ├───fake
+│   │       dht_find_node.bin
+│   │       dht_get_peers.bin
+│   │       discord-ip-discovery-with-port.bin
+│   │       discord-ip-discovery-without-port.bin
+│   │       dtls_clienthello_w3_org.bin
+│   │       http_iana_org.bin
+│   │       isakmp_initiator_request.bin
+│   │       quic_initial_facebook_com.bin
+│   │       quic_initial_facebook_com_quiche.bin
+│   │       quic_initial_rr1---sn-xguxaxjvh-n8me_googlevideo_com_kyber_1.bin
+│   │       quic_initial_rr1---sn-xguxaxjvh-n8me_googlevideo_com_kyber_2.bin
+│   │       quic_initial_rr2---sn-gvnuxaxjvh-o8ge_googlevideo_com.bin
+│   │       quic_initial_rutracker_org.bin
+│   │       quic_initial_rutracker_org_kyber_1.bin
+│   │       quic_initial_rutracker_org_kyber_2.bin
+│   │       quic_initial_vk_com.bin
+│   │       quic_initial_www_google_com.bin
+│   │       quic_short_header.bin
+│   │       stun.bin
+│   │       tls_clienthello_gosuslugi_ru.bin
+│   │       tls_clienthello_iana_org.bin
+│   │       tls_clienthello_rutracker_org_kyber.bin
+│   │       tls_clienthello_sberbank_ru.bin
+│   │       tls_clienthello_vk_com.bin
+│   │       tls_clienthello_vk_com_kyber.bin
+│   │       tls_clienthello_www_google_com.bin
+│   │       wireguard_initiation.bin
+│   │       wireguard_response.bin
+│   │       zero_1024.bin
+│   │       zero_256.bin
+│   │       zero_512.bin
+│   │
+│   └───huawei
+│       └───E8372
+│               run-zapret-hostlist
+│               run-zapret-ip
+│               unfuck_nfqueue.ko
+│               unzapret
+│               unzapret-ip
+│               zapret
+│               zapret-ip
+│
+├───init.d
+│   ├───custom.d.examples.linux
+│   │       10-keenetic-udp-fix
+│   │       20-fw-extra
+│   │       50-dht4all
+│   │       50-discord-media
+│   │       50-nfqws-ipset
+│   │       50-quic4all
+│   │       50-stun4all
+│   │       50-tpws-ipset
+│   │       50-wg4all
+│   │
+│   ├───macos
+│   │   │   functions
+│   │   │   zapret
+│   │   │   zapret.plist
+│   │   │
+│   │   ├───custom.d
+│   │   │       .keep
+│   │   │
+│   │   └───custom.d.examples
+│   │           50-extra-tpws
+│   │
+│   ├───openrc
+│   │       zapret
+│   │
+│   ├───openwrt
+│   │   │   90-zapret
+│   │   │   firewall.zapret
+│   │   │   functions
+│   │   │   zapret
+│   │   │
+│   │   └───custom.d
+│   │           .keep
+│   │
+│   ├───openwrt-minimal
+│   │   │   readme.txt
+│   │   │
+│   │   └───tpws
+│   │       └───etc
+│   │           │   firewall.user
+│   │           │
+│   │           ├───config
+│   │           │       tpws
+│   │           │
+│   │           ├───init.d
+│   │           │       tpws
+│   │           │
+│   │           └───nftables.d
+│   │                   90-tpws.nft
+│   │
+│   ├───pfsense
+│   │       zapret.sh
+│   │
+│   ├───runit
+│   │   └───zapret
+│   │           finish
+│   │           run
+│   │
+│   ├───s6
+│   │   └───zapret
+│   │           down
+│   │           type
+│   │           up
+│   │
+│   ├───systemd
+│   │       nfqws@.service
+│   │       tpws@.service
+│   │       zapret-list-update.service
+│   │       zapret-list-update.timer
+│   │       zapret.service
+│   │
+│   ├───sysv
+│   │   │   functions
+│   │   │   zapret
+│   │   │
+│   │   └───custom.d
+│   │           .keep
+│   │
+│   └───windivert.filter.examples
+│           README.txt
+│           windivert_part.discord_media.txt
+│           windivert_part.quic_initial_ietf.txt
+│           windivert_part.stun.txt
+│           windivert_part.wireguard.txt
+│
+├───ip2net
+│       ip2net.c
+│       Makefile
+│       qsort.c
+│       qsort.h
+│
+├───ipset
+│       antifilter.helper
+│       clear_lists.sh
+│       create_ipset.sh
+│       def.sh
+│       get_antifilter_allyouneed.sh
+│       get_antifilter_ip.sh
+│       get_antifilter_ipresolve.sh
+│       get_antifilter_ipsmart.sh
+│       get_antifilter_ipsum.sh
+│       get_antizapret_domains.sh
+│       get_config.sh
+│       get_exclude.sh
+│       get_ipban.sh
+│       get_reestr_preresolved.sh
+│       get_reestr_preresolved_smart.sh
+│       get_reestr_resolvable_domains.sh
+│       get_refilter_domains.sh
+│       get_refilter_ipsum.sh
+│       get_user.sh
+│       zapret-hosts-user-exclude.txt.default
+│
+├───mdig
+│       Makefile
+│       mdig.c
+│
+├───nfq
+│   │   BSDmakefile
+│   │   checksum.c
+│   │   checksum.h
+│   │   conntrack.c
+│   │   conntrack.h
+│   │   darkmagic.c
+│   │   darkmagic.h
+│   │   desync.c
+│   │   desync.h
+│   │   gzip.c
+│   │   gzip.h
+│   │   helpers.c
+│   │   helpers.h
+│   │   hostlist.c
+│   │   hostlist.h
+│   │   ipset.c
+│   │   ipset.h
+│   │   kavl.h
+│   │   Makefile
+│   │   nfqws.c
+│   │   nfqws.h
+│   │   packet_queue.c
+│   │   packet_queue.h
+│   │   params.c
+│   │   params.h
+│   │   pools.c
+│   │   pools.h
+│   │   protocol.c
+│   │   protocol.h
+│   │   sec.c
+│   │   sec.h
+│   │   uthash.h
+│   │   win.c
+│   │   win.h
+│   │
+│   ├───crypto
+│   │       aes-gcm.c
+│   │       aes-gcm.h
+│   │       aes.c
+│   │       aes.h
+│   │       gcm.c
+│   │       gcm.h
+│   │       hkdf.c
+│   │       hmac.c
+│   │       sha-private.h
+│   │       sha.h
+│   │       sha224-256.c
+│   │       usha.c
+│   │
+│   └───windows
+│       ├───res
+│       │   ├───32
+│       │   │       winicon.o
+│       │   │       winmanifest.o
+│       │   │
+│       │   └───64
+│       │           winicon.o
+│       │           winmanifest.o
+│       │
+│       └───windivert
+│               libwindivert32.a
+│               libwindivert64.a
+│               windivert.h
+│
+├───tmp
+│       .keep
+│
+└───tpws
+    │   BSDmakefile
+    │   gzip.c
+    │   gzip.h
+    │   helpers.c
+    │   helpers.h
+    │   hostlist.c
+    │   hostlist.h
+    │   ipset.c
+    │   ipset.h
+    │   kavl.h
+    │   linux_compat.h
+    │   Makefile
+    │   params.c
+    │   params.h
+    │   pools.c
+    │   pools.h
+    │   protocol.c
+    │   protocol.h
+    │   redirect.c
+    │   redirect.h
+    │   resolver.c
+    │   resolver.h
+    │   sec.c
+    │   sec.h
+    │   socks.h
+    │   tamper.c
+    │   tamper.h
+    │   tpws.c
+    │   tpws.h
+    │   tpws_conn.c
+    │   tpws_conn.h
+    │   uthash.h
+    │
+    ├───andr
+    │       getifaddrs.c
+    │       ifaddrs.h
+    │       netlink.c
+    │       netlink.h
+    │       _musl_license.txt
+    │
+    ├───epoll-shim
+    │   ├───include
+    │   │   └───sys
+    │   │           epoll.h
+    │   │
+    │   └───src
+    │           epoll.c
+    │           epollfd_ctx.c
+    │           epollfd_ctx.h
+    │           epoll_shim_ctx.c
+    │           epoll_shim_ctx.h
+    │           eventfd_ctx.h
+    │           fix.c
+    │           fix.h
+    │           signalfd_ctx.h
+    │           timerfd_ctx.h
+    │
+    └───macos
+        ├───net
+        │       pfvar.h
+        │
+        └───sys
+                tree.h
