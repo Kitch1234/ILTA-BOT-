@@ -1,121 +1,115 @@
+import os
+import asyncio
+import traceback
+
 import discord
 from discord.ext import commands
-from discord import app_commands
+from dotenv import load_dotenv
 
 
-# -------------------- МОДАЛЬНОЕ ОКНО --------------------
+from core.database import connect_db, close_db
 
-class ChangelogModal(discord.ui.Modal, title="Создать Change Log"):
 
-    version = discord.ui.TextInput(
-        label="Версия",
-        placeholder="Например: v0.1.0",
-        required=True,
-        max_length=30
-    )
+load_dotenv()
 
-    new = discord.ui.TextInput(
-        label="✨ Что нового",
-        style=discord.TextStyle.paragraph,
-        placeholder="Каждый пункт с новой строки",
-        required=False,
-        max_length=1000
-    )
+TOKEN = os.getenv("TOKEN")
 
-    changed = discord.ui.TextInput(
-        label="⚖️ Что изменено",
-        style=discord.TextStyle.paragraph,
-        placeholder="Каждый пункт с новой строки",
-        required=False,
-        max_length=1000
-    )
 
-    fixed = discord.ui.TextInput(
-        label="🛠️ Что исправлено",
-        style=discord.TextStyle.paragraph,
-        placeholder="Каждый пункт с новой строки",
-        required=False,
-        max_length=1000
-    )
+intents = discord.Intents.default()
+intents.message_content = True
 
-    development = discord.ui.TextInput(
-        label="🚧 В разработке",
-        style=discord.TextStyle.paragraph,
-        placeholder="Каждый пункт с новой строки",
-        required=False,
-        max_length=1000
-    )
 
-    async def on_submit(self, interaction: discord.Interaction):
+class QuantumBot(commands.Bot):
 
-        embed = discord.Embed(
-            title=f"📜 ILTA BOT — {self.version}",
-            colour=0x8A2BE2
+    def __init__(self):
+        super().__init__(
+            command_prefix="!",
+            intents=intents,
         )
 
-        if self.new.value.strip():
-            embed.add_field(
-                name="✨ Новое",
-                value=self.new.value,
-                inline=False
+    async def setup_hook(self):
+
+        await connect_db()
+
+        cogs = [
+            "auction",
+            "balance",
+            "contract",
+            "daily",
+            "inventory",
+            "profile",
+            "quest",
+            "shop",
+            "work",
+            "travel",
+            "quest_reward",
+            "cards",
+            "test_event",
+            "deck",
+            "battle",
+            "pack",
+            "collection",
+            "valdibot",
+            "map",
+        ]
+
+        for cog in cogs:
+
+            try:
+
+                await self.load_extension(
+                    f"cogs.{cog}"
+                )
+
+                print(f"✅ Загружен: {cog}")
+
+            except Exception:
+
+                print(f"❌ Ошибка загрузки {cog}")
+
+                traceback.print_exc()
+
+        try:
+
+            synced = await self.tree.sync()
+
+            print(
+                f"✅ Синхронизировано команд: {len(synced)}"
             )
 
-        if self.changed.value.strip():
-            embed.add_field(
-                name="⚖️ Изменения",
-                value=self.changed.value,
-                inline=False
-            )
+        except Exception:
 
-        if self.fixed.value.strip():
-            embed.add_field(
-                name="🛠️ Исправления",
-                value=self.fixed.value,
-                inline=False
-            )
+            print("❌ Ошибка синхронизации")
 
-        if self.development.value.strip():
-            embed.add_field(
-                name="🚧 В разработке",
-                value=self.development.value,
-                inline=False
-            )
+            traceback.print_exc()
 
-        embed.set_footer(
-            text=f"Опубликовано {interaction.user.display_name}",
-            icon_url=interaction.user.display_avatar.url
-        )
+    async def close(self):
 
-        embed.timestamp = discord.utils.utcnow()
+        await close_db()
 
-        await interaction.channel.send(embed=embed)
-
-        await interaction.response.send_message(
-            "✅ Change Log опубликован!",
-            ephemeral=True
-        )
+        await super().close()
 
 
-# -------------------- COG --------------------
-
-class Changelog(commands.Cog):
-
-    def __init__(self, bot):
-        self.bot = bot
-
-    @app_commands.command(
-        name="changelog",
-        description="Создать новый Change Log"
-    )
-    @app_commands.default_permissions(administrator=True)
-    async def changelog(self, interaction: discord.Interaction):
-
-        await interaction.response.send_modal(
-            ChangelogModal()
-        )
+bot = QuantumBot()
 
 
-async def setup(bot):
-    await bot.add_cog(
-        Changelog(bot)
-    )
+@bot.event
+async def on_ready():
+
+    print(f"🟢 Бот запущен как {bot.user}")
+
+
+async def main():
+
+    if not TOKEN:
+
+        print("❌ TOKEN не найден в .env")
+
+        return
+
+    await bot.start(TOKEN)
+
+
+if __name__ == "__main__":
+
+    asyncio.run(main())
