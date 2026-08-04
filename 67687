@@ -1,476 +1,686 @@
 Microsoft Windows [Version 10.0.26200.8973]
 (c) Корпорация Майкрософт (Microsoft Corporation). Все права защищены.
 
-C:\zapret-v72.13>tree /F
+C:\zapret-win-bundle-master>tree /F
 Структура папок тома Local Disk
-Серийный номер тома: 0000004F 46A3:5EF7
+Серийный номер тома: 00000077 46A3:5EF7
 C:.
-│   blockcheck.sh
-│   config.default
-│   install_bin.sh
-│   install_easy.sh
-│   install_prereq.sh
-│   Makefile
-│   uninstall_easy.sh
+│   .gitattributes
+│   readme.md
 │
-├───binaries
-│   ├───android-arm
-│   │       ip2net
-│   │       mdig
-│   │       nfqws
-│   │       tpws
-│   │
-│   ├───android-arm64
-│   │       ip2net
-│   │       mdig
-│   │       nfqws
-│   │       tpws
-│   │
-│   ├───android-x86
-│   │       ip2net
-│   │       mdig
-│   │       nfqws
-│   │       tpws
-│   │
-│   ├───android-x86_64
-│   │       ip2net
-│   │       mdig
-│   │       nfqws
-│   │       tpws
-│   │
-│   ├───freebsd-x86_64
-│   │       dvtws
-│   │       ip2net
-│   │       mdig
-│   │       tpws
-│   │
-│   ├───linux-arm
-│   │       ip2net
-│   │       mdig
-│   │       nfqws
-│   │       tpws
-│   │
-│   ├───linux-arm64
-│   │       ip2net
-│   │       mdig
-│   │       nfqws
-│   │       tpws
-│   │
-│   ├───linux-lexra
-│   │       ip2net
-│   │       mdig
-│   │       nfqws
-│   │       tpws
-│   │
-│   ├───linux-mips
-│   │       ip2net
-│   │       mdig
-│   │       nfqws
-│   │       tpws
-│   │
-│   ├───linux-mips64
-│   │       ip2net
-│   │       mdig
-│   │       nfqws
-│   │       tpws
-│   │
-│   ├───linux-mipsel
-│   │       ip2net
-│   │       mdig
-│   │       nfqws
-│   │       tpws
-│   │
-│   ├───linux-ppc
-│   │       ip2net
-│   │       mdig
-│   │       nfqws
-│   │       tpws
-│   │
-│   ├───linux-x86
-│   │       ip2net
-│   │       mdig
-│   │       nfqws
-│   │       tpws
-│   │
-│   ├───linux-x86_64
-│   │       ip2net
-│   │       mdig
-│   │       nfqws
-│   │       tpws
-│   │       tpws_wsl.tgz
-│   │
-│   ├───mac64
-│   │       ip2net
-│   │       mdig
-│   │       tpws
-│   │
-│   ├───windows-x86
-│   │       cygwin1.dll
-│   │       ip2net.exe
-│   │       killall.exe
-│   │       mdig.exe
-│   │       WinDivert.dll
-│   │       WinDivert32.sys
-│   │       winws.exe
-│   │
-│   └───windows-x86_64
-│           cygwin1.dll
-│           ip2net.exe
-│           killall.exe
-│           mdig.exe
-│           WinDivert.dll
-│           WinDivert64.sys
-│           winws.exe
+├───.github
+│       lockdown.yml
 │
-├───common
-│       base.sh
-│       custom.sh
-│       dialog.sh
-│       elevate.sh
-│       fwtype.sh
-│       installer.sh
-│       ipt.sh
-│       linux_daemons.sh
-│       linux_fw.sh
-│       linux_iphelper.sh
-│       list.sh
-│       nft.sh
-│       pf.sh
-│       virt.sh
+├───arm64
+│       install_arm64.cmd
+│       ip2net.exe
+│       mdig.exe
+│       WinDivert64.sys
 │
-├───docs
-│   │   bsd.en.md
-│   │   bsd.md
-│   │   bsdfw.txt
-│   │   changes.txt
-│   │   iptables.txt
-│   │   LICENSE.txt
-│   │   nftables.txt
-│   │   nftables_notes.txt
-│   │   quick_start.md
-│   │   quick_start_windows.md
-│   │   readme.en.md
-│   │   readme.md
-│   │   redsocks.txt
-│   │   windows.en.md
-│   │   windows.md
-│   │   wireguard_iproute_openwrt.txt
+├───blockcheck
+│   │   blockcheck-kyber.cmd
+│   │   blockcheck.cmd
+│   │   blockcheck2-kyber.cmd
+│   │   blockcheck2.cmd
 │   │
-│   └───compile
-│       │   build_howto_openwrt.txt
-│       │   build_howto_unix.txt
-│       │   build_howto_windows.txt
+│   ├───zapret
+│   │   │   blockcheck.sh
+│   │   │   blog.sh
+│   │   │   blog_kyber.sh
+│   │   │
+│   │   ├───common
+│   │   │       base.sh
+│   │   │       dialog.sh
+│   │   │       elevate.sh
+│   │   │       fwtype.sh
+│   │   │       virt.sh
+│   │   │
+│   │   ├───files
+│   │   │   └───fake
+│   │   │           dht_find_node.bin
+│   │   │           dht_get_peers.bin
+│   │   │           discord-ip-discovery-with-port.bin
+│   │   │           discord-ip-discovery-without-port.bin
+│   │   │           dtls_clienthello_w3_org.bin
+│   │   │           http_iana_org.bin
+│   │   │           isakmp_initiator_request.bin
+│   │   │           quic_initial_facebook_com.bin
+│   │   │           quic_initial_facebook_com_quiche.bin
+│   │   │           quic_initial_rr1---sn-xguxaxjvh-n8me_googlevideo_com_kyber_1.bin
+│   │   │           quic_initial_rr1---sn-xguxaxjvh-n8me_googlevideo_com_kyber_2.bin
+│   │   │           quic_initial_rr2---sn-gvnuxaxjvh-o8ge_googlevideo_com.bin
+│   │   │           quic_initial_rutracker_org.bin
+│   │   │           quic_initial_rutracker_org_kyber_1.bin
+│   │   │           quic_initial_rutracker_org_kyber_2.bin
+│   │   │           quic_initial_vk_com.bin
+│   │   │           quic_initial_www_google_com.bin
+│   │   │           quic_short_header.bin
+│   │   │           stun.bin
+│   │   │           tls_clienthello_gosuslugi_ru.bin
+│   │   │           tls_clienthello_iana_org.bin
+│   │   │           tls_clienthello_rutracker_org_kyber.bin
+│   │   │           tls_clienthello_sberbank_ru.bin
+│   │   │           tls_clienthello_vk_com.bin
+│   │   │           tls_clienthello_vk_com_kyber.bin
+│   │   │           tls_clienthello_www_google_com.bin
+│   │   │           wireguard_initiation.bin
+│   │   │           wireguard_response.bin
+│   │   │           zero_1024.bin
+│   │   │           zero_256.bin
+│   │   │           zero_512.bin
+│   │   │
+│   │   ├───ip2net
+│   │   │       ip2net.exe
+│   │   │
+│   │   ├───mdig
+│   │   │       mdig.exe
+│   │   │
+│   │   └───nfq
+│   │           WinDivert.dll
+│   │           WinDivert64.sys
+│   │           winws.exe
+│   │
+│   └───zapret2
+│       │   blockcheck2.sh
+│       │   blog.sh
+│       │   blog_kyber.sh
 │       │
-│       └───openwrt
-│           └───package
-│               └───zapret
-│                   ├───ip2net
-│                   │       Makefile
-│                   │       readme.txt
-│                   │
-│                   ├───mdig
-│                   │       Makefile
-│                   │       readme.txt
-│                   │
-│                   ├───nfqws
-│                   │       Makefile
-│                   │       readme.txt
-│                   │
-│                   └───tpws
-│                           Makefile
-│                           readme.txt
-│
-├───files
-│   ├───fake
-│   │       dht_find_node.bin
-│   │       dht_get_peers.bin
-│   │       discord-ip-discovery-with-port.bin
-│   │       discord-ip-discovery-without-port.bin
-│   │       dtls_clienthello_w3_org.bin
-│   │       http_iana_org.bin
-│   │       isakmp_initiator_request.bin
-│   │       quic_initial_facebook_com.bin
-│   │       quic_initial_facebook_com_quiche.bin
-│   │       quic_initial_rr1---sn-xguxaxjvh-n8me_googlevideo_com_kyber_1.bin
-│   │       quic_initial_rr1---sn-xguxaxjvh-n8me_googlevideo_com_kyber_2.bin
-│   │       quic_initial_rr2---sn-gvnuxaxjvh-o8ge_googlevideo_com.bin
-│   │       quic_initial_rutracker_org.bin
-│   │       quic_initial_rutracker_org_kyber_1.bin
-│   │       quic_initial_rutracker_org_kyber_2.bin
-│   │       quic_initial_vk_com.bin
-│   │       quic_initial_www_google_com.bin
-│   │       quic_short_header.bin
-│   │       stun.bin
-│   │       tls_clienthello_gosuslugi_ru.bin
-│   │       tls_clienthello_iana_org.bin
-│   │       tls_clienthello_rutracker_org_kyber.bin
-│   │       tls_clienthello_sberbank_ru.bin
-│   │       tls_clienthello_vk_com.bin
-│   │       tls_clienthello_vk_com_kyber.bin
-│   │       tls_clienthello_www_google_com.bin
-│   │       wireguard_initiation.bin
-│   │       wireguard_response.bin
-│   │       zero_1024.bin
-│   │       zero_256.bin
-│   │       zero_512.bin
-│   │
-│   └───huawei
-│       └───E8372
-│               run-zapret-hostlist
-│               run-zapret-ip
-│               unfuck_nfqueue.ko
-│               unzapret
-│               unzapret-ip
-│               zapret
-│               zapret-ip
-│
-├───init.d
-│   ├───custom.d.examples.linux
-│   │       10-keenetic-udp-fix
-│   │       20-fw-extra
-│   │       50-dht4all
-│   │       50-discord-media
-│   │       50-nfqws-ipset
-│   │       50-quic4all
-│   │       50-stun4all
-│   │       50-tpws-ipset
-│   │       50-wg4all
-│   │
-│   ├───macos
-│   │   │   functions
-│   │   │   zapret
-│   │   │   zapret.plist
-│   │   │
-│   │   ├───custom.d
-│   │   │       .keep
-│   │   │
-│   │   └───custom.d.examples
-│   │           50-extra-tpws
-│   │
-│   ├───openrc
-│   │       zapret
-│   │
-│   ├───openwrt
-│   │   │   90-zapret
-│   │   │   firewall.zapret
-│   │   │   functions
-│   │   │   zapret
-│   │   │
-│   │   └───custom.d
-│   │           .keep
-│   │
-│   ├───openwrt-minimal
-│   │   │   readme.txt
-│   │   │
-│   │   └───tpws
-│   │       └───etc
-│   │           │   firewall.user
-│   │           │
-│   │           ├───config
-│   │           │       tpws
-│   │           │
-│   │           ├───init.d
-│   │           │       tpws
-│   │           │
-│   │           └───nftables.d
-│   │                   90-tpws.nft
-│   │
-│   ├───pfsense
-│   │       zapret.sh
-│   │
-│   ├───runit
-│   │   └───zapret
-│   │           finish
-│   │           run
-│   │
-│   ├───s6
-│   │   └───zapret
-│   │           down
-│   │           type
-│   │           up
-│   │
-│   ├───systemd
-│   │       nfqws@.service
-│   │       tpws@.service
-│   │       zapret-list-update.service
-│   │       zapret-list-update.timer
-│   │       zapret.service
-│   │
-│   ├───sysv
-│   │   │   functions
-│   │   │   zapret
-│   │   │
-│   │   └───custom.d
-│   │           .keep
-│   │
-│   └───windivert.filter.examples
-│           README.txt
-│           windivert_part.discord_media.txt
-│           windivert_part.quic_initial_ietf.txt
-│           windivert_part.stun.txt
-│           windivert_part.wireguard.txt
-│
-├───ip2net
-│       ip2net.c
-│       Makefile
-│       qsort.c
-│       qsort.h
-│
-├───ipset
-│       antifilter.helper
-│       clear_lists.sh
-│       create_ipset.sh
-│       def.sh
-│       get_antifilter_allyouneed.sh
-│       get_antifilter_ip.sh
-│       get_antifilter_ipresolve.sh
-│       get_antifilter_ipsmart.sh
-│       get_antifilter_ipsum.sh
-│       get_antizapret_domains.sh
-│       get_config.sh
-│       get_exclude.sh
-│       get_ipban.sh
-│       get_reestr_preresolved.sh
-│       get_reestr_preresolved_smart.sh
-│       get_reestr_resolvable_domains.sh
-│       get_refilter_domains.sh
-│       get_refilter_ipsum.sh
-│       get_user.sh
-│       zapret-hosts-user-exclude.txt.default
-│
-├───mdig
-│       Makefile
-│       mdig.c
-│
-├───nfq
-│   │   BSDmakefile
-│   │   checksum.c
-│   │   checksum.h
-│   │   conntrack.c
-│   │   conntrack.h
-│   │   darkmagic.c
-│   │   darkmagic.h
-│   │   desync.c
-│   │   desync.h
-│   │   gzip.c
-│   │   gzip.h
-│   │   helpers.c
-│   │   helpers.h
-│   │   hostlist.c
-│   │   hostlist.h
-│   │   ipset.c
-│   │   ipset.h
-│   │   kavl.h
-│   │   Makefile
-│   │   nfqws.c
-│   │   nfqws.h
-│   │   packet_queue.c
-│   │   packet_queue.h
-│   │   params.c
-│   │   params.h
-│   │   pools.c
-│   │   pools.h
-│   │   protocol.c
-│   │   protocol.h
-│   │   sec.c
-│   │   sec.h
-│   │   uthash.h
-│   │   win.c
-│   │   win.h
-│   │
-│   ├───crypto
-│   │       aes-gcm.c
-│   │       aes-gcm.h
-│   │       aes.c
-│   │       aes.h
-│   │       gcm.c
-│   │       gcm.h
-│   │       hkdf.c
-│   │       hmac.c
-│   │       sha-private.h
-│   │       sha.h
-│   │       sha224-256.c
-│   │       usha.c
-│   │
-│   └───windows
-│       ├───res
-│       │   ├───32
-│       │   │       winicon.o
-│       │   │       winmanifest.o
+│       ├───blockcheck2.d
+│       │   ├───custom
+│       │   │       10-list.sh
+│       │   │       list_http.txt
+│       │   │       list_https_tls12.txt
+│       │   │       list_https_tls13.txt
+│       │   │       list_quic.txt
+│       │   │       README.txt
 │       │   │
-│       │   └───64
-│       │           winicon.o
-│       │           winmanifest.o
+│       │   └───standard
+│       │           10-http-basic.sh
+│       │           15-misc.sh
+│       │           17-oob.sh
+│       │           20-multi.sh
+│       │           23-seqovl.sh
+│       │           24-syndata.sh
+│       │           25-fake.sh
+│       │           30-faked.sh
+│       │           35-hostfake.sh
+│       │           50-fake-multi.sh
+│       │           55-fake-faked.sh
+│       │           60-fake-hostfake.sh
+│       │           90-quic.sh
+│       │           def.inc
 │       │
-│       └───windivert
-│               libwindivert32.a
-│               libwindivert64.a
-│               windivert.h
+│       ├───common
+│       │       base.sh
+│       │       dialog.sh
+│       │       elevate.sh
+│       │       fwtype.sh
+│       │       virt.sh
+│       │
+│       ├───ip2net
+│       │       ip2net.exe
+│       │
+│       ├───lua
+│       │       zapret-antidpi.lua
+│       │       zapret-auto.lua
+│       │       zapret-lib.lua
+│       │       zapret-obfs.lua
+│       │       zapret-pcap.lua
+│       │       zapret-tests.lua
+│       │
+│       ├───mdig
+│       │       mdig.exe
+│       │
+│       └───nfq2
+│               WinDivert.dll
+│               WinDivert64.sys
+│               winws2.exe
 │
-├───tmp
-│       .keep
+├───cygwin
+│   │   cygwin-admin.cmd
+│   │   cygwin.cmd
+│   │
+│   ├───bin
+│   │       arch.exe
+│   │       awk
+│   │       basename.exe
+│   │       bash.exe
+│   │       bunzip2.exe
+│   │       bzcat.exe
+│   │       bzgrep
+│   │       bzip2.exe
+│   │       cat.exe
+│   │       chattr.exe
+│   │       chgrp.exe
+│   │       chmod.exe
+│   │       chown.exe
+│   │       chrt.exe
+│   │       clear.exe
+│   │       cmp.exe
+│   │       cp.exe
+│   │       cut.exe
+│   │       cygattr-1.dll
+│   │       cygbsd-0.dll
+│   │       cygbz2-1.dll
+│   │       cygcrypto-1.1.dll
+│   │       cyggcc_s-seh-1.dll
+│   │       cyggmp-10.dll
+│   │       cygiconv-2.dll
+│   │       cygintl-8.dll
+│   │       cyglz4-1.dll
+│   │       cyglzma-5.dll
+│   │       cygmagic-1.dll
+│   │       cygmd-0.dll
+│   │       cygmpfr-6.dll
+│   │       cygncursesw-10.dll
+│   │       cygpath.exe
+│   │       cygpcre-1.dll
+│   │       cygpcre2-8-0.dll
+│   │       cygpopt-0.dll
+│   │       cygproc2-0.dll
+│   │       cygreadline7.dll
+│   │       cygssl-1.1.dll
+│   │       cygstart.exe
+│   │       cygtls-26.dll
+│   │       cygwin-console-helper.exe
+│   │       cygwin1.dll
+│   │       cygz.dll
+│   │       cygzstd-1.dll
+│   │       date.exe
+│   │       dircolors.exe
+│   │       dirname.exe
+│   │       dos2unix.exe
+│   │       echo.exe
+│   │       egrep
+│   │       env.exe
+│   │       expr.exe
+│   │       false.exe
+│   │       fgrep
+│   │       find.exe
+│   │       fmt.exe
+│   │       fold.exe
+│   │       gawk.exe
+│   │       getconf.exe
+│   │       getopt.exe
+│   │       grep.exe
+│   │       gunzip
+│   │       gzip.exe
+│   │       head.exe
+│   │       hexdump.exe
+│   │       hostname.exe
+│   │       id.exe
+│   │       install.exe
+│   │       kill.exe
+│   │       killall.exe
+│   │       ldd.exe
+│   │       ldh.exe
+│   │       link.exe
+│   │       ln.exe
+│   │       look.exe
+│   │       ls.exe
+│   │       md5sum.exe
+│   │       mkdir.exe
+│   │       more.exe
+│   │       mount.exe
+│   │       mv.exe
+│   │       nano.exe
+│   │       nc.exe
+│   │       nice.exe
+│   │       nl.exe
+│   │       pgrep.exe
+│   │       pidof.exe
+│   │       pkill.exe
+│   │       printenv.exe
+│   │       printf.exe
+│   │       ps.exe
+│   │       pwd.exe
+│   │       readlink.exe
+│   │       realpath.exe
+│   │       renice.exe
+│   │       rm.exe
+│   │       rmdir.exe
+│   │       sed.exe
+│   │       seq.exe
+│   │       sh.exe
+│   │       sha1sum.exe
+│   │       sha224sum.exe
+│   │       sha256sum.exe
+│   │       sha384sum.exe
+│   │       sha512sum.exe
+│   │       sleep.exe
+│   │       sort.exe
+│   │       stat.exe
+│   │       sync.exe
+│   │       tac.exe
+│   │       tail.exe
+│   │       tar.exe
+│   │       tee.exe
+│   │       test.exe
+│   │       timeout.exe
+│   │       touch.exe
+│   │       tr.exe
+│   │       true.exe
+│   │       truncate.exe
+│   │       tset.exe
+│   │       tty.exe
+│   │       ul.exe
+│   │       umount.exe
+│   │       uname.exe
+│   │       uniq.exe
+│   │       unix2dos.exe
+│   │       unzip.exe
+│   │       wc.exe
+│   │       which.exe
+│   │       xargs.exe
+│   │       xz.exe
+│   │       yes.exe
+│   │       zcat
+│   │       zgrep
+│   │       zip.exe
+│   │       zstd.exe
+│   │       [.exe
+│   │
+│   ├───dev
+│   │   ├───mqueue
+│   │   │       .gitkeep
+│   │   │
+│   │   └───shm
+│   │           .gitkeep
+│   │
+│   ├───etc
+│   │   │   bash.bashrc
+│   │   │   bash.bash_logout
+│   │   │   DIR_COLORS
+│   │   │   fstab
+│   │   │   profile
+│   │   │   shells
+│   │   │
+│   │   ├───defaults
+│   │   │   └───etc
+│   │   │       │   bash.bashrc
+│   │   │       │   bash.bash_logout
+│   │   │       │   cygserver.conf
+│   │   │       │   DIR_COLORS
+│   │   │       │   man_db.conf
+│   │   │       │   profile
+│   │   │       │   shells
+│   │   │       │
+│   │   │       ├───pki
+│   │   │       │   ├───ca-trust
+│   │   │       │   │       ca-legacy.conf
+│   │   │       │   │
+│   │   │       │   └───tls
+│   │   │       │           ct_log_list.cnf
+│   │   │       │           openssl.cnf
+│   │   │       │
+│   │   │       └───skel
+│   │   │               .bashrc
+│   │   │               .bash_profile
+│   │   │               .inputrc
+│   │   │               .profile
+│   │   │
+│   │   ├───pki
+│   │   │   └───tls
+│   │   │       │   openssl.cnf
+│   │   │       │
+│   │   │       └───certs
+│   │   │               ca-bundle.crt
+│   │   │
+│   │   ├───profile.d
+│   │   │       gawk.csh
+│   │   │       gawk.sh
+│   │   │
+│   │   └───skel
+│   │           .bashrc
+│   │           .bash_profile
+│   │           .inputrc
+│   │           .profile
+│   │
+│   ├───home
+│   │       .gitkeep
+│   │
+│   ├───lib
+│   │   │   charset.alias
+│   │   │
+│   │   └───gawk
+│   │           .gitkeep
+│   │
+│   ├───sbin
+│   │       .gitkeep
+│   │
+│   ├───tmp
+│   │       .gitkeep
+│   │
+│   ├───usr
+│   │   ├───libexec
+│   │   │   ├───awk
+│   │   │   │       grcat.exe
+│   │   │   │       pwcat.exe
+│   │   │   │
+│   │   │   └───coreutils
+│   │   │           libstdbuf.so
+│   │   │
+│   │   ├───local
+│   │   │   ├───bin
+│   │   │   │       curl-kyber.exe
+│   │   │   │       curl.exe
+│   │   │   │       cygcrypto-3.dll
+│   │   │   │       cygcurl-4.dll
+│   │   │   │       cygidn2-0.dll
+│   │   │   │       cygnghttp2-14.dll
+│   │   │   │       cygnghttp3-9.dll
+│   │   │   │       cygssl-3.dll
+│   │   │   │       idn2.exe
+│   │   │   │
+│   │   │   ├───etc
+│   │   │   │       .gitkeep
+│   │   │   │
+│   │   │   └───lib
+│   │   │           .gitkeep
+│   │   │
+│   │   ├───sbin
+│   │   │       .gitkeep
+│   │   │
+│   │   └───share
+│   │       ├───awk
+│   │       │       .gitkeep
+│   │       │
+│   │       ├───bash-completion
+│   │       │   └───completions
+│   │       │           getopt
+│   │       │           more
+│   │       │           renice
+│   │       │           ul
+│   │       │
+│   │       ├───cygwin
+│   │       │       cygwin.ldif
+│   │       │
+│   │       ├───locale
+│   │       │       .gitkeep
+│   │       │
+│   │       ├───tabset
+│   │       │       std
+│   │       │       stdcrt
+│   │       │       vt100
+│   │       │       vt300
+│   │       │
+│   │       └───terminfo
+│   │           ├───45
+│   │           │       Eterm
+│   │           │       Eterm-256color
+│   │           │       Eterm-88color
+│   │           │       Eterm-color
+│   │           │
+│   │           ├───61
+│   │           │       ansi
+│   │           │       aterm
+│   │           │
+│   │           ├───62
+│   │           │       bracketed+paste
+│   │           │       bterm
+│   │           │
+│   │           ├───63
+│   │           │       cons25
+│   │           │       cygwin
+│   │           │       cygwinB19
+│   │           │       cygwinDBG
+│   │           │
+│   │           ├───64
+│   │           │       dumb
+│   │           │       dumb-emacs-ansi
+│   │           │
+│   │           ├───65
+│   │           │       eterm
+│   │           │       eterm-color
+│   │           │
+│   │           ├───67
+│   │           │       gnome
+│   │           │       gnome-256color
+│   │           │
+│   │           ├───68
+│   │           │       hurd
+│   │           │
+│   │           ├───6a
+│   │           │       jfbterm
+│   │           │
+│   │           ├───6b
+│   │           │       konsole
+│   │           │       konsole-16color
+│   │           │       konsole-256color
+│   │           │
+│   │           ├───6c
+│   │           │       linux
+│   │           │
+│   │           ├───6d
+│   │           │       mach
+│   │           │       mach-bold
+│   │           │       mach-color
+│   │           │       mach-gnu
+│   │           │       mach-gnu-color
+│   │           │       mintty
+│   │           │       mintty+common
+│   │           │       mintty-direct
+│   │           │       mlterm
+│   │           │       mrxvt
+│   │           │       mrxvt-256color
+│   │           │
+│   │           ├───6e
+│   │           │       nsterm
+│   │           │
+│   │           ├───70
+│   │           │       pcansi
+│   │           │       putty
+│   │           │       putty-256color
+│   │           │       putty-m1
+│   │           │       putty-m1b
+│   │           │       putty-m2
+│   │           │       putty-noapp
+│   │           │       putty-sco
+│   │           │       putty-screen
+│   │           │       putty-vt100
+│   │           │
+│   │           ├───72
+│   │           │       rxvt
+│   │           │       rxvt+pcfkeys
+│   │           │       rxvt-16color
+│   │           │       rxvt-256color
+│   │           │       rxvt-88color
+│   │           │       rxvt-basic
+│   │           │       rxvt-color
+│   │           │       rxvt-cygwin
+│   │           │       rxvt-cygwin-native
+│   │           │       rxvt-unicode
+│   │           │       rxvt-unicode-256color
+│   │           │       rxvt-xpm
+│   │           │
+│   │           ├───73
+│   │           │       screen
+│   │           │       screen-16color
+│   │           │       screen-256color
+│   │           │       screen.Eterm
+│   │           │       screen.gnome
+│   │           │       screen.konsole
+│   │           │       screen.konsole-256color
+│   │           │       screen.linux
+│   │           │       screen.linux-m1
+│   │           │       screen.linux-m1b
+│   │           │       screen.linux-m2
+│   │           │       screen.linux-s
+│   │           │       screen.minitel1
+│   │           │       screen.minitel1-nb
+│   │           │       screen.minitel12-80
+│   │           │       screen.minitel1b
+│   │           │       screen.minitel1b-80
+│   │           │       screen.minitel1b-nb
+│   │           │       screen.minitel2-80
+│   │           │       screen.mlterm
+│   │           │       screen.mlterm-256color
+│   │           │       screen.mrxvt
+│   │           │       screen.putty
+│   │           │       screen.putty-256color
+│   │           │       screen.putty-m1
+│   │           │       screen.putty-m1b
+│   │           │       screen.putty-m2
+│   │           │       screen.rxvt
+│   │           │       screen.teraterm
+│   │           │       screen.vte
+│   │           │       screen.vte-256color
+│   │           │       screen.xterm-256color
+│   │           │       screen.xterm-new
+│   │           │       screen.xterm-r6
+│   │           │       screen.xterm-xfree86
+│   │           │       st
+│   │           │       st-0.6
+│   │           │       st-0.7
+│   │           │       st-0.8
+│   │           │       st-16color
+│   │           │       st-256color
+│   │           │       st-direct
+│   │           │       sun
+│   │           │
+│   │           ├───74
+│   │           │       tek4014
+│   │           │       tek4014-sm
+│   │           │       teraterm
+│   │           │       teraterm-256color
+│   │           │       teraterm2.3
+│   │           │       teraterm4.59
+│   │           │       teraterm4.97
+│   │           │       tmux
+│   │           │       tmux-256color
+│   │           │       tmux-direct
+│   │           │
+│   │           ├───76
+│   │           │       vt100
+│   │           │       vt100-nav
+│   │           │       vt102
+│   │           │       vt220
+│   │           │       vt320
+│   │           │       vt420
+│   │           │       vt52
+│   │           │       vt520
+│   │           │       vte
+│   │           │       vte-256color
+│   │           │       vwmterm
+│   │           │
+│   │           ├───77
+│   │           │       wsvt25
+│   │           │       wsvt25m
+│   │           │
+│   │           └───78
+│   │                   xfce
+│   │                   xterm
+│   │                   xterm-1002
+│   │                   xterm-1003
+│   │                   xterm-1005
+│   │                   xterm-1006
+│   │                   xterm-16color
+│   │                   xterm-24
+│   │                   xterm-256color
+│   │                   xterm-88color
+│   │                   xterm-8bit
+│   │                   xterm-basic
+│   │                   xterm-bold
+│   │                   xterm-color
+│   │                   xterm-direct
+│   │                   xterm-direct16
+│   │                   xterm-direct2
+│   │                   xterm-direct256
+│   │                   xterm-hp
+│   │                   xterm-mono
+│   │                   xterm-new
+│   │                   xterm-nic
+│   │                   xterm-noapp
+│   │                   xterm-old
+│   │                   xterm-p370
+│   │                   xterm-p371
+│   │                   xterm-pcolor
+│   │                   xterm-r5
+│   │                   xterm-r6
+│   │                   xterm-sco
+│   │                   xterm-sun
+│   │                   xterm-utf8
+│   │                   xterm-vt220
+│   │                   xterm-vt52
+│   │                   xterm-x10mouse
+│   │                   xterm-x11hilite
+│   │                   xterm-x11mouse
+│   │                   xterm-xf86-v32
+│   │                   xterm-xf86-v33
+│   │                   xterm-xf86-v333
+│   │                   xterm-xf86-v40
+│   │                   xterm-xf86-v43
+│   │                   xterm-xf86-v44
+│   │                   xterm-xfree86
+│   │                   xterm-xi
+│   │
+│   └───var
+│       ├───cache
+│       │       .gitkeep
+│       │
+│       ├───lib
+│       │       .gitkeep
+│       │
+│       ├───log
+│       │       .gitkeep
+│       │
+│       ├───run
+│       │       .gitkeep
+│       │
+│       └───tmp
+│               .gitkeep
 │
-└───tpws
-    │   BSDmakefile
-    │   gzip.c
-    │   gzip.h
-    │   helpers.c
-    │   helpers.h
-    │   hostlist.c
-    │   hostlist.h
-    │   ipset.c
-    │   ipset.h
-    │   kavl.h
-    │   linux_compat.h
-    │   Makefile
-    │   params.c
-    │   params.h
-    │   pools.c
-    │   pools.h
-    │   protocol.c
-    │   protocol.h
-    │   redirect.c
-    │   redirect.h
-    │   resolver.c
-    │   resolver.h
-    │   sec.c
-    │   sec.h
-    │   socks.h
-    │   tamper.c
-    │   tamper.h
-    │   tpws.c
-    │   tpws.h
-    │   tpws_conn.c
-    │   tpws_conn.h
-    │   uthash.h
+├───tools
+│       elevator.exe
+│
+├───win7
+│       install_win7.cmd
+│       WinDivert.dll
+│       WinDivert64.sys
+│
+├───windivert-hide
+│       Monkey64.sys
+│       monkey_delete.cmd
+│       README.txt
+│       WinDivert.dll
+│
+└───zapret-winws
+    │   cygwin1.dll
+    │   elevator.exe
+    │   enable_timestamps.cmd
+    │   killall.exe
+    │   preset1_example.cmd
+    │   preset2_example.cmd
+    │   preset2_wireguard.cmd
+    │   service1_create.cmd
+    │   service2_create.cmd
+    │   service_create.cmd
+    │   service_del.cmd
+    │   service_start.cmd
+    │   service_stop.cmd
+    │   WinDivert.dll
+    │   WinDivert64.sys
+    │   windivert_delete.cmd
+    │   winws.exe
+    │   winws2.exe
+    │   _CMD_ADMIN.cmd
     │
-    ├───andr
-    │       getifaddrs.c
-    │       ifaddrs.h
-    │       netlink.c
-    │       netlink.h
-    │       _musl_license.txt
+    ├───files
+    │       list-youtube.txt
+    │       quic_initial_www_google_com.bin
     │
-    ├───epoll-shim
-    │   ├───include
-    │   │   └───sys
-    │   │           epoll.h
-    │   │
-    │   └───src
-    │           epoll.c
-    │           epollfd_ctx.c
-    │           epollfd_ctx.h
-    │           epoll_shim_ctx.c
-    │           epoll_shim_ctx.h
-    │           eventfd_ctx.h
-    │           fix.c
-    │           fix.h
-    │           signalfd_ctx.h
-    │           timerfd_ctx.h
+    ├───lua
+    │       zapret-antidpi.lua
+    │       zapret-auto.lua
+    │       zapret-lib.lua
+    │       zapret-obfs.lua
+    │       zapret-pcap.lua
+    │       zapret-tests.lua
     │
-    └───macos
-        ├───net
-        │       pfvar.h
-        │
-        └───sys
-                tree.h
+    └───windivert.filter
+            README.txt
+            windivert_part.dht.txt
+            windivert_part.discord_media.txt
+            windivert_part.quic_initial_ietf.txt
+            windivert_part.stun.txt
+            windivert_part.wireguard.txt
