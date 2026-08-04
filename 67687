@@ -1,20 +1,85 @@
-ужен: work
-🌍 Регионов загружено для чемпионов: 32
-✅ Загружен: travel
-✅ Загружен: quest_reward
-✅ Загружен: cards
-✅ Загружен: test_event
-✅ Загружен: deck
-✅ Загружен: battle
-✅ Загружен: pack
-✅ Загружен: collection
-❌ Ошибка загрузки changelog
-Traceback (most recent call last):
-  File "C:\Users\Ketek'\Desktop\qantum_universe\main.py", line 60, in setup_hook
-    await self.load_extension(
-  File "C:\Users\Ketek'\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\discord\ext\commands\bot.py", line 1038, in load_extension
-    raise errors.ExtensionNotFound(name)
-discord.ext.commands.errors.ExtensionNotFound: Extension 'cogs.changelog' could not be loaded or found.
-✅ Загружен: map
-✅ Синхронизировано команд: 24
-🟢 Бот запущен как ILTA BOT#7827
+"""
+Координаты интерфейса коллекции ILTA
+"""
+
+# =====================================
+# Размер изображения
+# =====================================
+
+IMAGE_WIDTH = 1536
+IMAGE_HEIGHT = 1024
+
+# =====================================
+# Размер карты
+# =====================================
+
+CARD_WIDTH = 260
+CARD_HEIGHT = 380
+
+# =====================================
+# Сетка карт
+# =====================================
+
+CARDS_PER_ROW = 3
+ROWS = 2
+
+START_X = 170
+START_Y = 190
+
+GAP_X = 65
+GAP_Y = 48
+
+CARD_POSITIONS = []
+
+TOP_ROW_OFFSET = 10        # верхний ряд вниз
+BOTTOM_ROW_OFFSET = 20    # нижний ряд вниз
+
+for row in range(ROWS):
+    for col in range(CARDS_PER_ROW):
+
+        x = START_X + col * (CARD_WIDTH + GAP_X)
+        y = START_Y + row * (CARD_HEIGHT + GAP_Y)
+
+        if row == 0:
+            y += TOP_ROW_OFFSET
+
+        if row == 1:
+            y += BOTTOM_ROW_OFFSET
+
+        CARD_POSITIONS.append((x, y))
+
+
+# =====================================
+# Правая информационная панель
+# =====================================
+
+COLLECTED_POSITION = (
+    800,
+    420,
+)
+
+PROGRESS_POSITION = (
+    800,
+    490,
+)
+
+# =====================================
+# Редкости
+# =====================================
+
+RARITY_ICON_X = 1185
+
+RARITY_COUNT_X = 1390
+
+RARITY_START_Y = 615
+
+RARITY_STEP = 44
+
+# =====================================
+# Номер страницы
+# =====================================
+
+PAGE_POSITION = (
+    768,
+    980,
+)
