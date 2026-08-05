@@ -1,9 +1,2 @@
-@echo off
-cd /d "%~dp0"
-
-winws2 ^
---wf-l3=ipv4 ^
---wf-tcp-out=443 ^
---payload=tls_client_hello ^
---lua-desync=fake:blob=0x00000000:tcp_ts=-1000:repeats=1 ^
---lua-desync=fakedsplit:pos=midsld:tcp_ts=-1000
+cd /d C:\zapret-win-bundle-master\zapret-winws
+winws2.exe
