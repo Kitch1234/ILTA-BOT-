@@ -1,13 +1,7 @@
-@echo off
-cd /d "%~dp0"
+╨Ч╨░╨┐╤Г╤Б╨║ ╨╛╨▒╤Е╨╛╨┤╨░ DPI ╨┤╨╗╤П Discord...
 
-echo Запуск обхода DPI для Discord...
-start "Discord DPI" /min "%~dp0winws.exe" ^
---wf-raw-part=@"%~dp0windivert.filter\windivert_part.discord_media.txt" ^
---wf-raw-part=@"%~dp0windivert.filter\windivert_part.stun.txt" ^
---filter-l7=discord,stun ^
---dpi-desync=fake
+╨Х╤Б╨╗╨╕ ╨╛╨║╨╜╨╛ ╨╜╨╡ ╨╖╨░╨║╤А╤Л╨╗╨╛╤Б╤М ╤Б ╨╛╤И╨╕╨▒╨║╨╛╨╣ - ╨┐╨╛╨┐╤А╨╛╨▒╤Г╨╣╤В╨╡ ╨╛╤В╨║╤А╤Л╤В╤М Discord.
+Для продолжения нажмите любую клавишу . . .
 
-echo.
-echo Если окно не закрылось с ошибкой - попробуйте открыть Discord.
-pause
+
+
