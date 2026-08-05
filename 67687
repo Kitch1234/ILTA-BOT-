@@ -1,47 +1,9 @@
-Microsoft Windows [Version 10.0.26200.8973]
-(c) Корпорация Майкрософт (Microsoft Corporation). Все права защищены.
+@echo off
+cd /d "%~dp0"
 
-C:\zapret-win-bundle-master\zapret-winws>tree /F
-Структура папок тома Local Disk
-Серийный номер тома: 000000CA 46A3:5EF7
-C:.
-│   cygwin1.dll
-│   dis.cmd
-│   elevator.exe
-│   enable_timestamps.cmd
-│   killall.exe
-│   preset1_example.cmd
-│   preset2_example.cmd
-│   preset2_wireguard.cmd
-│   service1_create.cmd
-│   service2_create.cmd
-│   service_create.cmd
-│   service_del.cmd
-│   service_start.cmd
-│   service_stop.cmd
-│   WinDivert.dll
-│   WinDivert64.sys
-│   windivert_delete.cmd
-│   winws.exe
-│   winws2.exe
-│   _CMD_ADMIN.cmd
-│
-├───files
-│       list-youtube.txt
-│       quic_initial_www_google_com.bin
-│
-├───lua
-│       zapret-antidpi.lua
-│       zapret-auto.lua
-│       zapret-lib.lua
-│       zapret-obfs.lua
-│       zapret-pcap.lua
-│       zapret-tests.lua
-│
-└───windivert.filter
-        README.txt
-        windivert_part.dht.txt
-        windivert_part.discord_media.txt
-        windivert_part.quic_initial_ietf.txt
-        windivert_part.stun.txt
-        windivert_part.wireguard.txt
+winws2 ^
+--wf-l3=ipv4 ^
+--wf-tcp-out=443 ^
+--payload=tls_client_hello ^
+--lua-desync=fake:blob=0x00000000:tcp_ts=-1000:repeats=1 ^
+--lua-desync=fakedsplit:pos=midsld:tcp_ts=-1000
