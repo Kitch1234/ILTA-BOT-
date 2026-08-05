@@ -1,7 +1,300 @@
-╨Ч╨░╨┐╤Г╤Б╨║ ╨╛╨▒╤Е╨╛╨┤╨░ DPI ╨┤╨╗╤П Discord...
+Microsoft Windows [Version 10.0.26200.8973]
+(c) Корпорация Майкрософт (Microsoft Corporation). Все права защищены.
 
-╨Х╤Б╨╗╨╕ ╨╛╨║╨╜╨╛ ╨╜╨╡ ╨╖╨░╨║╤А╤Л╨╗╨╛╤Б╤М ╤Б ╨╛╤И╨╕╨▒╨║╨╛╨╣ - ╨┐╨╛╨┐╤А╨╛╨▒╤Г╨╣╤В╨╡ ╨╛╤В╨║╤А╤Л╤В╤М Discord.
-Для продолжения нажмите любую клавишу . . .
+C:\zapret>tree /F
+Структура папок тома Local Disk
+Серийный номер тома: 0000009E 46A3:5EF7
+C:.
+│   README.md
+│   service.bat
+│   zapret-console.bat
+│
+├───bin
+│       1.bin
+│       2.bin
+│       3.bin
+│       4.bin
+│       dht_find_node.bin
+│       dht_get_peers.bin
+│       dtls_clienthello_w3_org.bin
+│       fake_http_lichess.bin
+│       fake_http_ovhcloud.bin
+│       fake_http_postimg.bin
+│       fake_http_winrar.bin
+│       fake_quic.bin
+│       fake_quic_1.bin
+│       fake_quic_2.bin
+│       fake_quic_3.bin
+│       fake_syndata.bin
+│       fake_tls_1.bin
+│       fake_tls_2.bin
+│       fake_tls_3.bin
+│       fake_tls_4.bin
+│       fake_tls_5.bin
+│       fake_tls_6.bin
+│       fake_tls_7.bin
+│       fake_tls_8.bin
+│       fake_tls_vimeo_com.bin
+│       http_fake_MS.bin
+│       http_iana_org.bin
+│       mts_ch.bin
+│       quic_1.bin
+│       quic_2.bin
+│       quic_3.bin
+│       quic_4.bin
+│       quic_5.bin
+│       quic_6.bin
+│       quic_7.bin
+│       quic_initial_facebook_com.bin
+│       quic_initial_facebook_com_quiche.bin
+│       quic_initial_google_com.bin
+│       quic_initial_rutracker_org.bin
+│       quic_initial_rutracker_org_kyber_1.bin
+│       quic_initial_rutracker_org_kyber_2.bin
+│       quic_initial_vk_com.bin
+│       quic_initial_www_google_com.bin
+│       quic_short_header.bin
+│       quic_test_00.bin
+│       stun.bin
+│       syn_packet.bin
+│       tls_clienthello_1.bin
+│       tls_clienthello_10.bin
+│       tls_clienthello_11.bin
+│       tls_clienthello_12.bin
+│       tls_clienthello_13.bin
+│       tls_clienthello_14.bin
+│       tls_clienthello_15.bin
+│       tls_clienthello_16.bin
+│       tls_clienthello_17.bin
+│       tls_clienthello_18.bin
+│       tls_clienthello_2.bin
+│       tls_clienthello_2n.bin
+│       tls_clienthello_3.bin
+│       tls_clienthello_4.bin
+│       tls_clienthello_4pda_to.bin
+│       tls_clienthello_5.bin
+│       tls_clienthello_6.bin
+│       tls_clienthello_7.bin
+│       tls_clienthello_8.bin
+│       tls_clienthello_9.bin
+│       tls_clienthello_chat_deepseek_com.bin
+│       tls_clienthello_gosuslugi_ru.bin
+│       tls_clienthello_iana_org.bin
+│       tls_clienthello_max_ru.bin
+│       tls_clienthello_rutracker_org_kyber.bin
+│       tls_clienthello_sberbank_ru.bin
+│       tls_clienthello_vk_com.bin
+│       tls_clienthello_vk_com_kyber.bin
+│       tls_clienthello_www_google_com.bin
+│       tls_clienthello_www_google_com_2.bin
+│       wireguard_initiation.bin
+│       wireguard_response.bin
+│       ya_ch.bin
+│       zero_1024.bin
+│       zero_256.bin
+│       zero_512.bin
+│
+├───exe
+│       cygwin1.dll
+│       stop.bat
+│       WinDivert.dll
+│       WinDivert32.sys
+│       WinDivert64.sys
+│       winws2.exe
+│
+├───lists
+│       allzone.txt
+│       amazon.txt
+│       autohostlist.txt
+│       claude.txt
+│       cloudflare-ipset.txt
+│       cloudflare-ipset_v6.txt
+│       discord.txt
+│       facebook.txt
+│       github.txt
+│       google.txt
+│       instagram.txt
+│       ipset-all.txt
+│       ipset-amazon.txt
+│       ipset-anydesk.txt
+│       ipset-base.txt
+│       ipset-censorliber.txt
+│       ipset-claude.txt
+│       ipset-cloudflare.txt
+│       ipset-cloudflare1.txt
+│       ipset-discord.txt
+│       ipset-dns.txt
+│       ipset-exclude.txt
+│       ipset-facebook.txt
+│       ipset-github.txt
+│       ipset-googlevideo.txt
+│       ipset-instagram.txt
+│       ipset-lol-euw.txt
+│       ipset-lol-ru.txt
+│       ipset-melbicom.txt
+│       ipset-ovh.txt
+│       ipset-porn.txt
+│       ipset-roblox.txt
+│       ipset-ru.txt
+│       ipset-russia-youtube.txt
+│       ipset-rutracker.txt
+│       ipset-soundcloud.txt
+│       ipset-steam.txt
+│       ipset-tankix.txt
+│       ipset-telegram-bypass.txt
+│       ipset-telegram.txt
+│       ipset-timeweb.txt
+│       ipset-twitch.txt
+│       ipset-twitter.txt
+│       ipset-warp.txt
+│       ipset-whatsapp.txt
+│       ipset-youtube.txt
+│       ipset-zapretkvn.txt
+│       itch.txt
+│       list-exclude.txt
+│       list-general.txt
+│       list-google.txt
+│       mycdnlist.txt
+│       myhostlist.txt
+│       netrogat.txt
+│       ntcparty.txt
+│       other.txt
+│       porn.txt
+│       roblox.txt
+│       russia-blacklist.txt
+│       russia-discord-ipset.txt
+│       russia-discord.txt
+│       russia-youtube-rtmps.txt
+│       russia-youtube.txt
+│       russia-youtubeQ.txt
+│       rutor.txt
+│       rutracker.txt
+│       service_config.txt
+│       soundcloud.txt
+│       speedtest.txt
+│       steam.txt
+│       telegram.txt
+│       twitch.txt
+│       twitter.txt
+│       whatsapp.txt
+│       youtube.txt
+│       youtubeGV.txt
+│       youtubeQ.txt
+│       youtube_v2.txt
+│
+├───lua
+│       custom_diag.lua
+│       custom_funcs.lua
+│       init_vars.lua
+│       zapret-16kb.lua
+│       zapret-antidpi.lua
+│       zapret-auto.lua
+│       zapret-lib.lua
+│       zapret-multishake.lua
+│       zapret-obfs.lua
+│       zapret-pcap.lua
+│       zapret-tests.lua
+│       zapret-wgobfs.lua
+│
+├───presets
+│       ALL TCP & UDP multisplit_sni.txt
+│       ALL TCP & UDP multisplit_stun.txt
+│       ALL TCP & UDP v1.txt
+│       ALL TCP & UDP v2.txt
+│       ALL TCP & UDP v3_1.txt
+│       ALL TCP & UDP v3_2.txt
+│       complex multidisorder (game filter).txt
+│       Dead by Daylight (game filter).txt
+│       Dead by Daylight v2 (game filter).txt
+│       Default (game filter).txt
+│       Default multisplit_sni (game filter).txt
+│       Default multisplit_sni.txt
+│       Default multisplit_stun (game filter).txt
+│       Default multisplit_stun.txt
+│       Default old.txt
+│       Default v2 (game filter).txt
+│       Default v3 (game filter).txt
+│       Default v4 (game filter).txt
+│       Default v5.txt
+│       Default.txt
+│       Gaming (game filter).txt
+│       general ALT (game filter).txt
+│       general ALT.txt
+│       general ALT10 (game filter).txt
+│       general ALT10.txt
+│       general ALT11 (game filter).txt
+│       general ALT11.txt
+│       general ALT2 (game filter).txt
+│       general ALT2 + syndata.txt
+│       general ALT2.txt
+│       general ALT3 (game filter).txt
+│       general ALT3.txt
+│       general ALT4 (game filter).txt
+│       general ALT4.txt
+│       general ALT5 (game filter).txt
+│       general ALT5.txt
+│       general ALT6 (game filter).txt
+│       general ALT6.txt
+│       general ALT7 (game filter).txt
+│       general ALT7.txt
+│       general ALT8 (game filter).txt
+│       general ALT8.txt
+│       general ALT9 1.9.4 (game filter).txt
+│       general ALT9 1.9.4.txt
+│       general ALT9 1.9.5 (game filter).txt
+│       general ALT9 1.9.5.txt
+│       general FAKE TLS AUTO (game filter).txt
+│       general FAKE TLS AUTO ALT (game filter).txt
+│       general FAKE TLS AUTO ALT.txt
+│       general FAKE TLS AUTO ALT2 (game filter).txt
+│       general FAKE TLS AUTO ALT2.txt
+│       general FAKE TLS AUTO ALT3 (game filter).txt
+│       general FAKE TLS AUTO ALT3.txt
+│       general FAKE TLS AUTO v2 (game filter).txt
+│       general FAKE TLS AUTO v2.txt
+│       general FAKE TLS AUTO.txt
+│       general SIMPLE FAKE (game filter).txt
+│       general SIMPLE FAKE ALT (game filter).txt
+│       general SIMPLE FAKE ALT.txt
+│       general SIMPLE FAKE ALT2 (game filter).txt
+│       general SIMPLE FAKE ALT2.txt
+│       general SIMPLE FAKE.txt
+│       Preset X (game filter).txt
+│       Preset X v2 (game filter).txt
+│       Preset XY (game filter).txt
+│       Send + Syndata (game filter).txt
+│       Syndata + MultiDisorder legacy (game filter).txt
+│       Syndata + MultiDisorder legacy WoW (game filter).txt
+│       Ultimate Main Riot + Valorant (game filter).txt
+│       Ростелеком.txt
+│
+├───utils
+│       run-tests.bat
+│       targets.txt
+│       test-presets.ps1
+│       zapret2-run.bat
+│       zapret2-start.vbs
+│
+└───windivert.filter
+        windivert.all.txt
+        windivert.discord_media+amazon.txt
+        windivert.discord_media+stun+sites.txt
+        windivert.discord_media+stun.txt
+        windivert.discord_media.txt
+        windivert.sites+stun.txt
+        windivert.stun.txt
+        windivert.wireguard.txt
+        windivert_part.cloudflare_tcp_80_443_AS13335_v4_remote.txt
+        windivert_part.discord_bidirectional.txt
+        windivert_part.discord_media.txt
+        windivert_part.games_udp_bidirectional.txt
+        windivert_part.google_tcp_80_443_AS15169_v4_remote.txt
+        windivert_part.mts_tcp_80_443_AS8359_v4_remote.txt
+        windivert_part.quic_bidirectional.txt
+        windivert_part.quic_initial_ietf.txt
+        windivert_part.stun.txt
+        windivert_part.stun_bidirectional.txt
+        windivert_part.wireguard.txt
 
 
-
+C:\zapret>
