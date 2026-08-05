@@ -1,162 +1,52 @@
-et=SYN
-curl: (28) Connection timed out after 2013 milliseconds
-UNAVAILABLE code=28
-- curl_test_https_tls12 ipv4 discord.com : winws2 --wf-l3=ipv4 --wf-tcp-out=443 --payload=tls_client_hello --lua-desync=fake:blob=fake_default_tls:tcp_flags_set=SYN:tls_mod=rnd,dupsid,padencap:repeats=1 --lua-desync=fakedsplit:pos=host+1:tcp_flags_set=SYN
-curl: (28) Connection timed out after 2009 milliseconds
-UNAVAILABLE code=28
-- curl_test_https_tls12 ipv4 discord.com : winws2 --wf-l3=ipv4 --wf-tcp-out=443 --payload=tls_client_hello --lua-desync=fake:blob=fake_default_tls:tcp_flags_set=SYN:repeats=1 --lua-desync=fakedsplit:pos=midsld:tcp_flags_set=SYN
-curl: (28) Connection timed out after 2009 milliseconds
-UNAVAILABLE code=28
-- curl_test_https_tls12 ipv4 discord.com : winws2 --wf-l3=ipv4 --wf-tcp-out=443 --payload=tls_client_hello --lua-desync=fake:blob=0x00000000:tcp_flags_set=SYN:repeats=1 --lua-desync=fakedsplit:pos=midsld:tcp_flags_set=SYN
-curl: (28) Connection timed out after 2002 milliseconds
-UNAVAILABLE code=28
-- curl_test_https_tls12 ipv4 discord.com : winws2 --wf-l3=ipv4 --wf-tcp-out=443 --payload=tls_client_hello --lua-desync=fake:blob=0x00000000:tcp_flags_set=SYN:repeats=1 --lua-desync=fake:blob=fake_default_tls:tcp_flags_set=SYN:tls_mod=rnd,dupsid:repeats=1 --lua-desync=fakedsplit:pos=midsld:tcp_flags_set=SYN
-curl: (28) Connection timed out after 2006 milliseconds
-UNAVAILABLE code=28
-- curl_test_https_tls12 ipv4 discord.com : winws2 --wf-l3=ipv4 --wf-tcp-out=443 --payload=tls_client_hello --lua-desync=multisplit:blob=fake_default_tls:tcp_flags_set=SYN:pos=2:nodrop:repeats=1 --lua-desync=fakedsplit:pos=midsld:tcp_flags_set=SYN
-curl: (28) Connection timed out after 2011 milliseconds
-UNAVAILABLE code=28
-- curl_test_https_tls12 ipv4 discord.com : winws2 --wf-l3=ipv4 --wf-tcp-out=443 --payload=tls_client_hello --lua-desync=fake:blob=fake_default_tls:tcp_flags_set=SYN:tls_mod=rnd,dupsid,padencap:repeats=1 --lua-desync=fakedsplit:pos=midsld:tcp_flags_set=SYN
-curl: (28) Connection timed out after 2013 milliseconds
-UNAVAILABLE code=28
-- curl_test_https_tls12 ipv4 discord.com : winws2 --wf-l3=ipv4 --wf-tcp-out=443 --payload=tls_client_hello --lua-desync=fake:blob=fake_default_tls:tcp_flags_set=SYN:repeats=1 --lua-desync=fakedsplit:pos=1,midsld:tcp_flags_set=SYN
-curl: (28) Connection timed out after 2004 milliseconds
-UNAVAILABLE code=28
-- curl_test_https_tls12 ipv4 discord.com : winws2 --wf-l3=ipv4 --wf-tcp-out=443 --payload=tls_client_hello --lua-desync=fake:blob=0x00000000:tcp_flags_set=SYN:repeats=1 --lua-desync=fakedsplit:pos=1,midsld:tcp_flags_set=SYN
-curl: (28) Connection timed out after 2015 milliseconds
-UNAVAILABLE code=28
-- curl_test_https_tls12 ipv4 discord.com : winws2 --wf-l3=ipv4 --wf-tcp-out=443 --payload=tls_client_hello --lua-desync=fake:blob=0x00000000:tcp_flags_set=SYN:repeats=1 --lua-desync=fake:blob=fake_default_tls:tcp_flags_set=SYN:tls_mod=rnd,dupsid:repeats=1 --lua-desync=fakedsplit:pos=1,midsld:tcp_flags_set=SYN
-curl: (28) Connection timed out after 2006 milliseconds
-UNAVAILABLE code=28
-- curl_test_https_tls12 ipv4 discord.com : winws2 --wf-l3=ipv4 --wf-tcp-out=443 --payload=tls_client_hello --lua-desync=multisplit:blob=fake_default_tls:tcp_flags_set=SYN:pos=2:nodrop:repeats=1 --lua-desync=fakedsplit:pos=1,midsld:tcp_flags_set=SYN
-curl: (28) Connection timed out after 2008 milliseconds
-UNAVAILABLE code=28
-- curl_test_https_tls12 ipv4 discord.com : winws2 --wf-l3=ipv4 --wf-tcp-out=443 --payload=tls_client_hello --lua-desync=fake:blob=fake_default_tls:tcp_flags_set=SYN:tls_mod=rnd,dupsid,padencap:repeats=1 --lua-desync=fakedsplit:pos=1,midsld:tcp_flags_set=SYN
-curl: (28) Connection timed out after 2015 milliseconds
-UNAVAILABLE code=28
-- curl_test_https_tls12 ipv4 discord.com : winws2 --wf-l3=ipv4 --wf-tcp-out=443 --payload=tls_client_hello --lua-desync=fake:blob=fake_default_tls:tcp_flags_set=SYN:repeats=1 --lua-desync=fakedsplit:pos=1,sniext+1,host+1,midsld-2,midsld,midsld+2,endhost-1:tcp_flags_set=SYN
-curl: (28) Connection timed out after 2009 milliseconds
-UNAVAILABLE code=28
-- curl_test_https_tls12 ipv4 discord.com : winws2 --wf-l3=ipv4 --wf-tcp-out=443 --payload=tls_client_hello --lua-desync=fake:blob=0x00000000:tcp_flags_set=SYN:repeats=1 --lua-desync=fakedsplit:pos=1,sniext+1,host+1,midsld-2,midsld,midsld+2,endhost-1:tcp_flags_set=SYN
-curl: (28) Connection timed out after 2001 milliseconds
-UNAVAILABLE code=28
-- curl_test_https_tls12 ipv4 discord.com : winws2 --wf-l3=ipv4 --wf-tcp-out=443 --payload=tls_client_hello --lua-desync=fake:blob=0x00000000:tcp_flags_set=SYN:repeats=1 --lua-desync=fake:blob=fake_default_tls:tcp_flags_set=SYN:tls_mod=rnd,dupsid:repeats=1 --lua-desync=fakedsplit:pos=1,sniext+1,host+1,midsld-2,midsld,midsld+2,endhost-1:tcp_flags_set=SYN
-curl: (28) Connection timed out after 2009 milliseconds
-UNAVAILABLE code=28
-- curl_test_https_tls12 ipv4 discord.com : winws2 --wf-l3=ipv4 --wf-tcp-out=443 --payload=tls_client_hello --lua-desync=multisplit:blob=fake_default_tls:tcp_flags_set=SYN:pos=2:nodrop:repeats=1 --lua-desync=fakedsplit:pos=1,sniext+1,host+1,midsld-2,midsld,midsld+2,endhost-1:tcp_flags_set=SYN
-curl: (28) Connection timed out after 2014 milliseconds
-UNAVAILABLE code=28
-- curl_test_https_tls12 ipv4 discord.com : winws2 --wf-l3=ipv4 --wf-tcp-out=443 --payload=tls_client_hello --lua-desync=fake:blob=fake_default_tls:tcp_flags_set=SYN:tls_mod=rnd,dupsid,padencap:repeats=1 --lua-desync=fakedsplit:pos=1,sniext+1,host+1,midsld-2,midsld,midsld+2,endhost-1:tcp_flags_set=SYN
-curl: (28) Connection timed out after 2008 milliseconds
-UNAVAILABLE code=28
-- curl_test_https_tls12 ipv4 discord.com : winws2 --wf-l3=ipv4 --wf-tcp-out=443 --payload=tls_client_hello --lua-desync=fake:blob=fake_default_tls:ip_autottl=-1,3-20:repeats=1 --lua-desync=fakedsplit:pos=2:ip_autottl=-1,3-20
-curl: (28) Connection timed out after 2011 milliseconds
-UNAVAILABLE code=28
-- curl_test_https_tls12 ipv4 discord.com : winws2 --wf-l3=ipv4 --wf-tcp-out=443 --payload=tls_client_hello --lua-desync=fake:blob=0x00000000:ip_autottl=-1,3-20:repeats=1 --lua-desync=fakedsplit:pos=2:ip_autottl=-1,3-20
-curl: (28) Connection timed out after 2002 milliseconds
-UNAVAILABLE code=28
-- curl_test_https_tls12 ipv4 discord.com : winws2 --wf-l3=ipv4 --wf-tcp-out=443 --payload=tls_client_hello --lua-desync=fake:blob=0x00000000:ip_autottl=-1,3-20:repeats=1 --lua-desync=fake:blob=fake_default_tls:ip_autottl=-1,3-20:tls_mod=rnd,dupsid:repeats=1 --lua-desync=fakedsplit:pos=2:ip_autottl=-1,3-20
-curl: (28) Connection timed out after 2008 milliseconds
-UNAVAILABLE code=28
-- curl_test_https_tls12 ipv4 discord.com : winws2 --wf-l3=ipv4 --wf-tcp-out=443 --payload=tls_client_hello --lua-desync=multisplit:blob=fake_default_tls:ip_autottl=-1,3-20:pos=2:nodrop:repeats=1 --lua-desync=fakedsplit:pos=2:ip_autottl=-1,3-20
-curl: (28) Connection timed out after 2011 milliseconds
-UNAVAILABLE code=28
-- curl_test_https_tls12 ipv4 discord.com : winws2 --wf-l3=ipv4 --wf-tcp-out=443 --payload=tls_client_hello --lua-desync=fake:blob=fake_default_tls:ip_autottl=-1,3-20:tls_mod=rnd,dupsid,padencap:repeats=1 --lua-desync=fakedsplit:pos=2:ip_autottl=-1,3-20
-curl: (28) Connection timed out after 2015 milliseconds
-UNAVAILABLE code=28
-- curl_test_https_tls12 ipv4 discord.com : winws2 --wf-l3=ipv4 --wf-tcp-out=443 --payload=tls_client_hello --lua-desync=fake:blob=fake_default_tls:ip_autottl=-1,3-20:repeats=1 --lua-desync=fakedsplit:pos=2:ip_autottl=-1,3-20 --payload=empty --out-range=s1<d1 --lua-desync=pktmod:ip_ttl=1
-!!!!! AVAILABLE !!!!!
-- curl_test_https_tls12 ipv4 discord.com : winws2 --wf-l3=ipv4 --wf-tcp-out=443 --payload=tls_client_hello --lua-desync=fake:blob=0x00000000:ip_autottl=-1,3-20:repeats=1 --lua-desync=fakedsplit:pos=2:ip_autottl=-1,3-20 --payload=empty --out-range=s1<d1 --lua-desync=pktmod:ip_ttl=1
-!!!!! AVAILABLE !!!!!
-- curl_test_https_tls12 ipv4 discord.com : winws2 --wf-l3=ipv4 --wf-tcp-out=443 --payload=tls_client_hello --lua-desync=fake:blob=0x00000000:ip_autottl=-1,3-20:repeats=1 --lua-desync=fake:blob=fake_default_tls:ip_autottl=-1,3-20:tls_mod=rnd,dupsid:repeats=1 --lua-desync=fakedsplit:pos=2:ip_autottl=-1,3-20 --payload=empty --out-range=s1<d1 --lua-desync=pktmod:ip_ttl=1
-!!!!! AVAILABLE !!!!!
-- curl_test_https_tls12 ipv4 discord.com : winws2 --wf-l3=ipv4 --wf-tcp-out=443 --payload=tls_client_hello --lua-desync=multisplit:blob=fake_default_tls:ip_autottl=-1,3-20:pos=2:nodrop:repeats=1 --lua-desync=fakedsplit:pos=2:ip_autottl=-1,3-20 --payload=empty --out-range=s1<d1 --lua-desync=pktmod:ip_ttl=1
-!!!!! AVAILABLE !!!!!
-- curl_test_https_tls12 ipv4 discord.com : winws2 --wf-l3=ipv4 --wf-tcp-out=443 --payload=tls_client_hello --lua-desync=fake:blob=fake_default_tls:ip_autottl=-1,3-20:tls_mod=rnd,dupsid,padencap:repeats=1 --lua-desync=fakedsplit:pos=2:ip_autottl=-1,3-20 --payload=empty --out-range=s1<d1 --lua-desync=pktmod:ip_ttl=1
-curl: (28) Connection timed out after 2003 milliseconds
-UNAVAILABLE code=28
-- curl_test_https_tls12 ipv4 discord.com : winws2 --wf-l3=ipv4 --wf-tcp-out=443 --payload=tls_client_hello --lua-desync=fake:blob=fake_default_tls:ip_autottl=-1,3-20:repeats=1 --lua-desync=fakedsplit:pos=1:ip_autottl=-1,3-20
-curl: (28) Connection timed out after 2004 milliseconds
-UNAVAILABLE code=28
-- curl_test_https_tls12 ipv4 discord.com : winws2 --wf-l3=ipv4 --wf-tcp-out=443 --payload=tls_client_hello --lua-desync=fake:blob=0x00000000:ip_autottl=-1,3-20:repeats=1 --lua-desync=fakedsplit:pos=1:ip_autottl=-1,3-20
-curl: (28) Connection timed out after 2009 milliseconds
-UNAVAILABLE code=28
-- curl_test_https_tls12 ipv4 discord.com : winws2 --wf-l3=ipv4 --wf-tcp-out=443 --payload=tls_client_hello --lua-desync=fake:blob=0x00000000:ip_autottl=-1,3-20:repeats=1 --lua-desync=fake:blob=fake_default_tls:ip_autottl=-1,3-20:tls_mod=rnd,dupsid:repeats=1 --lua-desync=fakedsplit:pos=1:ip_autottl=-1,3-20
-curl: (28) Connection timed out after 2009 milliseconds
-UNAVAILABLE code=28
-- curl_test_https_tls12 ipv4 discord.com : winws2 --wf-l3=ipv4 --wf-tcp-out=443 --payload=tls_client_hello --lua-desync=multisplit:blob=fake_default_tls:ip_autottl=-1,3-20:pos=2:nodrop:repeats=1 --lua-desync=fakedsplit:pos=1:ip_autottl=-1,3-20
-curl: (28) Connection timed out after 2016 milliseconds
-UNAVAILABLE code=28
-- curl_test_https_tls12 ipv4 discord.com : winws2 --wf-l3=ipv4 --wf-tcp-out=443 --payload=tls_client_hello --lua-desync=fake:blob=fake_default_tls:ip_autottl=-1,3-20:tls_mod=rnd,dupsid,padencap:repeats=1 --lua-desync=fakedsplit:pos=1:ip_autottl=-1,3-20
-curl: (28) Connection timed out after 2013 milliseconds
-UNAVAILABLE code=28
-- curl_test_https_tls12 ipv4 discord.com : winws2 --wf-l3=ipv4 --wf-tcp-out=443 --payload=tls_client_hello --lua-desync=fake:blob=fake_default_tls:ip_autottl=-1,3-20:repeats=1 --lua-desync=fakedsplit:pos=1:ip_autottl=-1,3-20 --payload=empty --out-range=s1<d1 --lua-desync=pktmod:ip_ttl=1
-!!!!! AVAILABLE !!!!!
-- curl_test_https_tls12 ipv4 discord.com : winws2 --wf-l3=ipv4 --wf-tcp-out=443 --payload=tls_client_hello --lua-desync=fake:blob=0x00000000:ip_autottl=-1,3-20:repeats=1 --lua-desync=fakedsplit:pos=1:ip_autottl=-1,3-20 --payload=empty --out-range=s1<d1 --lua-desync=pktmod:ip_ttl=1
-!!!!! AVAILABLE !!!!!
-- curl_test_https_tls12 ipv4 discord.com : winws2 --wf-l3=ipv4 --wf-tcp-out=443 --payload=tls_client_hello --lua-desync=fake:blob=0x00000000:ip_autottl=-1,3-20:repeats=1 --lua-desync=fake:blob=fake_default_tls:ip_autottl=-1,3-20:tls_mod=rnd,dupsid:repeats=1 --lua-desync=fakedsplit:pos=1:ip_autottl=-1,3-20 --payload=empty --out-range=s1<d1 --lua-desync=pktmod:ip_ttl=1
-!!!!! AVAILABLE !!!!!
-- curl_test_https_tls12 ipv4 discord.com : winws2 --wf-l3=ipv4 --wf-tcp-out=443 --payload=tls_client_hello --lua-desync=multisplit:blob=fake_default_tls:ip_autottl=-1,3-20:pos=2:nodrop:repeats=1 --lua-desync=fakedsplit:pos=1:ip_autottl=-1,3-20 --payload=empty --out-range=s1<d1 --lua-desync=pktmod:ip_ttl=1
-!!!!! AVAILABLE !!!!!
-- curl_test_https_tls12 ipv4 discord.com : winws2 --wf-l3=ipv4 --wf-tcp-out=443 --payload=tls_client_hello --lua-desync=fake:blob=fake_default_tls:ip_autottl=-1,3-20:tls_mod=rnd,dupsid,padencap:repeats=1 --lua-desync=fakedsplit:pos=1:ip_autottl=-1,3-20 --payload=empty --out-range=s1<d1 --lua-desync=pktmod:ip_ttl=1
-curl: (28) Connection timed out after 2010 milliseconds
-UNAVAILABLE code=28
-- curl_test_https_tls12 ipv4 discord.com : winws2 --wf-l3=ipv4 --wf-tcp-out=443 --payload=tls_client_hello --lua-desync=fake:blob=fake_default_tls:ip_autottl=-1,3-20:repeats=1 --lua-desync=fakedsplit:pos=sniext+1:ip_autottl=-1,3-20
-curl: (28) Connection timed out after 2008 milliseconds
-UNAVAILABLE code=28
-- curl_test_https_tls12 ipv4 discord.com : winws2 --wf-l3=ipv4 --wf-tcp-out=443 --payload=tls_client_hello --lua-desync=fake:blob=0x00000000:ip_autottl=-1,3-20:repeats=1 --lua-desync=fakedsplit:pos=sniext+1:ip_autottl=-1,3-20
-curl: (28) Connection timed out after 2014 milliseconds
-UNAVAILABLE code=28
-- curl_test_https_tls12 ipv4 discord.com : winws2 --wf-l3=ipv4 --wf-tcp-out=443 --payload=tls_client_hello --lua-desync=fake:blob=0x00000000:ip_autottl=-1,3-20:repeats=1 --lua-desync=fake:blob=fake_default_tls:ip_autottl=-1,3-20:tls_mod=rnd,dupsid:repeats=1 --lua-desync=fakedsplit:pos=sniext+1:ip_autottl=-1,3-20
-curl: (28) Connection timed out after 2012 milliseconds
-UNAVAILABLE code=28
-- curl_test_https_tls12 ipv4 discord.com : winws2 --wf-l3=ipv4 --wf-tcp-out=443 --payload=tls_client_hello --lua-desync=multisplit:blob=fake_default_tls:ip_autottl=-1,3-20:pos=2:nodrop:repeats=1 --lua-desync=fakedsplit:pos=sniext+1:ip_autottl=-1,3-20
-curl: (28) Connection timed out after 2015 milliseconds
-UNAVAILABLE code=28
-- curl_test_https_tls12 ipv4 discord.com : winws2 --wf-l3=ipv4 --wf-tcp-out=443 --payload=tls_client_hello --lua-desync=fake:blob=fake_default_tls:ip_autottl=-1,3-20:tls_mod=rnd,dupsid,padencap:repeats=1 --lua-desync=fakedsplit:pos=sniext+1:ip_autottl=-1,3-20
-curl: (28) Connection timed out after 2011 milliseconds
-UNAVAILABLE code=28
-- curl_test_https_tls12 ipv4 discord.com : winws2 --wf-l3=ipv4 --wf-tcp-out=443 --payload=tls_client_hello --lua-desync=fake:blob=fake_default_tls:ip_autottl=-1,3-20:repeats=1 --lua-desync=fakedsplit:pos=sniext+1:ip_autottl=-1,3-20 --payload=empty --out-range=s1<d1 --lua-desync=pktmod:ip_ttl=1
-!!!!! AVAILABLE !!!!!
-- curl_test_https_tls12 ipv4 discord.com : winws2 --wf-l3=ipv4 --wf-tcp-out=443 --payload=tls_client_hello --lua-desync=fake:blob=0x00000000:ip_autottl=-1,3-20:repeats=1 --lua-desync=fakedsplit:pos=sniext+1:ip_autottl=-1,3-20 --payload=empty --out-range=s1<d1 --lua-desync=pktmod:ip_ttl=1
-!!!!! AVAILABLE !!!!!
-- curl_test_https_tls12 ipv4 discord.com : winws2 --wf-l3=ipv4 --wf-tcp-out=443 --payload=tls_client_hello --lua-desync=fake:blob=0x00000000:ip_autottl=-1,3-20:repeats=1 --lua-desync=fake:blob=fake_default_tls:ip_autottl=-1,3-20:tls_mod=rnd,dupsid:repeats=1 --lua-desync=fakedsplit:pos=sniext+1:ip_autottl=-1,3-20 --payload=empty --out-range=s1<d1 --lua-desync=pktmod:ip_ttl=1
-!!!!! AVAILABLE !!!!!
-- curl_test_https_tls12 ipv4 discord.com : winws2 --wf-l3=ipv4 --wf-tcp-out=443 --payload=tls_client_hello --lua-desync=multisplit:blob=fake_default_tls:ip_autottl=-1,3-20:pos=2:nodrop:repeats=1 --lua-desync=fakedsplit:pos=sniext+1:ip_autottl=-1,3-20 --payload=empty --out-range=s1<d1 --lua-desync=pktmod:ip_ttl=1
-!!!!! AVAILABLE !!!!!
-- curl_test_https_tls12 ipv4 discord.com : winws2 --wf-l3=ipv4 --wf-tcp-out=443 --payload=tls_client_hello --lua-desync=fake:blob=fake_default_tls:ip_autottl=-1,3-20:tls_mod=rnd,dupsid,padencap:repeats=1 --lua-desync=fakedsplit:pos=sniext+1:ip_autottl=-1,3-20 --payload=empty --out-range=s1<d1 --lua-desync=pktmod:ip_ttl=1
-curl: (28) Connection timed out after 2009 milliseconds
-UNAVAILABLE code=28
-- curl_test_https_tls12 ipv4 discord.com : winws2 --wf-l3=ipv4 --wf-tcp-out=443 --payload=tls_client_hello --lua-desync=fake:blob=fake_default_tls:ip_autottl=-1,3-20:repeats=1 --lua-desync=fakedsplit:pos=sniext+4:ip_autottl=-1,3-20
-curl: (28) Connection timed out after 2016 milliseconds
-UNAVAILABLE code=28
-- curl_test_https_tls12 ipv4 discord.com : winws2 --wf-l3=ipv4 --wf-tcp-out=443 --payload=tls_client_hello --lua-desync=fake:blob=0x00000000:ip_autottl=-1,3-20:repeats=1 --lua-desync=fakedsplit:pos=sniext+4:ip_autottl=-1,3-20
-curl: (28) Connection timed out after 2005 milliseconds
-UNAVAILABLE code=28
-- curl_test_https_tls12 ipv4 discord.com : winws2 --wf-l3=ipv4 --wf-tcp-out=443 --payload=tls_client_hello --lua-desync=fake:blob=0x00000000:ip_autottl=-1,3-20:repeats=1 --lua-desync=fake:blob=fake_default_tls:ip_autottl=-1,3-20:tls_mod=rnd,dupsid:repeats=1 --lua-desync=fakedsplit:pos=sniext+4:ip_autottl=-1,3-20
-curl: (28) Connection timed out after 2011 milliseconds
-UNAVAILABLE code=28
-- curl_test_https_tls12 ipv4 discord.com : winws2 --wf-l3=ipv4 --wf-tcp-out=443 --payload=tls_client_hello --lua-desync=multisplit:blob=fake_default_tls:ip_autottl=-1,3-20:pos=2:nodrop:repeats=1 --lua-desync=fakedsplit:pos=sniext+4:ip_autottl=-1,3-20
-curl: (28) Connection timed out after 2016 milliseconds
-UNAVAILABLE code=28
-- curl_test_https_tls12 ipv4 discord.com : winws2 --wf-l3=ipv4 --wf-tcp-out=443 --payload=tls_client_hello --lua-desync=fake:blob=fake_default_tls:ip_autottl=-1,3-20:tls_mod=rnd,dupsid,padencap:repeats=1 --lua-desync=fakedsplit:pos=sniext+4:ip_autottl=-1,3-20
-curl: (28) Connection timed out after 2014 milliseconds
-UNAVAILABLE code=28
-- curl_test_https_tls12 ipv4 discord.com : winws2 --wf-l3=ipv4 --wf-tcp-out=443 --payload=tls_client_hello --lua-desync=fake:blob=fake_default_tls:ip_autottl=-1,3-20:repeats=1 --lua-desync=fakedsplit:pos=sniext+4:ip_autottl=-1,3-20 --payload=empty --out-range=s1<d1 --lua-desync=pktmod:ip_ttl=1
-!!!!! AVAILABLE !!!!!
-- curl_test_https_tls12 ipv4 discord.com : winws2 --wf-l3=ipv4 --wf-tcp-out=443 --payload=tls_client_hello --lua-desync=fake:blob=0x00000000:ip_autottl=-1,3-20:repeats=1 --lua-desync=fakedsplit:pos=sniext+4:ip_autottl=-1,3-20 --payload=empty --out-range=s1<d1 --lua-desync=pktmod:ip_ttl=1
-!!!!! AVAILABLE !!!!!
-- curl_test_https_tls12 ipv4 discord.com : winws2 --wf-l3=ipv4 --wf-tcp-out=443 --payload=tls_client_hello --lua-desync=fake:blob=0x00000000:ip_autottl=-1,3-20:repeats=1 --lua-desync=fake:blob=fake_default_tls:ip_autottl=-1,3-20:tls_mod=rnd,dupsid:repeats=1 --lua-desync=fakedsplit:pos=sniext+4:ip_autottl=-1,3-20 --payload=empty --out-range=s1<d1 --lua-desync=pktmod:ip_ttl=1
-!!!!! AVAILABLE !!!!!
-- curl_test_https_tls12 ipv4 discord.com : winws2 --wf-l3=ipv4 --wf-tcp-out=443 --payload=tls_client_hello --lua-desync=multisplit:blob=fake_default_tls:ip_autottl=-1,3-20:pos=2:nodrop:repeats=1 --lua-desync=fakedsplit:pos=sniext+4:ip_autottl=-1,3-20 --payload=empty --out-range=s1<d1 --lua-desync=pktmod:ip_ttl=1
-!!!!! AVAILABLE !!!!!
-- curl_test_https_tls12 ipv4 discord.com : winws2 --wf-l3=ipv4 --wf-tcp-out=443 --payload=tls_client_hello --lua-desync=fake:blob=fake_default_tls:ip_autottl=-1,3-20:tls_mod=rnd,dupsid,padencap:repeats=1 --lua-desync=fakedsplit:pos=sniext+4:ip_autottl=-1,3-20 --payload=empty --out-range=s1<d1 --lua-desync=pktmod:ip_ttl=1
-curl: (28) Connection timed out after 2011 milliseconds
-UNAVAILABLE code=28
-- curl_test_https_tls12 ipv4 discord.com : winws2 --wf-l3=ipv4 --wf-tcp-out=443 --payload=tls_client_hello --lua-desync=fake:blob=fake_default_tls:ip_autottl=-1,3-20:repeats=1 --lua-desync=fakedsplit:pos=host+1:ip_autottl=-1,3-20
-curl: (28) Connection timed out after 2005 milliseconds
-UNAVAILABLE code=28
-- curl_test_https_tls12 ipv4 discord.com : winws2 --wf-l3=ipv4 --wf-tcp-out=443 --payload=tls_client_hello --lua-desync=fake:blob=0x00000000:ip_autottl=-1,3-20:repeats=1 --lua-desync=fakedsplit:pos=host+1:ip_autottl=-1,3-20
-curl: (28) Connection timed out after 2004 milliseconds
-UNAVAILABLE code=28
-- curl_test_https_tls12 ipv4 discord.com : winws2 --wf-l3=ipv4 --wf-tcp-out=443 --payload=tls_client_hello --lua-desync=fake:blob=0x00000000:ip_autottl=-1,3-20:repeats=1 --lua-desync=fake:blob=fake_default_tls:ip_autottl=-1,3-20:tls_mod=rnd,dupsid:repeats=1 --lua-desync=fakedsplit:pos=host+1:ip_autottl=-1,3-20
+start "zapret2" /min "%~dp0winws2.exe" ^
+--wf-tcp-out=80,443  ^
+--lua-init=@"%~dp0lua\zapret-lib.lua" --lua-init=@"%~dp0lua\zapret-antidpi.lua" ^
+--lua-init="fake_default_tls = tls_mod(fake_default_tls,'rnd,rndsni')" ^
+--blob=quic_google:@"%~dp0files\quic_initial_www_google_com.bin" ^
+--wf-raw-part=@"%~dp0windivert.filter\windivert_part.discord_media.txt" ^
+--wf-raw-part=@"%~dp0windivert.filter\windivert_part.stun.txt" ^
+--wf-raw-part=@"%~dp0windivert.filter\windivert_part.wireguard.txt" ^
+--wf-raw-part=@"%~dp0windivert.filter\windivert_part.quic_initial_ietf.txt" ^
+--filter-tcp=80 --filter-l7=http ^
+  --out-range=-d10 ^
+  --payload=http_req ^
+   --lua-desync=fake:blob=fake_default_http:ip_autottl=-2,3-20:ip6_autottl=-2,3-20:tcp_md5 ^
+   --lua-desync=fakedsplit:ip_autottl=-2,3-20:ip6_autottl=-2,3-20:tcp_md5 ^
+  --new ^
+--filter-tcp=443 --filter-l7=tls --hostlist="%~dp0files\list-youtube.txt" ^
+  --out-range=-d10 ^
+  --payload=tls_client_hello ^
+   --lua-desync=fake:blob=fake_default_tls:tcp_md5:repeats=11:tls_mod=rnd,dupsid,sni=www.google.com ^
+   --lua-desync=multidisorder:pos=1,midsld ^
+  --new ^
+--filter-tcp=443 --filter-l7=tls ^
+  --out-range=-d10 ^
+  --payload=tls_client_hello ^
+   --lua-desync=fake:blob=fake_default_tls:tcp_md5:tcp_seq=-10000:repeats=6 ^
+   --lua-desync=multidisorder:pos=midsld ^
+  --new ^
+--filter-udp=443 --filter-l7=quic --hostlist="%~dp0files\list-youtube.txt" ^
+  --payload=quic_initial ^
+   --lua-desync=fake:blob=quic_google:repeats=11 ^
+  --new ^
+--filter-udp=443 --filter-l7=quic ^
+  --payload=quic_initial ^
+   --lua-desync=fake:blob=fake_default_quic:repeats=11 ^
+  --new ^
+--filter-l7=wireguard,stun,discord ^
+  --payload=wireguard_initiation,wireguard_cookie,stun,discord_ip_discovery ^
+   --lua-desync=fake:blob=0x00000000000000000000000000000000:repeats=2
+
+
+
+start "zapret" /min "%~dp0winws.exe" ^
+--wf-tcp=80,443 ^
+--wf-raw-part=@"%~dp0windivert.filter\windivert_part.discord_media.txt" ^
+--wf-raw-part=@"%~dp0windivert.filter\windivert_part.stun.txt" ^
+--wf-raw-part=@"%~dp0windivert.filter\windivert_part.wireguard.txt" ^
+--wf-raw-part=@"%~dp0windivert.filter\windivert_part.quic_initial_ietf.txt" ^
+--filter-tcp=80 --dpi-desync=fake,fakedsplit --dpi-desync-autottl=2 --dpi-desync-fooling=md5sig --new ^
+--filter-tcp=443 --hostlist="%~dp0files\list-youtube.txt" --dpi-desync=fake,multidisorder --dpi-desync-split-pos=1,midsld --dpi-desync-repeats=11 --dpi-desync-fooling=md5sig --dpi-desync-fake-tls-mod=rnd,dupsid,sni=www.google.com --new ^
+--filter-tcp=443 --dpi-desync=fake,multidisorder --dpi-desync-split-pos=midsld --dpi-desync-repeats=6 --dpi-desync-fooling=badseq,md5sig --new ^
+--filter-l7=quic --hostlist="%~dp0files\list-youtube.txt" --dpi-desync=fake --dpi-desync-repeats=11 --dpi-desync-fake-quic="%~dp0files\quic_initial_www_google_com.bin" --new ^
+--filter-l7=quic --dpi-desync=fake --dpi-desync-repeats=11
