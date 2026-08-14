@@ -1,50 +1,64 @@
-Создай интерфейс для AAA fantasy RPG card game ILTA.
-
-Это не веб-приложение и не набор меню. 
-Интерфейс должен ощущаться как полноценный игровой экран в стиле Legends of Runeterra, League of Legends client и современных AAA RPG.
-
-Игрок всегда находится внутри игрового мира.
-
-Основной экран:
-- большая сцена мира на весь экран;
-- персонаж находится в центре;
-- вокруг живой фэнтезийный город;
-- NPC ходят и взаимодействуют;
-- здания, дома, магазины и таверны являются частью мира;
-- интерфейс аккуратно встроен поверх игры.
-
-Не делать:
-- обычные таблицы;
-- списки;
-- стандартные HTML панели;
-- скучные окна настроек.
-
-Делать:
-- красивые игровые панели;
-- полупрозрачное магическое стекло;
-- декоративные рамки;
-- анимации появления;
-- плавные переходы;
-- эффекты свечения;
-- премиальный fantasy стиль.
-
-Все окна должны выглядеть как часть игры:
-- коллекция карт открывается как игровая книга;
-- инвентарь как сумка персонажа;
-- профиль как карточка героя;
-- задания как древний журнал;
-- магазин как интерфейс торговца;
-- диалоги NPC как кинематографическая сцена.
-
-Стиль:
-- AAA качество;
-- Legends of Runeterra UI;
-- League of Legends client;
-- dark fantasy;
-- фиолетовые и серебряные оттенки;
-- магическое свечение;
-- дорогие материалы;
-- детальная фэнтези-архитектура.
-
-Цель:
-создать ощущение, что игрок вошёл в настоящий мир, а не открыл приложение.
+Ярослав Васильевич, для ILTA я бы не делал просто «карточную доску». Нужно описать как живое поле боя, где карты призываются в мир и сражаются. Вот промт под твой стиль (LoR + Riot AAA, но оригинальный):
+PROMPT:
+Create an AAA fantasy card battle arena for ILTA, an original fantasy RPG card game.
+A cinematic top-down/isometric magical battlefield inspired by premium fantasy games. The battlefield is a living ancient arena, not a simple UI screen. Dark violet magical stone, glowing crystals, arcane symbols engraved into the floor, mystical energy flowing through the arena, high quality Riot Games / Legends of Runeterra inspired atmosphere but completely original.
+Battlefield composition:
+Large horizontal 16:9 game screen.
+Two opposing sides:
+Player side at the bottom.
+Enemy side at the top.
+Large central combat zone where summoned creatures and champions fight.
+Space for cards to be placed on the battlefield in formation.
+3x3 card unit placement grid:
+up to 3 cards on the front line;
+up to 3 cards on the back line.
+Cards are physical magical objects placed onto the arena, not icons.
+When a card is summoned, a creature emerges from the card with magical effects.
+Player interface:
+Bottom area:
+Player hand with 5-7 detailed fantasy cards.
+Cards have ornate frames, rarity colors, artwork windows, mana cost.
+Hovered card enlarges with magical glow.
+Drag and drop feeling: player selects a card from hand and places it onto the battlefield.
+Left bottom:
+Mana crystal system.
+Glowing blue/purple mana crystals.
+Current mana / maximum mana display.
+Example: 6/6 mana.
+Empty crystals become dark.
+Top area:
+Enemy hand hidden.
+Enemy battlefield.
+Enemy cards face down or hidden.
+No Nexus health bar.
+No League of Legends style champion icons.
+Battle mechanics visualization:
+Show:
+A card being summoned onto the field.
+Magical portal opening.
+Creature appearing from the card.
+Attack indicators.
+Spell effects.
+Energy trails.
+Damage numbers appearing during combat.
+Status effects above units:
+shield;
+stun;
+poison;
+buffs.
+UI style:
+Premium fantasy UI:
+Elegant silver and dark purple decorations.
+Crystal ornaments.
+Magical glowing borders.
+High quality fantasy typography.
+Minimal clean interface.
+Everything integrated into the world, not floating game menus.
+Important:
+This is NOT a League of Legends champion select screen.
+This is a fantasy RPG card battlefield where the player controls a hero and summons cards to fight.
+The hero is not directly fighting. The hero uses magical cards to summon allies, creatures and spells.
+Create a realistic AAA game screenshot, not concept art.
+Для генерации лучше ещё добавить отдельную строку:
+"Show one summoned warrior creature card already placed on the battlefield, with a magical creature standing on the arena tile, while several cards remain in the player's hand."
+Так ИИ поймёт, что нужны именно карты на столе, а не просто красивые персонажи.
