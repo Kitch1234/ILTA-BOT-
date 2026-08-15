@@ -1,64 +1,1140 @@
-Ярослав Васильевич, для ILTA я бы не делал просто «карточную доску». Нужно описать как живое поле боя, где карты призываются в мир и сражаются. Вот промт под твой стиль (LoR + Riot AAA, но оригинальный):
-PROMPT:
-Create an AAA fantasy card battle arena for ILTA, an original fantasy RPG card game.
-A cinematic top-down/isometric magical battlefield inspired by premium fantasy games. The battlefield is a living ancient arena, not a simple UI screen. Dark violet magical stone, glowing crystals, arcane symbols engraved into the floor, mystical energy flowing through the arena, high quality Riot Games / Legends of Runeterra inspired atmosphere but completely original.
-Battlefield composition:
-Large horizontal 16:9 game screen.
-Two opposing sides:
-Player side at the bottom.
-Enemy side at the top.
-Large central combat zone where summoned creatures and champions fight.
-Space for cards to be placed on the battlefield in formation.
-3x3 card unit placement grid:
-up to 3 cards on the front line;
-up to 3 cards on the back line.
-Cards are physical magical objects placed onto the arena, not icons.
-When a card is summoned, a creature emerges from the card with magical effects.
-Player interface:
-Bottom area:
-Player hand with 5-7 detailed fantasy cards.
-Cards have ornate frames, rarity colors, artwork windows, mana cost.
-Hovered card enlarges with magical glow.
-Drag and drop feeling: player selects a card from hand and places it onto the battlefield.
-Left bottom:
-Mana crystal system.
-Glowing blue/purple mana crystals.
-Current mana / maximum mana display.
-Example: 6/6 mana.
-Empty crystals become dark.
-Top area:
-Enemy hand hidden.
-Enemy battlefield.
-Enemy cards face down or hidden.
-No Nexus health bar.
-No League of Legends style champion icons.
-Battle mechanics visualization:
-Show:
-A card being summoned onto the field.
-Magical portal opening.
-Creature appearing from the card.
-Attack indicators.
-Spell effects.
-Energy trails.
-Damage numbers appearing during combat.
-Status effects above units:
-shield;
-stun;
-poison;
-buffs.
-UI style:
-Premium fantasy UI:
-Elegant silver and dark purple decorations.
-Crystal ornaments.
-Magical glowing borders.
-High quality fantasy typography.
-Minimal clean interface.
-Everything integrated into the world, not floating game menus.
-Important:
-This is NOT a League of Legends champion select screen.
-This is a fantasy RPG card battlefield where the player controls a hero and summons cards to fight.
-The hero is not directly fighting. The hero uses magical cards to summon allies, creatures and spells.
-Create a realistic AAA game screenshot, not concept art.
-Для генерации лучше ещё добавить отдельную строку:
-"Show one summoned warrior creature card already placed on the battlefield, with a magical creature standing on the arena tile, while several cards remain in the player's hand."
-Так ИИ поймёт, что нужны именно карты на столе, а не просто красивые персонажи.
+Создай Discord-бота нового поколения с модерацией, экономикой, уровнями, питомцами и системой уведомлений о стримах.
+
+Главная идея:
+Это универсальный Discord-бот для игровых серверов. Он должен сочетать профессиональную модерацию и лёгкую RPG-прогрессию.
+
+Стек:
+- Python 3.12+
+- discord.py 2.x
+- PostgreSQL
+- asyncpg
+- aiohttp
+- python-dotenv
+- Docker готовность желательно
+
+Архитектура должна быть модульной, чтобы новые системы добавлялись как отдельные модули.
+
+Структура проекта:
+
+bot/
+│
+├── main.py
+│
+├── cogs/
+│   ├── moderation.py
+│   ├── ai_moderation.py
+│   ├── economy.py
+│   ├── levels.py
+│   ├── pets.py
+│   ├── streams.py
+│   ├── profile.py
+│   └── admin.py
+│
+├── services/
+│   ├── moderation_service.py
+│   ├── ai_service.py
+│   ├── economy_service.py
+│   ├── level_service.py
+│   ├── pet_service.py
+│   └── stream_service.py
+│
+├── database/
+│   ├── database.py
+│   ├── models.py
+│   ├── users.py
+│   ├── guilds.py
+│   ├── warnings.py
+│   ├── pets.py
+│   └── streams.py
+│
+├── utils/
+│   ├── embeds.py
+│   ├── permissions.py
+│   └── constants.py
+│
+├── config/
+│   └── settings.py
+│
+└── .env
+
+
+================================
+1. СИСТЕМА МОДЕРАЦИИ
+================================
+
+Добавить:
+
+Slash команды:
+
+/warn
+/mute
+/kick
+/ban
+/unban
+/clear
+/lock
+/unlock
+
+Все действия записываются в Mod Logs.
+
+Формат Embed:
+
+🛡 Moderation Action
+
+User:
+Moderator:
+Action:
+Reason:
+Date:
+
+История пользователя:
+
+Warnings:
+Timeouts:
+Bans:
+
+
+================================
+2. AI МОДЕРАЦИЯ
+================================
+
+Использовать OpenAI Moderation API.
+
+Важно:
+AI не принимает окончательное решение.
+AI только анализирует содержание.
+
+Схема:
+
+Discord message
+↓
+быстрые фильтры
+↓
+OpenAI Moderation
+↓
+результат
+↓
+Moderation rules
+↓
+действие
+
+
+AI должен проверять:
+
+- harassment
+- threats
+- hate
+- violence
+- sexual content
+- dangerous content
+
+
+Результат сохранять:
+
+ai_moderation_logs
+
+Поля:
+
+id
+guild_id
+user_id
+message_id
+category
+confidence
+action
+
+
+Настройки сервера:
+
+AI Moderation ON/OFF
+
+Auto Delete ON/OFF
+
+Auto Warning ON/OFF
+
+Confidence threshold
+
+
+================================
+3. LEVEL SYSTEM
+================================
+
+Пользователь получает XP:
+
+- сообщения
+- голосовые каналы
+- ежедневные задания
+- события
+
+
+Профиль:
+
+/profile
+
+
+Embed:
+
+👤 Profile
+
+Username
+
+Level:
+XP:
+
+Progress bar:
+
+Coins:
+
+Achievements:
+
+Titles:
+
+
+Добавить:
+
+Leaderboard
+
+/leaderboard
+
+
+================================
+4. ЭКОНОМИКА
+================================
+
+Основная валюта:
+
+Coins
+
+
+Команды:
+
+/balance
+/daily
+/work
+/shop
+/inventory
+/give
+
+
+Баланс:
+
+💰 Wallet
+
+Coins:
+Level:
+
+
+Магазин:
+
+Предметы:
+
+- роли
+- косметика
+- сундуки
+- предметы
+
+
+Не делать pay-to-win.
+
+
+================================
+5. ПИТОМЦЫ
+================================
+
+Система:
+
+Egg → Baby → Adult
+
+
+Получение:
+
+- яйца
+- события
+- магазин
+- достижения
+
+
+Команды:
+
+/egg
+/pet
+/pets
+/feed
+/play
+/pet rename
+
+
+Пример:
+
+🐺 Wolf
+
+Level:
+12
+
+Rarity:
+Common
+
+Happiness:
+90%
+
+Energy:
+80%
+
+Bonus:
++5% XP
+
+
+Питомец НЕ умирает.
+
+Если не ухаживать:
+только уменьшаются бонусы.
+
+
+База данных:
+
+pets
+
+id
+user_id
+species
+rarity
+level
+xp
+happiness
+energy
+created_at
+
+
+pet_species
+
+id
+name
+rarity
+bonus
+
+
+Начальные питомцы:
+
+Common:
+
+Wolf
+Fox
+Cat
+Rabbit
+Owl
+
+
+Rare:
+
+Moon Fox
+Frost Wolf
+Crystal Cat
+
+
+Epic:
+
+Shadow Wolf
+Fire Fox
+
+
+Legendary:
+
+Dragon
+Phoenix
+Kitsune
+
+
+================================
+6. СИСТЕМА ЯИЦ
+================================
+
+Яйца имеют редкость:
+
+Common Egg
+Rare Egg
+Epic Egg
+Legendary Egg
+
+
+Пример:
+
+🥚 Common Egg
+
+Hatching progress:
+75%
+
+Time:
+
+
+После открытия:
+
+🎉 Egg hatched!
+
+You received:
+
+🐺 Wolf
+
+
+================================
+7. STREAM SYSTEM
+================================
+
+Добавить систему уведомлений стримов.
+
+
+Поддержка:
+
+- Twitch
+- YouTube Live
+- Kick
+
+
+Команды:
+
+/stream setup
+/stream remove
+/stream list
+/stream role
+
+
+Настройки:
+
+guild_streams
+
+guild_id
+platform
+streamer_id
+channel_id
+notification_role
+
+
+Когда стример начинает эфир:
+
+Отправить Embed:
+
+
+🔴 STREAM STARTED
+
+Streamer:
+
+Game:
+
+Title:
+
+Viewers:
+
+Link:
+
+
+Добавить роль:
+
+🔴 Live Alerts
+
+
+================================
+8. STREAM ECONOMY
+================================
+
+Стримы должны влиять на сервер.
+
+Во время стрима:
+
+- сервер получает Server XP
+- пользователи получают XP
+- выполняются события
+
+
+Пример:
+
+🎥 Stream Event
+
+Streamer online:
+
+3 hours
+
+Server XP:
++2500
+
+
+================================
+9. EMBEDS
+================================
+
+Не использовать изображения в обычных командах.
+
+Все команды:
+
+- profile
+- economy
+- moderation
+- pets
+- shop
+
+используют красивые Embed.
+
+
+Изображения оставить только для будущего Discord Activity.
+
+
+================================
+10. PREMIUM И МОНЕТИЗАЦИЯ
+================================
+
+Архитектура должна поддерживать Premium.
+
+
+Не делать платными:
+
+- базовую модерацию
+- базовую экономику
+- уровни
+
+
+Premium:
+
+Server Premium:
+
+- расширенные настройки
+- кастомные награды
+- больше возможностей магазина
+- расширенная статистика
+- дополнительные питомцы
+- косметика
+
+
+User Premium:
+
+- эксклюзивные питомцы
+- скины
+- титулы
+- косметика
+
+
+Сделать систему:
+
+entitlements
+
+
+Она должна поддерживать:
+
+- Discord Premium Apps
+- Patreon
+- Boosty
+
+
+================================
+11. БАЗА ДАННЫХ
+================================
+
+Основные таблицы:
+
+users
+
+id
+discord_id
+level
+xp
+coins
+created_at
+
+
+guilds
+
+id
+guild_id
+settings
+
+
+warnings
+
+id
+user_id
+reason
+moderator_id
+created_at
+
+
+pets
+
+id
+user_id
+species
+level
+xp
+
+
+pet_inventory
+
+
+streams
+
+
+entitlements
+
+
+================================
+12. ОБЩИЕ ТРЕБОВАНИЯ
+================================
+
+Код должен быть:
+
+- чистым
+- асинхронным
+- с обработкой ошибок
+- с логированием
+- готовым к расширению
+
+Каждая система должна быть отдельным Cog.
+
+Не создавать монолитный файл.
+
+Сначала реализовать MVP:
+
+1. База данных
+2. Модерация
+3. Levels
+4. Economy
+5. Pets
+6. Stream notifications
+
+После этого добавлять Premium и дополнительные функции.
+
+Создай модуль автоматизации (Triggers / Automations) для Discord-бота.
+
+Цель:
+Дать администраторам возможность создавать автоматические действия на сервере без программирования.
+
+Система должна работать как конструктор:
+Событие → Условие → Действие
+
+
+================================
+АРХИТЕКТУРА
+================================
+
+Добавить:
+
+cogs/
+ └── automation.py
+
+services/
+ └── trigger_service.py
+
+database/
+ └── triggers.py
+
+utils/
+ └── trigger_conditions.py
+
+
+================================
+ОБЩАЯ ЛОГИКА
+================================
+
+Поток:
+
+Discord Event
+      ↓
+Trigger Service
+      ↓
+Поиск активных триггеров сервера
+      ↓
+Проверка условий
+      ↓
+Выполнение действий
+
+
+Пример:
+
+Пользователь достиг Level 10
+
+↓
+
+Проверяем:
+
+Есть ли триггер:
+level_up + level=10
+
+↓
+
+Выполнить:
+
+Выдать роль Veteran
+
+
+================================
+КОМАНДЫ
+================================
+
+
+/trigger create
+
+Создание нового триггера.
+
+
+Пошаговый режим:
+
+Шаг 1:
+Выбрать событие
+
+
+Доступные события:
+
+
+1. member_join
+
+Когда новый пользователь заходит.
+
+
+2. member_leave
+
+Когда пользователь выходит.
+
+
+3. message
+
+Новое сообщение.
+
+
+4. level_up
+
+Пользователь получил уровень.
+
+
+5. achievement_unlock
+
+Получено достижение.
+
+
+6. pet_level_up
+
+Питомец вырос.
+
+
+7. stream_start
+
+Начался стрим.
+
+
+8. daily_complete
+
+Выполнено ежедневное задание.
+
+
+9. economy_event
+
+Игровое событие экономики.
+
+
+10. keyword_detected
+
+Обнаружено слово.
+
+
+================================
+УСЛОВИЯ
+================================
+
+
+Каждый триггер может иметь условия.
+
+
+Примеры:
+
+
+message:
+
+condition:
+
+keyword = "привет"
+
+
+level_up:
+
+condition:
+
+level >= 10
+
+
+pet_level_up:
+
+condition:
+
+pet_rarity = legendary
+
+
+economy:
+
+condition:
+
+coins >= 100000
+
+
+
+Поддержать операторы:
+
+
+=
+>
+<
+>=
+<=
+contains
+
+
+================================
+ДЕЙСТВИЯ
+================================
+
+
+После выполнения условия выполнить действие.
+
+
+Доступные действия:
+
+
+1. SEND_MESSAGE
+
+
+Отправить сообщение.
+
+
+Пример:
+
+"Добро пожаловать на сервер!"
+
+
+2. SEND_EMBED
+
+
+Отправить красивый Embed.
+
+
+Поддержка:
+
+title
+
+description
+
+color
+
+footer
+
+
+3. GIVE_ROLE
+
+
+Выдать Discord роль.
+
+
+4. REMOVE_ROLE
+
+
+Удалить роль.
+
+
+5. GIVE_XP
+
+
+Выдать XP.
+
+
+6. GIVE_COINS
+
+
+Выдать игровую валюту.
+
+
+7. GIVE_ITEM
+
+
+Выдать предмет.
+
+
+8. GIVE_PET
+
+
+Выдать яйцо или питомца.
+
+
+9. START_EVENT
+
+
+Запустить серверное событие.
+
+
+10. LOG
+
+
+Записать событие в лог.
+
+
+================================
+ПРИМЕРЫ
+================================
+
+
+Пример 1:
+
+Новый пользователь.
+
+
+EVENT:
+
+member_join
+
+
+ACTION:
+
+SEND_EMBED
+
+
+Сообщение:
+
+
+👋 Добро пожаловать!
+
+Тебе выдано:
+
+⭐ 100 XP
+
+🎁 Common Egg
+
+
+
+--------------------------------
+
+
+Пример 2:
+
+Игрок получил 10 уровень.
+
+
+EVENT:
+
+level_up
+
+
+CONDITION:
+
+level = 10
+
+
+ACTION:
+
+GIVE_ROLE
+
+
+Role:
+
+Veteran
+
+
+
+--------------------------------
+
+
+Пример 3:
+
+Стример начал эфир.
+
+
+EVENT:
+
+stream_start
+
+
+ACTION:
+
+
+SEND_EMBED
+
+
++
+
+GIVE_XP
+
+
++
+
+START_EVENT
+
+
+
+--------------------------------
+
+
+Пример 4:
+
+Питомец вырос.
+
+
+EVENT:
+
+pet_level_up
+
+
+CONDITION:
+
+rarity = legendary
+
+
+ACTION:
+
+
+SEND_MESSAGE
+
+
+"Ваш легендарный питомец эволюционировал!"
+
+
+
+================================
+DATABASE
+================================
+
+
+Создать таблицу:
+
+
+triggers
+
+
+id
+
+guild_id
+
+created_by
+
+event_type
+
+conditions JSONB
+
+actions JSONB
+
+enabled BOOLEAN
+
+created_at TIMESTAMP
+
+
+
+Пример записи:
+
+
+{
+ "event": "level_up",
+
+ "conditions":
+ {
+   "level":10
+ },
+
+ "actions":
+ [
+   {
+    "type":"give_role",
+    "role_id":"123456"
+   }
+ ]
+}
+
+
+
+================================
+БЕЗОПАСНОСТЬ
+================================
+
+
+Только пользователи с правами:
+
+Administrator
+
+Manage Server
+
+могут создавать и изменять триггеры.
+
+
+Добавить:
+
+/trigger list
+
+Показать активные триггеры.
+
+
+/trigger edit ID
+
+Изменить.
+
+
+/trigger delete ID
+
+Удалить.
+
+
+/trigger toggle ID
+
+Включить/выключить.
+
+
+
+================================
+ИНТЕГРАЦИЯ С ДРУГИМИ СИСТЕМАМИ
+================================
+
+
+Триггеры должны поддерживать:
+
+
+Levels:
+
+level_up
+
+
+Economy:
+
+coins
+
+daily
+
+
+Pets:
+
+pet_level_up
+
+pet_hatch
+
+
+Moderation:
+
+warning_created
+
+
+Streams:
+
+stream_start
+
+
+Achievements:
+
+achievement_unlock
+
+
+
+================================
+ТРЕБОВАНИЯ К КОДУ
+================================
+
+
+- Использовать async/await
+- Не делать логику внутри cogs
+- Вся обработка через trigger_service
+- Использовать PostgreSQL JSONB для условий и действий
+- Добавить обработку ошибок
+- Добавить логирование
+- Сделать систему расширяемой
+
+
+В будущем система должна позволять создавать новые события и действия без переписывания всей архитектуры.
+
+Токент бота MTUzODIwODQxODU4NDg1ODYyNA.Gl2ib2.HNVt1S9J-DhQI1k5APLfveVh5cABSPN6CFIVe0
+Важно! Бот должен работать на русском и английском языке. 
