@@ -1,1140 +1,903 @@
-Создай Discord-бота нового поколения с модерацией, экономикой, уровнями, питомцами и системой уведомлений о стримах.
+============================================================
+333. FINAL CARD RARITY SYSTEM
+============================================================
 
-Главная идея:
-Это универсальный Discord-бот для игровых серверов. Он должен сочетать профессиональную модерацию и лёгкую RPG-прогрессию.
-
-Стек:
-- Python 3.12+
-- discord.py 2.x
-- PostgreSQL
-- asyncpg
-- aiohttp
-- python-dotenv
-- Docker готовность желательно
-
-Архитектура должна быть модульной, чтобы новые системы добавлялись как отдельные модули.
-
-Структура проекта:
-
-bot/
-│
-├── main.py
-│
-├── cogs/
-│   ├── moderation.py
-│   ├── ai_moderation.py
-│   ├── economy.py
-│   ├── levels.py
-│   ├── pets.py
-│   ├── streams.py
-│   ├── profile.py
-│   └── admin.py
-│
-├── services/
-│   ├── moderation_service.py
-│   ├── ai_service.py
-│   ├── economy_service.py
-│   ├── level_service.py
-│   ├── pet_service.py
-│   └── stream_service.py
-│
-├── database/
-│   ├── database.py
-│   ├── models.py
-│   ├── users.py
-│   ├── guilds.py
-│   ├── warnings.py
-│   ├── pets.py
-│   └── streams.py
-│
-├── utils/
-│   ├── embeds.py
-│   ├── permissions.py
-│   └── constants.py
-│
-├── config/
-│   └── settings.py
-│
-└── .env
+В ILTA используются 7 основных редкостей карт:
 
 
-================================
-1. СИСТЕМА МОДЕРАЦИИ
-================================
-
-Добавить:
-
-Slash команды:
-
-/warn
-/mute
-/kick
-/ban
-/unban
-/clear
-/lock
-/unlock
-
-Все действия записываются в Mod Logs.
-
-Формат Embed:
-
-🛡 Moderation Action
-
-User:
-Moderator:
-Action:
-Reason:
-Date:
-
-История пользователя:
-
-Warnings:
-Timeouts:
-Bans:
+1. Common
+2. Rare
+3. Epic
+4. Legendary
+5. Mythic
+6. Prestige
+7. Ultimate
 
 
-================================
-2. AI МОДЕРАЦИЯ
-================================
+Это окончательный список основных редкостей.
 
-Использовать OpenAI Moderation API.
 
-Важно:
-AI не принимает окончательное решение.
-AI только анализирует содержание.
+Не использовать другие основные rarity tiers,
+если они не добавлены разработчиком отдельно.
 
-Схема:
 
-Discord message
+============================================================
+334. RARITY ORDER
+============================================================
+
+Порядок редкостей от обычной к самой высокой:
+
+
+Common
 ↓
-быстрые фильтры
+Rare
 ↓
-OpenAI Moderation
+Epic
 ↓
-результат
+Legendary
 ↓
-Moderation rules
+Mythic
 ↓
-действие
+Prestige
+↓
+Ultimate
 
 
-AI должен проверять:
-
-- harassment
-- threats
-- hate
-- violence
-- sexual content
-- dangerous content
+Каждая следующая редкость должна
+быть визуально и экономически
+ценнее предыдущей.
 
 
-Результат сохранять:
+============================================================
+335. RARITY DATA
+============================================================
 
-ai_moderation_logs
-
-Поля:
-
-id
-guild_id
-user_id
-message_id
-category
-confidence
-action
+Каждая rarity должна иметь:
 
 
-Настройки сервера:
-
-AI Moderation ON/OFF
-
-Auto Delete ON/OFF
-
-Auto Warning ON/OFF
-
-Confidence threshold
-
-
-================================
-3. LEVEL SYSTEM
-================================
-
-Пользователь получает XP:
-
-- сообщения
-- голосовые каналы
-- ежедневные задания
-- события
-
-
-Профиль:
-
-/profile
-
-
-Embed:
-
-👤 Profile
-
-Username
-
-Level:
-XP:
-
-Progress bar:
-
-Coins:
-
-Achievements:
-
-Titles:
-
-
-Добавить:
-
-Leaderboard
-
-/leaderboard
-
-
-================================
-4. ЭКОНОМИКА
-================================
-
-Основная валюта:
-
-Coins
-
-
-Команды:
-
-/balance
-/daily
-/work
-/shop
-/inventory
-/give
-
-
-Баланс:
-
-💰 Wallet
-
-Coins:
-Level:
-
-
-Магазин:
-
-Предметы:
-
-- роли
-- косметика
-- сундуки
-- предметы
-
-
-Не делать pay-to-win.
-
-
-================================
-5. ПИТОМЦЫ
-================================
-
-Система:
-
-Egg → Baby → Adult
-
-
-Получение:
-
-- яйца
-- события
-- магазин
-- достижения
-
-
-Команды:
-
-/egg
-/pet
-/pets
-/feed
-/play
-/pet rename
+rarity_id
+display_name
+name_ru
+name_en
+icon
+frame
+drop_weight
+shard_value
+tier
+color/theme
+minimum_pack_tier
 
 
 Пример:
 
-🐺 Wolf
 
-Level:
-12
-
-Rarity:
 Common
 
-Happiness:
-90%
 
-Energy:
-80%
-
-Bonus:
-+5% XP
+rarity_id:
+common
 
 
-Питомец НЕ умирает.
-
-Если не ухаживать:
-только уменьшаются бонусы.
-
-
-База данных:
-
-pets
-
-id
-user_id
-species
-rarity
-level
-xp
-happiness
-energy
-created_at
-
-
-pet_species
-
-id
-name
-rarity
-bonus
-
-
-Начальные питомцы:
-
-Common:
-
-Wolf
-Fox
-Cat
-Rabbit
-Owl
+tier:
+1
 
 
 Rare:
 
-Moon Fox
-Frost Wolf
-Crystal Cat
+
+rarity_id:
+rare
+
+
+tier:
+2
 
 
 Epic:
 
-Shadow Wolf
-Fire Fox
+
+rarity_id:
+epic
+
+
+tier:
+3
+
+
+и т.д.
+
+
+============================================================
+336. RARITY FRAMES
+============================================================
+
+Для каждой редкости должна существовать
+собственная визуальная рамка.
+
+
+Например:
+
+
+Common Frame
+Rare Frame
+Epic Frame
+Legendary Frame
+Mythic Frame
+Prestige Frame
+Ultimate Frame
+
+
+ВАЖНО:
+
+
+Prestige и Ultimate должны иметь
+отдельный premium visual identity.
+
+
+Не просто менять цвет
+у существующей рамки.
+
+
+============================================================
+337. PRESTIGE
+============================================================
+
+Prestige — очень редкая
+премиальная редкость.
+
+
+Она должна ощущаться значительно
+ценнее Mythic.
+
+
+Использовать:
+
+
+Premium artwork treatment
+Premium frame
+Special effects
+Unique icon
+Special lore presentation
+
+
+Prestige cards могут быть
+связаны с:
+
+
+Prestige skins
+Special events
+Limited collections
+Extremely rare drops
+
+
+============================================================
+338. ULTIMATE
+============================================================
+
+Ultimate — самая высокая
+основная редкость.
+
+
+Это top-tier cards.
+
+
+Ultimate должна быть
+самой редкой категорией
+обычных карточных выпадений.
+
+
+Использовать:
+
+
+Unique frame
+Unique visual treatment
+Special artwork
+Special effects
+Unique icon
+Special lore presentation
+
+
+Ultimate может быть связана
+с наиболее редкими
+и значимыми образами / картами.
+
+
+============================================================
+339. RARITY DROP RATES
+============================================================
+
+Все 7 редкостей должны иметь
+отдельный Drop Rate.
+
+
+Пример первоначальной конфигурации:
+
+
+Common:
+68.00%
+
+
+Rare:
+20.00%
+
+
+Epic:
+8.00%
 
 
 Legendary:
+3.00%
 
-Dragon
-Phoenix
-Kitsune
 
+Mythic:
+0.80%
 
-================================
-6. СИСТЕМА ЯИЦ
-================================
 
-Яйца имеют редкость:
+Prestige:
+0.18%
 
-Common Egg
-Rare Egg
-Epic Egg
-Legendary Egg
 
+Ultimate:
+0.02%
 
-Пример:
 
-🥚 Common Egg
+TOTAL:
+100%
 
-Hatching progress:
-75%
 
-Time:
+ВАЖНО:
 
 
-После открытия:
+Это только стартовый пример.
 
-🎉 Egg hatched!
 
-You received:
+Фактический баланс должен
+храниться в configuration
+и легко изменяться.
 
-🐺 Wolf
 
+============================================================
+340. WEIGHTED RNG
+============================================================
 
-================================
-7. STREAM SYSTEM
-================================
+Использовать weighted rarity system.
 
-Добавить систему уведомлений стримов.
 
+Например:
 
-Поддержка:
 
-- Twitch
-- YouTube Live
-- Kick
+Common:
+6800
 
 
-Команды:
+Rare:
+2000
 
-/stream setup
-/stream remove
-/stream list
-/stream role
 
+Epic:
+800
 
-Настройки:
 
-guild_streams
+Legendary:
+300
 
-guild_id
-platform
-streamer_id
-channel_id
-notification_role
 
+Mythic:
+80
 
-Когда стример начинает эфир:
 
-Отправить Embed:
+Prestige:
+18
 
 
-🔴 STREAM STARTED
+Ultimate:
+2
 
-Streamer:
 
-Game:
+Total:
+10000
 
-Title:
 
-Viewers:
+Это позволяет легко
+балансировать экономику.
 
-Link:
 
+============================================================
+341. RARITY PITY
+============================================================
 
-Добавить роль:
+Pity System должен поддерживать
+все высокие редкости.
 
-🔴 Live Alerts
 
+Recommended initial values:
 
-================================
-8. STREAM ECONOMY
-================================
 
-Стримы должны влиять на сервер.
+Epic:
+10 openings
 
-Во время стрима:
 
-- сервер получает Server XP
-- пользователи получают XP
-- выполняются события
+Legendary:
+20 openings
 
 
-Пример:
+Mythic:
+50 openings
 
-🎥 Stream Event
 
-Streamer online:
+Prestige:
+100 openings
 
-3 hours
 
-Server XP:
-+2500
+Ultimate:
+250 openings
 
 
-================================
-9. EMBEDS
-================================
+Это означает:
 
-Не использовать изображения в обычных командах.
 
-Все команды:
+Epic гарантируется
+не позднее 10 подходящих открытий.
 
-- profile
-- economy
-- moderation
-- pets
-- shop
 
-используют красивые Embed.
+Legendary:
+20
 
 
-Изображения оставить только для будущего Discord Activity.
+Mythic:
+50
 
 
-================================
-10. PREMIUM И МОНЕТИЗАЦИЯ
-================================
+Prestige:
+100
 
-Архитектура должна поддерживать Premium.
 
+Ultimate:
+250
 
-Не делать платными:
 
-- базовую модерацию
-- базовую экономику
-- уровни
+Все значения configurable.
 
 
-Premium:
+============================================================
+342. PITY HIERARCHY
+============================================================
 
-Server Premium:
+Pity должен учитывать
+"rarity or better".
 
-- расширенные настройки
-- кастомные награды
-- больше возможностей магазина
-- расширенная статистика
-- дополнительные питомцы
-- косметика
 
+Например:
 
-User Premium:
 
-- эксклюзивные питомцы
-- скины
-- титулы
-- косметика
+Legendary pity:
 
 
-Сделать систему:
+Legendary
+Mythic
+Prestige
+Ultimate
 
-entitlements
 
+Любая из них считается
+успешным Legendary+ drop.
 
-Она должна поддерживать:
 
-- Discord Premium Apps
-- Patreon
-- Boosty
+После этого Legendary pity
+сбрасывается.
 
 
-================================
-11. БАЗА ДАННЫХ
-================================
+============================================================
+343. MYTHIC PITY
+============================================================
 
-Основные таблицы:
+Mythic pity:
 
-users
 
-id
-discord_id
-level
-xp
-coins
-created_at
+Mythic
+Prestige
+Ultimate
 
 
-guilds
+Любая из этих редкостей
+сбрасывает Mythic pity.
 
-id
-guild_id
-settings
 
+============================================================
+344. PRESTIGE PITY
+============================================================
 
-warnings
+Prestige pity:
 
-id
+
+Prestige
+Ultimate
+
+
+Ultimate также считается
+успешным Prestige drop.
+
+
+После получения:
+
+
+Prestige pity = 0
+
+
+============================================================
+345. ULTIMATE PITY
+============================================================
+
+Ultimate pity:
+
+
+Только Ultimate.
+
+
+При достижении pity limit:
+
+
+Ultimate гарантирована.
+
+
+Например:
+
+
+Ultimate:
+
+
+249 / 250
+
+
+Следующее подходящее открытие:
+
+
+✨ GUARANTEED ULTIMATE
+
+
+============================================================
+346. PITY COUNTERS
+============================================================
+
+User pity data:
+
+
 user_id
-reason
-moderator_id
-created_at
-
-
-pets
-
-id
-user_id
-species
-level
-xp
-
-
-pet_inventory
-
-
-streams
-
-
-entitlements
-
-
-================================
-12. ОБЩИЕ ТРЕБОВАНИЯ
-================================
-
-Код должен быть:
-
-- чистым
-- асинхронным
-- с обработкой ошибок
-- с логированием
-- готовым к расширению
-
-Каждая система должна быть отдельным Cog.
-
-Не создавать монолитный файл.
-
-Сначала реализовать MVP:
-
-1. База данных
-2. Модерация
-3. Levels
-4. Economy
-5. Pets
-6. Stream notifications
-
-После этого добавлять Premium и дополнительные функции.
-
-Создай модуль автоматизации (Triggers / Automations) для Discord-бота.
-
-Цель:
-Дать администраторам возможность создавать автоматические действия на сервере без программирования.
-
-Система должна работать как конструктор:
-Событие → Условие → Действие
-
-
-================================
-АРХИТЕКТУРА
-================================
-
-Добавить:
-
-cogs/
- └── automation.py
-
-services/
- └── trigger_service.py
-
-database/
- └── triggers.py
-
-utils/
- └── trigger_conditions.py
-
-
-================================
-ОБЩАЯ ЛОГИКА
-================================
-
-Поток:
-
-Discord Event
-      ↓
-Trigger Service
-      ↓
-Поиск активных триггеров сервера
-      ↓
-Проверка условий
-      ↓
-Выполнение действий
+pack_scope
+rarity
+counter
 
 
 Пример:
 
-Пользователь достиг Level 10
 
-↓
+Epic:
+4 / 10
 
-Проверяем:
 
-Есть ли триггер:
-level_up + level=10
+Legendary:
+14 / 20
 
-↓
 
-Выполнить:
+Mythic:
+31 / 50
 
-Выдать роль Veteran
 
+Prestige:
+72 / 100
 
-================================
-КОМАНДЫ
-================================
 
+Ultimate:
+184 / 250
 
-/trigger create
 
-Создание нового триггера.
+============================================================
+347. PITY DISPLAY
+============================================================
 
+Пользователь должен иметь
+возможность посмотреть
+весь pity progress.
 
-Пошаговый режим:
 
-Шаг 1:
-Выбрать событие
+Например:
 
 
-Доступные события:
+🎯 PITY
 
 
-1. member_join
+Epic
+4 / 10
 
-Когда новый пользователь заходит.
 
+Legendary
+14 / 20
 
-2. member_leave
 
-Когда пользователь выходит.
+Mythic
+31 / 50
 
 
-3. message
+Prestige
+72 / 100
 
-Новое сообщение.
 
+Ultimate
+184 / 250
 
-4. level_up
 
-Пользователь получил уровень.
+Next guaranteed:
 
 
-5. achievement_unlock
+Ultimate within 66 openings.
 
-Получено достижение.
 
+============================================================
+348. RARITY PACKS
+============================================================
 
-6. pet_level_up
+Обязательно поддерживать
+пакеты по редкости.
 
-Питомец вырос.
 
+Например:
 
-7. stream_start
 
-Начался стрим.
+🎁 COMMON PACK
 
 
-8. daily_complete
+🎁 RARE PACK
 
-Выполнено ежедневное задание.
 
+🎁 EPIC PACK
 
-9. economy_event
 
-Игровое событие экономики.
+🎁 LEGENDARY PACK
 
 
-10. keyword_detected
+🎁 MYTHIC PACK
 
-Обнаружено слово.
 
+🎁 PRESTIGE PACK
 
-================================
-УСЛОВИЯ
-================================
 
+🎁 ULTIMATE PACK
 
-Каждый триггер может иметь условия.
 
+Каждый Pack имеет
+собственную drop configuration.
 
-Примеры:
 
+============================================================
+349. HIGH-TIER PACKS
+============================================================
 
-message:
+Паки высокой редкости
+могут иметь гарантированный
+minimum rarity.
 
-condition:
 
-keyword = "привет"
+Например:
 
 
-level_up:
+🎁 MYTHIC PACK
 
-condition:
 
-level >= 10
+Guaranteed:
 
 
-pet_level_up:
+Mythic or better
 
-condition:
 
-pet_rarity = legendary
+Possible:
 
 
-economy:
+Mythic
+Prestige
+Ultimate
 
-condition:
 
-coins >= 100000
+Prestige Pack:
 
 
+Guaranteed:
 
-Поддержать операторы:
 
+Prestige or better
 
-=
->
-<
->=
-<=
-contains
 
+Possible:
 
-================================
-ДЕЙСТВИЯ
-================================
 
+Prestige
+Ultimate
 
-После выполнения условия выполнить действие.
 
+Ultimate Pack:
 
-Доступные действия:
 
+Guaranteed:
 
-1. SEND_MESSAGE
 
+Ultimate
 
-Отправить сообщение.
 
+============================================================
+350. REGION + RARITY
+============================================================
 
-Пример:
+Регионы могут комбинироваться
+с редкостью.
 
-"Добро пожаловать на сервер!"
 
+Например:
 
-2. SEND_EMBED
 
+🎁 IONIA MYTHIC PACK
 
-Отправить красивый Embed.
 
+Pool:
 
-Поддержка:
 
-title
+Ionia cards
 
-description
 
-color
+Minimum:
 
-footer
 
+Mythic
 
-3. GIVE_ROLE
 
+Possible:
 
-Выдать Discord роль.
 
+Mythic
+Prestige
+Ultimate
 
-4. REMOVE_ROLE
 
+Другой пример:
 
-Удалить роль.
 
+🎁 DEMACIA PRESTIGE PACK
 
-5. GIVE_XP
 
+Pool:
 
-Выдать XP.
 
+Demacia
 
-6. GIVE_COINS
 
+Minimum:
 
-Выдать игровую валюту.
 
+Prestige
 
-7. GIVE_ITEM
 
+Possible:
 
-Выдать предмет.
 
+Prestige
+Ultimate
 
-8. GIVE_PET
 
+============================================================
+351. CHEST RARITIES
+============================================================
 
-Выдать яйцо или питомца.
+Сундуки также должны
+использовать все 7 редкостей.
 
 
-9. START_EVENT
+Например:
 
 
-Запустить серверное событие.
+Common Chest
+Rare Chest
+Epic Chest
+Legendary Chest
+Mythic Chest
+Prestige Chest
+Ultimate Chest
 
 
-10. LOG
+Также поддерживать:
 
 
-Записать событие в лог.
+Region Chest
 
 
-================================
-ПРИМЕРЫ
-================================
+Event Chest
 
 
-Пример 1:
+Boss Chest
 
-Новый пользователь.
 
+Season Chest
 
-EVENT:
 
-member_join
+============================================================
+352. RARITY SHARD VALUES
+============================================================
 
+Каждая редкость имеет
+свою стоимость при disenchant.
 
-ACTION:
 
-SEND_EMBED
+Например:
 
 
-Сообщение:
+Common:
+5 Shards
 
 
-👋 Добро пожаловать!
+Rare:
+15 Shards
 
-Тебе выдано:
 
-⭐ 100 XP
+Epic:
+40 Shards
 
-🎁 Common Egg
 
+Legendary:
+100 Shards
 
 
---------------------------------
+Mythic:
+300 Shards
 
 
-Пример 2:
+Prestige:
+1000 Shards
 
-Игрок получил 10 уровень.
 
+Ultimate:
+3000 Shards
 
-EVENT:
 
-level_up
+Это только первоначальные
+значения.
 
 
-CONDITION:
+Все значения configurable.
 
-level = 10
 
+============================================================
+353. RARITY VISUAL IDENTITY
+============================================================
 
-ACTION:
+Каждая rarity должна
+легко различаться даже
+на маленьком мобильном экране.
 
-GIVE_ROLE
 
+Использовать:
 
-Role:
 
-Veteran
+Frame
+Icon
+Typography
+Ornament
+Lighting
+Effects
 
 
+Не полагаться только
+на цвет.
 
---------------------------------
 
+Особенно:
 
-Пример 3:
 
-Стример начал эфир.
+Mythic
+Prestige
+Ultimate
 
 
-EVENT:
+должны визуально различаться.
 
-stream_start
 
+============================================================
+354. CARD GENERATOR
+============================================================
 
-ACTION:
+card_generator.py должен
+поддерживать все 7 rarity.
 
 
-SEND_EMBED
+Например:
 
 
-+
+RARITY_CONFIG:
 
-GIVE_XP
 
+common
+rare
+epic
+legendary
+mythic
+prestige
+ultimate
 
-+
 
-START_EVENT
+Каждый rarity config
+указывает:
 
 
+frame
+mask
+icon
+layout
+visual effects
 
---------------------------------
 
+============================================================
+355. FINAL RARITY TREE
+============================================================
 
-Пример 4:
 
-Питомец вырос.
+Common
+  ↓
+Rare
+  ↓
+Epic
+  ↓
+Legendary
+  ↓
+Mythic
+  ↓
+Prestige
+  ↓
+Ultimate
 
 
-EVENT:
+============================================================
+356. FINAL RARITY LIST
+============================================================
 
-pet_level_up
+FINAL:
 
 
-CONDITION:
+⚪ Common
 
-rarity = legendary
 
+🔵 Rare
 
-ACTION:
 
+🟣 Epic
 
-SEND_MESSAGE
 
+🟠 Legendary
 
-"Ваш легендарный питомец эволюционировал!"
 
+🔴 Mythic
 
 
-================================
-DATABASE
-================================
+🟡 Prestige
 
 
-Создать таблицу:
+✨ Ultimate
 
 
-triggers
+Все системы ILTA должны использовать
+именно этот список:
 
 
-id
+Cards
+Packs
+Chests
+Drop Rates
+Pity
+Collection
+Filters
+Disenchant
+Card Shards
+Events
+Rewards
+Card Generator
+Card Layout Editor
 
-guild_id
 
-created_by
-
-event_type
-
-conditions JSONB
-
-actions JSONB
-
-enabled BOOLEAN
-
-created_at TIMESTAMP
-
-
-
-Пример записи:
-
-
-{
- "event": "level_up",
-
- "conditions":
- {
-   "level":10
- },
-
- "actions":
- [
-   {
-    "type":"give_role",
-    "role_id":"123456"
-   }
- ]
-}
-
-
-
-================================
-БЕЗОПАСНОСТЬ
-================================
-
-
-Только пользователи с правами:
-
-Administrator
-
-Manage Server
-
-могут создавать и изменять триггеры.
-
-
-Добавить:
-
-/trigger list
-
-Показать активные триггеры.
-
-
-/trigger edit ID
-
-Изменить.
-
-
-/trigger delete ID
-
-Удалить.
-
-
-/trigger toggle ID
-
-Включить/выключить.
-
-
-
-================================
-ИНТЕГРАЦИЯ С ДРУГИМИ СИСТЕМАМИ
-================================
-
-
-Триггеры должны поддерживать:
-
-
-Levels:
-
-level_up
-
-
-Economy:
-
-coins
-
-daily
-
-
-Pets:
-
-pet_level_up
-
-pet_hatch
-
-
-Moderation:
-
-warning_created
-
-
-Streams:
-
-stream_start
-
-
-Achievements:
-
-achievement_unlock
-
-
-
-================================
-ТРЕБОВАНИЯ К КОДУ
-================================
-
-
-- Использовать async/await
-- Не делать логику внутри cogs
-- Вся обработка через trigger_service
-- Использовать PostgreSQL JSONB для условий и действий
-- Добавить обработку ошибок
-- Добавить логирование
-- Сделать систему расширяемой
-
-
-В будущем система должна позволять создавать новые события и действия без переписывания всей архитектуры.
-
-Токент бота MTUzODIwODQxODU4NDg1ODYyNA.Gl2ib2.HNVt1S9J-DhQI1k5APLfveVh5cABSPN6CFIVe0
-Важно! Бот должен работать на русском и английском языке. 
+============================================================
+END OF FINAL CARD RARITY SYSTEM
+============================================================
