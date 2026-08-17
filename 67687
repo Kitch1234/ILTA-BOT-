@@ -901,3 +901,2277 @@ Card Layout Editor
 ============================================================
 END OF FINAL CARD RARITY SYSTEM
 ============================================================
+
+
+============================================================
+ILTA — COMPLETE BUTTON UI / MENU SYSTEM
+============================================================
+
+GOAL
+============================================================
+
+Основной пользовательский интерфейс ILTA должен работать
+через одну главную slash-команду:
+
+/menu
+
+Пользователь НЕ должен запоминать десятки команд.
+
+Основной UX:
+
+/menu
+↓
+Main Menu
+↓
+Buttons
+↓
+Select Menus
+↓
+Modals
+↓
+Action
+↓
+Result
+↓
+Back
+↓
+Main Menu
+
+
+Главная идея:
+
+ILTA должен ощущаться как полноценное игровое приложение
+внутри Discord, а не как набор Discord-команд.
+
+
+============================================================
+1. ONLY /MENU FOR USERS
+============================================================
+
+Для обычного пользователя основная доступная slash-команда:
+
+
+/menu
+
+
+Через неё должны быть доступны:
+
+Profile
+Economy
+Cards
+Packs
+Chests
+Battle
+LFG
+Events
+Kingdom
+Streams
+Achievements
+Settings
+
+
+Пользователь не должен быть обязан использовать:
+
+
+/profile
+/cards
+/economy
+/shop
+/battle
+/lfg
+/events
+/kingdom
+/etc.
+
+
+Все эти функции должны открываться через /menu.
+
+
+============================================================
+2. ADMIN COMMANDS
+============================================================
+
+Административные команды можно оставить
+только для администратора / модератора.
+
+
+Например:
+
+
+/mod
+/admin
+/setup
+
+
+Но они не должны отображаться обычным пользователям.
+
+
+Основной Admin UI также должен открываться через:
+
+
+/menu
+
+
+Если пользователь имеет необходимые permissions,
+ему показываются дополнительные кнопки:
+
+
+🛡️ Moderation
+⚡ Automations
+📊 Analytics
+⚙️ Server Settings
+
+
+Если permissions нет,
+эти кнопки вообще не показывать.
+
+
+============================================================
+3. DISCORD COMMAND VISIBILITY
+============================================================
+
+Использовать Discord application command permissions
+и scopes там, где это необходимо.
+
+
+Не регистрировать пользовательские shortcuts
+как основной UX.
+
+
+Все пользовательские функции должны быть
+доступны через /menu.
+
+
+Если дополнительные slash-команды существуют
+для технических целей, они должны быть:
+
+
+- admin-only
+- developer-only
+- hidden from normal users
+- permission protected
+
+
+============================================================
+4. MAIN MENU
+============================================================
+
+/menu
+
+
+открывает главное меню.
+
+
+Пример:
+
+
+╔══════════════════════════════════╗
+║             ✦ ILTA ✦             ║
+║                                  ║
+║  Welcome back, @User             ║
+║                                  ║
+║  ⭐ Level 25                     ║
+║  XP ███████░░░                   ║
+║                                  ║
+║  🪙 15,400 Coins                 ║
+║  🧩 2,840 Card Shards            ║
+╚══════════════════════════════════╝
+
+
+Buttons:
+
+
+🎮 Find Players
+👤 Profile
+🃏 Cards
+⚔️ Battle
+
+
+💰 Economy
+🎉 Events
+🏰 Kingdom
+📺 Streams
+
+
+🏆 Achievements
+⚙️ Settings
+
+
+Для администратора дополнительно:
+
+
+🛡️ Moderation
+⚡ Automations
+📊 Analytics
+
+
+============================================================
+5. BUTTON-FIRST ARCHITECTURE
+============================================================
+
+Основной интерфейс должен использовать:
+
+
+discord.ui.View
+discord.ui.Button
+discord.ui.Select
+discord.ui.Modal
+
+
+Не создавать отдельный slash command
+для каждого действия.
+
+
+Например:
+
+
+НЕ:
+
+
+/buy
+/disenchant
+/openpack
+/profile
+/battle
+
+
+Основной UX:
+
+
+/menu
+→ 💰 Economy
+→ 🏪 Shop
+→ select item
+→ 🛒 Buy
+
+
+============================================================
+6. REUSABLE UI SYSTEM
+============================================================
+
+Создать общий UI framework.
+
+
+Рекомендуемая структура:
+
+
+ui/
+
+
+    base_view.py
+    main_menu.py
+    navigation.py
+
+    profile_view.py
+    economy_view.py
+    cards_view.py
+    battle_view.py
+    lfg_view.py
+    events_view.py
+    kingdom_view.py
+    streams_view.py
+    achievements_view.py
+    settings_view.py
+
+    moderation_view.py
+    automation_view.py
+    analytics_view.py
+
+    components/
+        buttons.py
+        selects.py
+        modals.py
+        pagination.py
+
+
+Не копировать одинаковый код
+между View.
+
+
+============================================================
+7. BASE VIEW
+============================================================
+
+Создать:
+
+
+BaseView
+
+
+Она должна отвечать за:
+
+
+- timeout
+- user validation
+- guild validation
+- navigation
+- error handling
+- localization
+- disabled buttons
+- back button
+- home button
+- close button
+
+
+Все остальные Views должны
+наследоваться от BaseView.
+
+
+============================================================
+8. USER VALIDATION
+============================================================
+
+Персональные меню должны быть
+привязаны к пользователю.
+
+
+Например:
+
+
+User A открывает:
+
+
+/menu
+
+
+User B не должен иметь возможность
+нажать кнопки User A
+и изменить его данные.
+
+
+При interaction:
+
+
+if interaction.user.id != owner_id:
+
+
+показать:
+
+
+❌ This menu belongs to another user.
+
+
+Для русского:
+
+
+❌ Это меню другого пользователя.
+
+
+============================================================
+9. GUILD VALIDATION
+============================================================
+
+Все server-specific actions должны
+проверять guild_id.
+
+
+Например:
+
+
+Moderation
+Kingdom
+Server Economy
+Events
+Automations
+LFG
+
+
+Не позволять использовать interaction
+из другого сервера.
+
+
+============================================================
+10. NAVIGATION
+============================================================
+
+Каждое подменю должно иметь:
+
+
+🏠 Home
+⬅️ Back
+❌ Close
+
+
+Например:
+
+
+/menu
+
+
+↓
+
+
+🃏 Cards
+
+
+↓
+
+
+📚 Collection
+
+
+↓
+
+
+Card
+
+
+↓
+
+
+⬅️ Back
+
+
+↓
+
+
+🃏 Cards
+
+
+↓
+
+
+🏠 Home
+
+
+Главное меню должно всегда быть доступно.
+
+
+============================================================
+11. EDIT MESSAGE
+============================================================
+
+По возможности НЕ отправлять
+новое сообщение при каждой кнопке.
+
+
+Использовать:
+
+
+interaction.response.edit_message()
+
+
+Таким образом:
+
+
+Main Menu
+↓
+Cards
+↓
+Collection
+↓
+Card
+
+
+будут отображаться в одном
+интерактивном сообщении.
+
+
+Это уменьшает spam в Discord.
+
+
+============================================================
+12. EPHEMERAL
+============================================================
+
+Персональные интерфейсы использовать
+как ephemeral, если это необходимо.
+
+
+Например:
+
+
+Profile
+Inventory
+Balance
+Cards
+Collection
+Personal Settings
+LFG settings
+
+
+Публичные действия:
+
+
+Events
+Public LFG
+Kingdom Events
+Stream notifications
+
+
+могут быть обычными messages.
+
+
+============================================================
+13. MAIN MENU CATEGORIES
+============================================================
+
+MAIN MENU:
+
+
+🎮 Find Players
+👤 Profile
+🃏 Cards
+⚔️ Battle
+
+💰 Economy
+🎉 Events
+🏰 Kingdom
+📺 Streams
+
+🏆 Achievements
+⚙️ Settings
+
+
+ADMIN:
+
+
+🛡️ Moderation
+⚡ Automations
+📊 Analytics
+
+
+============================================================
+14. PROFILE
+============================================================
+
+/menu
+
+
+→ 👤 Profile
+
+
+Показать:
+
+
+👤 PROFILE
+
+
+Level
+XP
+Coins
+Card Shards
+Reputation
+Achievements
+Cards
+Titles
+
+
+Buttons:
+
+
+🎮 Gaming Profile
+🃏 Collection
+🏆 Achievements
+🏷️ Titles
+
+
+⬅️ Back
+🏠 Home
+
+
+============================================================
+15. CARDS
+============================================================
+
+/menu
+
+
+→ 🃏 Cards
+
+
+Показать:
+
+
+🃏 CARD CENTER
+
+
+Cards:
+42 / 250
+
+
+🧩 Card Shards:
+2,840
+
+
+Buttons:
+
+
+📚 Collection
+🎁 Packs
+🎁 Chests
+✨ Duplicates
+🧩 Card Shards
+🛠️ Craft
+🃏 Decks
+
+
+⬅️ Back
+🏠 Home
+
+
+============================================================
+16. PACKS
+============================================================
+
+Cards
+
+
+→ 🎁 Packs
+
+
+Показывать:
+
+
+🎁 Rarity Packs
+🌍 Region Packs
+✨ Special Packs
+
+
+Rarity:
+
+
+Common
+Rare
+Epic
+Legendary
+Mythic
+Prestige
+Ultimate
+
+
+Region:
+
+
+All Runeterra regions.
+
+
+Использовать:
+
+
+Select Menu
+Pagination
+
+
+При выборе:
+
+
+🎁 PACK
+
+
+Price
+Cards
+Possible Rarities
+Drop Rates
+Guaranteed Reward
+Pity
+
+
+Buttons:
+
+
+🎁 Open / Buy
+📊 Drop Rates
+🎯 Pity
+
+
+============================================================
+17. CHESTS
+============================================================
+
+Cards
+
+
+→ 🎁 Chests
+
+
+Categories:
+
+
+Rarity Chests
+Region Chests
+Event Chests
+Boss Chests
+Season Chests
+
+
+При выборе:
+
+
+🎁 CHEST
+
+
+Possible rewards
+Drop rates
+Guaranteed rewards
+Pity
+
+
+Button:
+
+
+🔓 Open
+
+
+============================================================
+18. COLLECTION
+============================================================
+
+Cards
+
+
+→ 📚 Collection
+
+
+Filters:
+
+
+All
+Champion
+Enemy
+Rarity
+Region
+New
+Duplicates
+Favorites
+
+
+Использовать Select Menus.
+
+
+Cards отображать
+через pagination.
+
+
+Buttons:
+
+
+⬅️ Previous
+➡️ Next
+
+
+При выборе карты:
+
+
+🃏 Card
+
+
+Показать полную карту.
+
+
+Buttons:
+
+
+⭐ Favorite
+✨ Disenchant
+⬅️ Back
+
+
+============================================================
+19. DUPLICATES
+============================================================
+
+Cards
+
+
+→ ✨ Duplicates
+
+
+Показать только карты:
+
+
+quantity > 1
+
+
+Пример:
+
+
+Garen ×3
+Ahri ×2
+Lux ×4
+
+
+Buttons:
+
+
+View
+Disenchant
+
+
+Внизу:
+
+
+✨ Disenchant All
+
+
+Перед массовым действием:
+
+
+Confirmation Modal / Confirmation View.
+
+
+============================================================
+20. ECONOMY
+============================================================
+
+/menu
+
+
+→ 💰 Economy
+
+
+Показать:
+
+
+🪙 Coins
+🧩 Card Shards
+
+
+Buttons:
+
+
+🎁 Daily
+🏪 Shop
+🎒 Inventory
+🎁 Rewards
+📜 Transactions
+
+
+============================================================
+21. SHOP
+============================================================
+
+Economy
+
+
+→ 🏪 Shop
+
+
+Categories:
+
+
+Packs
+Items
+Cosmetics
+Titles
+Special
+
+
+Использовать Select Menu.
+
+
+Выбор товара:
+
+
+Product Details
+
+
+Buttons:
+
+
+🛒 Buy
+⬅️ Back
+
+
+Перед покупкой:
+
+
+CONFIRM PURCHASE
+
+
+[ ✅ Confirm ]
+[ ❌ Cancel ]
+
+
+============================================================
+22. BATTLE
+============================================================
+
+/menu
+
+
+→ ⚔️ Battle
+
+
+Buttons:
+
+
+⚔️ Start Battle
+📖 Enemy Codex
+🏆 Battle Stats
+👑 Bosses
+
+
+============================================================
+23. START BATTLE
+============================================================
+
+Battle
+
+
+→ ⚔️ Start Battle
+
+
+STEP 1:
+
+
+Choose Card
+
+
+STEP 2:
+
+
+Choose Enemy
+
+
+STEP 3:
+
+
+Battle
+
+
+Battle buttons:
+
+
+⚔️ Attack
+🛡️ Defend
+🏃 Flee
+
+
+After victory:
+
+
+🏆 Victory
+
+
+Rewards
+
+
+Buttons:
+
+
+⚔️ Battle Again
+📖 Enemy Codex
+⬅️ Back
+
+
+============================================================
+24. LFG
+============================================================
+
+/menu
+
+
+→ 🎮 Find Players
+
+
+Buttons:
+
+
+🔎 Find Players
+➕ Create LFG
+⚡ Quick Match
+📋 My LFG
+🔔 Notifications
+
+
+Create LFG:
+
+
+Use Select Menus + Modals.
+
+
+Do NOT require slash command.
+
+
+============================================================
+25. EVENTS
+============================================================
+
+/menu
+
+
+→ 🎉 Events
+
+
+Buttons:
+
+
+📅 Upcoming
+🏆 My Events
+📜 Past Events
+
+
+Event:
+
+
+🎉 Event Name
+
+
+Date
+Time
+Players
+Rewards
+Rules
+
+
+Buttons:
+
+
+✅ Join
+❌ Leave
+👥 Participants
+
+
+============================================================
+26. KINGDOM
+============================================================
+
+/menu
+
+
+→ 🏰 Kingdom
+
+
+Buttons:
+
+
+🗺️ Map
+🏗️ Buildings
+🏆 Rankings
+📜 History
+🤝 Contribution
+🎉 Kingdom Events
+
+
+============================================================
+27. STREAMS
+============================================================
+
+/menu
+
+
+→ 📺 Streams
+
+
+Показывать:
+
+
+🔴 LIVE
+
+
+Streamer
+Game
+Viewers
+
+
+Buttons:
+
+
+👀 Watch
+🔔 Notifications
+
+
+Если offline:
+
+
+📺 No live streams.
+
+
+============================================================
+28. ACHIEVEMENTS
+============================================================
+
+/menu
+
+
+→ 🏆 Achievements
+
+
+Categories:
+
+
+Gaming
+Cards
+Economy
+Events
+Kingdom
+Community
+Battle
+
+
+Использовать Select Menu.
+
+
+============================================================
+29. SETTINGS
+============================================================
+
+/menu
+
+
+→ ⚙️ Settings
+
+
+Buttons:
+
+
+🌐 Language
+🔔 Notifications
+🎮 Gaming Profile
+👤 Privacy
+
+
+Language:
+
+
+🇷🇺 Russian
+🇬🇧 English
+
+
+Language is PERSONAL.
+
+
+Different users can use
+different languages on same server.
+
+
+============================================================
+30. MODERATION
+============================================================
+
+Admin only:
+
+
+/menu
+
+
+→ 🛡️ Moderation
+
+
+Buttons:
+
+
+👤 User Moderation
+🤖 AutoMod
+🧠 AI Moderator
+📜 Mod Logs
+⚠️ Warnings
+🔒 Server Protection
+
+
+AI Moderator is PREMIUM ONLY.
+
+
+Free moderation remains available.
+
+
+============================================================
+31. AUTOMATIONS
+============================================================
+
+Admin only:
+
+
+/menu
+
+
+→ ⚡ Automations
+
+
+Buttons:
+
+
+➕ Create Trigger
+📋 Triggers
+▶️ Enabled
+⏸️ Disabled
+
+
+Create Trigger:
+
+
+Event
+↓
+Conditions
+↓
+Action
+↓
+Preview
+↓
+Confirm
+
+
+All through UI.
+
+
+============================================================
+32. ANALYTICS
+============================================================
+
+Admin only:
+
+
+/menu
+
+
+→ 📊 Analytics
+
+
+Show:
+
+
+Members
+Active Members
+LFG
+Events
+Messages
+Warnings
+Economy
+Cards
+Battle
+Streams
+
+
+Use pagination / select menus
+for sections.
+
+
+============================================================
+33. SERVER SETTINGS
+============================================================
+
+Admin:
+
+
+/menu
+
+
+→ ⚙️ Server Settings
+
+
+Categories:
+
+
+🛡️ Moderation
+🤖 AI
+🎮 LFG
+⭐ Levels
+💰 Economy
+🃏 Cards
+⚔️ Battle
+🎉 Events
+🏰 Kingdom
+📺 Streams
+⚡ Automations
+
+
+============================================================
+34. CONFIRMATION SYSTEM
+============================================================
+
+Любое опасное действие
+должно требовать confirmation.
+
+
+Examples:
+
+
+Ban
+Kick
+Timeout
+Purchase
+Disenchant
+Disenchant All
+Leave Event
+Delete LFG
+Upgrade Building
+
+
+Использовать reusable:
+
+
+ConfirmationView
+
+
+Buttons:
+
+
+✅ Confirm
+❌ Cancel
+
+
+============================================================
+35. MODAL SYSTEM
+============================================================
+
+Для ввода текста использовать
+Discord Modal.
+
+
+Например:
+
+
+Create LFG:
+
+
+Game
+Description
+Time
+
+
+Trigger:
+
+
+Message content
+Response
+
+
+Moderation:
+
+
+Reason
+
+
+Kingdom:
+
+
+Building name
+
+
+Не просить пользователя
+вводить сложные команды вручную.
+
+
+============================================================
+36. SELECT MENU SYSTEM
+============================================================
+
+Если вариантов много:
+
+
+НЕ создавать 20 Buttons.
+
+
+Использовать:
+
+
+discord.ui.Select
+
+
+Например:
+
+
+Select Region
+
+
+Select Rarity
+
+
+Select Game
+
+
+Select Pack
+
+
+Select Enemy
+
+
+Select Event
+
+
+Select Category
+
+
+============================================================
+37. PAGINATION
+============================================================
+
+Для длинных списков использовать
+pagination.
+
+
+Например:
+
+
+Cards 1–10
+
+
+[⬅️] [➡️]
+
+
+Не показывать 100 элементов
+в одном Embed.
+
+
+============================================================
+38. DISABLED BUTTONS
+============================================================
+
+Если действие недоступно:
+
+
+disabled = True
+
+
+Например:
+
+
+Первая страница:
+
+
+⬅️ disabled
+
+
+Последняя страница:
+
+
+➡️ disabled
+
+
+Если нет duplicates:
+
+
+✨ Disenchant disabled
+
+
+============================================================
+39. PREMIUM UI
+============================================================
+
+Если Premium feature недоступна:
+
+
+🔒 PREMIUM
+
+
+AI Moderator
+
+
+This feature requires Premium.
+
+
+Button:
+
+
+⭐ Upgrade
+
+
+Не ломать меню.
+
+
+============================================================
+40. LOCALIZATION
+============================================================
+
+Все UI элементы
+должны поддерживать:
+
+
+🇷🇺 Russian
+🇬🇧 English
+
+
+Переводить:
+
+
+Embed titles
+Descriptions
+Buttons
+Select labels
+Select descriptions
+Modal labels
+Placeholders
+Errors
+Confirmations
+Notifications
+
+
+custom_id НЕ переводить.
+
+
+============================================================
+41. ERROR HANDLING
+============================================================
+
+Если interaction вызывает ошибку:
+
+
+НЕ показывать traceback.
+
+
+Показать:
+
+
+❌ Something went wrong.
+
+
+Buttons:
+
+
+🔄 Retry
+⬅️ Back
+🏠 Home
+
+
+Ошибка записывается
+в developer logs.
+
+
+============================================================
+42. VIEW TIMEOUT
+============================================================
+
+Все Views должны иметь timeout.
+
+
+Recommended:
+
+
+180 seconds
+
+
+После timeout:
+
+
+Buttons disabled.
+
+
+Показать:
+
+
+⌛ This menu has expired.
+
+
+Для продолжения:
+
+
+/menu
+
+
+============================================================
+43. SECURITY
+============================================================
+
+Каждый interaction должен
+проверять:
+
+
+user_id
+guild_id
+permissions
+
+
+Personal UI:
+
+
+user_id
+
+
+Server UI:
+
+
+guild_id
+
+
+Admin UI:
+
+
+permissions
+
+
+Никогда не полагаться
+только на скрытие кнопок.
+
+
+Backend action также проверяет
+permissions.
+
+
+============================================================
+44. DATABASE
+============================================================
+
+UI НЕ является source of truth.
+
+
+Database является source of truth.
+
+
+Buttons только вызывают
+service methods.
+
+
+Пример:
+
+
+Button:
+
+
+🛒 Buy
+
+
+↓
+
+
+ShopService.buy()
+
+
+↓
+
+
+Database transaction
+
+
+↓
+
+
+Result
+
+
+НЕ:
+
+
+Button напрямую изменяет database.
+
+
+============================================================
+45. SERVICE ARCHITECTURE
+============================================================
+
+Recommended:
+
+
+services/
+
+
+profile_service.py
+economy_service.py
+card_service.py
+pack_service.py
+chest_service.py
+battle_service.py
+lfg_service.py
+event_service.py
+kingdom_service.py
+stream_service.py
+moderation_service.py
+automation_service.py
+achievement_service.py
+
+
+UI вызывает Services.
+
+
+Cogs не должны содержать
+большую часть business logic.
+
+
+============================================================
+46. CUSTOM IDS
+============================================================
+
+Все buttons должны иметь
+стабильные custom_id.
+
+
+Например:
+
+
+menu_profile
+menu_cards
+menu_economy
+menu_battle
+menu_lfg
+
+
+cards_collection
+cards_packs
+cards_chests
+
+
+economy_shop
+economy_daily
+
+
+battle_start
+battle_attack
+battle_defend
+
+
+НЕ использовать перевод
+в custom_id.
+
+
+============================================================
+47. BUTTON FACTORY
+============================================================
+
+Создать reusable Button Factory.
+
+
+Например:
+
+
+create_back_button()
+
+
+create_home_button()
+
+
+create_close_button()
+
+
+create_confirm_button()
+
+
+create_cancel_button()
+
+
+create_pagination_buttons()
+
+
+Это позволит поддерживать
+единый стиль интерфейса.
+
+
+============================================================
+48. MENU FACTORY
+============================================================
+
+Создать:
+
+
+MenuFactory
+
+
+Она отвечает за создание
+основных меню.
+
+
+Например:
+
+
+MenuFactory.main_menu()
+MenuFactory.cards_menu()
+MenuFactory.economy_menu()
+MenuFactory.battle_menu()
+
+
+============================================================
+49. EMBED FACTORY
+============================================================
+
+Создать:
+
+
+EmbedFactory
+
+
+Для единого оформления:
+
+
+title
+description
+footer
+thumbnail
+fields
+
+
+Например:
+
+
+EmbedFactory.profile()
+EmbedFactory.card()
+EmbedFactory.battle()
+EmbedFactory.event()
+
+
+============================================================
+50. MOBILE FIRST
+============================================================
+
+Discord используется
+на мобильных устройствах.
+
+
+Поэтому:
+
+
+- короткие Button labels;
+- не больше необходимого количества
+  кнопок;
+- Select Menu вместо длинных списков;
+- pagination;
+- важная информация сверху;
+- не перегружать Embed.
+
+
+============================================================
+51. ONE MESSAGE UX
+============================================================
+
+Где возможно:
+
+
+ONE INTERACTIVE MESSAGE.
+
+
+Пример:
+
+
+/menu
+
+
+↓
+
+
+Main Menu
+
+
+↓
+
+
+Cards
+
+
+↓
+
+
+Collection
+
+
+↓
+
+
+Card
+
+
+↓
+
+
+Back
+
+
+↓
+
+
+Collection
+
+
+↓
+
+
+Back
+
+
+↓
+
+
+Cards
+
+
+↓
+
+
+Home
+
+
+Не создавать новое сообщение
+на каждом шаге.
+
+
+============================================================
+52. PUBLIC VS PERSONAL MENU
+============================================================
+
+Персональные меню:
+
+
+Profile
+Cards
+Inventory
+Balance
+Gaming Profile
+Settings
+
+
+→ preferably ephemeral.
+
+
+Общие:
+
+
+Events
+Public LFG
+Kingdom
+Stream status
+
+
+→ public или ephemeral
+в зависимости от действия.
+
+
+============================================================
+53. COMMAND STRUCTURE
+============================================================
+
+PUBLIC:
+
+
+/menu
+
+
+ADMIN / DEVELOPER:
+
+
+/setup
+/admin
+/debug
+
+
+Но:
+
+
+/setup
+/admin
+
+
+должны быть permission restricted.
+
+
+Developer commands:
+
+
+owner/developer only.
+
+
+Обычный пользователь
+не должен видеть их
+в command picker.
+
+
+============================================================
+54. SETUP COMMAND
+============================================================
+
+После добавления бота
+администратор использует:
+
+
+/setup
+
+
+Это техническая команда
+для первоначальной настройки.
+
+
+После setup:
+
+
+Основная работа сервера
+происходит через:
+
+
+/menu
+
+
+Admin:
+
+
+/menu
+↓
+⚙️ Server Settings
+
+
+============================================================
+55. NO COMMAND SPAM
+============================================================
+
+НЕ создавать:
+
+
+/buy
+/open
+/disenchant
+/battle
+/lfg
+/event
+/shop
+/card
+/profile
+
+
+только ради того,
+чтобы существовала команда.
+
+
+Если действие можно выполнить
+через Menu UI,
+использовать Menu UI.
+
+
+============================================================
+56. SHORTCUT COMMANDS
+============================================================
+
+В будущем некоторые shortcuts
+можно добавить,
+если они действительно полезны.
+
+
+Например:
+
+
+/menu
+
+
+как основная команда.
+
+
+Но shortcuts не должны быть
+необходимыми для работы бота.
+
+
+============================================================
+57. MAIN UX
+============================================================
+
+FINAL USER EXPERIENCE:
+
+
+User joins server
+
+
+↓
+
+
+User runs:
+
+
+/menu
+
+
+↓
+
+
+ILTA Main Menu
+
+
+↓
+
+
+User selects:
+
+
+🃏 Cards
+
+
+↓
+
+
+🎁 Packs
+
+
+↓
+
+
+🌍 Region Packs
+
+
+↓
+
+
+🌸 Ionia Pack
+
+
+↓
+
+
+📊 Drop Rates
+
+
+↓
+
+
+🎁 Open
+
+
+↓
+
+
+Card Reveal
+
+
+↓
+
+
+✨ Duplicate
+
+
+↓
+
+
+Disenchant
+
+
+↓
+
+
+🧩 Card Shards
+
+
+↓
+
+
+⬅️ Back
+
+
+↓
+
+
+🏠 Home
+
+
+Пользователь ни разу
+не вводит другую команду.
+
+
+============================================================
+58. FINAL ADMIN UX
+============================================================
+
+Admin:
+
+
+/menu
+
+
+↓
+
+
+🛡️ Moderation
+
+
+↓
+
+
+🧠 AI Moderator
+
+
+↓
+
+
+Settings
+
+
+↓
+
+
+Enable
+
+
+↓
+
+
+Threshold
+
+
+↓
+
+
+Actions
+
+
+↓
+
+
+Save
+
+
+Также без необходимости
+запоминать команды.
+
+
+============================================================
+59. FINAL ARCHITECTURE
+============================================================
+
+
+                    /menu
+                       │
+                       ↓
+                 MAIN MENU
+                       │
+       ┌───────────────┼────────────────┐
+       │               │                │
+       ↓               ↓                ↓
+    PROFILE          CARDS            BATTLE
+       │               │                │
+       ↓               ↓                ↓
+    SETTINGS         PACKS            ENEMIES
+                     CHESTS
+                     COLLECTION
+                     DUPLICATES
+
+
+       ┌───────────────┼────────────────┐
+       ↓               ↓                ↓
+    ECONOMY          EVENTS            LFG
+       │               │                │
+       ↓               ↓                ↓
+     SHOP            EVENTS          MATCHING
+     DAILY
+
+
+       ┌───────────────┼────────────────┐
+       ↓               ↓                ↓
+   KINGDOM          STREAMS       ACHIEVEMENTS
+
+
+ADMIN:
+
+
+       ┌───────────────┼────────────────┐
+       ↓               ↓                ↓
+ MODERATION       AUTOMATIONS        ANALYTICS
+
+
+============================================================
+60. FINAL REQUIREMENT
+============================================================
+
+ILTA должен быть designed
+как MENU-FIRST Discord BOT.
+
+
+Основная команда:
+
+
+/menu
+
+
+Основной интерфейс:
+
+
+Buttons
+Select Menus
+Modals
+Pagination
+
+
+Основной принцип:
+
+
+"One command → entire bot."
+
+
+Пользователь должен иметь возможность
+использовать практически весь функционал
+ILTA, не запоминая ни одной дополнительной
+slash-команды.
+
+
+============================================================
+END OF MENU-FIRST UI SPECIFICATION
+============================================================
