@@ -1,95 +1,494 @@
-Analyze the provided fantasy RPG card image template and redesign the layout system.
+Ты — игровой экономист AAA RPG проекта. Разработай и внедри экономическую систему для Discord RPG игры ILTA.
 
-Goal:
-Create a perfectly aligned premium collectible card UI inspired by League of Legends / Legends of Runeterra style.
+Не предлагай варианты. Используй следующие точные значения.
 
-Fix all layout problems:
+ЦЕЛИ:
+- Долгосрочный прогресс игрока 6-12 месяцев.
+- Игрок всегда имеет цели для развития.
+- Экономика не должна ломаться от фарма.
+- Редкие карты должны оставаться ценными.
+- Донат не должен полностью заменять игровой прогресс.
 
-1. CARD FRAME AND CANVAS
-- The card must completely fill the canvas.
-- Remove all transparent empty areas around the card.
-- The frame must touch the edges consistently.
-- Maintain a premium golden fantasy frame style.
+====================================
+ВАЛЮТЫ
+====================================
 
-2. TOP HEADER
-- The rarity title (LEGENDARY / PRESTIGE) must be perfectly centered.
-- Use a fixed header area.
-- Keep identical vertical alignment for every rarity.
-- Add a top-right card number badge.
-- The number badge must have:
-  - fixed size;
-  - perfect center alignment;
-  - consistent padding;
-  - format like #001, #002, #010.
+Создать 4 основные валюты:
 
-3. ARTWORK AREA
-- Keep the champion artwork inside the frame.
-- Do not crop important character details.
-- Maintain equal spacing between artwork and borders.
-- The image area must have consistent dimensions on every card.
+1. GOLD
 
-4. CHAMPION NAME SECTION
-- Create a fixed name container.
-- Center align text.
-- If the name is too long:
-  - automatically reduce font size;
-  - or move subtitle to a second line.
-- Never allow text to leave the container.
+Назначение:
+- покупка карточных паков;
+- магазин;
+- улучшение карт;
+- крафт.
 
-Example:
-"Darius"
-"General of Noxus"
+Начальный баланс игрока:
+5000 Gold
 
-instead of:
-"General-Triumphator Darius (Prestige)"
 
-5. STATS SECTION
-Create a perfectly aligned stats row:
-Attack | Defense | Health
+Источники Gold:
 
-Requirements:
-- Equal spacing between all three stats.
-- Icons and numbers must be vertically centered.
-- Use fixed positions.
-- Numbers must have identical font size.
+WORK:
+Cooldown: 60 минут
 
-6. DESCRIPTION CONTAINER
-This is the most important fix.
+Награды:
+70% шанс:
+500 Gold
 
-Create a fixed text box at the bottom.
+25% шанс:
+1000 Gold
 
-Rules:
-- Text must NEVER exit the container.
-- Automatic word wrapping.
-- Maximum number of lines.
-- Dynamic font scaling.
-- If the description is too long, reduce font size.
-- If it still does not fit, truncate with "...".
+5% шанс:
+3000 Gold
 
-The description must always stay inside the black/gold panel.
 
-7. BOTTOM ICONS
-- Left faction icon and right rarity/crystal icon must have equal size.
-- Align them symmetrically.
-- Keep equal distance from borders.
+ADVENTURE:
+Cooldown: 3 часа
 
-8. GLOBAL UI RULES
-Use a strict grid system:
-- Every element has fixed coordinates.
-- Every card from the collection must use the same template.
-- No random positioning.
-- No floating elements.
-- No empty transparent spaces.
+Награды:
+60%:
+2000-5000 Gold
 
-Output:
-A production-ready collectible card layout system suitable for generating thousands of RPG cards automatically.
+25%:
+1000-3000 Gold + региональный материал
 
-Style:
-AAA fantasy game UI,
-League of Legends inspired,
-Legends of Runeterra inspired,
-luxury gold ornaments,
-high quality esports card design,
-clean professional alignment.
-Do not redesign the visual style. Only fix alignment, spacing, scaling, and text fitting problems.
-Preserve the original artwork, colors, rarity identity, and premium fantasy aesthetic.
+10%:
+100 Card Shards
+
+5%:
+карта Rare
+
+
+DAILY QUEST:
+
+Лёгкое:
+1000 Gold
+
+Среднее:
+3000 Gold
+
+Сложное:
+5000 Gold + шанс сундука
+
+
+PVP:
+
+Победа:
+1000 Gold + 50 XP
+
+Проигрыш:
+200 Gold + 20 XP
+
+
+====================================
+2. CRYSTALS
+====================================
+
+Премиальная валюта.
+
+Использование:
+- Prestige Chest;
+- косметика;
+- рамки;
+- скины;
+- эмоции.
+
+
+Источники:
+- события;
+- достижения;
+- сезонные награды.
+
+Не выдавать через обычный фарм.
+
+
+====================================
+3. CARD SHARDS
+====================================
+
+Использование:
+- создание карт;
+- улучшение карт.
+
+
+Получение из дубликатов:
+
+COMMON:
+10 Shards
+
+RARE:
+40 Shards
+
+EPIC:
+150 Shards
+
+LEGENDARY:
+700 Shards
+
+MYTHIC:
+3000 Shards
+
+
+====================================
+4. REGIONAL MATERIALS
+====================================
+
+Материалы используются для:
+- развития королевства;
+- открытия регионов;
+- регионального крафта.
+
+
+Количество материалов ограниченное.
+
+
+====================================
+КАРТОЧНАЯ СИСТЕМА
+====================================
+
+Редкости:
+
+COMMON
+RARE
+EPIC
+LEGENDARY
+MYTHIC
+PRESTIGE
+
+
+====================================
+ПАКИ КАРТ
+====================================
+
+
+BRONZE PACK
+
+Цена:
+1000 Gold
+
+Количество карт:
+3
+
+
+Шансы:
+
+COMMON:
+65%
+
+RARE:
+25%
+
+EPIC:
+8%
+
+LEGENDARY:
+2%
+
+
+
+====================================
+
+
+SILVER PACK
+
+Цена:
+5000 Gold
+
+Количество карт:
+5
+
+
+Шансы:
+
+COMMON:
+45%
+
+RARE:
+35%
+
+EPIC:
+15%
+
+LEGENDARY:
+5%
+
+
+
+====================================
+
+
+GOLDEN CHEST
+
+Цена:
+15000 Gold
+
+Количество карт:
+7
+
+
+Шансы:
+
+COMMON:
+30%
+
+RARE:
+40%
+
+EPIC:
+20%
+
+LEGENDARY:
+9%
+
+MYTHIC:
+1%
+
+
+
+====================================
+
+
+PRESTIGE CHEST
+
+Цена:
+500 Crystals
+
+Количество карт:
+10
+
+
+Шансы:
+
+RARE:
+35%
+
+EPIC:
+40%
+
+LEGENDARY:
+20%
+
+MYTHIC:
+5%
+
+
+====================================
+PITY SYSTEM
+====================================
+
+LEGENDARY PITY:
+
+После 25 открытий без Legendary:
+следующая карта гарантированно Legendary.
+
+
+MYTHIC PITY:
+
+После 100 открытий без Mythic:
+следующая карта гарантированно Mythic.
+
+
+PRESTIGE:
+
+Не использовать pity.
+Выдавать только через события.
+
+
+====================================
+УЛУЧШЕНИЕ КАРТ
+====================================
+
+Каждая карта имеет 5 уровней.
+
+
+COMMON:
+
+Level 2:
+100 Shards
+
+Level 3:
+250 Shards
+
+Level 4:
+500 Shards
+
+Level 5:
+1000 Shards
+
+
+
+RARE:
+
+Level 2:
+250 Shards
+
+Level 3:
+500 Shards
+
+Level 4:
+1000 Shards
+
+Level 5:
+2500 Shards
+
+
+
+EPIC:
+
+Level 2:
+500 Shards
+
+Level 3:
+1500 Shards
+
+Level 4:
+3000 Shards
+
+Level 5:
+6000 Shards
+
+
+
+LEGENDARY:
+
+Level 2:
+1000 Shards
+
+Level 3:
+2500 Shards
+
+Level 4:
+5000 Shards
+
+Level 5:
+10000 Shards
+
+
+
+MYTHIC:
+
+Level 2:
+3000 Shards
+
+Level 3:
+7000 Shards
+
+Level 4:
+15000 Shards
+
+Level 5:
+30000 Shards
+
+
+====================================
+ПОДЗЕМЕЛЬЯ
+====================================
+
+1 попытка в день.
+
+
+NORMAL DUNGEON:
+
+5000 Gold
++ региональные материалы
+
+
+RARE DUNGEON:
+
+10000 Gold
++ Rare Chest
+
+
+LEGENDARY DUNGEON:
+
+Legendary Chest
+
+
+====================================
+СЕЗОННАЯ СИСТЕМА
+====================================
+
+Сезон:
+90 дней.
+
+
+FREE PASS:
+
+- Gold
+- Card Shards
+- Common/Rare карты
+
+
+PREMIUM PASS:
+
+- Crystals
+- Prestige рамка
+- эксклюзивная карта
+- Prestige Chest
+
+
+====================================
+КОЛЛЕКЦИЯ
+====================================
+
+Награды за количество карт:
+
+
+100 карт:
+титул "Collector"
+
+
+500 карт:
+эксклюзивная рамка
+
+
+1000 карт:
+Prestige Chest
+
+
+====================================
+СТАРТОВЫЙ НАБОР
+====================================
+
+Новый игрок получает:
+
+5000 Gold
+
+1 Starter Chest
+
+5 Common карт
+
+1 Rare карту
+
+100 Card Shards
+
+
+====================================
+ФИНАЛЬНЫЙ БАЛАНС
+====================================
+
+Активный игрок должен получать:
+
+В день:
+15000-25000 Gold
+
+3-8 карт
+
+
+В неделю:
+100000+ Gold
+
+5-10 сундуков
+
+
+В месяц:
+3-5 Legendary карт
+
+1 Mythic через систему pity
+
+
+Создай архитектуру экономики ILTA на основе этих чисел.
+Не изменяй значения.
+Не добавляй новые валюты.
+Сделай систему готовой для реализации в Discord RPG.
