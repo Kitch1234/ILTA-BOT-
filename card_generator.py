@@ -1,611 +1,1427 @@
-ТЗ: Система автоматического получения и управления Discord Emoji для ILTA BOT
+============================================================
+ILTA — URGENT IMAGE PIPELINE DEBUG
+PACK / CHEST / GENERATED CARD IMAGES
+============================================================
 
-ЦЕЛЬ
-Создать централизованную систему управления кастомными эмодзи Discord-сервера для ILTA BOT.
+КРИТИЧЕСКАЯ ПРОБЛЕМА
+============================================================
 
-Система должна автоматически получать все кастомные эмодзи сервера, сохранять их в PostgreSQL, поддерживать кеширование и позволять всему проекту обращаться к эмодзи по удобному ключу, без ручного прописывания Discord ID в каждом файле.
+После последних изменений изображения перестали
+отображаться в Discord.
 
-1. ПОЛУЧЕНИЕ ЭМОДЗИ
+Проблемы одновременно:
 
-При запуске бота необходимо получить полный список кастомных эмодзи каждого доступного Discord-сервера.
+1. Не отображаются изображения Pack.
+2. Не отображаются изображения Chest.
+3. В открытии Pack перестали отображаться
+   сгенерированные изображения карт.
+4. PNG assets физически существуют в проекте.
+5. Card Generator существует и должен продолжать
+   генерировать карты.
 
-Использовать discord.py:
+НЕ ПЕРЕПИСЫВАТЬ SHOP И INVENTORY ЗАНОВО.
 
-guild.emojis
+Сначала найти точную причину.
 
-Для каждого эмодзи получить:
 
-- name
-- id
-- animated
-- url
-- guild_id
+============================================================
+1. STOP — DO NOT MODIFY YET
+============================================================
 
-Пример данных:
+Перед любыми изменениями провести диагностику.
 
-name: gold
-id: 123456789012345678
-animated: false
-url: https://cdn.discordapp.com/emojis/123456789012345678.png
+Найти и показать:
 
-2. БАЗА ДАННЫХ
+- где загружается Pack image;
+- где загружается Chest image;
+- где вызывается card_generator;
+- где сохраняется generated card;
+- какой путь возвращает card_generator;
+- где generated card передаётся в Discord;
+- где создаётся discord.File;
+- где создаётся Embed;
+- где вызывается embed.set_image();
+- где вызывается message.reply();
+- где вызывается interaction.response.send_message();
+- где вызывается followup.send();
+- где вызывается edit_message();
+- где формируется attachment:// URL.
 
-Создать PostgreSQL таблицу:
+НЕ менять код, пока эти точки не найдены.
 
-guild_emojis
 
-Поля:
+============================================================
+2. IMPORTANT DISCORD RULE
+============================================================
 
-- id BIGSERIAL PRIMARY KEY
-- guild_id BIGINT NOT NULL
-- emoji_id BIGINT NOT NULL
-- name VARCHAR(100) NOT NULL
-- animated BOOLEAN DEFAULT FALSE
-- url TEXT
-- emoji_key VARCHAR(100)
-- created_at TIMESTAMP DEFAULT NOW()
-- updated_at TIMESTAMP DEFAULT NOW()
+Проверить все места, где используется:
 
-Добавить уникальность:
+embed.set_image(
+    url=...
+)
 
-UNIQUE(guild_id, emoji_id)
 
-emoji_id является реальным Discord ID эмодзи.
+Если URL имеет:
 
-emoji_key используется как внутренний ключ ILTA.
+attachment://filename.png
 
-Пример:
 
-Discord name:
-coin_gold
+то этот файл ОБЯЗАТЕЛЬНО должен быть
+передан в тот же Discord message
+как attachment.
 
-ILTA key:
-gold
 
-Тогда в коде используется:
+Например правильная схема:
 
-emoji("gold")
 
-а не:
+file = discord.File(
+    image_path,
+    filename="rare_pack.png"
+)
 
-emoji("coin_gold")
 
-3. СИНХРОНИЗАЦИЯ
+embed.set_image(
+    url="attachment://rare_pack.png"
+)
 
-Создать отдельный модуль:
 
-core/emoji_manager.py
+await interaction.followup.send(
+    embed=embed,
+    file=file
+)
 
-Создать функцию:
 
-async def sync_guild_emojis(guild)
+НЕ делать:
 
-Алгоритм:
 
-1. Получить guild.emojis.
-2. Для каждого эмодзи проверить наличие в PostgreSQL.
-3. Если эмодзи отсутствует — добавить.
-4. Если эмодзи уже существует — обновить name, animated, url и updated_at.
-5. Найти записи в БД, которых больше нет среди guild.emojis.
-6. Удалить устаревшие записи.
-7. Обновить кеш.
+embed.set_image(
+    url="attachment://rare_pack.png"
+)
 
-Важно:
 
-Если Discord временно недоступен или произошла ошибка API, НЕ удалять существующие записи из БД.
+await interaction.followup.send(
+    embed=embed
+)
 
-4. КЕШ
 
-Создать кеш эмодзи.
+Потому что attachment отсутствует.
 
-Пример:
 
-{
-    "gold": 123456789012345678,
-    "crystal": 123456789012345679,
-    "attack": 123456789012345680,
-    "defense": 123456789012345681,
-    "health": 123456789012345682
-}
+============================================================
+3. MULTIPLE IMAGES
+============================================================
 
-Кеш должен загружаться после синхронизации.
+Особенно проверить Pack Opening.
 
-Приоритет получения:
+Если одновременно показываются:
 
-1. Discord/cache
-2. PostgreSQL
-3. Если эмодзи не найден — fallback
+Pack image
 
-5. ОСНОВНАЯ ФУНКЦИЯ
++
+несколько generated card images
 
-Создать единую функцию:
 
-emoji("gold")
+Discord должен получить все необходимые
+attachments в одном сообщении либо система
+должна корректно отправлять их отдельно.
 
-Она должна возвращать корректное представление Discord-эмодзи.
-
-Примеры:
-
-emoji("gold")
-emoji("crystal")
-emoji("attack")
-emoji("defense")
-emoji("health")
-emoji("xp")
-
-Использование:
-
-f"{emoji('gold')} {player.gold}"
-
-f"{emoji('attack')} {player.attack}"
-
-f"{emoji('health')} {player.health}/{player.max_health}"
-
-6. НЕ ХРАНИТЬ ID В КОДЕ
-
-Запрещено создавать отдельные константы:
-
-GOLD_EMOJI_ID = 123456789
-CRYSTAL_EMOJI_ID = 987654321
-ATTACK_EMOJI_ID = 555555555
-
-ID эмодзи не должны быть разбросаны по проекту.
-
-Все обращения должны проходить через Emoji Manager:
-
-emoji("gold")
-emoji("crystal")
-emoji("attack")
-
-7. ВНУТРЕННИЕ КЛЮЧИ ILTA
-
-Создать стандартные ключи для игровых систем.
-
-Основные:
-
-gold
-crystal
-card_shard
-xp
-reputation
-
-Характеристики:
-
-attack
-defense
-health
-energy
-
-Редкости:
-
-common
-rare
-epic
-legendary
-mythic
-prestige
-ultimate
-
-Системные:
-
-success
-error
-warning
-info
-lock
-unlock
-arrow_left
-arrow_right
-search
-settings
-
-Региональные эмодзи:
-
-demacia
-noxus
-ionia
-piltover
-zaun
-shurima
-targon
-freljord
-shadow_isles
-bilgewater
-void
-ixtal
-bandle_city
-etc.
-
-Список должен быть расширяемым.
-
-8. ПОДДЕРЖКА ANIMATED EMOJI
-
-Система должна автоматически определять:
-
-animated = true/false
-
-Необходимо корректно поддерживать как обычные, так и анимированные Discord Emoji.
-
-9. FALLBACK
-
-Если emoji("gold") не найден:
-
-бот НЕ должен падать с ошибкой.
-
-Необходимо вернуть fallback-значение.
 
 Например:
 
-🪙
 
-Или специальный fallback:
+files = [
+    discord.File(pack_path, filename="pack.png"),
+    discord.File(card1_path, filename="card_1.png"),
+    discord.File(card2_path, filename="card_2.png")
+]
 
-❔
 
-Fallback должен быть централизованным и легко изменяемым.
+НЕЛЬЗЯ создавать:
 
-10. ADMINISTRATOR MENU
+file = discord.File(...)
 
-Добавить управление эмодзи через существующую систему /menu.
 
-Не создавать отдельную обязательную команду, которую администратор должен запоминать.
+затем:
 
-Путь:
+await send(file=file)
 
-/menu
-→ Administration
-→ Emoji Manager
 
-Меню:
+а после этого пытаться использовать
+тот же file object снова.
 
-Emoji Manager
 
-📦 Всего эмодзи: 84
+Каждый Discord File object
+должен использоваться корректно.
 
-[🔄 Синхронизировать]
-[📋 Список эмодзи]
-[🔍 Поиск]
-[📤 Экспорт]
 
-11. СИНХРОНИЗАЦИЯ ЧЕРЕЗ MENU
+============================================================
+4. PACK IMAGE DEBUG
+============================================================
 
-При нажатии:
+Для каждого Pack перед отправкой
+добавить DEBUG LOG:
 
-🔄 Синхронизировать
 
-бот:
+PACK IMAGE DEBUG
 
-1. Получает guild.emojis.
-2. Сравнивает их с PostgreSQL.
-3. Добавляет новые.
-4. Обновляет изменённые.
-5. Удаляет удалённые.
-6. Обновляет кеш.
-7. Показывает результат.
+pack_id:
+pack_name:
+asset_key:
+resolved_path:
+exists:
+is_file:
+size:
+format:
 
-Пример:
-
-Emoji synchronization completed.
-
-Added: 5
-Updated: 2
-Removed: 1
-Total: 84
-
-12. ПРОСМОТР ЭМОДЗИ
-
-Кнопка:
-
-📋 Список эмодзи
-
-Должна показывать список с пагинацией.
 
 Пример:
 
-🧩 ILTA Emojis
 
-🪙 gold
-ID: 123456789012345678
+PACK IMAGE DEBUG
+pack_id=rare_pack
+asset_key=rare_pack
+resolved_path=/project/assets/packs/rare.png
+exists=True
+is_file=True
+size=182934
+format=PNG
 
-💎 crystal
-ID: 123456789012345679
 
-⚔️ attack
-ID: 123456789012345680
+Если exists=False:
 
-🛡️ defense
-ID: 123456789012345681
+НЕ продолжать отправку.
 
-❤️ health
-ID: 123456789012345682
 
-Кнопки:
+Показать точный path,
+который система пытается открыть.
 
-[◀️] [1/5] [▶️]
 
-13. ПОИСК
+============================================================
+5. CHEST IMAGE DEBUG
+============================================================
 
-Добавить кнопку:
+То же самое:
 
-🔍 Поиск
 
-Администратор вводит:
+CHEST IMAGE DEBUG
 
-gold
+chest_id:
+asset_key:
+resolved_path:
+exists:
+is_file:
+size:
+format:
 
-Бот показывает:
 
-🪙 gold
+============================================================
+6. GENERATED CARD DEBUG
+============================================================
 
-ID: 123456789012345678
-Animated: false
-URL: ...
+КРИТИЧЕСКИ ВАЖНО.
 
-14. ЭКСПОРТ
+Найти:
 
-Добавить:
+card_generator.py
 
-📤 Экспорт
 
-Бот должен формировать файл:
+и место, где Pack Opening
+генерирует карты.
 
-emojis.json
 
-Формат:
+После каждой генерации
+выводить:
 
-{
-    "gold": {
-        "id": "123456789012345678",
-        "name": "gold",
-        "animated": false
-    },
-    "crystal": {
-        "id": "123456789012345679",
-        "name": "crystal",
-        "animated": false
-    },
-    "attack": {
-        "id": "123456789012345680",
-        "name": "attack",
-        "animated": true
-    }
-}
 
-Также желательно поддержать CSV:
+GENERATED CARD DEBUG
 
-emojis.csv
+champion:
+skin:
+rarity:
+output_path:
+exists:
+is_file:
+size:
 
-15. АВТОМАТИЧЕСКАЯ СИНХРОНИЗАЦИЯ
-
-Синхронизация должна выполняться:
-
-- при запуске бота;
-- после подключения guild;
-- вручную через Emoji Manager;
-- периодически через background task.
-
-Рекомендуемый интервал:
-
-30 минут.
-
-Необходимо использовать discord.ext.tasks для фоновой синхронизации.
-
-16. ОБРАБОТКА УДАЛЕНИЯ
-
-Если Discord Emoji был удалён:
-
-Discord:
-gold → удалён
-
-После синхронизации:
-
-PostgreSQL:
-gold → удалить
-
-Cache:
-gold → удалить
-
-При этом другие эмодзи не должны затрагиваться.
-
-17. ОБРАБОТКА ПЕРЕИМЕНОВАНИЯ
-
-Если эмодзи:
-
-old_name
-
-стал:
-
-new_name
-
-необходимо обновить name в БД.
-
-При этом emoji_id остаётся прежним.
-
-18. MULTI-GUILD
-
-Система должна поддерживать несколько Discord-серверов.
-
-Все записи должны быть связаны с:
-
-guild_id
-
-Пример:
-
-Guild A:
-gold → 111111111
-
-Guild B:
-gold → 222222222
-
-Один и тот же emoji_key может существовать на разных серверах с разными Discord ID.
-
-19. ИСПОЛЬЗОВАНИЕ В ILTA
-
-Emoji Manager должен быть доступен из всех игровых Cog.
 
 Например:
 
-profile.py
-shop.py
-battle.py
-cards.py
-pack.py
-quest.py
-inventory.py
-daily.py
-collection.py
 
-Примеры:
+GENERATED CARD DEBUG
 
-Профиль:
+champion=Ahri
+skin=Ultimate
+rarity=Ultimate
+output_path=/project/generated/cards/ahri_ultimate.png
+exists=True
+is_file=True
+size=734221
 
-⚔️ Attack: 100
-🛡️ Defense: 80
-❤️ Health: 500
 
-Баланс:
+============================================================
+7. DO NOT ASSUME CARD GENERATOR IS BROKEN
+============================================================
 
-🪙 Gold: 10,500
-💎 Crystals: 250
-🔷 Card Shards: 75
+Проверить отдельно:
 
-Карточка:
 
-⚔️ 120
-🛡️ 80
-❤️ 500
+card_generator
 
-Награда:
 
-🎁 Rewards
+→ generate card
 
-🪙 ×500
-💎 ×10
-🔷 ×25
 
-20. АРХИТЕКТУРА
+→ save PNG
 
-Рекомендуемая структура:
 
-ILTA-BOT/
+→ verify PNG
 
-core/
-    database.py
-    emoji_manager.py
 
-database/
-    emojis.py
+→ Discord send
 
-cogs/
-    menu.py
-    profile.py
-    shop.py
-    battle.py
-    cards.py
-    pack.py
-    quest.py
-    inventory.py
 
-assets/
+Если PNG существует и открывается,
+Card Generator считать исправным.
+
+
+Проблему искать после генерации.
+
+
+============================================================
+8. OPEN GENERATED CARD FILE
+============================================================
+
+Для каждой generated card проверить
+фактически:
+
+
+os.path.exists(path)
+
+
+os.path.isfile(path)
+
+
+os.path.getsize(path)
+
+
+PIL.Image.open(path)
+
+
+PIL.Image.verify()
+
+
+Если verify() проходит,
+значит PNG корректный.
+
+
+============================================================
+9. CRITICAL PATH PROBLEM
+============================================================
+
+Проверить различие между:
+
+
+relative path
+
+
+absolute path
+
+
+current working directory
+
+
+__file__
+
+
+project root
+
+
+Например:
+
+
+assets/cards/...
+
+
+может работать из:
+
 
 main.py
 
-core/emoji_manager.py
 
-Отвечает за:
+но не работать из:
 
-- кеш;
-- получение Discord Emoji;
-- поиск;
-- синхронизацию;
-- fallback;
-- предоставление API emoji().
 
-database/emojis.py
+cogs/pack.py
 
-Отвечает за:
 
-- INSERT;
-- UPDATE;
-- DELETE;
-- SELECT;
-- работу с PostgreSQL.
+Не использовать случайные:
 
-cogs/menu.py
 
-Отвечает только за интерфейс администратора.
+../../assets
 
-21. ТРЕБОВАНИЯ К КОДУ
 
-Использовать async/await.
+../../../assets
 
-Использовать существующий asyncpg pool проекта.
 
-Не создавать отдельное соединение с PostgreSQL для каждого запроса.
+Использовать единый PROJECT_ROOT.
 
-Не дублировать логику работы с Emoji в Cog.
 
-Не обращаться напрямую к таблице guild_emojis из игровых Cog.
+Например:
 
-Все игровые системы должны обращаться только через Emoji Manager.
 
-22. ЛОГИРОВАНИЕ
+PROJECT_ROOT = Path(__file__).resolve().parents[...] 
 
-При запуске:
 
-[EMOJI] Starting synchronization...
+Но сначала определить правильный
+root проекта по существующей структуре.
 
-После завершения:
 
-[EMOJI] Guild: ILTA
-[EMOJI] Added: 5
-[EMOJI] Updated: 2
-[EMOJI] Removed: 1
-[EMOJI] Total: 84
+============================================================
+10. ASSET MANAGER
+============================================================
 
-При ошибке:
+Если AssetManager уже существует:
 
-[EMOJI] Synchronization failed: <error>
+НЕ создавать второй.
 
-Ошибки не должны останавливать работу бота.
 
-23. БЕЗОПАСНОСТЬ
+Исправить существующий.
 
-Управление Emoji Manager доступно только администраторам сервера или пользователям с соответствующим Discord permission.
 
-Обычные пользователи не должны иметь доступа к:
+Если его нет:
 
-- синхронизации;
-- экспорту;
-- удалению;
-- изменению emoji_key.
+создать один.
 
-24. РЕЗУЛЬТАТ
 
-После реализации система должна работать следующим образом:
+Он должен возвращать:
 
-Discord Server
-        ↓
-guild.emojis
-        ↓
-Emoji Manager
-        ↓
-PostgreSQL
-        ↓
-Cache
-        ↓
-Все игровые системы ILTA
 
-В любом месте проекта можно использовать:
+Path
 
-emoji("gold")
-emoji("crystal")
-emoji("attack")
-emoji("defense")
-emoji("health")
-emoji("xp")
 
-Без ручного указания Discord ID.
+а не Discord URL.
 
-Главная задача системы — сделать Emoji полностью централизованными, автоматически синхронизируемыми и доступными всему ILTA BOT через простые ключи.
-:::
+
+Например:
+
+
+asset_manager.get_pack_asset("rare_pack")
+
+
+→ Path(.../rare.png)
+
+
+А Discord layer уже решает,
+как превратить Path в attachment.
+
+
+НЕ смешивать filesystem
+и Discord URL.
+
+
+============================================================
+11. IMPORTANT ARCHITECTURE
+============================================================
+
+Разделить:
+
+
+FILESYSTEM LAYER
+
+
+AssetManager
+
+
+↓
+
+
+Path
+
+
+DISCORD PRESENTATION LAYER
+
+
+DiscordImage
+
+
+↓
+
+
+discord.File
+
+
+↓
+
+
+attachment://filename
+
+
+Это должно быть разделено.
+
+
+============================================================
+12. DISCORD IMAGE HELPER
+============================================================
+
+Создать ОДИН helper,
+если аналогичного уже нет:
+
+
+create_discord_image_attachment(path, filename)
+
+
+Он должен:
+
+
+1. проверить существование;
+2. проверить файл;
+3. создать discord.File;
+4. вернуть File + attachment URL.
+
+
+Например логика:
+
+
+file = discord.File(
+    str(path),
+    filename=filename
+)
+
+
+url = f"attachment://{filename}"
+
+
+return file, url
+
+
+Все Pack / Chest / Card
+изображения должны использовать
+один и тот же механизм.
+
+
+============================================================
+13. GENERATED CARD SEND
+============================================================
+
+Найти текущую систему,
+которая раньше показывала
+сгенерированные карты.
+
+
+НЕ заменять card_generator.
+
+
+Нужно восстановить:
+
+
+generated PNG
+
+
+↓
+
+
+discord.File
+
+
+↓
+
+
+attachment://...
+
+
+↓
+
+
+Discord message
+
+
+============================================================
+14. PACK OPENING
+============================================================
+
+Проверить полный pipeline:
+
+
+OPEN PACK
+
+
+↓
+
+
+calculate rewards
+
+
+↓
+
+
+generate cards
+
+
+↓
+
+
+save cards
+
+
+↓
+
+
+verify cards
+
+
+↓
+
+
+create Discord files
+
+
+↓
+
+
+create embed/message
+
+
+↓
+
+
+send attachments
+
+
+↓
+
+
+display cards
+
+
+Если любой этап возвращает
+None / invalid path / missing file,
+остановиться и вывести DEBUG.
+
+
+============================================================
+15. IMPORTANT — FILE LIFETIME
+============================================================
+
+Проверить, что discord.File
+не закрывается до отправки сообщения.
+
+
+Не делать:
+
+
+with open(...) as f:
+    file = discord.File(f)
+
+
+а затем отправлять
+после выхода из context.
+
+
+Также проверить временные
+generated files.
+
+
+Если generated card сохраняется
+во временный каталог,
+файл не должен удаляться
+до момента завершения Discord upload.
+
+
+============================================================
+16. PACK + CARDS
+============================================================
+
+Если Pack Opening показывает:
+
+
+Pack image
+
+
+и
+
+
+generated cards
+
+
+проверить, как именно
+реализовано сообщение.
+
+
+Если используется один embed:
+
+Discord Embed имеет
+только одну основную image URL.
+
+
+Поэтому НЕ пытаться положить
+несколько card images
+в один embed.set_image().
+
+
+Для нескольких карт использовать
+существующую систему:
+
+
+- отдельные attachments;
+- отдельные embeds/messages;
+- или существующий carousel/navigation.
+
+
+Не ломать текущий UX.
+
+
+============================================================
+17. EXISTING CARD REVEAL FLOW
+============================================================
+
+В проекте ранее планировался
+Pack Opening:
+
+один message
+
+
++
+pack image
+
+
++
+Open button
+
+
++
+card reveal
+
+
++
+full card image
+
+
++
+arrow navigation.
+
+
+Сохранить именно этот UX.
+
+
+При открытии карты:
+
+
+[ ← ] [ → ]
+
+
+и большая generated card image.
+
+
+Не отправлять новую карту
+в случайный канал.
+
+
+Не создавать несколько
+бессмысленных сообщений.
+
+
+============================================================
+18. CARD REVEAL IMAGE
+============================================================
+
+При переходе:
+
+Card 1 → Card 2
+
+
+нужно корректно заменить
+image attachment/embed.
+
+
+ВАЖНО:
+
+Discord attachment старого
+сообщения нельзя просто заменить
+новым локальным path.
+
+
+Нужно заново отправить/редактировать
+message с новым attachment
+в соответствии с Discord API.
+
+
+Проверить существующую реализацию.
+
+
+============================================================
+19. EMBED IMAGE URL
+============================================================
+
+Проверить все:
+
+embed.set_image()
+
+
+embed.set_thumbnail()
+
+
+embed.set_author()
+
+
+attachment://
+
+
+и убедиться,
+что URL соответствует
+реальному filename attachment.
+
+
+Например:
+
+
+filename="card_1.png"
+
+
+тогда:
+
+
+attachment://card_1.png
+
+
+НЕ:
+
+
+attachment://card.png
+
+
+НЕ:
+
+
+attachment://generated/card_1.png
+
+
+НЕ:
+
+
+локальный filesystem path.
+
+
+============================================================
+20. UNIQUE FILENAMES
+============================================================
+
+Для generated cards использовать
+уникальные filenames.
+
+
+Например:
+
+
+pack_123_card_1.png
+
+
+pack_123_card_2.png
+
+
+pack_123_card_3.png
+
+
+Чтобы Discord/client/cache
+не путал одинаковые filenames.
+
+
+============================================================
+21. DO NOT USE SAME FILENAME
+============================================================
+
+Не делать:
+
+
+card.png
+
+
+card.png
+
+
+card.png
+
+
+для нескольких generated images
+в одном flow.
+
+
+Использовать уникальные имена.
+
+
+============================================================
+22. PACK ASSET FILENAME
+============================================================
+
+Pack asset:
+
+rare_pack.png
+
+
+filename должен совпадать
+с attachment URL:
+
+
+attachment://rare_pack.png
+
+
+Chest:
+
+
+mythic_chest.png
+
+
+→
+
+
+attachment://mythic_chest.png
+
+
+============================================================
+23. TEST RAW DISCORD IMAGE
+============================================================
+
+Создать отдельный временный
+debug/test mechanism.
+
+
+Отправить ОДИН существующий PNG
+в Discord без Embed.
+
+
+Например:
+
+
+await channel.send(
+    file=discord.File(path)
+)
+
+
+Если изображение отображается:
+
+
+filesystem + Discord upload работают.
+
+
+После этого протестировать:
+
+
+file + embed.set_image()
+
+
+Если первый работает,
+а второй нет — проблема
+в embed attachment URL.
+
+
+============================================================
+24. TEST GENERATED CARD
+============================================================
+
+Сгенерировать одну карту.
+
+
+Не через Pack.
+
+
+Напрямую:
+
+
+card_generator
+
+
+↓
+
+
+PNG
+
+
+↓
+
+
+discord.File
+
+
+↓
+
+
+Discord.
+
+
+Если карта отображается:
+
+card_generator исправен.
+
+
+Затем:
+
+
+Pack
+
+
+↓
+
+
+generate card
+
+
+↓
+
+
+Discord.
+
+
+Если здесь ломается:
+
+проблема в Pack Opening integration.
+
+
+============================================================
+25. DO NOT CHANGE CARD GENERATOR
+============================================================
+
+НЕ менять:
+
+ART_WIDTH
+
+
+ART_HEIGHT
+
+
+ART_X
+
+
+ART_Y
+
+
+без доказательства,
+что проблема именно там.
+
+
+Текущая рабочая конфигурация:
+
+
+ART_WIDTH = 930
+ART_HEIGHT = 950
+ART_X = 60
+ART_Y = 93
+
+
+Сохранить.
+
+
+============================================================
+26. CHECK CARD GENERATOR RETURN VALUE
+============================================================
+
+Очень важно.
+
+
+Если:
+
+
+generate_card(...)
+
+
+раньше возвращал:
+
+
+Path
+
+
+а новый код ожидает:
+
+
+str
+
+
+или наоборот,
+
+
+исправить interface.
+
+
+Проверить:
+
+
+return value
+
+
+тип:
+
+
+Path
+
+
+str
+
+
+bytes
+
+
+PIL.Image
+
+
+и место использования.
+
+
+Не делать:
+
+
+str(path)
+
+
+если следующий код ожидает
+PIL Image.
+
+
+============================================================
+27. CHECK DATABASE
+============================================================
+
+Не хранить filesystem path
+generated card в database,
+если карта должна быть
+перегенерирована.
+
+
+Проверить existing architecture.
+
+
+Card identity:
+
+
+card_id
+
+
+champion
+
+
+skin
+
+
+rarity
+
+
+etc.
+
+
+Image path должен
+получаться через Card Generator
+или asset system.
+
+
+============================================================
+28. DO NOT BREAK COLLECTION
+============================================================
+
+После исправления Pack Opening
+проверить:
+
+
+Collection
+
+
+Inventory
+
+
+Cards
+
+
+Rewards
+
+
+Profile
+
+
+Battle
+
+
+не должны перестать
+работать.
+
+
+============================================================
+29. FINAL DEBUG MATRIX
+============================================================
+
+Обязательно проверить:
+
+
+TEST A
+Pack PNG direct send
+
+
+TEST B
+Pack PNG + embed
+
+
+TEST C
+Chest PNG direct send
+
+
+TEST D
+Chest PNG + embed
+
+
+TEST E
+Generated Card direct send
+
+
+TEST F
+Generated Card + embed
+
+
+TEST G
+Pack → generated card
+
+
+TEST H
+Pack → multiple generated cards
+
+
+TEST I
+Pack → navigation
+
+
+TEST J
+Inventory → Pack image
+
+
+TEST K
+Shop → Pack image
+
+
+TEST L
+Purchase Confirmation → Pack image
+
+
+============================================================
+30. REQUIRED DEBUG OUTPUT
+============================================================
+
+После запуска тестов вывести:
+
+
+IMAGE PIPELINE REPORT
+
+
+PACK ASSETS
+----------------
+common_pack: PASS/FAIL
+rare_pack: PASS/FAIL
+epic_pack: PASS/FAIL
+legendary_pack: PASS/FAIL
+mythic_pack: PASS/FAIL
+prestige_pack: PASS/FAIL
+ultimate_pack: PASS/FAIL
+
+
+CHEST ASSETS
+----------------
+...
+
+
+GENERATED CARDS
+----------------
+direct generation: PASS/FAIL
+discord upload: PASS/FAIL
+pack integration: PASS/FAIL
+reveal navigation: PASS/FAIL
+
+
+============================================================
+31. IMPORTANT
+============================================================
+
+НЕ говорить:
+
+"Path выглядит правильно"
+
+
+Нужно реально проверить:
+
+
+exists
+
+
+open
+
+
+PIL verify
+
+
+Discord upload
+
+
+Embed display.
+
+
+============================================================
+32. FIND ROOT CAUSE
+============================================================
+
+В конце обязательно написать:
+
+
+ROOT CAUSE:
+
+
+Например:
+
+
+1. Asset path incorrect.
+
+
+или:
+
+
+2. discord.File was not attached
+   to the message.
+
+
+или:
+
+
+3. attachment:// filename mismatch.
+
+
+или:
+
+
+4. generated card path was lost
+   between card_generator and pack.py.
+
+
+или:
+
+
+5. temporary file was deleted
+   before Discord upload.
+
+
+или:
+
+
+6. multiple images were incorrectly
+   placed into one Embed.
+
+
+или:
+
+
+7. interaction.followup/edit_message
+   did not include the new attachment.
+
+
+Не писать общий ответ.
+
+
+Найти конкретную причину.
+
+
+============================================================
+33. FIX
+============================================================
+
+После нахождения причины
+исправить её минимально.
+
+
+Не делать большой rewrite.
+
+
+Не создавать новую
+параллельную систему.
+
+
+Использовать существующую
+архитектуру ILTA.
+
+
+============================================================
+34. REGRESSION TEST
+============================================================
+
+После исправления проверить:
+
+
+Shop
+✓ Pack image
+
+
+Shop
+✓ Chest image
+
+
+Purchase confirmation
+✓ Pack image
+
+
+Purchase confirmation
+✓ Chest image
+
+
+Inventory
+✓ Pack image
+
+
+Inventory
+✓ Chest image
+
+
+Pack Opening
+✓ Pack image
+
+
+Pack Opening
+✓ Generated card image
+
+
+Pack Opening
+✓ Arrow navigation
+
+
+Collection
+✓ Card
+
+
+Profile
+✓ Card
+
+
+============================================================
+35. FINAL REPORT
+============================================================
+
+В конце предоставить:
+
+
+1. ROOT CAUSE
+
+
+2. Исправленные файлы
+
+
+3. Что было сломано
+
+
+4. Почему изображения не отображались
+
+
+5. Почему generated cards
+   перестали отображаться
+
+
+6. Как теперь работает
+   image pipeline
+
+
+7. Результаты тестов
+
+
+8. Неизменённые системы
+
+
+============================================================
+END
+============================================================
