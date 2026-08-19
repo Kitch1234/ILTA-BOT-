@@ -5158,3 +5158,1723 @@ where transparency is expected.
 ============================================================
 END
 ============================================================
+
+============================================================
+ILTA — ADVANCED CARD LORE SYSTEM
+============================================================
+
+GOAL
+============================================================
+
+Переделать существующую систему Lore для карт ILTA.
+
+Сейчас проблема:
+
+Один чемпион имеет одинаковый Lore на всех картах.
+
+Например:
+
+Common Ahri
+Rare Ahri
+Epic Ahri
+Legendary Ahri
+Ultimate Ahri
+
+используют один и тот же текст чемпиона.
+
+ЭТО НУЖНО ИСПРАВИТЬ.
+
+Каждая карта должна иметь собственный короткий Lore,
+который учитывает:
+
+- Champion
+- Skin
+- Skin Universe
+- Event / Theme
+- Rarity
+
+Основная идея:
+
+ОДИН ЧЕМПИОН ≠ ОДИН LORE.
+
+
+============================================================
+1. IMPORTANT — ANALYZE EXISTING PROJECT FIRST
+============================================================
+
+Перед изменениями обязательно проанализировать:
+
+- card_generator.py
+- существующую систему Champion data
+- data/translations.py
+- data/champion_loader.py
+- существующую структуру champions.json
+- существующую структуру skins
+- существующую систему карт
+- database/cards.py
+- таблицу cards
+- существующие JSON/YAML/data files
+- существующие Lore fields
+- существующие assets
+- существующие функции генерации карт.
+
+НЕ создавать вторую параллельную систему Lore,
+если существующую можно расширить.
+
+Сначала определить:
+
+Где сейчас хранится Champion Lore?
+
+Где сейчас определяется Skin?
+
+Где определяется Region?
+
+Где определяется Rarity?
+
+Где card_generator.py получает Lore?
+
+
+============================================================
+2. NEW LORE ARCHITECTURE
+============================================================
+
+Создать многоуровневую систему:
+
+Champion Lore
++
+Skin Lore
++
+Universe Lore
++
+Event Lore
++
+Card Lore
+
+
+Структура:
+
+
+CHAMPION
+    ↓
+SKIN
+    ↓
+UNIVERSE
+    ↓
+EVENT / THEME
+    ↓
+CARD LORE
+
+
+============================================================
+3. CHAMPION LORE
+============================================================
+
+Champion Lore — базовая история персонажа.
+
+Например:
+
+Ahri
+
+
+Это НЕ должно автоматически
+становиться Lore каждой карты Ahri.
+
+
+Champion Lore используется как fallback
+или как базовая информация.
+
+
+Пример структуры:
+
+
+champion_lore:
+
+
+champion_id
+
+
+champion_name
+
+
+region
+
+
+lore_short
+
+
+lore_full
+
+
+source
+
+
+language
+
+
+============================================================
+4. SKIN LORE
+============================================================
+
+Создать отдельный Lore для конкретного образа.
+
+
+Например:
+
+
+Champion:
+
+Ahri
+
+
+Skin:
+
+Spirit Blossom Ahri
+
+
+Skin Lore:
+
+уникальная история этой версии персонажа.
+
+
+ВАЖНО:
+
+Skin Lore должен описывать
+именно этот образ / эту версию персонажа.
+
+
+Не использовать Champion Lore
+как основной Lore,
+если существует Skin Lore.
+
+
+============================================================
+5. UNIVERSE LORE
+============================================================
+
+Создать отдельную сущность:
+
+
+Universe
+
+
+Например:
+
+
+Runeterra
+
+
+Spirit Blossom
+
+
+Star Guardian
+
+
+PROJECT
+
+
+K/DA
+
+
+Arcane
+
+
+High Noon
+
+
+Coven
+
+
+Blood Moon
+
+
+и другие существующие тематические вселенные.
+
+
+Universe должен иметь:
+
+
+universe_id
+
+
+name
+
+
+name_ru
+
+
+name_en
+
+
+description_short
+
+
+description_full
+
+
+source
+
+
+============================================================
+6. EVENT / THEME
+============================================================
+
+Если skin связан с отдельным событием,
+поддерживать:
+
+
+event_id
+
+
+event_name
+
+
+event_lore
+
+
+event_description
+
+
+Например:
+
+
+Spirit Blossom Event
+
+
+Star Guardian Event
+
+
+Это позволит связывать
+несколько карт одной сюжетной линией.
+
+
+============================================================
+7. CARD-SPECIFIC LORE
+============================================================
+
+Каждая карта может иметь
+уникальный Card Lore.
+
+
+Это самый приоритетный Lore.
+
+
+Priority:
+
+
+1. card_lore
+
+
+2. skin_lore
+
+
+3. universe_lore
+
+
+4. champion_lore
+
+
+5. fallback
+
+
+То есть:
+
+
+Card
+
+
+↓
+
+
+есть card_lore?
+
+
+YES → использовать его
+
+
+NO
+
+
+↓
+
+
+есть skin_lore?
+
+
+YES → использовать его
+
+
+NO
+
+
+↓
+
+
+есть universe_lore?
+
+
+YES → использовать его
+
+
+NO
+
+
+↓
+
+
+Champion Lore
+
+
+============================================================
+8. VERY IMPORTANT — RARITY
+============================================================
+
+Rarity сама по себе НЕ должна
+создавать совершенно другую биографию
+персонажа.
+
+
+Но редкость может влиять
+на глубину и формулировку Lore.
+
+
+Например:
+
+
+Common:
+
+короткий Lore.
+
+
+Rare:
+
+немного более подробный.
+
+
+Epic:
+
+более атмосферный.
+
+
+Legendary:
+
+уникальная история образа.
+
+
+Mythic:
+
+особая легендарная интерпретация.
+
+
+Prestige:
+
+премиальная версия.
+
+
+Ultimate:
+
+расширенный Lore,
+если у образа есть собственная история.
+
+
+НЕ придумывать новую вселенную
+только потому, что карта Ultimate.
+
+
+============================================================
+9. EXAMPLE
+============================================================
+
+Плохо:
+
+
+Common Ahri:
+
+"Ahri is a vastaya..."
+
+Ultimate Ahri:
+
+"Ahri is a vastaya..."
+
+
+Это неправильно.
+
+
+Нужно:
+
+
+Common Ahri:
+
+
+короткий Lore базовой Ahri.
+
+
+Legendary Ahri:
+
+
+Lore конкретного legendary skin.
+
+
+Ultimate Ahri:
+
+
+Lore конкретной Ultimate версии.
+
+
+============================================================
+10. LORE ON CARD
+============================================================
+
+На самой карте показывать
+короткий Lore.
+
+
+Рекомендуемый размер:
+
+
+Common:
+
+1–2 предложения.
+
+
+Rare:
+
+1–2 предложения.
+
+
+Epic:
+
+2 предложения.
+
+
+Legendary:
+
+2–3 предложения.
+
+
+Mythic:
+
+2–3 предложения.
+
+
+Prestige:
+
+2–3 предложения.
+
+
+Ultimate:
+
+2–4 предложения.
+
+
+Lore должен быть коротким,
+чтобы не ломать дизайн карты.
+
+
+============================================================
+11. LORE STYLE
+============================================================
+
+Lore должен быть:
+
+- атмосферным;
+- коротким;
+- связанным с персонажем;
+- связанным с конкретным образом;
+- связанным с его вселенной;
+- написанным как игровой lore;
+- без сухой энциклопедической подачи.
+
+
+НЕ писать:
+
+
+"Ahri is a champion from Ionia."
+
+
+Это слишком сухо.
+
+
+Лучше:
+
+
+"В Ионии Ари идёт по следу собственного прошлого,
+пытаясь понять природу силы, которую она носит внутри."
+
+
+Это пример стиля,
+а не обязательный финальный текст.
+
+
+============================================================
+12. LANGUAGE SYSTEM
+============================================================
+
+ILTA поддерживает:
+
+
+Russian
+
+
+English
+
+
+Поэтому Lore должен храниться
+отдельно для каждого языка.
+
+
+Например:
+
+
+lore_ru
+
+
+lore_en
+
+
+НЕ использовать автоматический
+перевод во время генерации карты.
+
+
+Переводы должны храниться
+в data.
+
+
+============================================================
+13. DATA FORMAT
+============================================================
+
+Создать отдельную структуру.
+
+
+Например:
+
+
+data/lore/
+
+
+champions.json
+
+
+skins.json
+
+
+universes.json
+
+
+events.json
+
+
+cards.json
+
+
+Возможная структура:
+
+
+cards.json
+
+
+{
+
+
+    "ahri_ultimate_01": {
+
+
+        "champion": "Ahri",
+
+
+        "skin": "Immortalized Legend Ahri",
+
+
+        "universe": "Runeterra",
+
+
+        "rarity": "Ultimate",
+
+
+        "lore_ru": "...",
+
+
+        "lore_en": "...",
+
+
+        "source": "adapted"
+
+
+    }
+
+
+}
+
+
+============================================================
+14. SKIN DATA
+============================================================
+
+Skins should support:
+
+
+skin_id
+
+
+champion_id
+
+
+name
+
+
+universe_id
+
+
+lore_ru
+
+
+lore_en
+
+
+source
+
+
+Например:
+
+
+{
+
+
+    "skin_id": "ahri_spirit_blossom",
+
+
+    "champion_id": "ahri",
+
+
+    "name": "Spirit Blossom Ahri",
+
+
+    "universe_id": "spirit_blossom",
+
+
+    "lore_ru": "...",
+
+
+    "lore_en": "...",
+
+
+    "source": "adapted"
+
+
+}
+
+
+============================================================
+15. UNIVERSE DATA
+============================================================
+
+Example:
+
+
+{
+
+
+    "universe_id": "spirit_blossom",
+
+
+    "name": "Spirit Blossom",
+
+
+    "description_ru": "...",
+
+
+    "description_en": "..."
+
+
+}
+
+
+============================================================
+16. CARD DATABASE
+============================================================
+
+If cards are stored in PostgreSQL,
+extend the existing schema instead of
+creating a second card table.
+
+
+Possible fields:
+
+
+lore_id
+
+
+lore_override_ru
+
+
+lore_override_en
+
+
+universe_id
+
+
+skin_id
+
+
+event_id
+
+
+Do NOT duplicate existing
+champion / skin / rarity fields.
+
+
+Use foreign keys where appropriate.
+
+
+============================================================
+17. LORE SERVICE
+============================================================
+
+Create:
+
+
+services/lore_service.py
+
+
+The service should provide:
+
+
+get_champion_lore()
+
+
+get_skin_lore()
+
+
+get_universe_lore()
+
+
+get_event_lore()
+
+
+get_card_lore()
+
+
+resolve_card_lore()
+
+
+For normal card generation
+the main function should be:
+
+
+resolve_card_lore(
+    champion_id,
+    skin_id,
+    card_id,
+    universe_id=None,
+    event_id=None,
+    rarity=None,
+    language="ru"
+)
+
+
+============================================================
+18. LORE RESOLUTION
+============================================================
+
+Implement:
+
+
+resolve_card_lore()
+
+
+Priority:
+
+
+CARD OVERRIDE
+
+
+↓
+
+
+SKIN LORE
+
+
+↓
+
+
+EVENT LORE
+
+
+↓
+
+
+UNIVERSE LORE
+
+
+↓
+
+
+CHAMPION LORE
+
+
+↓
+
+
+Fallback
+
+
+But do NOT simply return
+Universe Lore as card Lore.
+
+
+Universe Lore should be used
+only when no more specific Lore exists.
+
+
+============================================================
+19. CARD GENERATOR
+============================================================
+
+Modify:
+
+
+card_generator.py
+
+
+Current:
+
+
+lore = champion.lore
+
+
+must be removed/replaced.
+
+
+Use:
+
+
+lore = lore_service.resolve_card_lore(...)
+
+
+The generator should receive:
+
+
+champion
+
+
+skin
+
+
+rarity
+
+
+region
+
+
+card_id
+
+
+language
+
+
+universe
+
+
+event
+
+
+Then automatically resolve
+the correct Lore.
+
+
+============================================================
+20. CARD LORE LENGTH CONTROL
+============================================================
+
+Create a validation function:
+
+
+validate_lore_length()
+
+
+It should check:
+
+maximum characters
+
+
+maximum lines
+
+
+maximum words
+
+
+depending on card design.
+
+
+Example:
+
+
+MAX_LORE_CHARS = 220
+
+
+MAX_LORE_LINES = 4
+
+
+These values must be configurable.
+
+
+If Lore is too long:
+
+
+1. try shorter version;
+
+
+2. reduce font size slightly;
+
+
+3. wrap text;
+
+
+4. NEVER allow text outside
+the Lore container.
+
+
+============================================================
+21. NO TEXT OVERFLOW
+============================================================
+
+CRITICAL:
+
+
+Lore must never:
+
+- leave the container;
+- overlap icons;
+- overlap borders;
+- overlap stats;
+- clip outside the card.
+
+
+Use existing card generator
+text wrapping system if available.
+
+
+Do NOT rewrite it unnecessarily.
+
+
+============================================================
+22. FULL LORE VIEW
+============================================================
+
+Add a detailed Lore view
+for the Discord bot.
+
+
+When user selects a card:
+
+
+🃏 CARD
+
+
+[Card Image]
+
+
+Ahri
+
+
+Spirit Blossom Ahri
+
+
+Legendary
+
+
+Then button:
+
+
+📖 Lore
+
+
+opens:
+
+
+📖 CARD LORE
+
+
+[full adapted Lore]
+
+
+🌌 UNIVERSE
+
+
+[Universe description]
+
+
+👤 CHAMPION
+
+
+[Champion short lore]
+
+
+This should be an interaction
+editing the existing message,
+not a new message if possible.
+
+
+============================================================
+23. CARD LORE UI
+============================================================
+
+Create:
+
+
+CardLoreView
+
+
+Buttons:
+
+
+📖 Lore
+
+
+🌌 Universe
+
+
+👤 Champion
+
+
+⬅️ Back
+
+
+The user can switch between
+these sections.
+
+
+============================================================
+24. COLLECTION
+============================================================
+
+When viewing a card in Collection:
+
+
+Show:
+
+
+Card
+
+
+Name
+
+
+Skin
+
+
+Rarity
+
+
+Region
+
+
+Lore
+
+
+Universe
+
+
+Owned quantity
+
+
+If duplicate:
+
+
+Duplicate
+
+
+Card Shards available
+
+
+============================================================
+25. LORE DISCOVERY
+============================================================
+
+A player should be able to
+discover lore while collecting cards.
+
+
+For example:
+
+
+new card:
+
+
+🆕 NEW CARD
+
+
+📖 Lore discovered
+
+
+This creates additional
+collection value.
+
+
+============================================================
+26. LORE COMPLETION
+============================================================
+
+Future-ready support for:
+
+
+Lore collection.
+
+
+Example:
+
+
+📖 LORE
+
+
+Discovered:
+
+
+286 / 500
+
+
+This does NOT need to be
+fully implemented if it would
+require major database changes,
+but architecture should support it.
+
+
+============================================================
+27. SOURCES
+============================================================
+
+For factual lore research,
+prefer authoritative sources.
+
+
+Primary source priority:
+
+
+1. Official Riot / League of Legends
+2. Official Legends of Runeterra
+3. Official event / universe material
+4. Reliable community references
+   only when official information
+   is unavailable.
+
+
+Do NOT blindly copy text.
+
+
+============================================================
+28. COPYRIGHT / TEXT HANDLING
+============================================================
+
+IMPORTANT:
+
+
+Do NOT copy large official
+biographies verbatim.
+
+
+Use official material as factual
+reference and create concise
+original/adapted summaries for ILTA.
+
+
+Store:
+
+
+source = "official"
+
+
+or:
+
+
+source = "adapted"
+
+
+or:
+
+
+source = "original"
+
+
+Do not pretend original ILTA text
+is official Riot text.
+
+
+============================================================
+29. MISSING LORE
+============================================================
+
+Some skins may not have
+an explicit official biography.
+
+
+Do NOT invent fake official lore.
+
+
+Mark:
+
+
+source = "missing"
+
+
+Then either:
+
+
+use Champion Lore as fallback
+
+
+or create an ILTA original adaptation
+marked:
+
+
+source = "original"
+
+
+Do not present original ILTA lore
+as official Riot lore.
+
+
+============================================================
+30. LORE ADMIN TOOLS
+============================================================
+
+Create developer/admin tools
+for managing lore.
+
+
+Examples:
+
+
+/lore card
+
+
+/lore skin
+
+
+/lore champion
+
+
+or preferably integrate
+into existing admin interface.
+
+
+Admin should be able to:
+
+
+view
+
+
+edit
+
+
+validate
+
+
+reload
+
+
+preview
+
+
+Lore.
+
+
+============================================================
+31. LORE PREVIEW
+============================================================
+
+Create a development preview:
+
+
+Card
+
+
++
+
+
+resolved Lore
+
+
++
+
+
+character count
+
+
++
+
+
+line count
+
+
+Example:
+
+
+CARD:
+
+
+Ultimate Ahri
+
+
+RESOLVED LORE:
+
+
+...
+
+
+Characters:
+
+
+184 / 220
+
+
+Lines:
+
+
+3 / 4
+
+
+Status:
+
+
+✓ VALID
+
+
+============================================================
+32. BULK LORE IMPORT
+============================================================
+
+Support importing Lore
+from JSON.
+
+
+Example:
+
+
+data/lore/cards.json
+
+
+This is important because
+hundreds/thousands of cards
+will eventually exist.
+
+
+Do NOT hardcode Lore
+inside card_generator.py.
+
+
+============================================================
+33. CACHE
+============================================================
+
+Lore data can be cached
+after loading.
+
+
+Do not read JSON from disk
+for every card generation.
+
+
+Load once and cache.
+
+
+If admin reloads lore:
+
+
+invalidate cache.
+
+
+============================================================
+34. PERFORMANCE
+============================================================
+
+Generating cards should remain fast.
+
+
+Do not perform web requests
+during normal card generation.
+
+
+Do not query external websites
+every time a card is generated.
+
+
+Lore must be local data.
+
+
+============================================================
+35. INITIAL DATA
+============================================================
+
+Create the architecture first.
+
+
+Then populate a small test set:
+
+
+Ahri
+
+
+Diana
+
+
+Amumu
+
+
+Garen
+
+
+Lux
+
+
+Yasuo
+
+
+Use several skins for testing.
+
+
+For example:
+
+
+Base
+
+
+Rare skin
+
+
+Legendary skin
+
+
+Ultimate skin
+
+
+The goal is to verify that
+different skins produce
+different Lore.
+
+
+============================================================
+36. TEST
+============================================================
+
+Create tests:
+
+
+test_champion_lore()
+
+
+test_skin_lore()
+
+
+test_universe_lore()
+
+
+test_card_lore_override()
+
+
+test_lore_priority()
+
+
+test_language()
+
+
+test_lore_length()
+
+
+test_missing_lore()
+
+
+test_card_generator_integration()
+
+
+============================================================
+37. CRITICAL TEST
+============================================================
+
+This must pass:
+
+
+Generate:
+
+
+Common Ahri
+
+
+Legendary Ahri
+
+
+Ultimate Ahri
+
+
+with different skins.
+
+
+Expected:
+
+
+Common Ahri
+→ Champion/Base Lore
+
+
+Legendary Ahri
+→ Legendary Skin Lore
+
+
+Ultimate Ahri
+→ Ultimate Skin Lore
+
+
+They MUST NOT all contain
+the same Lore.
+
+
+============================================================
+38. FINAL ARCHITECTURE
+============================================================
+
+Recommended:
+
+
+data/
+
+
+    lore/
+
+
+        champions.json
+
+
+        skins.json
+
+
+        universes.json
+
+
+        events.json
+
+
+        cards.json
+
+
+services/
+
+
+    lore_service.py
+
+
+generators/
+
+
+    card_generator.py
+
+
+ui/
+
+
+    card_lore_view.py
+
+
+tests/
+
+
+    test_lore.py
+
+
+============================================================
+39. DO NOT BREAK EXISTING SYSTEM
+============================================================
+
+Do NOT break:
+
+
+- card_generator.py
+- existing card generation
+- card database
+- card collection
+- packs
+- chests
+- inventory
+- economy
+- translations
+- region system
+- rarity system
+- Discord /menu
+- existing assets.
+
+
+Extend existing functionality.
+
+
+Do not create duplicate systems.
+
+
+============================================================
+40. FINAL RESULT
+============================================================
+
+The final ILTA card system must work like:
+
+
+CHAMPION
+
+
+↓
+
+
+SKIN
+
+
+↓
+
+
+UNIVERSE
+
+
+↓
+
+
+EVENT
+
+
+↓
+
+
+CARD
+
+
+↓
+
+
+UNIQUE LORE
+
+
+The same champion can therefore
+have completely different Lore
+depending on the card and skin.
+
+
+Example:
+
+
+Ahri Base
+→ Base Lore
+
+
+Spirit Blossom Ahri
+→ Spirit Blossom Lore
+
+
+Star Guardian Ahri
+→ Star Guardian Lore
+
+
+K/DA Ahri
+→ K/DA Universe Lore
+
+
+Ultimate Ahri
+→ Ultimate-specific Lore
+
+
+============================================================
+END
+============================================================
