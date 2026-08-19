@@ -402,3 +402,4759 @@ Crystals:
 10. Возможность расширения через DLC.
 
 Создай систему уровня AAA MMORPG, адаптированную под Discord RPG.
+
+============================================================
+ILTA — COMPLETE SHOP + INVENTORY + PACKS + CHESTS SYSTEM
+============================================================
+
+IMPORTANT
+============================================================
+
+Не переписывать существующую архитектуру проекта
+без необходимости.
+
+Сначала проанализировать текущий код проекта:
+
+- структуру папок;
+- database;
+- services;
+- cogs;
+- UI;
+- card_generator.py;
+- существующие Pack/Chest системы;
+- существующие assets;
+- существующие economy;
+- существующие inventory;
+- существующие card systems.
+
+Нужно интегрировать новую систему
+в существующий проект.
+
+НЕ создавать дублирующие системы,
+если функциональность уже существует.
+
+Использовать существующие модели,
+services и database там, где это возможно.
+
+
+============================================================
+1. MAIN GOAL
+============================================================
+
+Создать полноценную AAA-style систему:
+
+
+SHOP
++
+INVENTORY
++
+PACKS
++
+CHESTS
++
+CONTAINER PREVIEW
++
+DROP RATES
++
+PITY
++
+PURCHASE FLOW
++
+OPENING FLOW
++
+GRID/LIST INVENTORY
+
+
+Основной UX должен работать
+через /menu и кнопки.
+
+Пользователь не должен
+запоминать отдельные команды.
+
+
+============================================================
+2. MAIN STRUCTURE
+============================================================
+
+/menu
+    ↓
+💰 Economy
+    ↓
+🏪 Shop
+
+
+или:
+
+
+/menu
+    ↓
+🎒 Inventory
+
+
+Shop и Inventory должны быть
+связаны.
+
+
+SHOP
+↓
+BUY
+↓
+INVENTORY
+↓
+OPEN / USE / EQUIP
+↓
+GAME SYSTEM
+
+
+============================================================
+3. SHOP MAIN MENU
+============================================================
+
+Shop должен иметь категории:
+
+
+🔥 Featured
+
+🎁 Packs
+
+🎁 Chests
+
+🧰 Items
+
+🎨 Cosmetics
+
+🏷️ Titles
+
+🔑 Keys
+
+🧩 Materials
+
+🎉 Event Shop
+
+
+Не выводить всё огромным
+списком.
+
+
+Использовать Select Menu
+для выбора категории.
+
+
+============================================================
+4. SHOP UI
+============================================================
+
+Главный экран:
+
+
+🏪 ILTA SHOP
+
+
+Показывать баланс:
+
+
+🪙 Coins: 15,400
+
+🧩 Card Shards: 2,840
+
+
+Далее:
+
+
+🔥 Featured
+
+
+[商品 preview]
+
+
+Категории:
+
+
+[ 🎁 Packs ▼ ]
+
+
+Использовать:
+
+
+discord.ui.Select
+
+
+============================================================
+5. FEATURED SHOP
+============================================================
+
+Featured показывает
+ограниченный набор товаров.
+
+
+Например:
+
+
+🔥 FEATURED
+
+
+🎁 Mythic Pack
+
+[PACK IMAGE]
+
+
+🪙 5,000
+
+
+🌸 Ionia Profile Frame
+
+[FRAME IMAGE]
+
+
+🪙 3,000
+
+
+🏷️ Spirit Walker
+
+[TITLE IMAGE]
+
+
+🪙 2,000
+
+
+Каждый item кликабельный.
+
+
+============================================================
+6. SHOP PRODUCT PREVIEW
+============================================================
+
+Каждый товар должен иметь
+отдельный Preview.
+
+
+Preview должен содержать:
+
+
+IMAGE
+
+
+NAME
+
+
+RARITY
+
+
+DESCRIPTION
+
+
+PRICE
+
+
+OWNED
+
+
+AVAILABLE CONTENT
+
+
+ACTIONS
+
+
+Например:
+
+
+[ PACK IMAGE ]
+
+
+🎁 LEGENDARY PACK
+
+
+5 Cards
+
+
+All Runeterra Regions
+
+
+Description:
+
+
+A premium card pack containing
+5 collectible cards.
+
+
+Price:
+
+
+🪙 5,000
+
+
+Buttons:
+
+
+🛒 Buy
+
+
+📊 Drop Rates
+
+
+🎯 Pity
+
+
+⬅️ Back
+
+
+============================================================
+7. PACK PREVIEW
+============================================================
+
+Для Pack обязательно показывать:
+
+
+- изображение Pack;
+- название;
+- rarity;
+- описание;
+- количество карт;
+- регион;
+- возможные редкости;
+- Drop Rates;
+- Guaranteed Reward;
+- Pity;
+- цену.
+
+
+Пример:
+
+
+🎁 LEGENDARY PACK
+
+
+[PACK IMAGE]
+
+
+5 Cards
+
+
+Region:
+
+
+All Runeterra
+
+
+Possible Rarities:
+
+
+Common
+Rare
+Epic
+Legendary
+Mythic
+Prestige
+Ultimate
+
+
+Price:
+
+
+🪙 5,000
+
+
+Buttons:
+
+
+🛒 Buy
+
+
+📊 Drop Rates
+
+
+🎯 Pity
+
+
+⬅️ Back
+
+
+============================================================
+8. CHEST PREVIEW
+============================================================
+
+Для Chest использовать
+такой же Preview.
+
+
+Показывать:
+
+
+[CHEST IMAGE]
+
+
+🎁 MYTHIC CHEST
+
+
+Description
+
+
+Possible Rewards:
+
+
+🃏 Cards
+
+🪙 Coins
+
+🧩 Card Shards
+
+🎁 Packs
+
+✨ Special Items
+
+
+Buttons:
+
+
+🛒 Buy / 🔓 Open
+
+
+📊 Drop Rates
+
+
+⬅️ Back
+
+
+============================================================
+9. PACK IMAGE SYSTEM
+============================================================
+
+Все изображения Pack
+уже существуют в assets.
+
+
+Сначала найти существующие
+assets в проекте.
+
+
+НЕ создавать новые изображения.
+
+
+НЕ дублировать assets.
+
+
+Использовать существующую
+структуру проекта.
+
+
+Если структура уже существует,
+сохранить её.
+
+
+Возможная структура:
+
+
+assets/
+    packs/
+        common.png
+        rare.png
+        epic.png
+        legendary.png
+        mythic.png
+        prestige.png
+        ultimate.png
+
+        ionia.png
+        demacia.png
+        noxus.png
+        freljord.png
+
+
+Но НЕ создавать эти файлы,
+если они уже находятся
+в другой директории.
+
+
+============================================================
+10. CHEST ASSETS
+============================================================
+
+Использовать существующие
+Chest assets.
+
+
+Поддержать:
+
+
+closed image
+
+
+и при наличии:
+
+
+opened image
+
+
+Например:
+
+
+closed_chest.png
+
+
+opened_chest.png
+
+
+Если opened asset отсутствует,
+использовать обычный asset.
+
+
+============================================================
+11. DATA MODEL — PACK
+============================================================
+
+Каждый Pack должен иметь
+data-driven configuration.
+
+
+Fields:
+
+
+pack_id
+
+
+name
+
+
+name_ru
+
+
+name_en
+
+
+description
+
+
+description_ru
+
+
+description_en
+
+
+image
+
+
+rarity
+
+
+region
+
+
+price
+
+
+currency
+
+
+cards_count
+
+
+drop_table
+
+
+guaranteed_rules
+
+
+pity_rules
+
+
+available
+
+
+category
+
+
+event_id
+
+
+season_id
+
+
+Не hardcode эти данные
+в Discord Cog.
+
+
+============================================================
+12. DATA MODEL — CHEST
+============================================================
+
+Chest:
+
+
+chest_id
+
+
+name
+
+
+name_ru
+
+
+name_en
+
+
+description
+
+
+description_ru
+
+
+description_en
+
+
+image
+
+
+opened_image
+
+
+rarity
+
+
+region
+
+
+price
+
+
+currency
+
+
+reward_table
+
+
+drop_table
+
+
+guaranteed_rules
+
+
+pity_rules
+
+
+available
+
+
+category
+
+
+event_id
+
+
+season_id
+
+
+============================================================
+13. CONTAINER SYSTEM
+============================================================
+
+Pack и Chest должны
+использовать общую концепцию:
+
+
+Container
+
+
+Types:
+
+
+PACK
+
+
+CHEST
+
+
+EVENT_PACK
+
+
+EVENT_CHEST
+
+
+BOSS_CHEST
+
+
+REGION_PACK
+
+
+RARITY_PACK
+
+
+SEASON_PACK
+
+
+Не создавать отдельную
+логику для каждого типа.
+
+
+Использовать общий:
+
+
+ContainerPreview
+
+
+ContainerService
+
+
+ContainerOpeningService
+
+
+============================================================
+14. CONTAINER PREVIEW
+============================================================
+
+Создать reusable:
+
+
+ContainerPreviewView
+
+
+Он автоматически отображает:
+
+
+Image
+
+
+Name
+
+
+Rarity
+
+
+Description
+
+
+Region
+
+
+Contents
+
+
+Price
+
+
+Drop Rates
+
+
+Guaranteed
+
+
+Pity
+
+
+Owned
+
+
+Actions
+
+
+Пример:
+
+
+ContainerPreview
+
+
+↓
+
+[IMAGE]
+
+
+↓
+
+Title
+
+
+↓
+
+Description
+
+
+↓
+
+Information
+
+
+↓
+
+Buttons
+
+
+============================================================
+15. INVENTORY
+============================================================
+
+Создать полноценный Inventory.
+
+
+Главный экран:
+
+
+🎒 INVENTORY
+
+
+🪙 Coins: 15,400
+
+
+🧩 Card Shards: 2,840
+
+
+Category:
+
+
+[ 🧰 Items ▼ ]
+
+
+View:
+
+
+[▦ Grid] [☷ List]
+
+
+Search:
+
+
+[ 🔎 Search ]
+
+
+============================================================
+16. INVENTORY CATEGORIES
+============================================================
+
+Поддержать:
+
+
+🃏 Cards
+
+
+🎁 Packs
+
+
+🎁 Chests
+
+
+🧰 Items
+
+
+🎨 Cosmetics
+
+
+🏷️ Titles
+
+
+🔑 Keys
+
+
+🧩 Materials
+
+
+Не показывать всё одновременно.
+
+
+Использовать Select Menu.
+
+
+============================================================
+17. INVENTORY LIST VIEW
+============================================================
+
+List View должен быть
+удобен на мобильном устройстве.
+
+
+Пример:
+
+
+🎒 ITEMS
+
+
+❤️ Health Potion
+Restores 25% HP
+×12
+
+
+⭐ XP Boost
++25% XP
+×4
+
+
+🔑 Rare Chest Key
+×7
+
+
+🎟️ Event Ticket
+×3
+
+
+Каждый item selectable.
+
+
+Показывать:
+
+
+icon
+
+
+name
+
+
+description
+
+
+quantity
+
+
+rarity
+
+
+NEW
+
+
+Equipped
+
+
+============================================================
+18. INVENTORY GRID VIEW
+============================================================
+
+Добавить квадратную сетку.
+
+
+Recommended:
+
+
+2 × 2
+
+
+для mobile-friendly интерфейса.
+
+
+Пример:
+
+
+┌─────────┐ ┌─────────┐
+│         │ │         │
+│  IMAGE  │ │  IMAGE  │
+│         │ │         │
+│      ×12│ │       ×4│
+└─────────┘ └─────────┘
+
+
+┌─────────┐ ┌─────────┐
+│         │ │         │
+│  IMAGE  │ │  IMAGE  │
+│         │ │         │
+│       ×7│ │       ×3│
+└─────────┘ └─────────┘
+
+
+Использовать реальные
+локальные PNG assets.
+
+
+НЕ использовать Discord emoji,
+если существует локальный asset.
+
+
+============================================================
+19. GRID / LIST SWITCH
+============================================================
+
+Buttons:
+
+
+▦ Grid
+
+
+☷ List
+
+
+При переключении
+не создавать новое сообщение.
+
+
+Использовать:
+
+
+interaction.edit_message()
+
+
+Сохранять пользовательскую
+настройку:
+
+
+inventory_view
+
+
+values:
+
+
+grid
+
+
+list
+
+
+При следующем открытии
+использовать последний
+выбранный режим.
+
+
+============================================================
+20. INVENTORY PAGINATION
+============================================================
+
+Для длинных списков:
+
+
+⬅️ Previous
+
+
+Page 1 / 10
+
+
+➡️ Next
+
+
+Не показывать сотни
+предметов одновременно.
+
+
+============================================================
+21. INVENTORY SEARCH
+============================================================
+
+Добавить:
+
+
+🔎 Search
+
+
+Использовать Modal.
+
+
+Пользователь вводит:
+
+
+Potion
+
+
+или:
+
+
+Ionia
+
+
+или:
+
+
+Garen
+
+
+Результаты фильтруются.
+
+
+============================================================
+22. INVENTORY FILTERS
+============================================================
+
+Поддержать:
+
+
+Category
+
+
+Rarity
+
+
+Region
+
+
+New
+
+
+Owned
+
+
+Equipped
+
+
+Duplicates
+
+
+Favorites
+
+
+============================================================
+23. ITEM QUANTITY
+============================================================
+
+Количество всегда отображать
+в нижнем правом углу icon.
+
+
+Например:
+
+
+[ ITEM IMAGE ]
+
+
+             ×12
+
+
+Количество должно быть
+частью визуального UI.
+
+
+Если используется
+generated inventory image,
+quantity должен быть
+overlay поверх icon.
+
+
+============================================================
+24. NEW BADGE
+============================================================
+
+Новые предметы:
+
+
+✨ NEW
+
+
+После просмотра item:
+
+
+NEW flag снимается.
+
+
+Хранить состояние
+в database.
+
+
+============================================================
+25. EQUIPPED
+============================================================
+
+Для cosmetics:
+
+
+✓ EQUIPPED
+
+
+Например:
+
+
+🌸 Ionia Frame
+
+
+Owned
+
+
+✓ Equipped
+
+
+============================================================
+26. ITEM DETAILS
+============================================================
+
+При выборе item:
+
+
+[ITEM IMAGE]
+
+
+NAME
+
+
+RARITY
+
+
+DESCRIPTION
+
+
+OWNED
+
+
+EFFECT
+
+
+ACTIONS
+
+
+Например:
+
+
+❤️ HEALTH POTION
+
+
+Restores 25% HP
+
+
+Owned:
+
+
+×12
+
+
+Buttons:
+
+
+[ Use ]
+
+
+[ Details ]
+
+
+[ Back ]
+
+
+============================================================
+27. PACK IN INVENTORY
+============================================================
+
+Если пользователь купил:
+
+
+🎁 Legendary Pack ×3
+
+
+В Inventory показывать:
+
+
+[PACK IMAGE]
+
+
+🎁 Legendary Pack
+
+
+×3
+
+
+При выборе:
+
+
+[PACK IMAGE]
+
+
+🎁 Legendary Pack
+
+
+Owned: ×3
+
+
+5 Cards
+
+
+All Runeterra
+
+
+Drop Rates
+
+
+Pity
+
+
+Buttons:
+
+
+🔓 Open
+
+
+📊 Drop Rates
+
+
+🎯 Pity
+
+
+⬅️ Back
+
+
+============================================================
+28. CHEST IN INVENTORY
+============================================================
+
+То же самое для Chest.
+
+
+Например:
+
+
+[CHEST IMAGE]
+
+
+🎁 Mythic Chest
+
+
+×2
+
+
+Buttons:
+
+
+🔓 Open
+
+
+📊 Drop Rates
+
+
+⬅️ Back
+
+
+============================================================
+29. DROP RATES
+============================================================
+
+Каждый Pack / Chest
+должен иметь доступный
+Drop Rates экран.
+
+
+Button:
+
+
+📊 Drop Rates
+
+
+Пример:
+
+
+📊 LEGENDARY PACK
+
+
+RARITY:
+
+
+Common
+45.00%
+
+
+Rare
+30.00%
+
+
+Epic
+18.00%
+
+
+Legendary
+5.00%
+
+
+Mythic
+1.50%
+
+
+Prestige
+0.45%
+
+
+Ultimate
+0.05%
+
+
+TOTAL:
+
+
+100%
+
+
+Использовать реальные
+rarity icons/assets,
+если они существуют.
+
+
+============================================================
+30. RARITY SYSTEM
+============================================================
+
+Основные редкости:
+
+
+Common
+
+
+Rare
+
+
+Epic
+
+
+Legendary
+
+
+Mythic
+
+
+Prestige
+
+
+Ultimate
+
+
+Именно этот порядок.
+
+
+============================================================
+31. PITY
+============================================================
+
+Поддержать:
+
+
+Epic
+
+
+Legendary
+
+
+Mythic
+
+
+Prestige
+
+
+Ultimate
+
+
+Recommended initial values:
+
+
+Epic:
+10
+
+
+Legendary:
+20
+
+
+Mythic:
+50
+
+
+Prestige:
+100
+
+
+Ultimate:
+250
+
+
+Все значения должны быть
+configurable.
+
+
+============================================================
+32. PITY UI
+============================================================
+
+Button:
+
+
+🎯 Pity
+
+
+Показывать:
+
+
+Epic
+4 / 10
+
+
+Legendary
+14 / 20
+
+
+Mythic
+31 / 50
+
+
+Prestige
+72 / 100
+
+
+Ultimate
+184 / 250
+
+
+Правильно писать:
+
+
+Guaranteed within X openings
+
+
+а не:
+
+
+Guaranteed in X
+
+
+если это не следующее
+обязательное открытие.
+
+
+============================================================
+33. GUARANTEED REWARDS
+============================================================
+
+Pack может иметь:
+
+
+Guaranteed:
+
+
+Rare or better
+
+
+Legendary or better
+
+
+Mythic or better
+
+
+Prestige or better
+
+
+Ultimate
+
+
+Показывать это
+в Preview.
+
+
+============================================================
+34. SHOP PURCHASE FLOW
+============================================================
+
+User:
+
+
+Shop
+
+
+↓
+
+
+Select Pack
+
+
+↓
+
+
+Preview
+
+
+↓
+
+
+Buy
+
+
+↓
+
+
+Confirmation
+
+
+Example:
+
+
+🛒 PURCHASE
+
+
+🎁 Ionia Pack ×1
+
+
+Price:
+
+
+🪙 1,500
+
+
+Balance:
+
+
+15,400 → 13,900
+
+
+Buttons:
+
+
+✅ Confirm
+
+
+❌ Cancel
+
+
+============================================================
+35. PURCHASE RESULT
+============================================================
+
+После успешной покупки:
+
+
+✅ PURCHASE COMPLETE
+
+
+🎁 Ionia Pack ×1
+
+
+Added to Inventory.
+
+
+Buttons:
+
+
+🎁 Open Now
+
+
+🎒 Inventory
+
+
+🏪 Continue Shopping
+
+
+============================================================
+36. INSUFFICIENT FUNDS
+============================================================
+
+Если недостаточно валюты:
+
+
+❌ NOT ENOUGH COINS
+
+
+Required:
+
+
+🪙 1,500
+
+
+You have:
+
+
+🪙 700
+
+
+Buttons:
+
+
+🏪 Back to Shop
+
+
+============================================================
+37. OPENING SYSTEM
+============================================================
+
+Pack opening должен быть
+ONE MESSAGE EXPERIENCE.
+
+
+НЕ отправлять:
+
+
+Card 1 message
+
+
+Card 2 message
+
+
+Card 3 message
+
+
+Вместо этого:
+
+
+ONE MESSAGE
+
+
+ONE VIEW
+
+
+EDIT MESSAGE
+
+
+============================================================
+38. PACK OPENING FLOW
+============================================================
+
+User:
+
+
+Open Pack
+
+
+↓
+
+
+🎁 LEGENDARY PACK
+
+
+[PACK IMAGE]
+
+
+[ 🔓 Open ]
+
+
+↓
+
+
+Opening state:
+
+
+✨ Opening Pack...
+
+
+[PACK IMAGE]
+
+
+↓
+
+
+Rewards generated
+
+
+↓
+
+
+Card Reveal
+
+
+============================================================
+39. CARD REVEAL
+============================================================
+
+Показывать одну карту.
+
+
+Например:
+
+
+🎉 NEW CARD!
+
+
+CARD 1 / 5
+
+
+[CARD IMAGE]
+
+
+Ahri
+
+
+✨ Ultimate
+
+
+Ionia
+
+
+🆕 NEW
+
+
+Buttons:
+
+
+◀️ Previous
+
+
+▶️ Next
+
+
+🎁 Reveal All
+
+
+🏠 Close
+
+
+============================================================
+40. CARD NAVIGATION
+============================================================
+
+Previous:
+
+
+show previous card.
+
+
+Next:
+
+
+show next card.
+
+
+Не создавать новое сообщение.
+
+
+Использовать:
+
+
+interaction.edit_message()
+
+
+============================================================
+41. REVEAL ALL
+============================================================
+
+После:
+
+
+🎁 Reveal All
+
+
+показать:
+
+
+🎉 PACK COMPLETE
+
+
+Rewards:
+
+
+✨ Ultimate Ahri
+
+
+🔴 Legendary Diana
+
+
+🟣 Epic Amumu
+
+
+⚪ Common Card
+
+
+Buttons:
+
+
+📚 View Collection
+
+
+🎁 Open Another
+
+
+🏠 Home
+
+
+============================================================
+42. DUPLICATES
+============================================================
+
+Если карта уже существует:
+
+
+✨ DUPLICATE
+
+
+Ahri
+
+
+Owned:
+
+
+×3
+
+
+Не конвертировать
+автоматически.
+
+
+Пользователь может
+позже disenchant.
+
+
+Disenchant даёт:
+
+
+🧩 Card Shards
+
+
+============================================================
+43. CHEST OPENING
+============================================================
+
+Chest:
+
+
+Closed
+
+
+↓
+
+
+🔓 Open
+
+
+↓
+
+
+✨ Unlocking...
+
+
+↓
+
+
+Opened Chest
+
+
+↓
+
+
+Rewards
+
+
+Если существуют assets:
+
+
+closed_image
+
+
+opened_image
+
+
+использовать их.
+
+
+============================================================
+44. OPENING VIEW
+============================================================
+
+Создать:
+
+
+PackOpeningView
+
+
+ChestOpeningView
+
+
+Они должны:
+
+
+- хранить current reward;
+- хранить reward list;
+- navigation;
+- user ownership;
+- timeout;
+- error handling.
+
+
+============================================================
+45. USER OWNERSHIP
+============================================================
+
+Opening View должен
+принадлежать пользователю.
+
+
+Если другой пользователь
+нажимает кнопку:
+
+
+❌ This opening belongs
+to another player.
+
+
+Не позволять менять
+состояние открытия.
+
+
+============================================================
+46. TIMEOUT
+============================================================
+
+View timeout:
+
+
+180 seconds
+
+
+После timeout:
+
+
+Buttons disabled
+
+
+⌛ This opening has expired.
+
+
+============================================================
+47. SERVICE ARCHITECTURE
+============================================================
+
+Не помещать business logic
+в Discord UI.
+
+
+Recommended:
+
+
+services/
+
+
+shop_service.py
+
+
+inventory_service.py
+
+
+container_service.py
+
+
+pack_service.py
+
+
+chest_service.py
+
+
+pack_opening_service.py
+
+
+reward_service.py
+
+
+pity_service.py
+
+
+purchase_service.py
+
+
+card_service.py
+
+
+============================================================
+48. UI ARCHITECTURE
+============================================================
+
+Recommended:
+
+
+ui/
+
+
+shop/
+
+
+shop_view.py
+
+
+product_preview.py
+
+
+inventory/
+
+
+inventory_view.py
+
+
+inventory_grid.py
+
+
+inventory_list.py
+
+
+pack/
+
+
+pack_preview.py
+
+
+pack_opening_view.py
+
+
+chest/
+
+
+chest_preview.py
+
+
+chest_opening_view.py
+
+
+components/
+
+
+navigation.py
+
+
+pagination.py
+
+
+confirmation.py
+
+
+filters.py
+
+
+============================================================
+49. IMPORTANT ARCHITECTURE RULE
+============================================================
+
+UI:
+
+
+Button
+
+
+↓
+
+
+Service
+
+
+↓
+
+
+Database
+
+
+↓
+
+
+Result
+
+
+↓
+
+
+UI
+
+
+НЕ:
+
+
+Button
+
+
+↓
+
+
+SQL
+
+
+или:
+
+
+Button
+
+
+↓
+
+
+economy modification
+
+
+Вся бизнес-логика
+должна находиться
+в services.
+
+
+============================================================
+50. DATABASE
+============================================================
+
+Использовать существующие
+таблицы, если они уже есть.
+
+
+Если данных не хватает,
+добавить необходимые поля
+миграциями.
+
+
+Не удалять существующие
+данные.
+
+
+Не создавать duplicate
+inventory system.
+
+
+Inventory должен корректно
+хранить:
+
+
+user_id
+
+
+item_id
+
+
+item_type
+
+
+quantity
+
+
+is_new
+
+
+is_equipped
+
+
+acquired_at
+
+
+metadata
+
+
+============================================================
+51. TRANSACTION SAFETY
+============================================================
+
+Покупка должна быть
+атомарной.
+
+
+Нельзя допустить:
+
+
+- деньги списались,
+  предмет не выдался;
+
+
+- предмет выдался,
+  деньги не списались;
+
+
+- двойную покупку
+  при двойном interaction.
+
+
+Использовать database transaction.
+
+
+============================================================
+52. REWARD TRANSACTION
+============================================================
+
+Открытие Pack/Chest должно
+логироваться.
+
+
+Хранить:
+
+
+user_id
+
+
+container_id
+
+
+container_type
+
+
+reward_id
+
+
+reward_type
+
+
+rarity
+
+
+quantity
+
+
+pity_before
+
+
+pity_after
+
+
+created_at
+
+
+Это необходимо для:
+
+
+debugging
+
+
+support
+
+
+anti-abuse
+
+
+economy analytics
+
+
+============================================================
+53. ASSETS
+============================================================
+
+Перед реализацией:
+
+1. Просмотреть assets.
+2. Найти существующие Pack images.
+3. Найти существующие Chest images.
+4. Найти rarity frames.
+5. Найти rarity icons.
+6. Найти card assets.
+7. Использовать существующие файлы.
+
+
+НЕ генерировать placeholder images,
+если реальные assets уже существуют.
+
+
+============================================================
+54. LOCAL ASSETS
+============================================================
+
+Не использовать внешние URLs
+для игровых изображений.
+
+
+Использовать локальные PNG/JPG/WebP
+из assets.
+
+
+Discord attachment должен
+показывать локальный файл.
+
+
+============================================================
+55. MOBILE FIRST
+============================================================
+
+Основной пользователь —
+мобильный Discord.
+
+
+Поэтому:
+
+
+- максимум 2×2 Grid для Inventory
+  в первой версии;
+- короткие названия;
+- Select Menu для категорий;
+- pagination;
+- минимум текста;
+- крупные изображения;
+- крупные кнопки;
+- не перегружать Embed.
+
+
+============================================================
+56. NAVIGATION
+============================================================
+
+В каждом UI:
+
+
+⬅️ Back
+
+
+🏠 Home
+
+
+❌ Close
+
+
+Не создавать новое сообщение
+при обычной навигации.
+
+
+Использовать:
+
+
+interaction.edit_message()
+
+
+============================================================
+57. EMBED + IMAGE
+============================================================
+
+Для Pack/Chest Preview:
+
+
+Embed
+
+
+title
+
+
+description
+
+
+fields
+
+
+buttons
+
+
+image
+
+
+Изображение Pack/Chest
+должно быть видно
+до покупки/открытия.
+
+
+Не показывать только текст.
+
+
+============================================================
+58. PACK / CHEST IMAGE PRIORITY
+============================================================
+
+Preview должен визуально
+выглядеть примерно:
+
+
+┌─────────────────────────────┐
+│                             │
+│        [ PACK IMAGE ]       │
+│                             │
+├─────────────────────────────┤
+│ 🎁 LEGENDARY PACK           │
+│                             │
+│ 5 Cards                     │
+│ All Runeterra               │
+│                             │
+│ 📊 Drop Rates               │
+│ 🎯 Pity                     │
+│                             │
+│ 🪙 5,000                    │
+└─────────────────────────────┘
+
+
+============================================================
+59. CARD COLLECTION
+============================================================
+
+Cards Collection также должна
+поддерживать Grid View.
+
+
+Использовать реальные
+card images.
+
+
+Recommended:
+
+
+2 columns on mobile.
+
+
+Каждая карта:
+
+
+Card image
+
+
+Rarity
+
+
+Quantity
+
+
+NEW
+
+
+Duplicate
+
+
+При выборе:
+
+
+полноразмерная карта.
+
+
+============================================================
+60. RARITY VISUALS
+============================================================
+
+Использовать существующие
+rarity frames/assets.
+
+
+Common
+
+
+Rare
+
+
+Epic
+
+
+Legendary
+
+
+Mythic
+
+
+Prestige
+
+
+Ultimate
+
+
+Не полагаться только
+на цвет.
+
+
+Особенно:
+
+
+Mythic
+
+
+Prestige
+
+
+Ultimate
+
+
+должны визуально отличаться.
+
+
+============================================================
+61. ERROR HANDLING
+============================================================
+
+Ошибки не должны показывать
+traceback пользователю.
+
+
+Показывать:
+
+
+❌ Something went wrong.
+
+
+Buttons:
+
+
+🔄 Retry
+
+
+⬅️ Back
+
+
+🏠 Home
+
+
+Подробность записывать
+в developer logs.
+
+
+============================================================
+62. SECURITY
+============================================================
+
+Каждый interaction
+проверяет:
+
+
+user_id
+
+
+guild_id
+
+
+permissions
+
+
+Нельзя позволить другому
+пользователю нажать кнопку
+и изменить Inventory.
+
+
+============================================================
+63. DOUBLE CLICK PROTECTION
+============================================================
+
+Кнопки покупки и открытия
+должны временно блокироваться
+после нажатия.
+
+
+Защитить от:
+
+
+double click
+
+
+duplicate transaction
+
+
+double reward
+
+
+============================================================
+64. FINAL SHOP FLOW
+============================================================
+
+
+/menu
+
+
+↓
+
+
+💰 Economy
+
+
+↓
+
+
+🏪 Shop
+
+
+↓
+
+
+🎁 Packs
+
+
+↓
+
+
+Select:
+
+
+Legendary Pack
+
+
+↓
+
+
+Preview:
+
+
+[PACK IMAGE]
+
+
+Description
+
+
+5 Cards
+
+
+Drop Rates
+
+
+Guaranteed
+
+
+Pity
+
+
+Price
+
+
+↓
+
+
+🛒 Buy
+
+
+↓
+
+
+Confirmation
+
+
+↓
+
+
+Purchase
+
+
+↓
+
+
+Inventory
+
+
+↓
+
+
+🎁 Legendary Pack ×1
+
+
+↓
+
+
+🔓 Open
+
+
+↓
+
+
+Card Reveal
+
+
+============================================================
+65. FINAL INVENTORY FLOW
+============================================================
+
+
+/menu
+
+
+↓
+
+
+🎒 Inventory
+
+
+↓
+
+
+Category Select
+
+
+↓
+
+
+Grid / List
+
+
+↓
+
+
+Select Item
+
+
+↓
+
+
+Item Details
+
+
+↓
+
+
+Use / Equip / Open
+
+
+↓
+
+
+Result
+
+
+============================================================
+66. FINAL PACK OPENING FLOW
+============================================================
+
+
+Inventory
+
+
+↓
+
+
+🎁 Legendary Pack
+
+
+↓
+
+
+[PACK IMAGE]
+
+
+↓
+
+
+📊 Drop Rates
+
+
+🎯 Pity
+
+
+🔓 Open
+
+
+↓
+
+
+✨ Opening...
+
+
+↓
+
+
+🎉 CARD 1 / 5
+
+
+[CARD IMAGE]
+
+
+↓
+
+
+▶️ Next
+
+
+↓
+
+
+CARD 2 / 5
+
+
+↓
+
+
+...
+
+
+↓
+
+
+🎉 PACK COMPLETE
+
+
+↓
+
+
+Rewards Summary
+
+
+↓
+
+
+📚 Collection
+
+
+🎁 Open Another
+
+
+🏠 Home
+
+
+============================================================
+67. FINAL CHEST FLOW
+============================================================
+
+
+Inventory
+
+
+↓
+
+
+🎁 Mythic Chest
+
+
+↓
+
+
+[CHEST IMAGE]
+
+
+↓
+
+
+📊 Drop Rates
+
+
+🔓 Open
+
+
+↓
+
+
+✨ Unlocking...
+
+
+↓
+
+
+🎁 REWARDS
+
+
+↓
+
+
+Reward Summary
+
+
+↓
+
+
+🏠 Home
+
+
+============================================================
+68. NO DUPLICATE MESSAGES
+============================================================
+
+CRITICAL:
+
+
+Pack Opening:
+
+
+ONE MESSAGE.
+
+
+Chest Opening:
+
+
+ONE MESSAGE.
+
+
+Inventory navigation:
+
+
+ONE MESSAGE.
+
+
+Shop navigation:
+
+
+ONE MESSAGE.
+
+
+Product Preview:
+
+
+ONE MESSAGE.
+
+
+Использовать:
+
+
+edit_message()
+
+
+где возможно.
+
+
+============================================================
+69. DO NOT BREAK EXISTING SYSTEM
+============================================================
+
+Не ломать:
+
+
+- card_generator.py
+- existing cards
+- card collection
+- economy
+- database
+- packs
+- chests
+- rewards
+- Discord commands
+- localization
+- assets.
+
+
+Перед изменениями проверить
+существующие реализации.
+
+
+Если существующая система
+уже выполняет часть задачи,
+расширить её вместо создания
+второй системы.
+
+
+============================================================
+70. IMPLEMENTATION ORDER
+============================================================
+
+Реализовывать по этапам:
+
+
+STEP 1
+
+
+Analyze current project.
+
+
+STEP 2
+
+
+Analyze existing database.
+
+
+STEP 3
+
+
+Analyze existing Pack/Chest system.
+
+
+STEP 4
+
+
+Analyze existing assets.
+
+
+STEP 5
+
+
+Create/extend services.
+
+
+STEP 6
+
+
+Create ContainerPreview.
+
+
+STEP 7
+
+
+Create Shop.
+
+
+STEP 8
+
+
+Create Inventory List.
+
+
+STEP 9
+
+
+Create Inventory Grid.
+
+
+STEP 10
+
+
+Create Pack Opening.
+
+
+STEP 11
+
+
+Create Chest Opening.
+
+
+STEP 12
+
+
+Add Drop Rates.
+
+
+STEP 13
+
+
+Add Pity UI.
+
+
+STEP 14
+
+
+Add purchase confirmation.
+
+
+STEP 15
+
+
+Add transaction safety.
+
+
+STEP 16
+
+
+Test all flows.
+
+
+============================================================
+71. TEST CHECKLIST
+============================================================
+
+Проверить:
+
+
+[ ] Shop opens.
+
+
+[ ] Inventory opens.
+
+
+[ ] Grid works.
+
+
+[ ] List works.
+
+
+[ ] Search works.
+
+
+[ ] Filters work.
+
+
+[ ] Pagination works.
+
+
+[ ] Pack image appears.
+
+
+[ ] Chest image appears.
+
+
+[ ] Product Preview works.
+
+
+[ ] Drop Rates work.
+
+
+[ ] Pity works.
+
+
+[ ] Purchase works.
+
+
+[ ] Insufficient funds works.
+
+
+[ ] Item added to Inventory.
+
+
+[ ] Pack opens.
+
+
+[ ] Chest opens.
+
+
+[ ] Card navigation works.
+
+
+[ ] Reveal All works.
+
+
+[ ] Duplicate detection works.
+
+
+[ ] Card Shards work.
+
+
+[ ] Transaction is atomic.
+
+
+[ ] Double click protected.
+
+
+[ ] User ownership protected.
+
+
+[ ] Timeout works.
+
+
+[ ] Mobile UI is readable.
+
+
+[ ] Existing systems still work.
+
+
+============================================================
+72. FINAL UX PRINCIPLE
+============================================================
+
+ILTA Shop + Inventory должны
+ощущаться как интерфейс
+полноценной RPG.
+
+
+Не делать:
+
+
+"Discord bot menu with text"
+
+
+Делать:
+
+
+"Game UI inside Discord"
+
+
+Основной принцип:
+
+
+IMAGE FIRST
+
+
+SHORT INFORMATION
+
+
+CLEAR ACTION
+
+
+INTERACTIVE BUTTONS
+
+
+ONE MESSAGE
+
+
+MOBILE FIRST
+
+
+============================================================
+END OF ILTA SHOP + INVENTORY SYSTEM
+============================================================
+
+
+
+============================================================
+ILTA PROFILE CARD GENERATOR
+============================================================
+
+GOAL
+============================================================
+
+Create a complete dynamic player profile card generator
+using the provided profile UI overlay/template.
+
+The provided image is a reusable UI frame.
+
+It must NOT be treated as a finished profile image.
+
+The generator must place dynamic player data underneath
+the decorative overlay.
+
+The final result should look like a premium AAA fantasy RPG
+player profile screen inside Discord.
+
+
+============================================================
+1. TEMPLATE
+============================================================
+
+Use the provided profile template as the main UI overlay.
+
+Current template:
+
+1536 × 864
+
+Aspect ratio:
+
+16:9
+
+Normalize the final rendering to:
+
+1600 × 900
+
+Preserve the exact composition and proportions
+of the template.
+
+Do NOT redesign the UI.
+
+Do NOT move the decorative frames.
+
+Do NOT generate a new layout.
+
+
+============================================================
+2. IMPORTANT LAYER SYSTEM
+============================================================
+
+The profile must be rendered using layers.
+
+Rendering order:
+
+1. Background
+2. Regional atmosphere
+3. Avatar
+4. Favorite Cards
+5. Dynamic icons
+6. Dynamic text
+7. Profile overlay
+8. Final glow/effects
+
+
+The decorative template must remain ABOVE
+the avatar and cards.
+
+This is important because the decorative frames
+must visually surround the inserted content.
+
+
+============================================================
+3. PROFILE BACKGROUND
+============================================================
+
+Background should be independent from the UI overlay.
+
+Possible regional backgrounds:
+
+Ionia
+Demacia
+Noxus
+Freljord
+Shurima
+Targon
+Shadow Isles
+Piltover
+Zaun
+Bilgewater
+and all other supported Runeterra regions.
+
+
+Example:
+
+assets/profile/backgrounds/
+
+
+ionia.png
+
+demacia.png
+
+noxus.png
+
+freljord.png
+
+
+Do NOT hardcode one region.
+
+The background must be selected dynamically
+based on player profile settings.
+
+
+============================================================
+4. AVATAR
+============================================================
+
+Use the user's Discord avatar.
+
+Place it inside the large circular avatar frame
+on the left side.
+
+The avatar must:
+
+- remain centered;
+- preserve aspect ratio;
+- be cropped to a perfect circle;
+- not stretch;
+- not distort.
+
+
+Recommended behavior:
+
+Create circular mask.
+
+Resize avatar using cover scaling.
+
+Apply circular crop.
+
+
+============================================================
+5. AVATAR FRAME
+============================================================
+
+The template already contains
+the decorative avatar frame.
+
+Do NOT create another frame around it.
+
+Do NOT duplicate the frame.
+
+The final layer order must be:
+
+
+Avatar
+
+
+↓
+
+
+Profile Overlay
+
+
+This means the decorative frame remains
+above the avatar.
+
+
+============================================================
+6. USERNAME
+============================================================
+
+Place username in the large upper-center area.
+
+The username must be dynamically rendered.
+
+
+Example:
+
+USERNAME
+
+
+Do not put the username inside the template.
+
+
+Use a premium fantasy font.
+
+
+Recommended:
+
+
+Beaufort
+
+
+or the existing ILTA fantasy font assets.
+
+
+Respect existing project font system.
+
+
+============================================================
+7. PLAYER TITLE
+============================================================
+
+Below username:
+
+
+Player Title
+
+
+Examples:
+
+
+The Wanderer
+
+Card Collector
+
+Veteran
+
+Kingmaker
+
+Mythic Hunter
+
+
+Title must be dynamically rendered.
+
+
+Do not write placeholder text into the template.
+
+
+============================================================
+8. LEVEL
+============================================================
+
+Display:
+
+
+LEVEL 42
+
+
+Use a smaller premium font than username.
+
+
+Level must be dynamically rendered.
+
+
+============================================================
+9. XP BAR
+============================================================
+
+The long horizontal bar under
+the identity area is the XP bar.
+
+
+Render dynamically:
+
+
+current XP
+
+
+required XP
+
+
+percentage
+
+
+Example:
+
+
+18,420 / 24,000 XP
+
+
+The XP fill must be calculated:
+
+
+progress = current_xp / required_xp
+
+
+Do not hardcode the fill.
+
+
+The template already provides
+the decorative border.
+
+
+Only render the inner progress fill.
+
+
+============================================================
+10. CURRENCIES
+============================================================
+
+The profile may display:
+
+
+Gold
+
+
+Card Shards
+
+
+Use existing local ILTA currency icons.
+
+
+Example:
+
+
+[GOLD ICON] 15,400
+
+
+[SHARD ICON] 2,840
+
+
+Do not use Discord emoji
+if local assets exist.
+
+
+============================================================
+11. THREE STAT PANELS
+============================================================
+
+The three small horizontal panels
+in the center are dynamic statistics.
+
+
+Use:
+
+
+Panel 1:
+
+
+Cards
+
+
+Example:
+
+
+286
+
+
+CARDS
+
+
+Panel 2:
+
+
+Battles
+
+
+Example:
+
+
+1,248
+
+
+BATTLES
+
+
+Panel 3:
+
+
+Achievements
+
+
+Example:
+
+
+348
+
+
+ACHIEVEMENTS
+
+
+The values must come from database.
+
+
+Do not hardcode statistics.
+
+
+============================================================
+12. FAVORITE CARDS
+============================================================
+
+The three large vertical slots
+in the lower center are:
+
+Favorite Card 1
+
+Favorite Card 2
+
+Favorite Card 3
+
+
+Use real generated ILTA card images.
+
+
+These cards are generated by:
+
+card_generator.py
+
+
+Do NOT recreate cards.
+
+
+Do NOT generate thumbnails
+unless necessary.
+
+
+Use the existing generated card assets.
+
+
+============================================================
+13. CARD FITTING
+============================================================
+
+This is extremely important.
+
+
+Each favorite card must:
+
+
+- preserve original aspect ratio;
+- never stretch;
+- never distort;
+- fit inside its slot;
+- be centered;
+- remain behind the decorative frame.
+
+
+Recommended:
+
+
+cover or contain depending on slot geometry.
+
+
+The decorative frame must remain visible.
+
+
+Layer order:
+
+
+Card image
+
+
+↓
+
+
+Profile Overlay
+
+
+============================================================
+14. FAVORITE CARD EMPTY STATE
+============================================================
+
+If player has fewer than 3 favorite cards:
+
+
+Do not display placeholder art.
+
+
+Leave the slot empty.
+
+
+The decorative frame remains visible.
+
+
+Example:
+
+
+Player has 1 favorite card:
+
+
+Card 1 = real card
+
+
+Card 2 = empty
+
+
+Card 3 = empty
+
+
+============================================================
+15. KINGDOM PANEL
+============================================================
+
+The lower-left panel should contain
+Kingdom information.
+
+
+Example:
+
+
+Kingdom Name
+
+
+Kingdom Level
+
+
+Kingdom Rank
+
+
+Player Role
+
+
+Kingdom Progress
+
+
+Example data:
+
+
+VALDHEIM
+
+
+Kingdom Lv.18
+
+
+Citizen
+
+
+428 Citizens
+
+
+The panel must use dynamic database values.
+
+
+============================================================
+16. COLLECTION PANEL
+============================================================
+
+The upper-right panel should display
+collection information.
+
+
+Example:
+
+
+Cards
+
+
+286 / 500
+
+
+Frames
+
+
+12 / 40
+
+
+Titles
+
+
+18 / 75
+
+
+Badges
+
+
+24 / 60
+
+
+Keep text compact.
+
+
+Do not overload the panel.
+
+
+============================================================
+17. ACHIEVEMENT PANEL
+============================================================
+
+The lower-right panel should display
+selected achievements.
+
+
+Show up to 3 showcased achievements.
+
+
+Example:
+
+
+Card Collector
+
+
+Veteran
+
+
+Explorer
+
+
+Also show:
+
+
+348 TOTAL
+
+
+Use existing achievement icons/assets
+when available.
+
+
+============================================================
+18. REGION
+============================================================
+
+Player region can be displayed
+as a small decorative element.
+
+
+Example:
+
+
+IONIA
+
+
+But the region text must be generated
+programmatically.
+
+
+Do not put region text in the template.
+
+
+============================================================
+19. PROFILE FRAME
+============================================================
+
+Support profile frame rarity.
+
+
+Existing rarity system:
+
+
+Common
+
+
+Rare
+
+
+Epic
+
+
+Legendary
+
+
+Mythic
+
+
+Prestige
+
+
+Ultimate
+
+
+Profile frame may be selected
+by player.
+
+
+The current template acts as
+the default profile overlay.
+
+
+Future frames must be replaceable
+without changing generator architecture.
+
+
+============================================================
+20. TEMPLATE TRANSPARENCY
+============================================================
+
+IMPORTANT:
+
+
+The provided template currently appears
+to have black empty areas.
+
+
+Do NOT treat the black areas as actual
+profile background.
+
+
+Convert / prepare the overlay so that
+content slots are transparent.
+
+
+Required transparent areas:
+
+
+1. Avatar interior
+
+
+2. Favorite Card 1 interior
+
+
+3. Favorite Card 2 interior
+
+
+4. Favorite Card 3 interior
+
+
+5. XP bar interior
+
+
+Decorative borders must remain opaque.
+
+
+The final overlay should support RGBA.
+
+
+============================================================
+21. BACKGROUND SEPARATION
+============================================================
+
+Do not permanently merge the
+regional background into the overlay.
+
+
+Architecture:
+
+
+background.png
+
+
++
+
+
+profile content
+
+
++
+
+
+profile_overlay.png
+
+
+=
+
+
+final profile.png
+
+
+============================================================
+22. SAFE TEXT AREAS
+============================================================
+
+Text must stay inside
+its intended UI region.
+
+
+Never allow:
+
+
+- text overflow;
+- text clipping;
+- text touching borders;
+- text overlapping cards;
+- text overlapping decorative ornaments.
+
+
+Use automatic font scaling
+when username is too long.
+
+
+============================================================
+23. LONG USERNAME
+============================================================
+
+If username is too long:
+
+
+Automatically reduce font size
+until it fits.
+
+
+Do NOT allow overflow.
+
+
+Example:
+
+
+Short name:
+
+
+large font
+
+
+Long name:
+
+
+smaller font
+
+
+Keep centered/aligned consistently.
+
+
+============================================================
+24. TEXT ALIGNMENT
+============================================================
+
+Use consistent alignment.
+
+
+Username:
+
+center aligned.
+
+
+Title:
+
+center aligned.
+
+
+Level:
+
+center aligned.
+
+
+XP:
+
+center aligned.
+
+
+Statistics:
+
+center aligned.
+
+
+Cards:
+
+centered in their slots.
+
+
+Kingdom:
+
+centered or left aligned
+depending on existing panel geometry.
+
+
+============================================================
+25. COLOR SYSTEM
+============================================================
+
+Use the existing ILTA visual system.
+
+
+Primary:
+
+
+white
+
+
+silver
+
+
+gold
+
+
+violet
+
+
+Secondary:
+
+
+dark purple
+
+
+black
+
+
+Avoid excessive colors.
+
+
+Dynamic rarity colors may be used
+where appropriate.
+
+
+============================================================
+26. ICON SYSTEM
+============================================================
+
+Use local PNG assets.
+
+
+Possible icons:
+
+
+Gold
+
+
+Card Shards
+
+
+Cards
+
+
+Battles
+
+
+Achievements
+
+
+Kingdom
+
+
+Region
+
+
+Titles
+
+
+Do not use random Unicode emoji
+when a proper ILTA icon exists.
+
+
+============================================================
+27. PROFILE DATA
+============================================================
+
+Generator should receive a player object
+or structured profile data.
+
+
+Example:
+
+
+profile = {
+
+
+    username,
+
+
+    avatar,
+
+
+    level,
+
+
+    xp,
+
+
+    xp_required,
+
+
+    gold,
+
+
+    card_shards,
+
+
+    cards_owned,
+
+
+    cards_total,
+
+
+    battles,
+
+
+    achievements_count,
+
+
+    kingdom_name,
+
+
+    kingdom_level,
+
+
+    kingdom_role,
+
+
+    region,
+
+
+    title,
+
+
+    favorite_cards,
+
+
+    showcased_achievements,
+
+
+    profile_frame,
+
+
+    backgrounds,
+
+
+}
+
+
+Do not query database directly
+from drawing functions.
+
+
+============================================================
+28. ARCHITECTURE
+============================================================
+
+Recommended:
+
+
+generators/
+
+
+profile_generator.py
+
+
+profile_layout.py
+
+
+services/
+
+
+profile_service.py
+
+
+database/
+
+
+profile.py
+
+
+assets/
+
+
+profile/
+
+
+    backgrounds/
+
+
+    frames/
+
+
+    icons/
+
+
+    templates/
+
+
+The generator should only render.
+
+
+Database operations belong in services/database.
+
+
+============================================================
+29. LAYOUT CONFIGURATION
+============================================================
+
+DO NOT hardcode coordinates
+throughout profile_generator.py.
+
+
+Create a dedicated layout configuration.
+
+
+Example:
+
+
+PROFILE_LAYOUT = {
+
+
+    "avatar": {
+
+
+        "x": ...,
+
+
+        "y": ...,
+
+
+        "size": ...
+
+
+    },
+
+
+    "username": {
+
+
+        "x": ...,
+
+
+        "y": ...,
+
+
+        "width": ...
+
+
+    },
+
+
+    "title": {
+
+
+        "x": ...,
+
+
+        "y": ...,
+
+
+        "width": ...
+
+
+    },
+
+
+    "level": {
+
+
+        "x": ...,
+
+
+        "y": ...,
+
+
+        "width": ...
+
+
+    },
+
+
+    "xp_bar": {
+
+
+        "x": ...,
+
+
+        "y": ...,
+
+
+        "width": ...,
+
+
+        "height": ...
+
+
+    },
+
+
+    "stat_1": ...,
+
+
+    "stat_2": ...,
+
+
+    "stat_3": ...,
+
+
+    "card_1": ...,
+
+
+    "card_2": ...,
+
+
+    "card_3": ...,
+
+
+    "kingdom": ...,
+
+
+    "collection": ...,
+
+
+    "achievements": ...
+
+
+}
+
+
+============================================================
+30. PROFILE LAYOUT EDITOR
+============================================================
+
+Create a simple development-only
+Profile Layout Editor.
+
+
+Purpose:
+
+
+Visually adjust coordinates
+without editing Python manually.
+
+
+Editor should allow:
+
+
+- move avatar;
+- resize avatar;
+- move username;
+- move title;
+- move level;
+- adjust XP bar;
+- move statistics;
+- move favorite card slots;
+- resize card slots;
+- move Kingdom panel content;
+- move Collection content;
+- move Achievement content.
+
+
+Save:
+
+
+profile_layout.json
+
+
+The generator loads this layout.
+
+
+============================================================
+31. DEBUG MODE
+============================================================
+
+Add:
+
+
+DEBUG_PROFILE = True
+
+
+When enabled:
+
+
+show:
+
+
+- bounding boxes;
+- slot coordinates;
+- avatar mask;
+- card slots;
+- text zones;
+- XP bar zone.
+
+
+This is required for precise positioning.
+
+
+When disabled:
+
+
+all debug lines disappear.
+
+
+============================================================
+32. CARD SLOT DEBUGGING
+============================================================
+
+Because card frames are decorative
+and their exact inner dimensions matter,
+
+
+debug mode must show:
+
+
+CARD 1:
+
+
+x
+
+
+y
+
+
+width
+
+
+height
+
+
+CARD 2:
+
+
+x
+
+
+y
+
+
+width
+
+
+height
+
+
+CARD 3:
+
+
+x
+
+
+y
+
+
+width
+
+
+height
+
+
+This will allow manual alignment
+of the generated cards.
+
+
+============================================================
+33. OUTPUT
+============================================================
+
+Final output:
+
+
+PNG
+
+
+1600 × 900
+
+
+RGBA or RGB depending on final
+background composition.
+
+
+Discord optimized.
+
+
+No unnecessary metadata.
+
+
+============================================================
+34. DISCORD INTEGRATION
+============================================================
+
+Profile should be generated
+when user opens:
+
+
+/menu
+
+
+→
+
+
+Profile
+
+
+or:
+
+
+/profile
+
+
+if the existing command remains.
+
+
+Do not remove existing commands
+unless explicitly required.
+
+
+Use the existing /menu navigation.
+
+
+============================================================
+35. PERFORMANCE
+============================================================
+
+Do not regenerate expensive assets
+unnecessarily.
+
+
+Cache:
+
+
+backgrounds
+
+
+frames
+
+
+fonts
+
+
+icons
+
+
+templates
+
+
+Where safe.
+
+
+Do not cache user-specific final
+profile images indefinitely.
+
+
+============================================================
+36. FINAL DESIGN PRINCIPLE
+============================================================
+
+The profile must look like:
+
+
+AAA RPG PLAYER PROFILE
+
+
+NOT:
+
+
+Discord embed
+
+
+NOT:
+
+
+simple stats card
+
+
+NOT:
+
+
+generic fantasy poster.
+
+
+The template itself provides
+the premium visual frame.
+
+
+Python provides:
+
+
+player identity
+
+
+avatar
+
+
+cards
+
+
+statistics
+
+
+economy
+
+
+Kingdom
+
+
+achievements
+
+
+collection
+
+
+The final result must look
+like a single cohesive game UI.
+
+
+============================================================
+37. IMPORTANT — DO NOT BREAK
+============================================================
+
+Do not break:
+
+
+card_generator.py
+
+
+existing card generation
+
+
+existing card database
+
+
+existing inventory
+
+
+existing economy
+
+
+existing Kingdom system
+
+
+existing localization
+
+
+existing /menu
+
+
+existing assets.
+
+
+Reuse existing functions
+where appropriate.
+
+
+Before modifying anything:
+
+
+ANALYZE THE CURRENT PROJECT.
+
+
+============================================================
+38. FINAL TEST
+============================================================
+
+Test with:
+
+
+1. Short username
+
+
+2. Very long username
+
+
+3. No favorite cards
+
+
+4. One favorite card
+
+
+5. Three favorite cards
+
+
+6. Different regions
+
+
+7. Different profile frames
+
+
+8. Different levels
+
+
+9. Large XP
+
+
+10. Long title
+
+
+11. Missing achievement
+
+
+12. Missing Kingdom
+
+
+13. Mobile Discord preview
+
+
+Ensure:
+
+
+No overflow.
+
+
+No distortion.
+
+
+No overlap.
+
+
+No duplicated frames.
+
+
+No black rectangles
+where transparency is expected.
+
+
+============================================================
+END
+============================================================
