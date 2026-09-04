@@ -1,172 +1,574 @@
-import discord
-from discord.ext import commands
-from discord import app_commands
-import random
+СОЗДАЙ ПОЛНОЦЕННУЮ ЗАСТАВКУ И ГЛАВНОЕ МЕНЮ ДЛЯ МОЕЙ 3D ISOMETRIC COZY FARMING ADVENTURE GAME В UNITY.
 
-from database.cards import add_card
-from data.champion_loader import load_champions
-from data.loot import get_random_rarity
-from generators.card_generator import create_card
+ВАЖНО:
+Используй существующий арт фермы с зайцами как основной background главного меню. Не заменяй его другим изображением. Сохрани его композицию, атмосферу и визуальный стиль.
 
+ЦЕЛЬ:
+Сделать профессиональную cinematic opening sequence + полноценное главное меню уровня коммерческой мобильной игры.
 
-class Pack(commands.Cog):
+========================================
+1. ЗАПУСК ИГРЫ
+========================================
 
-    def __init__(self, bot):
-        self.bot = bot
-        self.champions = load_champions()
+При запуске игры:
 
+BLACK SCREEN
+↓
+плавный Fade In
+↓
+появляется логотип игровой студии AERAVEN GAMES
+↓
+короткая cinematic-анимация логотипа
+↓
+мягкое свечение / частицы / light rays
+↓
+логотип плавно исчезает
+↓
+переход через Fade
+↓
+появляется основной арт фермы с зайцами
+↓
+запускается cinematic-анимация background
+↓
+через 1–2 секунды плавно появляется логотип игры
+↓
+после этого появляются кнопки главного меню.
 
-    @app_commands.command(
-        name="open_pack",
-        description="Открыть пак из 10 карт"
-    )
-    async def open_pack(self, interaction: discord.Interaction):
+Не использовать резкие переходы.
 
-        await interaction.response.defer()
+========================================
+2. AERAVEN GAMES SPLASH
+========================================
 
-        try:
+Создать отдельную сцену:
 
-            if not self.champions:
-                await interaction.followup.send(
-                    "❌ champions.json пустой или не найден!"
-                )
-                return
+BootScene
 
+Содержит:
 
-            await interaction.followup.send(
-                f"🎁 **{interaction.user.name} открыл набор из 10 карт!**"
-            )
+Canvas
+SplashLogo
+Background
+Glow
+Particles
+FadeOverlay
 
+Логотип AERAVEN GAMES должен появляться через Scale + Fade.
 
-            for number in range(10):
+Добавить:
+- мягкое свечение;
+- маленькие частицы;
+- лёгкий cinematic light sweep;
+- очень короткий звук появления.
 
-                # Выбор чемпиона
-                champion_id = random.choice(
-                    list(self.champions.keys())
-                )
+Продолжительность:
+примерно 2–3 секунды.
 
-                champion = self.champions[champion_id]
+После завершения автоматически перейти в MainMenuScene.
 
+Добавить возможность пропустить заставку тапом по экрану.
 
-                # Выбор скина
-                skins = champion.get(
-                    "skins",
-                    [
-                        {
-                            "name": "Classic",
-                            "id": 0
-                        }
-                    ]
-                )
+========================================
+3. MAIN MENU
+========================================
 
+Создать отдельную сцену:
 
-                skin = random.choice(skins)
+MainMenuScene
 
-                skin_name = skin["name"]
-                skin_id = skin["id"]
+Background:
+использовать существующий арт фермы с зайцами.
 
+Не превращать картинку в обычный статичный Image.
 
-                # Редкость
-                rarity = get_random_rarity()
+Создать эффект 2.5D:
 
+Background
+Midground
+Characters
+Foreground
+VFX
 
-                # Статы
-                attack = random.randint(20, 70)
-                health = random.randint(30, 100)
-                defense = random.randint(5, 35)
+Использовать лёгкий Parallax.
 
+Камера должна очень медленно двигаться.
 
-                # Сохраняем карту
-                await add_card(
-                    interaction.user.id,
-                    champion_id,
-                    skin_name,
-                    rarity,
-                    attack,
-                    defense,
-                    health
-                )
+Без сильного zoom.
 
+========================================
+4. АНИМАЦИЯ BACKGROUND
+========================================
 
-                # Embed
-                embed = discord.Embed(
-                    title=f"🎴 {rarity} | {champion_id}",
-                    description=f"✨ Образ: **{skin_name}**",
-                    color=0xFFD700
-                )
+Добавить живость сцене.
 
+Анимировать:
 
-                embed.add_field(
-                    name="⚔️ Атака",
-                    value=str(attack),
-                    inline=True
-                )
+- лёгкое движение листьев;
+- траву;
+- цветы;
+- частицы пыли;
+- светлячков;
+- золотые частицы вокруг пшеницы;
+- свечение золотого колоса;
+- фонари;
+- солнечные лучи;
+- отражения на воде;
+- лёгкое движение облаков.
 
-                embed.add_field(
-                    name="❤️ Здоровье",
-                    value=str(health),
-                    inline=True
-                )
+Все движения должны быть очень мягкими.
 
-                embed.add_field(
-                    name="🛡️ Защита",
-                    value=str(defense),
-                    inline=True
-                )
+Не перегружать сцену эффектами.
 
+========================================
+5. ЗАЙЦЫ
+========================================
 
-                # Ссылка на арт скина
-                safe_name = champion_id.replace(" ", "")
+Зайцы должны выглядеть максимально близко к персонажам игры.
 
+Не делать чрезмерно мультяшными.
 
-                image_url = (
-                    "https://ddragon.leagueoflegends.com/"
-                    "cdn/img/champion/splash/"
-                    f"{safe_name}_{skin_id}.jpg"
-                )
+Добавить subtle animation:
 
+- breathing;
+- blinking;
+- ears movement;
+- tiny head movement;
+- occasional happy reaction.
 
-                # Генерация карточки PNG
-                card_file = create_card(
-                    champion=champion_id,
-                    skin=skin_name,
-                    rarity=rarity,
-                    attack=attack,
-                    health=health,
-                    defense=defense,
-                    image_url=image_url
-                )
+Анимация должна быть естественной и почти незаметной.
 
+Не заставлять зайцев постоянно двигаться.
 
-                # Отправка готовой карты
-                file = discord.File(
-                    card_file
-                )
+========================================
+6. GAME LOGO
+========================================
 
+В центре/верхней центральной области разместить логотип игры.
 
-                embed.set_image(
-                    url=f"attachment://{card_file.split('/')[-1]}"
-                )
+Логотип должен появляться после background.
 
+Animation:
 
-                embed.set_footer(
-                    text=f"Карта {number + 1}/10"
-                )
+Fade In
++
+Scale 0.95 → 1.0
++
+Soft Glow
 
+После появления логотип практически не двигать.
 
-                await interaction.followup.send(
-                    embed=embed,
-                    file=file
-                )
+Он должен хорошо читаться на фоне.
 
+========================================
+7. MAIN MENU UI
+========================================
 
-        except Exception as e:
+Главное меню сделать НЕБОЛЬШИМ.
 
-            await interaction.followup.send(
-                f"❌ Ошибка: {e}"
-            )
+Расположить меню:
 
+В ЛЕВОМ НИЖНЕМ УГЛУ.
 
+Не закрывать зайцев, ферму и главный визуальный центр.
 
-async def setup(bot):
-    await bot.add_cog(Pack(bot))
+Структура:
+
+PLAY
+CONTINUE
+NEW GAME
+LOAD GAME
+SETTINGS
+EXIT
+
+Если игра мобильная:
+
+PLAY
+CONTINUE
+SETTINGS
+
+Остальные пункты спрятать в дополнительное меню.
+
+========================================
+8. СТИЛЬ КНОПОК
+========================================
+
+Использовать стиль игры:
+
+cute premium fantasy farming.
+
+Кнопки:
+
+- мягкие;
+- округлые;
+- pastel;
+- деревянные/кремовые элементы;
+- небольшие декоративные листья;
+- лёгкая тень;
+- subtle glow.
+
+Не делать огромные кнопки.
+
+Размер примерно 280–380 px.
+
+Вертикальный список.
+
+Расстояние между кнопками 10–18 px.
+
+========================================
+9. BUTTON ANIMATION
+========================================
+
+При наведении:
+
+Scale 1.0 → 1.05
+
++
+Soft Glow
+
++
+маленькие particles.
+
+При нажатии:
+
+Scale 1.05 → 0.96 → 1.0
+
+Добавить короткий UI sound.
+
+На мобильном использовать Touch.
+
+========================================
+10. ATMOSPHERIC VFX
+========================================
+
+Добавить отдельный VFX слой:
+
+VFXLayer
+
+Содержит:
+
+Fireflies
+Dust
+Sparkles
+SoftLight
+GoldenParticles
+Leaves
+LightRays
+
+Particle System использовать умеренно.
+
+Главный источник визуального внимания:
+
+золотой пшеничный колос.
+
+Он должен иметь:
+
+Bloom
++
+Golden Glow
++
+маленькие частицы.
+
+========================================
+11. DAY/NIGHT
+========================================
+
+Главное меню должно иметь лёгкую ambient animation.
+
+Не делать полноценную смену дня и ночи при каждом запуске.
+
+Можно сделать очень медленное изменение:
+
+Sunlight
+Cloud movement
+Light intensity
+Particle movement
+
+Цель — ощущение живого мира.
+
+========================================
+12. MUSIC
+========================================
+
+При запуске:
+
+Studio Logo Sound
+
+↓
+
+Main Menu Music
+
+Музыка должна плавно переходить из intro в main theme.
+
+Использовать подготовленный main theme игры.
+
+При открытии Settings музыка не должна перезапускаться.
+
+========================================
+13. SETTINGS
+========================================
+
+Создать полноценное Settings Window.
+
+Разделы:
+
+Audio
+Music Volume
+SFX Volume
+
+Graphics
+Quality
+FPS
+Resolution
+
+Gameplay
+Text Speed
+Auto Dialogue
+
+Language
+
+Controls
+
+Reset Settings
+
+Close
+
+Окно появляется через:
+
+Fade
++
+Scale
+
+========================================
+14. SAVE SYSTEM
+========================================
+
+Continue должна проверять наличие сохранения.
+
+Если Save существует:
+
+CONTINUE
+
+Если Save отсутствует:
+
+CONTINUE disabled.
+
+NEW GAME:
+
+показать confirmation:
+
+START NEW GAME?
+
+YES
+NO
+
+========================================
+15. LOAD GAME
+========================================
+
+Создать Load Game UI.
+
+Slots:
+
+SAVE 01
+SAVE 02
+SAVE 03
+
+Показывать:
+
+Farm Name
+Play Time
+Date
+Season
+Farm Level
+
+========================================
+16. MOBILE UI
+========================================
+
+Главное меню должно работать на:
+
+16:9
+18:9
+19.5:9
+20:9
+
+Использовать:
+
+Canvas Scaler
+Scale With Screen Size
+
+Reference Resolution:
+
+1920x1080
+
+Учитывать Safe Area мобильных устройств.
+
+========================================
+17. RESPONSIVE LAYOUT
+========================================
+
+Для разных экранов:
+
+Logo
+Menu
+Version Text
+
+должны автоматически перестраиваться.
+
+Menu всегда остаётся в нижней левой безопасной зоне.
+
+Не позволять UI закрывать центральную композицию.
+
+========================================
+18. CINEMATIC INTRO
+========================================
+
+После AERAVEN GAMES:
+
+Camera starts slightly zoomed.
+
+Background slowly reveals.
+
+Light rays appear.
+
+Particles start moving.
+
+Game Logo fades in.
+
+Music starts.
+
+Menu buttons appear sequentially:
+
+PLAY
+↓
+CONTINUE
+↓
+SETTINGS
+
+Каждая кнопка появляется с задержкой 0.08–0.15 sec.
+
+========================================
+19. IDLE ANIMATION
+========================================
+
+Если игрок ничего не нажимает 20–30 секунд:
+
+запустить небольшой cinematic moment:
+
+Camera slightly moves toward farm.
+
+Wheat glows brighter.
+
+Particles become visible.
+
+One rabbit reacts / moves slightly.
+
+Light rays become stronger.
+
+После этого камера возвращается в исходное положение.
+
+Очень медленно.
+
+========================================
+20. TECHNICAL ARCHITECTURE
+========================================
+
+Создать:
+
+BootScene
+MainMenuScene
+
+Scripts:
+
+BootManager
+SplashController
+MainMenuController
+MenuAnimationController
+BackgroundAnimator
+ParallaxController
+VFXController
+MenuMusicController
+SettingsController
+SaveSlotController
+UIAnimationController
+
+Использовать:
+
+Canvas
+CanvasGroup
+Animator
+ParticleSystem
+AudioSource
+AudioMixer
+Cinemachine
+ScriptableObjects
+
+Не создавать всё одним огромным скриптом.
+
+Разделить систему на независимые компоненты.
+
+========================================
+21. PERFORMANCE
+========================================
+
+Игра ориентирована прежде всего на мобильные устройства.
+
+Оптимизировать:
+
+Particles
+Overdraw
+Transparent UI
+Post Processing
+Texture resolution
+Canvas rebuilds
+
+Не использовать тяжёлые эффекты без необходимости.
+
+Цель:
+
+стабильные 60 FPS на современных мобильных устройствах.
+
+========================================
+22. FINAL RESULT
+========================================
+
+Итоговый flow:
+
+GAME LAUNCH
+↓
+BLACK SCREEN
+↓
+AERAVEN GAMES LOGO
+↓
+CINEMATIC LOGO ANIMATION
+↓
+FADE
+↓
+FARM ART
+↓
+BACKGROUND ANIMATION
+↓
+GAME LOGO
+↓
+CINEMATIC MUSIC
+↓
+MAIN MENU
+
+Главное меню должно выглядеть как законченная коммерческая игра.
+
+Атмосфера:
+
+cozy
+cute
+premium
+magical
+warm
+emotional
+adventure
+anime-inspired
+hand-painted
+3D isometric farming fantasy.
+
+Не делать интерфейс перегруженным.
+
+Главное внимание должно оставаться на красивом мире, ферме, животных и атмосфере.
