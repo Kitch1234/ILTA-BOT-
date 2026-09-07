@@ -1,1741 +1,1825 @@
-Ты — senior game designer, Unity architect, multiplayer programmer и gameplay programmer.
+Да, Ярослав Васильевич. Я бы для Cursor сделал не просто промпт “создай боёвку”, а полноценное ТЗ, где Cursor сначала анализирует проект, затем создаёт архитектуру и реализует систему по этапам.
+Для Unity 6 сейчас актуальны Input System 1.17 и Netcode for GameObjects 2.7; поэтому в ТЗ лучше ориентироваться на современный Unity 6 стек, но не заставлять Cursor ломать уже установленную версию пакетов. �
+Документация Unity +1
+Ниже — готовый промпт. Его можно целиком вставить в Cursor.
+MASTER PROMPT — AERAVEN COMBAT SYSTEM
+Ты работаешь как Senior Unity Gameplay Programmer + Combat Designer + Technical Architect.
 
-Мне нужно спроектировать и постепенно разработать игру в Unity.
-
-ВАЖНО:
-Сначала изучи существующий проект, его структуру, сцены, Packages, скрипты, настройки Unity и уже реализованные системы.
-
-Не переписывай существующий код без необходимости.
-Не создавай дубликаты уже существующих систем.
-Перед реализацией сначала проанализируй проект и предложи архитектуру.
+Ты разрабатываешь игру AERAVEN.
 
 ==================================================
-1. КОНЦЕПЦИЯ ИГРЫ
+1. ОБЩАЯ ИНФОРМАЦИЯ О ПРОЕКТЕ
 ==================================================
 
-Жанр:
-
-FIRST-PERSON CO-OP ACTION ROGUELITE / FANTASY RPG.
-
-Количество игроков:
-
-1–4 игрока.
+AERAVEN — fantasy action roguelite RPG.
 
 Основные особенности:
 
-- first-person;
-- melee combat;
-- мечи и другое холодное оружие;
-- высокая, но честная сложность;
-- roguelite-забеги;
-- процедурная генерация;
-- этажи с разными визуальными стилями;
-- уникальные билды;
-- случайные события;
-- случайные выборы перед и во время забега;
-- боссы;
-- кооперативные механики;
-- постоянный прогресс;
-- личный дом игрока;
-- NPC;
-- развитие дома;
-- коллекционирование оружия и трофеев.
+- First Person как основной вид на первом этапе.
+- Архитектура должна позволять добавить Third Person в будущем.
+- 1–4 игрока в кооперативе.
+- Souls-like философия боя.
+- Roguelite структура забегов.
+- Procedural floors.
+- Swords.
+- Bows.
+- Magic.
+- HP.
+- Stamina.
+- Mana.
+- Poise/Stagger.
+- Dodge.
+- Block.
+- Parry.
+- Critical attacks.
+- Enemy AI.
+- Boss AI.
+- Build system.
+- Уникальное оружие.
+- PC + Mobile.
+- В будущем Steam + Android + iOS.
 
-Главный принцип:
+Игра НЕ должна быть копией Elden Ring или Dark Souls.
 
-HARD BUT FAIR.
+Мы используем общие принципы:
 
-Игра должна быть сложной, но игрок должен понимать, почему он умер.
+- readable combat
+- stamina management
+- dodge timing
+- i-frames
+- poise/stagger
+- enemy attack patterns
+- meaningful weapon choice
+- high skill ceiling
+- hard but fair
 
-Игрок должен думать:
-
-"Я ошибся."
-
-а не:
-
-"Игра меня убила несправедливо."
-
-==================================================
-2. ОСНОВНАЯ ИГРОВАЯ ПЕТЛЯ
-==================================================
-
-Основной цикл:
-
-HOME
-↓
-PREPARE
-↓
-START RUN
-↓
-CHOOSE DESTINATION
-↓
-PROCEDURAL FLOOR
-↓
-EXPLORE
-↓
-COMBAT
-↓
-EVENT / LOOT / SECRET
-↓
-CHOICE
-↓
-NEXT AREA
-↓
-ELITE / MINI BOSS
-↓
-NEXT FLOOR
-↓
-BOSS
-↓
-VICTORY / DEATH
-↓
-RETURN HOME
-↓
-PERMANENT PROGRESSION
-↓
-NEW RUN
-
-Каждый забег должен отличаться.
-
-Но игра не должна быть полностью случайной.
-
-Использовать:
-
-HANDCRAFTED CONTENT + PROCEDURAL GENERATION.
-
-То есть разработчик создаёт качественные модули вручную, а генератор собирает из них разные варианты уровней.
+Но все системы должны быть собственной реализацией AERAVEN.
 
 ==================================================
-3. ЭТАЖИ
+2. ГЛАВНЫЙ ПРИНЦИП
 ==================================================
 
-Главная визуальная фишка игры:
+Combat должен строиться вокруг:
 
-КАЖДЫЙ ЭТАЖ — НОВЫЙ МИР.
+PLAYER DECISION
+        ↓
+PLAYER ACTION
+        ↓
+TIMING
+        ↓
+RISK
+        ↓
+REWARD
 
-Этажи должны сильно отличаться не только визуально, но и игровыми механиками.
+Игрок должен понимать:
 
+- почему он получил урон;
+- почему атака попала;
+- почему атака промахнулась;
+- почему произошёл stagger;
+- почему произошёл guard break;
+- почему произошёл critical;
+- почему он умер.
+
+Никаких случайных непонятных смертей.
+
+==================================================
+3. ПЕРЕД НАЧАЛОМ РАБОТЫ
+==================================================
+
+ВАЖНО:
+
+Сначала полностью проанализируй существующий Unity project.
+
+НЕ создавай систему вслепую.
+
+Проверь:
+
+- Unity version
+- Packages
+- Input System
+- Netcode
+- существующие scripts
+- существующий Player
+- Camera
+- Animator
+- Character Controller
+- Rigidbody
+- Physics layers
+- Tags
+- Scenes
+- Prefabs
+- ScriptableObjects
+- UI
+- project architecture
+- namespaces
+- assembly definitions
+
+Сначала составь краткий технический отчёт:
+
+1. Что уже существует.
+2. Что можно использовать.
+3. Что нужно изменить.
+4. Что нужно создать.
+5. Какие существующие системы нельзя ломать.
+
+После анализа НЕ переписывай существующий проект без необходимости.
+
+Сохраняй совместимость с текущей архитектурой.
+
+==================================================
+4. АРХИТЕКТУРА
+==================================================
+
+Создай модульную архитектуру.
+
+Предпочтительная структура:
+
+Assets/
+└── AERAVEN/
+    ├── Combat/
+    │   ├── Core/
+    │   ├── Damage/
+    │   ├── HitDetection/
+    │   ├── Attacks/
+    │   ├── Poise/
+    │   ├── Critical/
+    │   ├── StatusEffects/
+    │   └── Interfaces/
+    │
+    ├── Player/
+    │   ├── Controller/
+    │   ├── StateMachine/
+    │   ├── Resources/
+    │   ├── Camera/
+    │   └── Input/
+    │
+    ├── Weapons/
+    │   ├── Data/
+    │   ├── Runtime/
+    │   ├── Melee/
+    │   ├── Bow/
+    │   └── Abilities/
+    │
+    ├── Magic/
+    │   ├── Data/
+    │   ├── Runtime/
+    │   └── Spells/
+    │
+    ├── Enemies/
+    │   ├── AI/
+    │   ├── Combat/
+    │   ├── Perception/
+    │   ├── Data/
+    │   └── Boss/
+    │
+    ├── Roguelite/
+    │   ├── Run/
+    │   ├── Rewards/
+    │   ├── Builds/
+    │   └── Seeds/
+    │
+    ├── Multiplayer/
+    │   ├── Player/
+    │   ├── Combat/
+    │   ├── Enemy/
+    │   └── State/
+    │
+    ├── UI/
+    │   ├── HUD/
+    │   ├── Combat/
+    │   └── Mobile/
+    │
+    └── Tests/
+Если проект уже имеет другую структуру — не перестраивай всё автоматически.
+Адаптируй архитектуру.
+================================================== 5. CORE COMBAT ARCHITECTURE
+Создай следующие основные системы:
+CombatSystem DamageSystem HitDetectionSystem AttackSystem PoiseSystem CriticalSystem StatusEffectSystem ResourceSystem TargetingSystem
+Используй интерфейсы.
+Например:
+IDamageable IAttacker IHitReceiver IPoiseReceiver IStatusEffectReceiver ICombatTarget
+Не создавай жёсткие зависимости между конкретными оружиями и врагами.
+================================================== 6. PLAYER STATE MACHINE
+Создай Player State Machine.
+Минимальные состояния:
+Idle Move Sprint Attack HeavyAttack Dodge Block Parry Cast Hit Stagger GuardBreak Jump Fall Interact Dead Downed Revive
+Система должна позволять:
+CurrentState ChangeState CanEnterState ExitState StateUpdate
+Не использовать огромный PlayerController.cs на несколько тысяч строк.
+Разделяй ответственность.
+================================================== 7. PLAYER RESOURCES
+Основные ресурсы:
+HP Stamina Mana
+Создай универсальный Resource System.
+Например:
+ResourceType:
+Health Stamina Mana
+Должны поддерживаться:
+Current Maximum Regeneration Consumption Damage Restore RegenerationDelay
+================================================== 8. STAMINA
+Stamina используется для:
+light attack
+heavy attack
+dodge
+block
+sprint
+charged bow
+некоторые abilities
+Начальные значения:
+Max Stamina = 100
+Рекомендуемые стартовые значения:
+Light Attack = 10 Heavy Attack = 25 Dodge = 22 Sprint = 10–15 per second
+Stamina regeneration:
+Regeneration Delay ≈ 0.5 sec Regeneration ≈ 25/sec
+ВСЕ эти значения должны находиться в конфиге / ScriptableObject.
+Не хардкодить значения внутри gameplay scripts.
+================================================== 9. MANA
+Max Mana = 100.
+Mana используется магией.
+Mana regeneration должна быть медленной.
+Например:
+Regeneration Delay = 2 sec Regeneration = 5–10/sec
+Все параметры должны быть настраиваемыми.
+================================================== 10. ATTACK SYSTEM
+Каждая атака состоит из:
+STARTUP ACTIVE RECOVERY
+AttackData должен содержать:
+attack ID
+damage
+poise damage
+stamina cost
+startup duration
+active duration
+recovery duration
+attack animation
+hitbox configuration
+damage type
+element
+critical multiplier
+movement modifier
+can combo
+combo window
+Пример:
+Light Sword Attack:
+Damage = 35 Stamina = 10 Poise Damage = 10
+Heavy Sword Attack:
+Damage = 75 Stamina = 25 Poise Damage = 30
+Это стартовые значения.
+Не считать их финальным балансом.
+================================================== 11. HIT DETECTION
+НЕ использовать постоянный Collider для нанесения урона.
+Hitbox должен активироваться только в ACTIVE phase.
+Flow:
+Startup ↓ Hitbox OFF
+Active ↓ Hitbox ON
+Recovery ↓ Hitbox OFF
+Создай:
+AttackHitbox HitboxController HitResult DamageContext
+DamageContext должен содержать:
+attacker
+target
+damage
+poise damage
+damage type
+element
+critical
+attack ID
+position
+direction
+Один удар не должен наносить урон одному объекту несколько раз, если это не разрешено AttackData.
+================================================== 12. DAMAGE SYSTEM
+Используй:
+FinalDamage = BaseDamage × DefenseMultiplier × AttackMultiplier × CriticalMultiplier × ElementMultiplier × StatusMultiplier
+Базовая физическая формула:
+FinalDamage = BaseDamage × (100 / (100 + EffectiveDefense))
+Пример:
+100 damage 50 defense
+100 × (100 / 150) ≈ 66.6 damage
+Создай DamageType:
+Physical Fire Ice Lightning Poison Void Holy
+Но система должна позволять добавлять новые типы без переписывания DamageSystem.
+================================================== 13. DODGE
+Dodge должен иметь:
+Startup IFrame Recovery
+Начальные значения:
+Total Duration ≈ 0.65 sec IFrame ≈ 0.30 sec Stamina Cost = 22
+I-frames должны быть привязаны к времени анимации.
+НЕ делать бессмертие на всю анимацию.
+Dodge направления:
+Forward Backward Left Right
+Направление определяется по movement input.
+================================================== 14. BLOCK
+Block:
+уменьшает damage;
+потребляет stamina;
+снижает movement speed.
+ShieldData:
+DamageReduction StaminaDamageMultiplier PoiseStability CanParry CanPerfectBlock
+Пример:
+DamageReduction = 80%
+Если:
+Incoming Damage = 100
+Player receives:
+20 HP damage
+и определённый Stamina Damage.
+================================================== 15. GUARD BREAK
+Если игрок блокирует и:
+CurrentStamina <= 0
+то:
+GuardBreak ↓ Stagger ↓ Recovery
+Создай отдельное состояние GuardBreak.
+================================================== 16. PARRY
+Parry должен иметь:
+Startup ParryWindow Recovery
+При успешном parry:
+Enemy receives:
+High Poise Damage или Forced Stagger
+После stagger:
+Critical opportunity.
+При провале:
+Player enters recovery.
+Parry НЕ должен быть обязательной механикой для прохождения игры.
+================================================== 17. POISE
+Каждый серьёзный враг имеет Poise.
+EnemyData:
+MaxPoise CurrentPoise PoiseRecovery PoiseRecoveryDelay
+Каждая атака имеет:
+PoiseDamage.
+Например:
+Light Sword = 10 Heavy Sword = 30 Hammer = 45
+Когда:
+CurrentPoise <= 0
+происходит:
+Stagger.
+После stagger:
+Poise восстанавливается.
+Создай:
+PoiseSystem PoiseBreakEvent StaggerState
+================================================== 18. CRITICAL SYSTEM
+Поддержать:
+Backstab Stagger Critical Boss Critical
+Backstab требует:
+правильное положение относительно цели;
+допустимое состояние врага;
+соответствующую атаку.
+Stagger Critical:
+Enemy ↓ Poise Break ↓ Critical Window ↓ Critical Attack
+================================================== 19. WEAPON SYSTEM
+Не создавай систему:
+Sword001 Sword002 Sword003 с простым повышением stats.
+Оружие должно иметь уникальные механики.
+Создай:
+WeaponData
+Поля:
+ID Name Category BaseDamage PoiseDamage AttackSpeed StaminaCost DamageType Element AttackSet Ability CriticalMultiplier SpecialEffect
+Категории:
+Sword GreatSword Axe Hammer Spear Bow MagicWeapon
+В будущем систему можно расширять.
+================================================== 20. УНИКАЛЬНОЕ ОРУЖИЕ
 Примеры:
-
-1. Древний лес
-- руины;
-- деревни;
-- лесные тропы;
-- звери;
-- разбойники;
-- засады;
-- скрытые пути.
-
-2. Средневековая крепость
-- стены;
-- внутренний двор;
-- казармы;
-- тюрьма;
-- оружейная;
-- рычаги;
-- ворота;
-- рыцари.
-
-3. Подземные шахты
-- тоннели;
-- шахты;
-- пещеры;
-- вагонетки;
-- обвалы;
-- узкие проходы;
-- подземные существа.
-
-4. Затерянный храм
-- ловушки;
-- алтари;
-- загадки;
-- древние механизмы;
-- проклятые существа.
-
-5. Ледяное королевство
-- лёд;
-- снег;
-- замёрзший замок;
-- ледяные враги;
-- заморозка;
-- скользкие поверхности.
-
-6. Вулканический мир
-- лава;
-- огненные существа;
-- разрушенные мосты;
-- меняющаяся арена;
-- высокая температура;
-- опасное окружение.
-
-7. Затопленный мир
-- вода;
-- корабли;
-- затопленные здания;
-- подводные проходы;
-- водные существа.
-
-8. Пустота
-- сюрреалистическая архитектура;
-- порталы;
-- изменяющаяся геометрия;
-- необычные враги;
-- нестандартные правила.
-
-9. Небесный город
-- острова;
-- мосты;
-- башни;
-- пропасти;
-- воздушные враги.
-
-10. Финальная цитадель
-- древняя архитектура;
-- сильнейшие враги;
-- несколько больших арен;
-- финальный босс.
-
-В будущем количество этажей можно расширять.
-
-==================================================
-4. КОМБИНАЦИИ СТИЛЕЙ
-==================================================
-
-Не ограничиваться только отдельными биомами.
-
-Иногда генератор может создавать комбинацию двух тематик.
-
+Blood Sword Ice Blade Void Blade Sun Sword Living Sword Executioner Duelist Blade
+Оружие может иметь уникальные механики.
 Например:
-
-CASTLE + CORRUPTED FOREST
-
-Получается:
-
-- замок;
-- стены;
-- но внутри растут гигантские деревья;
-- корни разрушают помещения;
-- лесные враги находятся внутри крепости.
-
-Другие варианты:
-
-ICE + MINE
-
-VOLCANO + CASTLE
-
-JUNGLE + TEMPLE
-
-VOID + CASTLE
-
-Это позволит получать новые варианты контента без необходимости создавать полностью отдельный этаж для каждой комбинации.
-
-==================================================
-5. PROCEDURAL GENERATION
-==================================================
-
-Не делать тупой random dungeon.
-
-Генератор должен понимать структуру уровня.
-
+Blood Sword:
+часть HP игрока → bonus damage;
+bleed synergy.
+Ice Blade:
+frost buildup.
+Void Blade:
+void portals / ranged slash.
+Living Sword:
+получает временные бонусы после убийств.
+Не реализовывай все сразу.
+Для MVP реализуй:
+1 обычный Sword 1 Heavy Sword
+================================================== 21. WEAPON HISTORY
+Архитектура должна позволять хранить:
+Kills EliteKills BossKills Criticals TimeUsed RunsUsed
+Это понадобится позже.
+================================================== 22. BOW SYSTEM
+Создай BowController.
+Режимы:
+Quick Shot Charged Shot
+Charged Shot:
+Hold ↓ Charge ↓ Release
+Bow должен использовать Stamina.
+Поддержать:
+Projectile Aim Charge Weak Point Arrow Type
+Но для MVP:
+обычная стрела.
+================================================== 23. MAGIC SYSTEM
+Создай:
+SpellData SpellController SpellCaster SpellEffect
+Типы:
+Projectile AoE Buff Debuff Control Utility
+Для MVP:
+Fireball Ice Bolt
+Fireball:
+damage
+fire status
+Ice Bolt:
+damage
+frost buildup
+================================================== 24. STATUS EFFECT SYSTEM
+Создай универсальную систему.
+StatusEffect:
+Burn Bleed Freeze Shock Poison Curse
+Каждый effect должен поддерживать:
+Duration Stacking Intensity TickInterval Source RefreshBehaviour
+Не хардкодить status effects внутри EnemyController.
+================================================== 25. ENEMY AI
+Создай AI State Machine.
+Состояния:
+Idle Patrol Detect Alert Search Chase Combat Attack Recovery Stagger Dead
+AI должен иметь:
+Perception Target selection Distance checks Attack selection Cooldown Reaction system
+Enemy не должен постоянно атаковать.
+================================================== 26. ENEMY PERCEPTION
+Поддержать:
+Vision Hearing
+Vision:
+View Distance View Angle Line of Sight
+Hearing:
+sprint
+attack
+spell
+explosion
+environmental events
+================================================== 27. ENEMY ATTACK SELECTION
+AI выбирает атаку исходя из:
+Distance Target State Cooldown Health Poise Attack availability Position
+Например:
+Close → melee Medium → ranged Player healing → interrupt Player blocking → guard-break attack Player behind → turn / defensive action
+================================================== 28. ENEMY ARCHETYPES
+Создать data-driven architecture:
+Grunt Heavy Assassin Archer Mage Support Tank Elite
+НЕ создавать 8 полностью разных AI systems.
+Один общий AI framework + разные Data/Behaviours.
+================================================== 29. ELITE MODIFIERS
+Архитектура должна позволять:
+Burning Frozen Vampiric Explosive Armored Lightning Summoner Fast Berserker
+Modifier должен быть отдельным компонентом/объектом.
+================================================== 30. BOSS SYSTEM
+Создай BossController поверх обычного Enemy AI.
+Boss должен поддерживать:
+Phases Phase transitions Unique attacks Arena mechanics Special states Critical windows
+Не делать Boss как Enemy с большим HP.
+================================================== 31. FIRST PERSON
+Основной режим:
+First Person.
+Camera должна быть отдельным модулем.
+PlayerCameraController:
+Look Pitch Yaw Sensitivity Smoothing Camera shake FOV
+Не привязывать CombatSystem напрямую к CameraSystem.
+================================================== 32. LOCK ON
+Lock-On должен быть опциональным.
+TargetingSystem:
+FindTarget SelectTarget ReleaseTarget SwitchTarget
+Поддержать:
+PC Gamepad Mobile
+В First Person lock-on должен слегка помогать направлению камеры, но НЕ полностью забирать управление у игрока.
+================================================== 33. INPUT
+Используй современный Unity Input System.
+Создай Input Actions:
+Move Look Attack HeavyAttack Dodge Block Parry Sprint Jump Interact Cast Aim LockOn SwitchTarget
+Не использовать старый Input Manager, если проект уже использует новый Input System.
+Не привязывать gameplay logic напрямую к Keyboard/Mouse keys.
+Например:
+НЕ:
+Input.GetKey(KeyCode.Space)
+А:
+Input Action → Gameplay command.
+Это позволит использовать:
+Keyboard Mouse Gamepad Touch
+без переписывания gameplay.
+================================================== 34. MOBILE
+Архитектура должна поддерживать мобильное управление.
+Mobile controls:
+Left Stick: Movement
+Right Stick: Look
+Buttons:
+Attack Heavy Dodge Block Ability Interact Lock-On
+Gameplay code НЕ должен знать, что команда пришла с телефона.
+Он должен получать:
+MoveCommand AttackCommand DodgeCommand BlockCommand
+и т.д.
+================================================== 35. THIRD PERSON FUTURE SUPPORT
+Сейчас First Person.
+Но CombatSystem НЕ должен зависеть от:
+FirstPersonCamera FirstPersonArms FPS-specific code.
+Combat должен работать независимо от камеры.
+В будущем можно добавить:
+ThirdPersonCameraController.
+================================================== 36. MULTIPLAYER
+Игра рассчитана на:
+1–4 игроков.
+Использовать Unity Netcode for GameObjects, если проект уже использует NGO.
+Архитектура должна быть server authoritative для критических gameplay events.
+Server должен авторитетно решать:
+damage
+HP
+stamina
+mana
+enemy state
+enemy damage
+death
+loot
+critical
+stagger
+boss state
+Client отправляет intent:
+Attack request Dodge request Spell request Block state Movement input
+Не доверять клиенту:
+"я нанёс 500 damage".
+================================================== 37. NETWORK COMBAT
 Пример:
-
-Entrance
-↓
-Main Path
-↓
-Combat
-↓
-Branch
-↙       ↘
-Secret   Treasure
-↘       ↙
-Main Path
-↓
-Elite
-↓
-Large Room
-↓
-Mini Boss
-↓
-Next Floor
-
-Генератор должен учитывать:
-
-- назначение комнаты;
-- сложность;
-- размер;
-- количество игроков;
-- доступные маршруты;
-- количество врагов;
-- наличие выхода;
-- наличие безопасной зоны;
-- возможность уклоняться;
-- точки интереса;
-- секретные комнаты;
-- ловушки;
-- сундуки;
-- NPC;
-- события;
-- boss arena.
-
-Не допускать невозможных или несправедливых комбинаций.
-
-==================================================
-6. MODULE SYSTEM
-==================================================
-
-Все процедурные уровни должны строиться из модулей.
-
+Client:
+RequestAttack(attackID)
+Server:
+ValidateAttack ValidateState ValidateCooldown ValidateStamina ExecuteAttack DetectHit CalculateDamage ApplyDamage ReplicateResult
+НЕ делать:
+Client → напрямую изменить Enemy HP.
+================================================== 38. CO-OP COMBAT
+Система должна поддерживать:
+1–4 players.
+Игроки могут взаимодействовать через:
+Freeze Shatter Poise Damage Backstab Weak Points Elemental reactions Buffs Debuffs
+Но не делать всё сразу.
+Сначала:
+2 players + shared enemy + damage synchronization.
+================================================== 39. ROGUELITE COMPATIBILITY
+CombatSystem должен быть независим от RunSystem.
+RunSystem будет управлять:
+Run Floor Seed Rewards Build Relics
+CombatSystem только предоставляет combat functionality.
+НЕ смешивать:
+RunManager PlayerCombat EnemyAI
+в один класс.
+================================================== 40. SCRIPTABLE OBJECTS
+Использовать ScriptableObjects для data.
+Создать:
+WeaponData AttackData EnemyData SpellData StatusEffectData BossPhaseData ShieldData DamageTypeData
+Gameplay code должен читать configuration из данных.
+================================================== 41. EVENTS
+Создать event architecture.
 Примеры:
+OnAttackStarted OnAttackActive OnAttackFinished OnHit OnDamageTaken OnDodge OnPerfectDodge OnBlock OnParry OnGuardBreak OnPoiseBreak OnCritical OnDeath OnStagger OnStatusApplied
+Системы должны использовать события вместо жёстких вызовов там, где это разумно.
+================================================== 42. DEBUG SYSTEM
+Создай Combat Debug Mode.
+В Editor:
+Show Hitboxes Show Hurtboxes Show Attack Phase Show Poise Show AI State Show Target Show Attack Range Show Perception Show IFrames
+Добавь:
+DebugCombatSettings
+чтобы разработчик мог включать/выключать debug visualization.
+================================================== 43. TELEMETRY / TESTING
+Добавь development logging:
+Attack ID Damage Poise damage Stamina cost Target Critical Status State transition
+Но logging должен быть отключаемым.
+НЕ оставлять Debug.Log spam в production.
+================================================== 44. PERFORMANCE
+Игра должна работать:
+PC Android iOS
+Не использовать без необходимости:
+FindObjectsOfType каждый кадр;
+Camera.main каждый кадр;
+GetComponent каждый кадр;
+Instantiate/Destroy spam;
+огромное количество Update;
+постоянные LINQ allocations;
+GC-heavy combat loops.
+Где необходимо:
+Object Pooling.
+Особенно для:
+Projectiles VFX Damage numbers Hit effects Enemy effects
+================================================== 45. MOBILE PERFORMANCE
+Combat должен быть рассчитан на mobile.
+Избегать:
+тысячи активных colliders;
+огромного количества particle systems;
+тяжёлых physics queries;
+дорогих AI calculations каждый кадр.
+AI и combat queries должны иметь контролируемую частоту.
+================================================== 46. ANIMATION
+Не привязывать gameplay к случайным Animation Events без необходимости.
+AttackData должен определять timing.
+Animator должен отвечать за визуальное представление.
+Combat state machine отвечает за gameplay state.
+Для атаки:
+Startup Active Recovery
+Timing должен быть настраиваемым.
+================================================== 47. ANIMATION EVENTS
+Если Animation Events используются:
+Они должны сообщать:
+BeginHitbox EndHitbox Footstep WeaponTrail Impact
+Но критическая gameplay логика не должна полностью зависеть от того, что Animation Event случайно не сработал.
+================================================== 48. HARD BUT FAIR
+Запрещены:
+случайные one-shot атаки без телеграфа;
+невозможные procedural encounters;
+damage через стены;
+атаки вне range;
+invisible attacks;
+случайный spawn врага за спиной;
+бесконечные stun-lock;
+бесконечные enemy combos;
+unavoidable damage.
+Каждая опасная атака должна иметь:
+Telegraph Reaction window Counter option
+================================================== 49. MVP
+НЕ пытайся реализовать всю систему сразу.
+Работай по фазам.
+PHASE 1:
+Player Controller First Person Camera Input System HP Stamina
+PHASE 2:
+Sword Light Attack Heavy Attack Attack State Machine Hitbox
+PHASE 3:
+Enemy Enemy HP Damage Death
+PHASE 4:
+Dodge I-Frames Stamina
+PHASE 5:
+Block Guard Break
+PHASE 6:
+Poise Stagger Critical
+PHASE 7:
+Enemy AI
+PHASE 8:
+Bow
+PHASE 9:
+Magic
+PHASE 10:
+Status Effects
+PHASE 11:
+Boss
+PHASE 12:
+Multiplayer
+PHASE 13:
+Roguelite
+PHASE 14:
+Mobile controls
+================================================== 50. ПЕРВАЯ ЗАДАЧА
+Сейчас НЕ реализовывай всё.
+Сначала:
+Проанализируй проект.
+Определи текущую архитектуру.
+Найди существующий Player.
+Найди существующую Camera.
+Найди Input System.
+Найди Network System.
+Проверь текущие dependencies.
+Проверь существующие namespaces.
+Проверь существующие scripts.
+Определи конфликты.
+После этого создай файл:
+AERAVEN_COMBAT_ARCHITECTURE.md
+В нём опиши:
+текущую архитектуру;
+предлагаемую архитектуру;
+какие файлы будут созданы;
+какие файлы будут изменены;
+зависимости;
+порядок реализации;
+потенциальные проблемы.
+НЕ начинай массовое создание файлов до завершения анализа.
+================================================== 51. ПРАВИЛА РАЗРАБОТКИ
+Не ломай существующий проект.
+Не удаляй существующие scripts без необходимости.
+Не создавай дублирующие системы.
+Не создавай огромные monolithic scripts.
+Не хардкодь gameplay balance.
+Используй ScriptableObjects.
+Используй interfaces.
+Используй events.
+Делай системы тестируемыми.
+Делай системы расширяемыми.
+Учитывай multiplayer.
+Учитывай mobile.
+Не делай Third Person сейчас.
+Не создавай сложный inventory сейчас.
+Не создавай procedural generation сейчас.
+Не создавай весь roguelite сейчас.
+Сначала нужно получить качественную базовую боёвку.
+================================================== 52. ACCEPTANCE CRITERIA
+После PHASE 1–6 должна существовать рабочая сцена:
+Player + Sword + Enemy
+Игрок может:
+ходить;
+смотреть;
+атаковать;
+делать heavy attack;
+расходовать stamina;
+восстанавливать stamina;
+уклоняться;
+получать i-frames;
+блокировать;
+получить guard break;
+наносить poise damage;
+stagger enemy;
+сделать critical;
+убить enemy;
+получить damage;
+умереть.
+Все эти системы должны работать через созданную архитектуру.
+================================================== 53. FINAL RULE
+Не пытайся угадать мои существующие файлы.
+Сначала исследуй проект.
+Если система уже существует:
+→ адаптируй её.
+Если система отсутствует:
+→ создай её.
+Если существующая система плохая:
+→ сначала объясни проблему и предложи безопасный migration.
+После каждой крупной фазы:
+Проверь compilation.
+Проверь errors.
+Проверь references.
+Проверь namespace.
+Проверь prefabs.
+Проверь ScriptableObjects.
+Проверь runtime behaviour.
+Исправь ошибки.
+Не переходи к следующей фазе, если предыдущая не компилируется.
+Главная цель:
+Создать чистую, расширяемую, производительную combat architecture для AERAVEN, которая ощущается как качественный Souls-like combat, но является собственной системой и с самого начала готова к:
+First Person + 1–4 Co-op + PC + Mobile + Roguelite + Future Third Person.
 
-Small Room
-Medium Room
-Large Room
-Corridor
-Crossroad
-Stairs
-Vertical Connector
-Secret Room
-Treasure Room
-Combat Arena
-Elite Arena
-Event Room
-Boss Room
-Safe Room
+### Я бы сделал ещё важное изменение
 
-Каждый модуль должен иметь:
+**Не давай Cursor этот промпт и не говори ему сразу “реализуй всё”.** Лучше после вставки этого ТЗ дать ему команду:
 
-- входы;
-- выходы;
-- connector points;
-- размер;
-- категорию;
-- biome;
-- difficulty;
-- tags;
-- возможные соседние модули;
-- точки спавна;
-- точки размещения объектов.
+```text
+Начинай только с анализа существующего проекта.
 
-Пример:
+Ничего массово не изменяй и не создавай.
 
-CastleHall
+Проанализируй проект, затем создай AERAVEN_COMBAT_ARCHITECTURE.md с предлагаемой архитектурой.
 
-Tags:
-Castle
-Large
-Combat
-Interior
+После создания документа остановись и жди моего подтверждения.
+Так Cursor сначала разберётся с твоим конкретным Unity-проектом, а не начнёт создавать параллельно второй PlayerController, вторую камеру, вторую Input System и т.д.
+А уже после проверки документа дать:
+Архитектура одобрена.
 
-Connectors:
-North
-South
-East
-West
+Теперь реализуй только PHASE 1.
+
+Не переходи к PHASE 2.
+
+После реализации:
+1. Проверь compilation.
+2. Исправь ошибки.
+3. Проверь runtime.
+4. Создай краткий отчёт о созданных и изменённых файлах.
+5. Остановись.
+Это намного безопаснее для Cursor.
+И ещё: я специально заложил Input System вместо старого Input Manager и отделил input от gameplay-команд — это позволит одной боевой системе принимать управление от клавиатуры/мыши, gamepad и touch. Unity сейчас позиционирует Input System как расширяемую современную систему ввода, а для Unity 6 опубликована версия 1.17.0. �
+Документация Unity
+Для мультиплеера также оставил server-authoritative combat: NGO является высокоуровневым сетевым SDK Unity для GameObject/MonoBehaviour workflow, и для нашего случая это разумная база. �
+Документация Unity
+Следующим я бы сделал отдельное ТЗ именно на PHASE 1–6 — Player + Sword + Stamina + Dodge + Block + Poise + Stagger + Critical. Это будет уже не концепция, а буквально список конкретных C# файлов, классов, enum, ScriptableObject и связей между ними, который Cursor сможет реализовать по шагам. �
+Документация Unity +1
+
+AERAVEN — COMBAT IMPLEMENTATION
+PHASE 1–6
+
+Ты уже провёл анализ существующего проекта и создал
+AERAVEN_COMBAT_ARCHITECTURE.md.
+
+Теперь начинай реализацию базовой боевой системы.
+
+ВАЖНО:
+
+НЕ переходи к Bow.
+НЕ переходи к Magic.
+НЕ переходи к Boss.
+НЕ переходи к Roguelite.
+НЕ переходи к Procedural Generation.
+
+Сейчас реализуются только:
+
+PHASE 1 — Player + Resources
+PHASE 2 — Sword Combat
+PHASE 3 — Enemy
+PHASE 4 — Dodge
+PHASE 5 — Block + Guard Break
+PHASE 6 — Poise + Stagger + Critical
+
+После каждой фазы:
+- компилируй проект;
+- исправляй ошибки;
+- проверяй references;
+- проверяй runtime;
+- не переходи дальше при критических ошибках.
 
 ==================================================
-7. SEED SYSTEM
+PHASE 1 — PLAYER
 ==================================================
 
-Нужна полноценная Seed System.
+Создай или адаптируй Player Controller.
 
-Например:
+Не создавай второй Player Controller, если существующий уже подходит.
 
-AERAVEN-72831
+Игрок должен поддерживать:
 
-Один seed должен всегда создавать одинаковую генерацию.
+Movement
+Look
+Sprint
+HP
+Stamina
 
-Игрок должен иметь возможность поделиться seed с другим игроком.
+Использовать существующий Input System проекта.
 
-При одинаковом seed:
+Если используется Unity Input System:
 
-- одинаковая структура;
-- одинаковые комнаты;
-- одинаковые события;
-- одинаковые варианты;
-- одинаковые позиции основных объектов.
+Создай/используй действия:
 
-При этом состояние игроков, их действия и текущий прогресс не должны быть частью seed.
+Move
+Look
+Sprint
+Attack
+HeavyAttack
+Dodge
+Block
 
-==================================================
-8. СЛУЧАЙНОСТЬ В НАЧАЛЕ ЗАБЕГА
-==================================================
+Gameplay code не должен зависеть от конкретных клавиш.
 
-В начале каждого забега должны случайно определяться несколько факторов.
+НЕ:
 
-Например:
-
-1. STARTING WEAPON
-2. BLESSING
-3. CURSE
-4. FIRST FLOOR
-5. RUN MODIFIER
-
-Игрок или команда получают несколько вариантов и выбирают.
-
-Например:
-
-BLOOD MOON
-- враги +25% силы;
-- больше шанс редкого оружия.
-
-GOLDEN AGE
-- больше золота;
-- больше элитных врагов.
-
-CURSED RUN
-- повышенная сложность;
-- уникальные награды.
-
-Также можно сделать три алтаря:
-
-ALTAR A
-ALTAR B
-ALTAR C
-
-Игроки подходят и активируют один из них.
-
-После выбора раскрывается эффект.
-
-==================================================
-9. BLESSING / CURSE
-==================================================
-
-Каждый забег может получить:
-
-ONE BLESSING
-+
-ONE CURSE.
-
-Примеры Blessing:
-
-- идеальный блок восстанавливает HP;
-- +10% speed;
-- +critical chance;
-- лечение после элитного врага;
-- дополнительный dodge;
-- усиленный elemental damage.
-
-Примеры Curse:
-
-- враги быстрее;
-- меньше лечения;
-- периодически появляется elite;
-- темнее окружение;
-- враги получают новый эффект;
-- меньше safe rooms.
-
-Команда должна выбирать между риском и наградой.
-
-==================================================
-10. PATH CHOICE
-==================================================
-
-После некоторых комнат команда должна выбирать следующий путь.
-
-Например:
-
-COMBAT
-TREASURE
-EVENT
-
-или:
-
-SAFE
-ELITE
-CURSED
-
-Игроки должны видеть приблизительную информацию о выборе, но не всё.
-
-Это создаёт стратегию.
-
-==================================================
-11. RISK / REWARD
-==================================================
-
-Добавить риск ради награды.
-
-Например:
-
-CURSED ALTAR
-
-"Следующий этаж получает +30% сложности."
-
-Награда:
-
-"Уникальный артефакт."
-
-Или:
-
-BLOOD PORTAL
-
-Следующий этаж становится Elite Floor.
-
-Награда увеличивается в 3 раза.
-
-==================================================
-12. БОЕВАЯ СИСТЕМА
-==================================================
-
-Главное оружие — мечи.
-
-Бой должен ощущаться весомым.
-
-Не делать:
-
-click click click click.
-
-Нужны:
-
-- light attack;
-- heavy attack;
-- block;
-- perfect block;
-- dodge;
-- stamina;
-- hit reaction;
-- stagger;
-- combo;
-- weapon recovery;
-- directional attacks;
-- hit detection;
-- damage;
-- critical attacks.
-
-Игрок должен постоянно принимать решения:
-
-Attack or wait?
-Block or dodge?
-Risk or retreat?
-Finish enemy or recover stamina?
-
-==================================================
-13. СЛОЖНОСТЬ
-==================================================
-
-Стиль сложности:
-
-DARK SOULS INSPIRED,
-BUT SLIGHTLY MORE ACCESSIBLE.
-
-Правила:
-
-1. Атаки врагов должны быть читаемыми.
-2. Замах должен иметь понятную анимацию.
-3. Должно существовать окно реакции.
-4. Игрок должен понимать причину смерти.
-5. Не использовать чрезмерное количество HP у врагов как основной способ повышения сложности.
-6. Не создавать случайные one-shot атаки без предупреждения.
-7. Не спавнить врагов в невозможных позициях.
-8. Не создавать ловушки, которые невозможно заметить или избежать.
-9. Не перегружать игрока четырьмя непредсказуемыми атаками одновременно.
-10. Сложность должна расти через поведение, паттерны и комбинации.
-
-Главный принцип:
-
-DIFFICULT, NOT UNFAIR.
-
-==================================================
-14. DOWNED / REVIVE
-==================================================
-
-В кооперативе при смертельном уроне игрок сначала переходит в:
-
-DOWNED STATE.
-
-Другой игрок может его поднять.
-
-Если никто не помогает:
-
-FINAL DEATH.
-
-Для одиночной игры можно предусмотреть небольшой Last Stand.
-
-==================================================
-15. УНИКАЛЬНЫЕ МЕЧИ
-==================================================
-
-Не создавать сотни одинаковых мечей с:
-
-+1 damage
-+2 damage
-+3 damage.
-
-Лучше меньше оружия, но каждое оружие должно иметь собственную механику.
-
-Примеры:
-
-BLOOD MOON
-- восстанавливает HP от урона.
-
-ICE BLADE
-- замедляет врагов.
-
-VOID BLADE
-- высокий damage, но опасный эффект для владельца.
-
-SUN SWORD
-- дополнительный damage против тёмных существ.
-
-LIVING SWORD
-- развивается вместе с игроком.
-
-EXECUTIONER
-- медленный, огромный damage.
-
-DUELIST BLADE
-- быстрые атаки и bonus за dodge.
-
-==================================================
-16. WEAPON PROGRESSION
-==================================================
-
-У любимого оружия должна быть история.
-
-Например:
-
-Old Sword
-↓
-Tempered Sword
-↓
-Veteran Sword
-↓
-Legendary Sword
-
-Хранить статистику:
-
-- kills;
-- elite kills;
-- boss kills;
-- usage time;
-- discovered abilities;
-- history.
-
-Игрок должен эмоционально привязываться к оружию.
-
-==================================================
-17. BUILDS
-==================================================
-
-Во время каждого забега игрок постепенно создаёт билд.
-
-Пример:
-
-Blood Sword
-+
-Vampire Heart
-+
-Blood Dash
-+
-Bleed passive
-
-Получается:
-
-низкий HP
-→ высокий damage
-→ лечение через атаки
-→ bleed.
-
-Каждый забег должен позволять получить другую комбинацию.
-
-==================================================
-18. ИГРОКИ И РОЛИ
-==================================================
-
-Не использовать жёсткую систему классов.
-
-Роль определяется оружием, предметами и билдом.
-
-Возможные архетипы:
-
-Duelist
-Tank
-Berserker
-Hunter
-Magic Swordsman
-Support
-
-Но игрок должен иметь свободу менять стиль.
-
-==================================================
-19. CO-OP 1–4
-==================================================
-
-Игра должна проектироваться как multiplayer С САМОГО НАЧАЛА.
-
-Не делать:
-
-Singleplayer first → multiplayer later.
-
-Нужны:
-
-- player spawn/despawn;
-- network movement;
-- rotation;
-- health;
-- stamina;
-- player state;
-- attacks;
-- dodge;
-- block;
-- interaction;
-- enemies;
-- loot;
-- doors;
-- switches;
-- procedural seed;
-- dungeon state;
-- revive;
-- boss state.
-
-Использовать server-authoritative architecture.
-
-==================================================
-20. CO-OP COMBAT
-==================================================
-
-Игроки должны взаимодействовать.
-
-Не просто:
-
-4 человека бьют одного босса.
-
-Нужны синергии.
-
-Пример:
-
-Player A:
-Freeze
-
-Player B:
-Heavy attack
-
-→ Shatter.
-
-Или:
-
-Player A:
-Block / Taunt
-
-Player B:
-Backstab.
-
-Или:
-
-Player A:
-Knock-up
-
-Player B:
-Air attack.
-
-Не обязательно создавать сложную систему сразу.
-
-Но архитектура должна позволять расширить её позже.
-
-==================================================
-21. CO-OP BOSS DESIGN
-==================================================
-
-Боссы должны учитывать количество игроков.
-
-Не просто:
-
-4 игрока = boss HP × 4.
+Input.GetKey(KeyCode.W)
 
 Вместо этого:
 
-1 player:
-basic mechanics.
+Input Action
+→ command
+→ gameplay system
 
-2 players:
-дополнительные атаки.
+Это необходимо для PC + Gamepad + Mobile.
 
-3 players:
-новая mechanic.
+--------------------------------------------------
+PLAYER RESOURCES
+--------------------------------------------------
 
-4 players:
-полноценная cooperative mechanic.
+Создай:
 
-Например:
+PlayerResourceSystem
 
-один игрок удерживает босса;
+Ресурсы:
 
-второй уничтожает источник энергии;
+Health
+Stamina
 
-третий защищает механизм;
+Mana пока НЕ реализовывать.
 
-четвёртый наносит damage.
+Health:
 
-==================================================
-22. ВРАГИ
-==================================================
+MaxHealth = 100
+CurrentHealth = 100
 
-Archetypes:
+Stamina:
 
-- melee;
-- ranged;
-- tank;
-- assassin;
-- flying;
-- magic;
-- support;
-- elite;
-- boss.
+MaxStamina = 100
+CurrentStamina = 100
 
-AI states:
+Начальные значения должны находиться в configuration/data,
+а не быть разбросаны по коду.
 
-Idle
-Patrol
-Alert
-Chase
-Attack
-Stagger
-Dead
+--------------------------------------------------
+STAMINA
+--------------------------------------------------
 
-В будущем архитектура должна позволять добавлять новые AI behaviors.
+Stamina расходуется на:
 
-==================================================
-23. ELITE ENEMIES
-==================================================
+Light Attack
+Heavy Attack
+Dodge
+Block
+Sprint
 
-Обычный враг может получить случайный modifier.
+Начальные значения:
 
-Например:
+Light Attack = 10
 
-Burning
-Frozen
-Vampiric
-Explosive
-Armored
-Lightning
-Summoner
-Fast
-Berserker
+Heavy Attack = 25
 
-Это позволит создавать большое количество комбинаций без сотен уникальных моделей.
+Dodge = 22
 
-==================================================
-24. EVENTS
-==================================================
+Sprint = 12 per second
 
-Во время забега появляются случайные события.
+Stamina regeneration:
 
-Примеры:
+Delay = 0.5 seconds
 
-Ancient Altar
-Mysterious Merchant
-Cursed Chest
-Lost Knight
-Prisoner
-Strange Statue
-Forbidden Ritual
-Wandering Boss
-Treasure Room
-Sacrifice Shrine
+Regeneration = 25 per second
 
-События могут давать:
+Все значения должны быть изменяемыми через Inspector/ScriptableObject.
 
-- предмет;
-- curse;
-- blessing;
-- золото;
-- weapon;
-- health;
-- выбор;
-- новый путь.
+НЕ хардкодить balance.
 
-==================================================
-25. BOSS
-==================================================
+--------------------------------------------------
+PLAYER STATES
+--------------------------------------------------
 
-Босс не должен быть просто большим врагом с большим HP.
-
-Нужны:
-
-- readable attacks;
-- phases;
-- weak points;
-- arena mechanics;
-- environmental hazards;
-- summons;
-- changing patterns;
-- cooperative mechanics.
-
-Босс должен заставлять игрока учиться.
-
-==================================================
-26. ДОМ ИГРОКА
-==================================================
-
-Между забегами игрок возвращается домой.
-
-Дом — полноценная first-person локация.
-
-Не просто меню.
-
-В доме могут находиться:
-
-- спальня;
-- оружейная;
-- кузница;
-- алхимическая лаборатория;
-- сундуки;
-- библиотека;
-- карта;
-- трофейная;
-- сад;
-- питомец;
-- NPC.
-
-==================================================
-27. NPC
-==================================================
-
-Игрок может встречать NPC во время приключений.
-
-Некоторых NPC можно привести домой.
-
-Примеры:
-
-BLACKSMITH
-- улучшение оружия.
-
-ALCHEMIST
-- зелья.
-
-RESEARCHER
-- новые типы локаций.
-
-MAGE
-- магические предметы.
-
-TRADER
-- торговля.
-
-Каждый NPC должен открывать новые возможности.
-
-==================================================
-28. РАЗВИТИЕ NPC
-==================================================
-
-NPC имеют уровни развития.
-
-Например:
-
-Blacksmith Level 1
-→ basic weapons
-
-Level 2
-→ upgrade
-
-Level 3
-→ elemental weapons
-
-Level 4
-→ legendary weapons
-
-Развитие NPC должно быть видно физически.
-
-Например:
-
-маленькая кузница
-→ большая кузница
-→ полноценная мастерская.
-
-==================================================
-29. РАЗВИТИЕ ДОМА
-==================================================
-
-Дом должен постепенно улучшаться.
-
-Small House
-↓
-Improved House
-↓
-Large House
-↓
-Advanced House
-
-Игрок может открывать новые комнаты.
-
-Также можно дать возможность:
-
-- расставлять мебель;
-- менять интерьер;
-- ставить трофеи;
-- размещать оружие;
-- украшать дом.
-
-==================================================
-30. ОРУЖЕЙНАЯ
-==================================================
-
-Все найденные уникальные мечи можно физически отображать в доме.
-
-Например:
-
-игрок нашёл Blood Moon Sword.
-
-После возвращения домой меч можно повесить на стену.
-
-Подойти:
-
-"Take Weapon"
-
-Так коллекция становится физической частью мира.
-
-==================================================
-31. TROPHY ROOM
-==================================================
-
-После убийства боссов игрок получает трофеи.
-
-Например:
-
-- корона;
-- оружие;
-- маска;
-- фрагмент брони;
-- голова монстра;
-- артефакт.
-
-Трофей физически появляется в доме.
-
-==================================================
-32. САД
-==================================================
-
-Игрок может находить семена.
-
-Дома выращивать:
-
-- лечебные растения;
-- ингредиенты;
-- редкие растения;
-- материалы для зелий.
-
-Некоторые растения можно получить только на определённых этажах.
-
-==================================================
-33. ПИТОМЕЦ
-==================================================
-
-В доме может жить питомец.
-
-Примеры:
-
-- wolf;
-- fox;
-- cat;
-- small dragon;
-- magical creature.
-
-Питомец может быть в основном декоративным.
-
-Допустимы небольшие бонусы, но питомец не должен становиться обязательной частью meta.
-
-==================================================
-34. КАРТА
-==================================================
-
-В доме должна находиться физическая карта мира.
-
-Игрок подходит к карте и выбирает экспедицию.
-
-Карта показывает:
-
-- открытые регионы;
-- известные этажи;
-- новые области;
-- discovered locations;
-- special events.
-
-Не делать выбор забега исключительно через обычное UI-меню.
-
-Физическая карта должна быть частью мира.
-
-==================================================
-35. ПОДГОТОВКА К ЗАБЕГУ
-==================================================
-
-Перед забегом игроки собираются в доме.
-
-На столе появляются варианты экспедиции.
-
-Например:
-
-COMBAT
-TREASURE
-CURSED
-UNKNOWN
-
-Игроки могут обсуждать выбор.
-
-После выбора открывается путь/портал/ворота.
-
-==================================================
-36. СОЦИАЛЬНАЯ ЧАСТЬ
-==================================================
-
-Каждый игрок имеет свой дом.
-
-Игрок может приглашать друзей.
-
-Другие игроки могут находиться в доме вместе.
-
-Они могут:
-
-- смотреть оружие друг друга;
-- показывать трофеи;
-- общаться;
-- готовиться к экспедиции;
-- выбирать забег.
-
-==================================================
-37. ПРОГРЕССИЯ
-==================================================
-
-Разделить progression на:
-
-TEMPORARY RUN PROGRESSION
-
-и
-
-PERMANENT PROGRESSION.
-
-Во время забега:
-
-- временные buffs;
-- temporary weapons;
-- temporary abilities;
-- temporary artifacts;
-- temporary build.
-
-После смерти временный билд сбрасывается.
-
-Но сохраняется:
-
-- открытое оружие;
-- NPC;
-- развитие дома;
-- трофеи;
-- открытые регионы;
-- коллекция;
-- постоянные улучшения;
-- знания/открытия.
-
-==================================================
-38. DEATH
-==================================================
-
-Смерть должна быть частью roguelite loop.
-
-После смерти:
-
-RUN LOST.
-
-Но:
-
-PERMANENT PROGRESS REMAINS.
-
-Игрок должен думать:
-
-"Я проиграл забег, но стал сильнее для следующего."
-
-Смерть должна давать ощущение обучения.
-
-==================================================
-39. MEMORY OF RUNS
-==================================================
-
-В доме можно сделать книгу/архив приключений.
-
-Например:
-
-RUN #37
-
-Depth:
-8 Floors
-
-Bosses:
-3
-
-Players:
-4
-
-Weapon:
-Blood Moon
-
-Death:
-Void King
-
-Также можно хранить:
-
-- лучшие забеги;
-- самые глубокие этажи;
-- убитых боссов;
-- редкие находки.
-
-Это создаёт историю конкретного игрока.
-
-==================================================
-40. ПОСТОЯННЫЙ ПРОГРЕСС
-==================================================
-
-После каждого забега игрок может улучшать:
-
-- дом;
-- NPC;
-- кузницу;
-- алхимию;
-- карту;
-- доступные этажи;
-- доступные оружия;
-- permanent upgrades.
-
-Но permanent upgrades не должны полностью уничтожать сложность.
-
-Навык игрока всегда должен оставаться главным фактором.
-
-==================================================
-41. FIRST-PERSON
-==================================================
-
-Игрок должен полноценно играть от первого лица.
-
-Нужны:
-
-- WASD;
-- mouse look;
-- controller support;
-- mobile controls в будущем;
-- sprint;
-- jump;
-- crouch;
-- dodge;
-- block;
-- attack;
-- interaction.
-
-Для мобильной версии архитектура ввода должна быть абстрагирована.
-
-==================================================
-42. LEVEL BUILDER
-==================================================
-
-Нужен собственный First-Person Level Builder.
-
-Разработчик должен иметь возможность ходить по сцене и строить уровень.
-
-Controls:
-
-WASD
-Mouse
-LMB
-RMB
-R
-G
-F
-
-Функции:
-
-- place prefab;
-- delete;
-- move;
-- rotate;
-- duplicate;
-- snapping;
-- undo;
-- redo;
-- asset categories;
-- save;
-- load;
-- preview;
-- procedural generation.
-
-Категории:
-
-Walls
-Buildings
-Rooms
-Nature
-Decor
-Props
-NPC
-Enemies
-Lights
-Doors
-Interactive
-Roads
-Special.
-
-Созданную вручную область можно сохранить как MODULE.
-
-После этого procedural generator может использовать этот модуль.
-
-==================================================
-43. АРХИТЕКТУРА
-==================================================
-
-Не создавать один огромный GameManager.
-
-Разделить системы:
-
-Player
-FirstPerson
-Combat
-Weapons
-Abilities
-Enemies
-AI
-Interaction
-Inventory
-Loot
-ProceduralGeneration
-Dungeon
-World
-Biomes
-Events
-Bosses
-NPC
-House
-Progression
-Multiplayer
-Save
-UI
-Audio
-LevelBuilder
-
-Использовать ScriptableObjects для:
-
-- WeaponData;
-- EnemyData;
-- ItemData;
-- AbilityData;
-- RoomModuleData;
-- BiomeData;
-- LootTable;
-- EventData;
-- BossData;
-- NPCData;
-- UpgradeData.
-
-==================================================
-44. MULTIPLAYER ARCHITECTURE
-==================================================
-
-Для MVP использовать:
-
-Unity Netcode for GameObjects (NGO).
-
-Архитектура:
-
-SERVER AUTHORITATIVE.
-
-Синхронизировать:
-
-- player position;
-- rotation;
-- health;
-- stamina;
-- state;
-- attacks;
-- dodge;
-- block;
-- interactions;
-- enemies;
-- doors;
-- switches;
-- loot;
-- boss state;
-- procedural dungeon state.
-
-RPC использовать для:
-
-- Attack;
-- Dodge;
-- Block;
-- Interact;
-- other authoritative actions.
-
-==================================================
-45. ANIMATION
-==================================================
-
-Для MVP использовать:
-
-Unity Animator Controller.
-
-Сделать архитектуру расширяемой.
+Создай базовую state machine.
 
 States:
 
 Idle
-Walk
-Run
+Move
+Sprint
 Attack
 HeavyAttack
-Block
 Dodge
+Block
 Hit
 Stagger
-Death
-Downed.
+GuardBreak
+Dead
+
+Архитектура должна позволять добавлять новые состояния позже.
+
+НЕ создавать giant PlayerController.cs.
+
+Разделяй:
+
+PlayerController
+PlayerStateMachine
+PlayerState
+PlayerMovement
+PlayerResources
+PlayerCombat
 
 ==================================================
-46. NAVIGATION
+PHASE 2 — SWORD COMBAT
 ==================================================
 
-Использовать Unity NavMesh.
+Создай базовое оружие:
 
-Так как уровни процедурные, NavMesh должен поддерживать runtime generation/building.
+Sword.
 
-AI должен корректно работать на сгенерированных этажах.
+Пока только один меч.
 
-Не использовать A* без необходимости.
+Меч должен поддерживать:
+
+Light Attack
+Heavy Attack
+
+--------------------------------------------------
+ATTACK DATA
+--------------------------------------------------
+
+Создай:
+
+AttackData : ScriptableObject
+
+Поля:
+
+Attack ID
+Damage
+Poise Damage
+Stamina Cost
+
+Startup Duration
+Active Duration
+Recovery Duration
+
+Animation
+
+CanCombo
+ComboWindow
+
+DamageType
+
+CriticalMultiplier
+
+--------------------------------------------------
+LIGHT ATTACK
+--------------------------------------------------
+
+Начальные параметры:
+
+Damage = 35
+
+PoiseDamage = 10
+
+StaminaCost = 10
+
+Startup = 0.20 sec
+
+Active = 0.10 sec
+
+Recovery = 0.35 sec
+
+--------------------------------------------------
+HEAVY ATTACK
+--------------------------------------------------
+
+Начальные параметры:
+
+Damage = 75
+
+PoiseDamage = 30
+
+StaminaCost = 25
+
+Startup = 0.60 sec
+
+Active = 0.15 sec
+
+Recovery = 0.55 sec
+
+Это стартовый баланс.
+
+Не считать его финальным.
+
+--------------------------------------------------
+ATTACK STATE
+--------------------------------------------------
+
+Каждая атака имеет:
+
+STARTUP
+ACTIVE
+RECOVERY
+
+Пример:
+
+Attack
+ ↓
+Startup
+ ↓
+Active
+ ↓
+Recovery
+ ↓
+Idle
+
+Во время Startup:
+
+Hitbox OFF
+
+Во время Active:
+
+Hitbox ON
+
+Во время Recovery:
+
+Hitbox OFF
+
+--------------------------------------------------
+HITBOX
+--------------------------------------------------
+
+Создай:
+
+AttackHitbox
+HitboxController
+HitResult
+DamageContext
+
+Hitbox должен существовать/работать только во время Active.
+
+DamageContext должен содержать:
+
+Attacker
+Target
+Damage
+PoiseDamage
+DamageType
+AttackID
+HitPosition
+HitDirection
+IsCritical
+
+Один attack instance не должен наносить одному target несколько попаданий,
+если AttackData явно не разрешает multi-hit.
 
 ==================================================
-47. ASSET MANAGEMENT
+PHASE 3 — ENEMY
 ==================================================
 
-Не строить финальную архитектуру на Resources.
+Создай одного тестового врага:
 
-Для MVP можно использовать обычные prefab references.
+TrainingEnemy.
 
-Архитектура должна быть совместима с Addressables в будущем.
+Пока НЕ нужен сложный AI.
+
+Enemy должен иметь:
+
+EnemyHealth
+EnemyDefense
+EnemyPoise
+
+Начальные значения:
+
+HP = 250
+
+Defense = 25
+
+Poise = 100
+
+Enemy должен:
+
+- получать damage;
+- получать poise damage;
+- реагировать на hit;
+- умирать.
+
+--------------------------------------------------
+DAMAGE SYSTEM
+--------------------------------------------------
+
+Создай:
+
+IDamageable
+
+DamageSystem
+
+DamageContext
+
+Базовая формула:
+
+FinalDamage =
+BaseDamage *
+(100 / (100 + Defense))
+
+Например:
+
+100 damage
+25 defense
+
+FinalDamage =
+100 * (100 / 125)
+
+= 80
+
+--------------------------------------------------
+ENEMY HIT REACTION
+--------------------------------------------------
+
+После получения удара:
+
+Enemy получает damage.
+
+Дополнительно:
+
+Enemy получает PoiseDamage.
+
+Но пока PoiseBreak будет реализован в PHASE 6.
 
 ==================================================
-48. PHYSICS
+PHASE 4 — DODGE
 ==================================================
 
-Использовать Unity built-in PhysX.
+Добавь:
 
-Не использовать Havok/DOTS Physics на MVP.
+DodgeState
 
-Учитывать:
+DodgeController
 
-- performance;
-- multiplayer;
-- mobile;
-- pooling.
+DodgeData
+
+--------------------------------------------------
+DODGE PARAMETERS
+--------------------------------------------------
+
+Stamina Cost:
+
+22
+
+Total Duration:
+
+0.65 sec
+
+I-Frame:
+
+0.30 sec
+
+Recovery:
+
+0.25 sec
+
+--------------------------------------------------
+DODGE DIRECTIONS
+--------------------------------------------------
+
+Поддержать:
+
+Forward
+Backward
+Left
+Right
+
+Направление определяется movement input.
+
+Если input отсутствует:
+
+использовать backward/forward direction
+согласно design choice проекта.
+
+--------------------------------------------------
+I-FRAMES
+--------------------------------------------------
+
+Создай:
+
+IFrameController
+
+Во время i-frame:
+
+Player должен игнорировать damage.
+
+ВАЖНО:
+
+I-frame НЕ должен длиться всю dodge animation.
+
+Например:
+
+0.00
+START
+
+0.15
+I-FRAME START
+
+0.45
+I-FRAME END
+
+0.65
+DODGE END
+
+Сделать значения configurable.
+
+--------------------------------------------------
+DODGE RULES
+--------------------------------------------------
+
+Dodge нельзя использовать:
+
+если Player Dead.
+
+Dodge должен проверять:
+
+CurrentStamina >= DodgeCost.
+
+Если stamina недостаточно:
+
+Dodge не выполняется.
 
 ==================================================
-49. SAVE SYSTEM
+PHASE 5 — BLOCK
 ==================================================
+
+Добавь:
+
+BlockState
+
+BlockController
+
+ShieldData
 
 Для MVP:
 
-JSON.
+обычный shield.
 
-Система должна быть:
+--------------------------------------------------
+SHIELD DATA
+--------------------------------------------------
 
-- modular;
-- versioned;
-- extensible.
+DamageReduction = 80%
 
-Сохранять:
+StaminaDamageMultiplier = 1.0
 
-- house;
-- NPC;
-- progression;
-- weapons;
-- unlocks;
-- trophies;
-- discovered locations;
-- player settings.
+CanParry = false
 
-Не сохранять временный run build как permanent progression.
+CanPerfectBlock = false
 
-В будущем можно перейти на MessagePack.
+--------------------------------------------------
+BLOCK
+--------------------------------------------------
 
-==================================================
-50. PERFORMANCE
-==================================================
+При блоке:
 
-Игра должна потенциально работать:
+Player получает уменьшенный HP damage.
 
-PC / Steam
-+
-Mobile.
+Но получает Stamina damage.
 
-С самого начала учитывать:
+Например:
 
-- object pooling;
-- LOD;
-- occlusion;
-- efficient spawning;
-- minimal Instantiate/Destroy;
-- AI optimization;
-- streaming;
-- limited active NPC;
-- limited active enemies;
-- scalable VFX;
-- mobile quality settings.
+Incoming Damage = 100
 
-==================================================
-51. MVP
-==================================================
+DamageReduction = 80%
 
-Не пытайся сразу создать всю игру.
+HP Damage = 20
 
-Сначала создать маленький vertical slice.
+Stamina Damage = configurable.
 
-MVP:
+--------------------------------------------------
+BLOCK MOVEMENT
+--------------------------------------------------
 
-1 playable character
+Во время block:
 
-1 first-person controller
+Movement speed уменьшается.
 
-1 sword
+Например:
 
-basic melee combat
+Movement multiplier = 0.45
 
-light attack
+Значение configurable.
 
-heavy attack
+--------------------------------------------------
+GUARD BREAK
+--------------------------------------------------
 
-block
+Если:
 
-dodge
+CurrentStamina <= 0
 
-stamina
+во время Block:
 
-2 enemy types
+Player
+ ↓
+GuardBreak
+ ↓
+Stagger
+ ↓
+Recovery
 
-1 elite enemy
+Создай отдельное:
 
-1 boss
+GuardBreakState
 
-10–15 procedural room modules
+GuardBreak должен:
 
-1 thematic floor
-
-seed system
-
-basic loot
-
-basic temporary buffs
-
-basic blessing
-
-basic curse
-
-2-player multiplayer
-
-player synchronization
-
-enemy synchronization
-
-health synchronization
-
-downed state
-
-revive
-
-basic home
-
-basic weapon display
-
-basic NPC
-
-basic progression
-
-basic save.
+- временно отключать block;
+- блокировать атаку;
+- проигрывать recovery;
+- позволять врагу наказать игрока.
 
 ==================================================
-52. DEVELOPMENT ORDER
+PHASE 6 — POISE + STAGGER + CRITICAL
 ==================================================
 
-Не начинать сразу с процедурной генерации.
+Это центральная часть melee combat.
 
-Разрабатывать по этапам:
+--------------------------------------------------
+POISE SYSTEM
+--------------------------------------------------
 
-STEP 1
-Project analysis.
+Создай:
 
-STEP 2
-Core architecture.
+IPoiseReceiver
 
-STEP 3
-First-person controller.
+PoiseSystem
 
-STEP 4
-Multiplayer connection.
+PoiseData
 
-STEP 5
-Player synchronization.
+Enemy:
 
-STEP 6
-Sword combat.
+MaxPoise = 100
 
-STEP 7
-Enemy AI.
+CurrentPoise = 100
 
-STEP 8
-Networked enemies.
+PoiseRecoveryDelay = 2 sec
 
-STEP 9
-Downed/revive.
+PoiseRecoveryRate = 20/sec
 
-STEP 10
-Basic boss.
+--------------------------------------------------
+POISE DAMAGE
+--------------------------------------------------
 
-STEP 11
-Room Module System.
+Light Sword:
 
-STEP 12
-Procedural Generator.
+10
 
-STEP 13
-Seed System.
+Heavy Sword:
 
-STEP 14
-First complete floor.
+30
 
-STEP 15
-Loot/build system.
+Когда:
 
-STEP 16
-Blessing/Curse system.
+CurrentPoise <= 0
 
-STEP 17
-Path choice.
+происходит:
 
-STEP 18
-Home.
+POISE BREAK
 
-STEP 19
-NPC.
+--------------------------------------------------
+STAGGER
+--------------------------------------------------
 
-STEP 20
-Permanent progression.
+После Poise Break:
 
-STEP 21
-Additional floors.
+Enemy
+ ↓
+StaggerState
 
-STEP 22
-Optimization.
+Во время stagger:
 
-==================================================
-53. DEVELOPMENT RULES
-==================================================
+- enemy не атакует;
+- enemy не двигается нормально;
+- enemy проигрывает stagger animation;
+- появляется Critical Window.
 
-После каждого крупного этапа:
+После stagger:
 
-- compile project;
-- проверить Console;
-- проверить references;
-- проверить prefabs;
-- проверить scenes;
-- проверить multiplayer;
-- проверить null references;
-- проверить performance;
-- исправить ошибки.
+Poise восстанавливается.
 
-Не создавать систему, если она не нужна текущему этапу.
+--------------------------------------------------
+POISE RECOVERY
+--------------------------------------------------
 
-Не делать premature optimization, но архитектуру сразу делать масштабируемой.
+После получения Poise Damage:
 
-Не создавать огромные файлы на тысячи строк без необходимости.
+запустить recovery delay.
 
-Использовать небольшие специализированные компоненты.
+Например:
 
-Не дублировать код.
+2 секунды без получения Poise Damage.
 
-Не использовать hardcoded значения там, где лучше ScriptableObject/configuration.
+После delay:
+
+Poise восстанавливается.
+
+Recovery rate:
+
+20/sec
+
+Все значения configurable.
 
 ==================================================
-54. ГЛАВНАЯ ФИЛОСОФИЯ ИГРЫ
+CRITICAL
 ==================================================
 
-Игрок должен чувствовать:
+Поддержать:
 
-"Каждый забег — новый путь."
+Stagger Critical
 
-"Каждый этаж — новый мир."
+Backstab architecture подготовить,
+но полноценный Backstab пока НЕ реализовывать.
 
-"Каждый найденный меч — новая возможность."
+--------------------------------------------------
+STAGGER CRITICAL
+--------------------------------------------------
 
-"Каждая смерть — новый опыт."
+Когда enemy находится в Stagger:
 
-"Каждый NPC делает мой дом живее."
+Player может выполнить:
 
-"Вместе играть интереснее, чем одному."
+Critical Attack
 
-"Игра сложная, но справедливая."
+Critical:
 
-==================================================
-55. ГЛАВНАЯ ЦЕЛЬ
-==================================================
+BaseDamage × CriticalMultiplier
 
-Создать first-person cooperative fantasy roguelite, в котором:
+Начальный:
 
-FIRST PERSON
-+
-WEIGHTY SWORD COMBAT
-+
-1–4 PLAYER CO-OP
-+
-DARK SOULS INSPIRED FAIR DIFFICULTY
-+
-ROGUELITE RUNS
-+
-PROCEDURAL FLOORS
-+
-HANDCRAFTED MODULES
-+
-UNIQUE WEAPONS
-+
-BUILD SYNERGY
-+
-RANDOM BLESSINGS/CURSES
-+
-RISK/REWARD
-+
-BOSSES
-+
-PLAYER HOME
-+
-NPC
-+
-PERMANENT PROGRESSION
-+
-MULTIPLE THEMATIC WORLDS.
+CriticalMultiplier = 2.0
 
-Главная уникальность:
+После critical:
 
-Мир собирается заново для каждого забега, но сохраняет качество ручного level design.
-
-Каждый этаж имеет свой стиль, врагов, механики и атмосферу.
-
-Игроки принимают решения вместе.
-
-После забега последствия остаются в доме и постоянном прогрессе.
+Enemy выходит из Critical Window.
 
 ==================================================
-56. ПЕРЕД НАПИСАНИЕМ КОДА
+COMBAT FLOW
 ==================================================
 
-СНАЧАЛА НЕ ПИШИ КОД.
+Финальный flow должен выглядеть так:
 
-Сначала:
+PLAYER
 
-1. Изучи существующий Unity project.
-2. Определи текущую архитектуру.
-3. Найди уже существующие системы.
-4. Определи потенциальные конфликты.
-5. Предложи новую архитектуру поверх существующего проекта.
-6. Покажи структуру папок.
-7. Покажи зависимости между системами.
-8. Определи multiplayer architecture.
-9. Определи procedural architecture.
-10. Определи Module/Connector format.
-11. Определи Seed architecture.
-12. Определи MVP.
-13. Разбей разработку на конкретные этапы.
+Idle
+ ↓
+Attack
+ ↓
+Startup
+ ↓
+Active
+ ↓
+Hit
+ ↓
+Damage + PoiseDamage
+ ↓
+Recovery
 
-После моего подтверждения начинай STEP 1.
 
-Никогда не создавай всю игру одним большим шагом.
+ENEMY
 
-Каждый этап должен оставлять Unity project в рабочем состоянии.
+Idle
+ ↓
+Hit
+ ↓
+Receive Damage
+ ↓
+Receive Poise Damage
+ ↓
+Poise <= 0
+ ↓
+Stagger
+ ↓
+Critical Window
+ ↓
+Critical
+ ↓
+Recovery
+
+
+BLOCK
+
+Player
+ ↓
+Block
+ ↓
+Enemy Attack
+ ↓
+Damage Reduction
+ ↓
+Stamina Damage
+ ↓
+Stamina <= 0
+ ↓
+Guard Break
+ ↓
+Stagger
+
+
+DODGE
+
+Player
+ ↓
+Dodge
+ ↓
+I-Frame
+ ↓
+Enemy Attack
+ ↓
+No Damage
+ ↓
+Recovery
+
+==================================================
+ANIMATION ARCHITECTURE
+==================================================
+
+Если в проекте уже существует Animator:
+
+используй его.
+
+Не создавай второй Animator.
+
+Создай параметры только при необходимости:
+
+Speed
+IsGrounded
+IsBlocking
+IsAttacking
+IsStaggered
+AttackID
+
+Gameplay state machine должна отвечать за gameplay.
+
+Animator должен отвечать за visual animation.
+
+Не помещай весь combat logic в Animation Events.
+
+==================================================
+DEBUG TOOLS
+==================================================
+
+Создай debug mode.
+
+В Editor должно быть возможно видеть:
+
+Player HP
+Player Stamina
+
+Enemy HP
+Enemy Poise
+
+Current Player State
+Current Enemy State
+
+Attack Phase:
+
+Startup
+Active
+Recovery
+
+IFrame status
+
+Hitbox
+
+==================================================
+TEST SCENE
+==================================================
+
+Создай отдельную тестовую сцену:
+
+AERAVEN_Combat_Test
+
+Содержит:
+
+Player
+Sword
+TrainingEnemy
+Ground
+Simple lighting
+Simple camera
+
+Дополнительно:
+
+Damage Debug UI
+
+Показывать:
+
+HP
+Stamina
+Enemy HP
+Enemy Poise
+Current State
+
+Это временная developer UI.
+
+НЕ создавать красивый production HUD.
+
+==================================================
+ACCEPTANCE TESTS
+==================================================
+
+Тест 1:
+
+Player атакует enemy.
+
+Enemy получает damage.
+
+Тест 2:
+
+Light attack потребляет 10 stamina.
+
+Тест 3:
+
+Heavy attack потребляет 25 stamina.
+
+Тест 4:
+
+При недостатке stamina attack не запускается.
+
+Тест 5:
+
+Stamina восстанавливается после delay.
+
+Тест 6:
+
+Player выполняет dodge.
+
+Тест 7:
+
+Во время i-frame player не получает damage.
+
+Тест 8:
+
+После dodge player снова получает damage.
+
+Тест 9:
+
+Player блокирует.
+
+Тест 10:
+
+Block уменьшает HP damage.
+
+Тест 11:
+
+Block расходует stamina.
+
+Тест 12:
+
+Stamina достигает 0.
+
+Player получает Guard Break.
+
+Тест 13:
+
+Enemy получает Poise Damage.
+
+Тест 14:
+
+Poise достигает 0.
+
+Enemy входит в Stagger.
+
+Тест 15:
+
+Во время Stagger можно выполнить Critical.
+
+Тест 16:
+
+Critical наносит повышенный damage.
+
+Тест 17:
+
+После Critical enemy возвращается в обычное состояние.
+
+Тест 18:
+
+Enemy можно убить обычными атаками.
+
+Тест 19:
+
+Player можно убить.
+
+Тест 20:
+
+После смерти Player не может атаковать/dodge/block.
+
+==================================================
+CODE QUALITY
+==================================================
+
+Требования:
+
+- SOLID;
+- маленькие классы;
+- отсутствие giant classes;
+- отсутствие duplicate systems;
+- отсутствие magic numbers;
+- ScriptableObjects для balance;
+- interfaces;
+- events;
+- dependency injection там, где это оправдано;
+- минимальное использование GetComponent в Update;
+- отсутствие FindObjectsOfType в Update;
+- отсутствие Camera.main в Update;
+- отсутствие LINQ в горячих gameplay loops;
+- отсутствие постоянных allocations.
+
+Все public API должны иметь понятные имена.
+
+Используй namespaces проекта.
+
+==================================================
+MULTIPLAYER PREPARATION
+==================================================
+
+Пока НЕ реализовывай полноценный multiplayer combat.
+
+Но архитектура не должна препятствовать ему.
+
+Не делай:
+
+Enemy.hp -= damage;
+
+из случайного client-side script.
+
+Создай централизованный:
+
+DamageSystem
+
+CombatSystem
+
+которые позже можно сделать server-authoritative.
+
+Если проект уже использует NGO,
+не ломай существующую сетевую архитектуру.
+
+Unity 6 имеет актуальную ветку Netcode for GameObjects 2.7 для Unity 6.0,
+поэтому при наличии NGO используй совместимую с проектом версию,
+а не устанавливай новую версию вслепую.
+
+==================================================
+ФИНАЛЬНОЕ ТРЕБОВАНИЕ
+==================================================
+
+После завершения PHASE 1–6:
+
+1. Проект должен компилироваться без ошибок.
+2. AERAVEN_Combat_Test должен запускаться.
+3. Player должен двигаться.
+4. Player должен атаковать.
+5. Player должен dodge.
+6. Player должен block.
+7. Player должен получать damage.
+8. Enemy должен получать damage.
+9. Enemy должен иметь Poise.
+10. Enemy должен stagger.
+11. Player должен выполнить Critical.
+12. Player и Enemy должны умирать корректно.
+13. Все основные параметры должны редактироваться через Inspector/ScriptableObjects.
+
+После завершения:
+
+Создай:
+
+AERAVEN_COMBAT_PHASE_1_6_REPORT.md
+
+В отчёте укажи:
+
+- созданные файлы;
+- изменённые файлы;
+- архитектуру;
+- реализованные системы;
+- настройки;
+- известные проблемы;
+- что осталось сделать.
+
+НЕ начинай PHASE 7.
+
+После отчёта остановись. 
