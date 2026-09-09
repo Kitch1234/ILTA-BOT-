@@ -1,1427 +1,702 @@
-============================================================
-ILTA — URGENT IMAGE PIPELINE DEBUG
-PACK / CHEST / GENERATED CARD IMAGES
-============================================================
+---
 
-КРИТИЧЕСКАЯ ПРОБЛЕМА
-============================================================
+name: aeraven-dungeon-builder
+description: >
+Use when designing, blocking out, generating, assembling, validating, or
+modifying fantasy dungeons in the AERAVEN Unity project. This skill controls
+dungeon level-design workflow, modular asset analysis, room layout,
+corridor connections, combat spaces, exploration paths, secrets, boss rooms,
+and final scene validation. Always use this skill before modifying a dungeon
+scene through Unity MCP.
 
-После последних изменений изображения перестали
-отображаться в Discord.
+AERAVEN Dungeon Builder
 
-Проблемы одновременно:
+ROLE
 
-1. Не отображаются изображения Pack.
-2. Не отображаются изображения Chest.
-3. В открытии Pack перестали отображаться
-   сгенерированные изображения карт.
-4. PNG assets физически существуют в проекте.
-5. Card Generator существует и должен продолжать
-   генерировать карты.
+You are acting as a senior Unity level designer and technical level designer.
 
-НЕ ПЕРЕПИСЫВАТЬ SHOP И INVENTORY ЗАНОВО.
+Your job is NOT to randomly place assets.
 
-Сначала найти точную причину.
+Your job is to:
 
+1. Understand the available dungeon assets.
+2. Understand how the assets connect.
+3. Design a playable dungeon layout.
+4. Validate the layout.
+5. Build the layout using existing Unity assets.
+6. Validate the resulting Unity scene.
+7. Only then add decoration and secondary details.
 
-============================================================
-1. STOP — DO NOT MODIFY YET
-============================================================
+The dungeon must feel intentionally designed by a human level designer.
 
-Перед любыми изменениями провести диагностику.
+---
 
-Найти и показать:
+ABSOLUTE RULES
 
-- где загружается Pack image;
-- где загружается Chest image;
-- где вызывается card_generator;
-- где сохраняется generated card;
-- какой путь возвращает card_generator;
-- где generated card передаётся в Discord;
-- где создаётся discord.File;
-- где создаётся Embed;
-- где вызывается embed.set_image();
-- где вызывается message.reply();
-- где вызывается interaction.response.send_message();
-- где вызывается followup.send();
-- где вызывается edit_message();
-- где формируется attachment:// URL.
+Rule 1 — Never start by placing random assets
 
-НЕ менять код, пока эти точки не найдены.
+NEVER immediately create hundreds of GameObjects.
 
+Before building:
 
-============================================================
-2. IMPORTANT DISCORD RULE
-============================================================
+INSPECT → PLAN → VALIDATE → BLOCKOUT → BUILD → VALIDATE → DECORATE
 
-Проверить все места, где используется:
+---
 
-embed.set_image(
-    url=...
-)
+Rule 2 — Use existing assets
 
+Do not create replacement primitive geometry unless explicitly requested.
 
-Если URL имеет:
+Prefer existing:
 
-attachment://filename.png
+- Prefabs
+- FBX models
+- Materials
+- Modular walls
+- Floors
+- Doors
+- Arches
+- Corners
+- Pillars
+- Stairs
+- Props
+- Decorations
 
+If the project contains a Dungeon Assets Pack, inspect it before creating anything.
 
-то этот файл ОБЯЗАТЕЛЬНО должен быть
-передан в тот же Discord message
-как attachment.
+---
 
+Rule 3 — Never invent asset names
 
-Например правильная схема:
+Do not assume that a prefab exists.
 
+First inspect the Unity project.
 
-file = discord.File(
-    image_path,
-    filename="rare_pack.png"
-)
+Use the exact asset paths and prefab names discovered in the project.
 
+---
 
-embed.set_image(
-    url="attachment://rare_pack.png"
-)
+Rule 4 — Separate architecture from decoration
 
+Architectural objects:
 
-await interaction.followup.send(
-    embed=embed,
-    file=file
-)
+- floor
+- wall
+- ceiling
+- corridor
+- door
+- arch
+- stairs
+- pillars
 
+Decoration:
 
-НЕ делать:
+- torch
+- barrel
+- chest
+- skeleton
+- chains
+- table
+- statue
+- rubble
+- candles
+- small props
 
+Architecture comes first.
 
-embed.set_image(
-    url="attachment://rare_pack.png"
-)
+Decoration comes last.
 
+---
 
-await interaction.followup.send(
-    embed=embed
-)
+PHASE 1 — PROJECT INSPECTION
 
+Before building a dungeon:
 
-Потому что attachment отсутствует.
+1. Inspect the current Unity scene.
+2. Inspect the project hierarchy.
+3. Locate dungeon-related folders.
+4. Locate Prefabs.
+5. Locate FBX assets.
+6. Locate demo/example scenes.
+7. Locate materials and textures.
+8. Identify existing dungeon systems.
+9. Check whether NavMesh / AI Navigation is installed.
+10. Check whether an existing level-generation system already exists.
 
+Do not overwrite existing systems without inspection.
 
-============================================================
-3. MULTIPLE IMAGES
-============================================================
+---
 
-Особенно проверить Pack Opening.
+PHASE 2 — ASSET CATALOG
 
-Если одновременно показываются:
+Create an internal catalog of discovered assets.
 
-Pack image
+Classify assets into:
 
-+
-несколько generated card images
+STRUCTURAL
 
+Examples:
 
-Discord должен получить все необходимые
-attachments в одном сообщении либо система
-должна корректно отправлять их отдельно.
+- Floor
+- Wall
+- Wall_End
+- Corner
+- InnerCorner
+- OuterCorner
+- Door
+- Arch
+- Corridor
+- Stairs
+- Pillar
+- Ceiling
 
+ROOM MODULES
 
-Например:
+Examples:
 
+- SmallRoom
+- MediumRoom
+- LargeRoom
+- Arena
+- BossRoom
 
-files = [
-    discord.File(pack_path, filename="pack.png"),
-    discord.File(card1_path, filename="card_1.png"),
-    discord.File(card2_path, filename="card_2.png")
-]
+DECORATION
 
+Examples:
 
-НЕЛЬЗЯ создавать:
+- Torch
+- Chest
+- Barrel
+- Skeleton
+- Statue
+- Chains
+- Table
+- Debris
 
-file = discord.File(...)
+For every important structural asset determine:
 
+- approximate dimensions
+- pivot position
+- forward direction
+- usable rotation
+- connection points
+- grid compatibility
+- whether it is a Prefab
+- whether it can be safely duplicated
 
-затем:
+If exact dimensions cannot be determined, inspect the asset in Unity rather than guessing.
 
-await send(file=file)
+---
 
+PHASE 3 — UNDERSTAND MODULAR CONNECTIONS
 
-а после этого пытаться использовать
-тот же file object снова.
+Determine how the dungeon pack is intended to connect.
 
+Look for:
 
-Каждый Discord File object
-должен использоваться корректно.
+- matching wall lengths
+- floor dimensions
+- door widths
+- corridor widths
+- socket/connection points
+- modular grid size
+- rotation increments
 
+If the pack contains a Demo Scene:
 
-============================================================
-4. PACK IMAGE DEBUG
-============================================================
+USE IT AS A REFERENCE.
 
-Для каждого Pack перед отправкой
-добавить DEBUG LOG:
+Analyze how the original creator assembled:
 
+- rooms
+- corridors
+- corners
+- doors
+- walls
+- decoration
 
-PACK IMAGE DEBUG
+Do not copy the demo dungeon layout unless explicitly requested.
 
-pack_id:
-pack_name:
-asset_key:
-resolved_path:
-exists:
-is_file:
-size:
-format:
+Copy the construction logic, not the layout.
 
+---
 
-Пример:
+PHASE 4 — ABSTRACT DUNGEON DESIGN
 
+Before placing visual assets, create an abstract dungeon graph.
 
-PACK IMAGE DEBUG
-pack_id=rare_pack
-asset_key=rare_pack
-resolved_path=/project/assets/packs/rare.png
-exists=True
-is_file=True
-size=182934
-format=PNG
+Example:
 
-
-Если exists=False:
-
-НЕ продолжать отправку.
-
-
-Показать точный path,
-который система пытается открыть.
-
-
-============================================================
-5. CHEST IMAGE DEBUG
-============================================================
-
-То же самое:
-
-
-CHEST IMAGE DEBUG
-
-chest_id:
-asset_key:
-resolved_path:
-exists:
-is_file:
-size:
-format:
-
-
-============================================================
-6. GENERATED CARD DEBUG
-============================================================
-
-КРИТИЧЕСКИ ВАЖНО.
-
-Найти:
-
-card_generator.py
-
-
-и место, где Pack Opening
-генерирует карты.
-
-
-После каждой генерации
-выводить:
-
-
-GENERATED CARD DEBUG
-
-champion:
-skin:
-rarity:
-output_path:
-exists:
-is_file:
-size:
-
-
-Например:
-
-
-GENERATED CARD DEBUG
-
-champion=Ahri
-skin=Ultimate
-rarity=Ultimate
-output_path=/project/generated/cards/ahri_ultimate.png
-exists=True
-is_file=True
-size=734221
-
-
-============================================================
-7. DO NOT ASSUME CARD GENERATOR IS BROKEN
-============================================================
-
-Проверить отдельно:
-
-
-card_generator
-
-
-→ generate card
-
-
-→ save PNG
-
-
-→ verify PNG
-
-
-→ Discord send
-
-
-Если PNG существует и открывается,
-Card Generator считать исправным.
-
-
-Проблему искать после генерации.
-
-
-============================================================
-8. OPEN GENERATED CARD FILE
-============================================================
-
-Для каждой generated card проверить
-фактически:
-
-
-os.path.exists(path)
-
-
-os.path.isfile(path)
-
-
-os.path.getsize(path)
-
-
-PIL.Image.open(path)
-
-
-PIL.Image.verify()
-
-
-Если verify() проходит,
-значит PNG корректный.
-
-
-============================================================
-9. CRITICAL PATH PROBLEM
-============================================================
-
-Проверить различие между:
-
-
-relative path
-
-
-absolute path
-
-
-current working directory
-
-
-__file__
-
-
-project root
-
-
-Например:
-
-
-assets/cards/...
-
-
-может работать из:
-
-
-main.py
-
-
-но не работать из:
-
-
-cogs/pack.py
-
-
-Не использовать случайные:
-
-
-../../assets
-
-
-../../../assets
-
-
-Использовать единый PROJECT_ROOT.
-
-
-Например:
-
-
-PROJECT_ROOT = Path(__file__).resolve().parents[...] 
-
-
-Но сначала определить правильный
-root проекта по существующей структуре.
-
-
-============================================================
-10. ASSET MANAGER
-============================================================
-
-Если AssetManager уже существует:
-
-НЕ создавать второй.
-
-
-Исправить существующий.
-
-
-Если его нет:
-
-создать один.
-
-
-Он должен возвращать:
-
-
-Path
-
-
-а не Discord URL.
-
-
-Например:
-
-
-asset_manager.get_pack_asset("rare_pack")
-
-
-→ Path(.../rare.png)
-
-
-А Discord layer уже решает,
-как превратить Path в attachment.
-
-
-НЕ смешивать filesystem
-и Discord URL.
-
-
-============================================================
-11. IMPORTANT ARCHITECTURE
-============================================================
-
-Разделить:
-
-
-FILESYSTEM LAYER
-
-
-AssetManager
-
-
+Entrance
 ↓
-
-
-Path
-
-
-DISCORD PRESENTATION LAYER
-
-
-DiscordImage
-
-
+Combat Room
 ↓
-
-
-discord.File
-
-
+Exploration
 ↓
-
-
-attachment://filename
-
-
-Это должно быть разделено.
-
-
-============================================================
-12. DISCORD IMAGE HELPER
-============================================================
-
-Создать ОДИН helper,
-если аналогичного уже нет:
-
-
-create_discord_image_attachment(path, filename)
-
-
-Он должен:
-
-
-1. проверить существование;
-2. проверить файл;
-3. создать discord.File;
-4. вернуть File + attachment URL.
-
-
-Например логика:
-
-
-file = discord.File(
-    str(path),
-    filename=filename
-)
-
-
-url = f"attachment://{filename}"
-
-
-return file, url
-
-
-Все Pack / Chest / Card
-изображения должны использовать
-один и тот же механизм.
-
-
-============================================================
-13. GENERATED CARD SEND
-============================================================
-
-Найти текущую систему,
-которая раньше показывала
-сгенерированные карты.
-
-
-НЕ заменять card_generator.
-
-
-Нужно восстановить:
-
-
-generated PNG
-
-
+Combat Room
 ↓
-
-
-discord.File
-
-
+Branch
+├── Secret Room
+└── Main Path
 ↓
-
-
-attachment://...
-
-
+Elite Room
 ↓
-
-
-Discord message
-
-
-============================================================
-14. PACK OPENING
-============================================================
-
-Проверить полный pipeline:
-
-
-OPEN PACK
-
-
+Shrine
 ↓
-
-
-calculate rewards
-
-
+Large Arena
 ↓
+Boss
 
+The abstract graph is more important than visual decoration.
 
-generate cards
+---
 
+PHASE 5 — LEVEL DESIGN RULES
 
-↓
+The dungeon should contain variation.
 
+Avoid:
 
-save cards
+Room → Corridor → Room → Corridor → Room
 
+Instead use:
 
-↓
+Entrance
+→ narrow corridor
+→ small combat room
+→ larger exploration space
+→ branching corridor
+→ optional secret
+→ elite encounter
+→ rest/checkpoint
+→ large arena
+→ boss
 
+---
 
-verify cards
+SPATIAL RULES
 
+Do not create:
 
-↓
+- meaningless corridors
+- excessive empty space
+- impossible turns
+- blocked doors
+- overlapping rooms
+- rooms without gameplay purpose
+- identical rooms repeated excessively
 
+Use:
 
-create Discord files
+- narrow spaces for tension
+- medium rooms for combat
+- large rooms for important encounters
+- vertical changes where supported
+- visual landmarks
+- secrets
+- optional routes
 
+---
 
-↓
+MAIN PATH
 
+The main path must always be readable.
 
-create embed/message
+The player should understand:
 
+WHERE THEY ARE
 
-↓
+WHERE THEY CAME FROM
 
+WHERE THEY CAN GO
 
-send attachments
+WHERE THE IMPORTANT DESTINATION IS
 
+The main path must always have a valid connection:
 
-↓
+Entrance → Boss
 
+---
 
-display cards
+BRANCHES
 
+Branches should have a reason to exist.
 
-Если любой этап возвращает
-None / invalid path / missing file,
-остановиться и вывести DEBUG.
+Good branch purposes:
 
+- treasure
+- secret
+- lore
+- elite enemy
+- shortcut
+- alternate route
+- resource
+- NPC
+- puzzle
 
-============================================================
-15. IMPORTANT — FILE LIFETIME
-============================================================
+Do not create branches simply to make the map larger.
 
-Проверить, что discord.File
-не закрывается до отправки сообщения.
+---
 
+ROOM TYPES
 
-Не делать:
+Every major room must have a purpose.
 
+Allowed types:
 
-with open(...) as f:
-    file = discord.File(f)
+- Entrance
+- Combat
+- Elite
+- Exploration
+- Treasure
+- Secret
+- Shrine
+- Puzzle
+- Arena
+- Boss
 
+A room may have multiple purposes.
 
-а затем отправлять
-после выхода из context.
+Example:
 
+Elite + Treasure
 
-Также проверить временные
-generated files.
+or
 
+Puzzle + Secret
 
-Если generated card сохраняется
-во временный каталог,
-файл не должен удаляться
-до момента завершения Discord upload.
+---
 
+COMBAT ROOMS
 
-============================================================
-16. PACK + CARDS
-============================================================
+Combat rooms need sufficient space for:
 
-Если Pack Opening показывает:
+- player movement
+- enemy movement
+- dodging
+- attacks
+- abilities
+- camera visibility
 
+Do not place decoration in locations that interfere with gameplay.
 
-Pack image
+Reserve enemy spawn locations.
 
+---
 
-и
+BOSS ROOM
 
+Boss rooms must be significantly more spacious than normal combat rooms.
 
-generated cards
+Requirements:
 
+- clear player movement
+- boss spawn position
+- sufficient arena space
+- readable boundaries
+- entrance
+- optional exit
+- reward location
+- no unnecessary obstacles
 
-проверить, как именно
-реализовано сообщение.
+The boss arena must not feel like a normal room with a boss dropped inside it.
 
+---
 
-Если используется один embed:
+PHASE 6 — BLOCKOUT
 
-Discord Embed имеет
-только одну основную image URL.
+Before final art placement:
 
+Create a blockout.
 
-Поэтому НЕ пытаться положить
-несколько card images
-в один embed.set_image().
+The blockout should communicate:
 
+- room boundaries
+- corridors
+- main path
+- branches
+- boss location
+- secret locations
+- combat spaces
 
-Для нескольких карт использовать
-существующую систему:
+Do not spend time decorating the blockout.
 
+---
 
-- отдельные attachments;
-- отдельные embeds/messages;
-- или существующий carousel/navigation.
+PHASE 7 — VALIDATION
 
+Before building the final dungeon check:
 
-Не ломать текущий UX.
+Connectivity
 
+Entrance can reach Boss.
 
-============================================================
-17. EXISTING CARD REVEAL FLOW
-============================================================
+Room overlap
 
-В проекте ранее планировался
-Pack Opening:
+No rooms intersect incorrectly.
 
-один message
+Corridor connection
 
+Every corridor connects to its intended room.
 
-+
-pack image
+Door alignment
 
+Doors are aligned with corridors.
 
-+
-Open button
+Player navigation
 
+Player has enough space to move.
 
-+
-card reveal
+Combat space
 
+Combat rooms have sufficient usable space.
 
-+
-full card image
+Boss space
 
+Boss arena is sufficiently large.
 
-+
-arrow navigation.
+Dead ends
 
+Dead ends must have a gameplay reason.
 
-Сохранить именно этот UX.
+Navigation
 
+Check NavMesh / AI Navigation if available.
 
-При открытии карты:
+Scene integrity
 
+No missing Prefabs.
 
-[ ← ] [ → ]
+No missing materials.
 
+No broken references.
 
-и большая generated card image.
+No accidental modification of source assets.
 
+---
 
-Не отправлять новую карту
-в случайный канал.
+PHASE 8 — UNITY BUILD
 
+Only after the abstract layout passes validation:
 
-Не создавать несколько
-бессмысленных сообщений.
+1. Create required parent hierarchy.
+2. Place room modules.
+3. Place corridors.
+4. Connect doors.
+5. Validate transforms.
+6. Validate overlaps.
+7. Validate navigation.
+8. Save the scene.
 
+Recommended hierarchy:
 
-============================================================
-18. CARD REVEAL IMAGE
-============================================================
+Dungeon
+├── Architecture
+│   ├── Rooms
+│   ├── Corridors
+│   ├── Doors
+│   └── Stairs
+│
+├── Gameplay
+│   ├── EnemySpawns
+│   ├── PlayerSpawn
+│   ├── Checkpoints
+│   ├── Treasure
+│   └── Boss
+│
+└── Decoration
+├── Torches
+├── Props
+└── Environment
 
-При переходе:
+---
 
-Card 1 → Card 2
+PHASE 9 — DECORATION
 
+Only after architecture is correct.
 
-нужно корректно заменить
-image attachment/embed.
+Decoration should reinforce the level design.
 
+Do not distribute props uniformly.
 
-ВАЖНО:
+Use clusters.
 
-Discord attachment старого
-сообщения нельзя просто заменить
-новым локальным path.
+Examples:
 
+Torch clusters near doors.
 
-Нужно заново отправить/редактировать
-message с новым attachment
-в соответствии с Discord API.
+Rubble near collapsed walls.
 
+Chains near prison areas.
 
-Проверить существующую реализацию.
+Statues near important locations.
 
+Treasure props near reward rooms.
 
-============================================================
-19. EMBED IMAGE URL
-============================================================
+Decoration should communicate location and gameplay importance.
 
-Проверить все:
+---
 
-embed.set_image()
+PHASE 10 — FINAL REVIEW
 
+After construction:
 
-embed.set_thumbnail()
+Inspect the actual Unity scene.
 
+Do not assume that successful tool execution means successful level construction.
 
-embed.set_author()
+Verify:
 
+- hierarchy
+- transforms
+- room connections
+- player path
+- camera visibility
+- collision
+- NavMesh
+- enemy spawn points
+- boss arena
+- decoration
+- performance
 
-attachment://
+If possible, capture a top-down Scene View screenshot and inspect the complete dungeon.
 
+---
 
-и убедиться,
-что URL соответствует
-реальному filename attachment.
+MCP BEHAVIOR
 
+When using Unity MCP:
 
-Например:
+Prefer inspection tools before modification tools.
 
+Do not perform massive destructive operations.
 
-filename="card_1.png"
+After major modifications:
 
+READ BACK THE RESULT.
 
-тогда:
+Never assume that an MCP command succeeded merely because the tool returned without an error.
 
+Use this cycle:
 
-attachment://card_1.png
+INSPECT
+→ MODIFY
+→ READ BACK
+→ VALIDATE
 
+---
 
-НЕ:
+IMPORTANT — USER APPROVAL GATES
 
+For large dungeon generation tasks, stop after the abstract layout.
 
-attachment://card.png
+Report:
 
+- number of rooms
+- main path
+- branches
+- secret rooms
+- elite encounters
+- boss location
+- estimated dungeon length
 
-НЕ:
+Then continue to blockout/build only when instructed.
 
+If the user explicitly says:
 
-attachment://generated/card_1.png
+"Build it"
 
+then continue automatically through the remaining phases.
 
-НЕ:
+---
 
+DESIGN QUALITY STANDARD
 
-локальный filesystem path.
+The final dungeon must not look like procedural noise.
 
+It should have:
 
-============================================================
-20. UNIQUE FILENAMES
-============================================================
+- pacing
+- rhythm
+- contrast
+- landmarks
+- intentional spaces
+- exploration
+- combat variation
+- secrets
+- anticipation
+- payoff
 
-Для generated cards использовать
-уникальные filenames.
+The player should remember the dungeon as a PLACE, not as a collection of random rooms.
 
+---
 
-Например:
+FAILURE RECOVERY
 
+If asset connections cannot be determined:
 
-pack_123_card_1.png
+STOP.
 
+Inspect the Demo Scene or relevant Prefabs.
 
-pack_123_card_2.png
+Do not guess.
 
+If a room cannot connect cleanly:
 
-pack_123_card_3.png
+Do not force the connection.
 
+Choose another compatible module.
 
-Чтобы Discord/client/cache
-не путал одинаковые filenames.
+If the dungeon graph cannot be validated:
 
+Do not build the final scene.
 
-============================================================
-21. DO NOT USE SAME FILENAME
-============================================================
+Fix the graph first.
 
-Не делать:
+If Unity MCP cannot provide enough information:
 
+Report exactly what information is missing and inspect available project data before proceeding.
 
-card.png
+---
 
+DEFAULT AERAVEN DUNGEON PROFILE
 
-card.png
+Unless the user specifies otherwise:
 
+Dungeon length:
+10–20 minutes
 
-card.png
+Main rooms:
+6–12
 
+Optional rooms:
+2–4
 
-для нескольких generated images
-в одном flow.
+Major encounters:
+2–4
 
+Elite encounters:
+1–2
 
-Использовать уникальные имена.
+Secret rooms:
+1–3
 
+Checkpoint:
+1
 
-============================================================
-22. PACK ASSET FILENAME
-============================================================
+Boss:
+1
 
-Pack asset:
+The dungeon should gradually increase in intensity.
 
-rare_pack.png
+Start relatively simple.
 
+Introduce the dungeon's visual language.
 
-filename должен совпадать
-с attachment URL:
+Increase combat complexity.
 
+Introduce optional exploration.
 
-attachment://rare_pack.png
+Create anticipation before the boss.
 
-
-Chest:
-
-
-mythic_chest.png
-
-
-→
-
-
-attachment://mythic_chest.png
-
-
-============================================================
-23. TEST RAW DISCORD IMAGE
-============================================================
-
-Создать отдельный временный
-debug/test mechanism.
-
-
-Отправить ОДИН существующий PNG
-в Discord без Embed.
-
-
-Например:
-
-
-await channel.send(
-    file=discord.File(path)
-)
-
-
-Если изображение отображается:
-
-
-filesystem + Discord upload работают.
-
-
-После этого протестировать:
-
-
-file + embed.set_image()
-
-
-Если первый работает,
-а второй нет — проблема
-в embed attachment URL.
-
-
-============================================================
-24. TEST GENERATED CARD
-============================================================
-
-Сгенерировать одну карту.
-
-
-Не через Pack.
-
-
-Напрямую:
-
-
-card_generator
-
-
-↓
-
-
-PNG
-
-
-↓
-
-
-discord.File
-
-
-↓
-
-
-Discord.
-
-
-Если карта отображается:
-
-card_generator исправен.
-
-
-Затем:
-
-
-Pack
-
-
-↓
-
-
-generate card
-
-
-↓
-
-
-Discord.
-
-
-Если здесь ломается:
-
-проблема в Pack Opening integration.
-
-
-============================================================
-25. DO NOT CHANGE CARD GENERATOR
-============================================================
-
-НЕ менять:
-
-ART_WIDTH
-
-
-ART_HEIGHT
-
-
-ART_X
-
-
-ART_Y
-
-
-без доказательства,
-что проблема именно там.
-
-
-Текущая рабочая конфигурация:
-
-
-ART_WIDTH = 930
-ART_HEIGHT = 950
-ART_X = 60
-ART_Y = 93
-
-
-Сохранить.
-
-
-============================================================
-26. CHECK CARD GENERATOR RETURN VALUE
-============================================================
-
-Очень важно.
-
-
-Если:
-
-
-generate_card(...)
-
-
-раньше возвращал:
-
-
-Path
-
-
-а новый код ожидает:
-
-
-str
-
-
-или наоборот,
-
-
-исправить interface.
-
-
-Проверить:
-
-
-return value
-
-
-тип:
-
-
-Path
-
-
-str
-
-
-bytes
-
-
-PIL.Image
-
-
-и место использования.
-
-
-Не делать:
-
-
-str(path)
-
-
-если следующий код ожидает
-PIL Image.
-
-
-============================================================
-27. CHECK DATABASE
-============================================================
-
-Не хранить filesystem path
-generated card в database,
-если карта должна быть
-перегенерирована.
-
-
-Проверить existing architecture.
-
-
-Card identity:
-
-
-card_id
-
-
-champion
-
-
-skin
-
-
-rarity
-
-
-etc.
-
-
-Image path должен
-получаться через Card Generator
-или asset system.
-
-
-============================================================
-28. DO NOT BREAK COLLECTION
-============================================================
-
-После исправления Pack Opening
-проверить:
-
-
-Collection
-
-
-Inventory
-
-
-Cards
-
-
-Rewards
-
-
-Profile
-
-
-Battle
-
-
-не должны перестать
-работать.
-
-
-============================================================
-29. FINAL DEBUG MATRIX
-============================================================
-
-Обязательно проверить:
-
-
-TEST A
-Pack PNG direct send
-
-
-TEST B
-Pack PNG + embed
-
-
-TEST C
-Chest PNG direct send
-
-
-TEST D
-Chest PNG + embed
-
-
-TEST E
-Generated Card direct send
-
-
-TEST F
-Generated Card + embed
-
-
-TEST G
-Pack → generated card
-
-
-TEST H
-Pack → multiple generated cards
-
-
-TEST I
-Pack → navigation
-
-
-TEST J
-Inventory → Pack image
-
-
-TEST K
-Shop → Pack image
-
-
-TEST L
-Purchase Confirmation → Pack image
-
-
-============================================================
-30. REQUIRED DEBUG OUTPUT
-============================================================
-
-После запуска тестов вывести:
-
-
-IMAGE PIPELINE REPORT
-
-
-PACK ASSETS
-----------------
-common_pack: PASS/FAIL
-rare_pack: PASS/FAIL
-epic_pack: PASS/FAIL
-legendary_pack: PASS/FAIL
-mythic_pack: PASS/FAIL
-prestige_pack: PASS/FAIL
-ultimate_pack: PASS/FAIL
-
-
-CHEST ASSETS
-----------------
-...
-
-
-GENERATED CARDS
-----------------
-direct generation: PASS/FAIL
-discord upload: PASS/FAIL
-pack integration: PASS/FAIL
-reveal navigation: PASS/FAIL
-
-
-============================================================
-31. IMPORTANT
-============================================================
-
-НЕ говорить:
-
-"Path выглядит правильно"
-
-
-Нужно реально проверить:
-
-
-exists
-
-
-open
-
-
-PIL verify
-
-
-Discord upload
-
-
-Embed display.
-
-
-============================================================
-32. FIND ROOT CAUSE
-============================================================
-
-В конце обязательно написать:
-
-
-ROOT CAUSE:
-
-
-Например:
-
-
-1. Asset path incorrect.
-
-
-или:
-
-
-2. discord.File was not attached
-   to the message.
-
-
-или:
-
-
-3. attachment:// filename mismatch.
-
-
-или:
-
-
-4. generated card path was lost
-   between card_generator and pack.py.
-
-
-или:
-
-
-5. temporary file was deleted
-   before Discord upload.
-
-
-или:
-
-
-6. multiple images were incorrectly
-   placed into one Embed.
-
-
-или:
-
-
-7. interaction.followup/edit_message
-   did not include the new attachment.
-
-
-Не писать общий ответ.
-
-
-Найти конкретную причину.
-
-
-============================================================
-33. FIX
-============================================================
-
-После нахождения причины
-исправить её минимально.
-
-
-Не делать большой rewrite.
-
-
-Не создавать новую
-параллельную систему.
-
-
-Использовать существующую
-архитектуру ILTA.
-
-
-============================================================
-34. REGRESSION TEST
-============================================================
-
-После исправления проверить:
-
-
-Shop
-✓ Pack image
-
-
-Shop
-✓ Chest image
-
-
-Purchase confirmation
-✓ Pack image
-
-
-Purchase confirmation
-✓ Chest image
-
-
-Inventory
-✓ Pack image
-
-
-Inventory
-✓ Chest image
-
-
-Pack Opening
-✓ Pack image
-
-
-Pack Opening
-✓ Generated card image
-
-
-Pack Opening
-✓ Arrow navigation
-
-
-Collection
-✓ Card
-
-
-Profile
-✓ Card
-
-
-============================================================
-35. FINAL REPORT
-============================================================
-
-В конце предоставить:
-
-
-1. ROOT CAUSE
-
-
-2. Исправленные файлы
-
-
-3. Что было сломано
-
-
-4. Почему изображения не отображались
-
-
-5. Почему generated cards
-   перестали отображаться
-
-
-6. Как теперь работает
-   image pipeline
-
-
-7. Результаты тестов
-
-
-8. Неизменённые системы
-
-
-============================================================
-END
-============================================================
+Finish with a memorable boss arena.
