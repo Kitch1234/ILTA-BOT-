@@ -1,779 +1,3400 @@
-Да, Ярослав Васильевич. Я бы для Cursor сделал не просто промпт “создай боёвку”, а полноценное ТЗ, где Cursor сначала анализирует проект, затем создаёт архитектуру и реализует систему по этапам.
-Для Unity 6 сейчас актуальны Input System 1.17 и Netcode for GameObjects 2.7; поэтому в ТЗ лучше ориентироваться на современный Unity 6 стек, но не заставлять Cursor ломать уже установленную версию пакетов. �
-Документация Unity +1
-Ниже — готовый промпт. Его можно целиком вставить в Cursor.
-MASTER PROMPT — AERAVEN COMBAT SYSTEM
-Ты работаешь как Senior Unity Gameplay Programmer + Combat Designer + Technical Architect.
+UNITY 6 SOULSLIKE COMBAT SYSTEM — MASTER IMPLEMENTATION PROMPT
 
-Ты разрабатываешь игру AERAVEN.
+You are working on a Unity 6 third-person fantasy Soulslike/action RPG.
 
-==================================================
-1. ОБЩАЯ ИНФОРМАЦИЯ О ПРОЕКТЕ
-==================================================
+The goal is to build a professional, scalable and maintainable combat framework suitable as the foundation for a commercial Soulslike game.
 
-AERAVEN — fantasy action roguelite RPG.
+The combat should feel deliberate, responsive, weighty and readable, inspired by the general design principles of games such as Dark Souls and Elden Ring, but it must remain an ORIGINAL implementation and must not copy proprietary game code, assets, animations, names or exact mechanics.
 
-Основные особенности:
+---
 
-- First Person как основной вид на первом этапе.
-- Архитектура должна позволять добавить Third Person в будущем.
-- 1–4 игрока в кооперативе.
-- Souls-like философия боя.
-- Roguelite структура забегов.
-- Procedural floors.
-- Swords.
-- Bows.
-- Magic.
-- HP.
-- Stamina.
-- Mana.
-- Poise/Stagger.
-- Dodge.
-- Block.
-- Parry.
-- Critical attacks.
-- Enemy AI.
-- Boss AI.
-- Build system.
-- Уникальное оружие.
-- PC + Mobile.
-- В будущем Steam + Android + iOS.
+1. MOST IMPORTANT RULE
 
-Игра НЕ должна быть копией Elden Ring или Dark Souls.
+DO NOT IMPLEMENT EVERYTHING AT ONCE.
 
-Мы используем общие принципы:
+Work strictly phase-by-phase.
 
-- readable combat
-- stamina management
-- dodge timing
-- i-frames
-- poise/stagger
-- enemy attack patterns
-- meaningful weapon choice
-- high skill ceiling
-- hard but fair
+For EVERY phase:
 
-Но все системы должны быть собственной реализацией AERAVEN.
+1. Explain what you are going to change.
+2. List every file you intend to create/change.
+3. Inspect relevant existing code before modifying it.
+4. Implement ONLY the current phase.
+5. Compile/check for C# errors.
+6. Check Unity 6 API compatibility.
+7. Check serialized references.
+8. Check for duplicated systems.
+9. Check for architecture conflicts.
+10. Report exactly what was changed.
+11. STOP.
 
-==================================================
-2. ГЛАВНЫЙ ПРИНЦИП
-==================================================
+DO NOT automatically continue to the next phase.
 
-Combat должен строиться вокруг:
+Wait for approval before proceeding.
 
-PLAYER DECISION
-        ↓
-PLAYER ACTION
-        ↓
-TIMING
-        ↓
-RISK
-        ↓
-REWARD
+---
 
-Игрок должен понимать:
+2. EXISTING PROJECT IS THE SOURCE OF TRUTH
 
-- почему он получил урон;
-- почему атака попала;
-- почему атака промахнулась;
-- почему произошёл stagger;
-- почему произошёл guard break;
-- почему произошёл critical;
-- почему он умер.
+The current Unity project is the primary project.
 
-Никаких случайных непонятных смертей.
+DO NOT replace existing systems simply because a reference GitHub project implements them differently.
 
-==================================================
-3. ПЕРЕД НАЧАЛОМ РАБОТЫ
-==================================================
+Before writing combat code, inspect:
 
-ВАЖНО:
+- current PlayerController
+- movement system
+- camera
+- input system
+- Animator
+- CharacterController / Rigidbody
+- current enemy system
+- health system
+- UI
+- packages
+- render pipeline
+- scene structure
+- folder structure
+- existing ScriptableObjects
+- existing animation architecture
 
-Сначала полностью проанализируй существующий Unity project.
+Reuse existing systems where they are already suitable.
 
-НЕ создавай систему вслепую.
+Only replace an existing system if there is a clear technical reason.
 
-Проверь:
+---
+
+3. GITHUB REFERENCE PROJECTS
+
+Several GitHub Unity projects may be available locally as references.
+
+Potential references include:
+
+- Souls-Combat
+- UnityRPGProject
+- DragonSouls-Unity3D
+- Soulslike-Combat
+- Unity-Third-Person-Combat
+- Tartarus-Game
+- Sigil GAS
+
+Use them ONLY as references for architecture, implementation patterns and ideas.
+
+DO NOT mechanically merge them.
+
+Before using code from any repository:
+
+- inspect the license
+- inspect dependencies
+- inspect Unity version
+- inspect architecture
+- determine whether the code is compatible with the current project
+- adapt outdated Unity APIs to Unity 6
+- remove duplicate systems
+
+There must NEVER be multiple competing implementations of:
+
+- PlayerController
+- Input System
+- Camera System
+- Combat State Machine
+- Lock-On System
+- Damage System
+
+There must be ONE authoritative implementation for each responsibility.
+
+Prefer learning from reference repositories rather than copying entire systems.
+
+---
+
+4. FIRST TASK — PROJECT AUDIT
+
+Before creating or modifying combat code, perform a complete project audit.
+
+DO NOT MODIFY CODE DURING THE AUDIT.
+
+Inspect:
+
+Project
 
 - Unity version
-- Packages
+- render pipeline
+- installed packages
 - Input System
-- Netcode
-- существующие scripts
-- существующий Player
-- Camera
+- Cinemachine
+- Animator setup
+- physics configuration
+- layers
+- tags
+
+Player
+
+- movement
+- rotation
+- acceleration
+- gravity
+- jumping
+- sprinting
+- dodge if already present
 - Animator
-- Character Controller
-- Rigidbody
-- Physics layers
-- Tags
-- Scenes
-- Prefabs
-- ScriptableObjects
+- animation controller
+- root motion
+
+Camera
+
+- third-person camera
+- Cinemachine
+- target following
+- camera rotation
+- collision
+- existing lock-on functionality
+
+Enemies
+
+- movement
+- detection
+- AI
+- health
+- animation
+- attack system
+- navigation
+
+Existing gameplay systems
+
+- health
+- stamina
+- stats
+- weapons
+- inventory
 - UI
-- project architecture
+- audio
+- VFX
+
+References
+
+Inspect available GitHub reference projects.
+
+Create a comparison:
+
+SYSTEM | CURRENT PROJECT | BEST REFERENCE | RECOMMENDATION | REASON
+
+Cover:
+
+- movement
+- combat state machine
+- input
+- animation
+- weapon system
+- hit detection
+- damage
+- stamina
+- poise
+- dodge
+- lock-on
+- enemy AI
+- block
+- parry
+- riposte
+- camera integration
+
+At the end of the audit recommend the architecture.
+
+DO NOT write implementation code yet.
+
+STOP after the audit.
+
+---
+
+5. TARGET ARCHITECTURE
+
+Use modular composition instead of large inheritance hierarchies.
+
+Prefer:
+
+CombatController
+
++ HealthComponent
++ StaminaComponent
++ PoiseComponent
++ WeaponController
++ LockOnSystem
++ DodgeController
++ BlockController
++ ParryController
++ CombatAnimator
+
+instead of enormous classes containing everything.
+
+Avoid GOD CLASSES.
+
+A class should not simultaneously handle:
+
+- input
+- animation
+- damage
+- stamina
+- AI
+- camera
+- VFX
+
+Split responsibilities.
+
+---
+
+6. SINGLE SOURCE OF TRUTH
+
+Use exactly one authoritative system for each responsibility:
+
+Input
+→ Input layer
+
+Combat state
+→ Combat State Machine
+
+Attack definition
+→ AttackData
+
+Damage
+→ Damage Pipeline
+
+Health
+→ HealthComponent
+
+Stamina
+→ StaminaComponent
+
+Poise
+→ PoiseComponent
+
+Targeting
+→ LockOnSystem
+
+Animation
+→ CombatAnimator
+
+AI decisions
+→ AI system
+
+Weapon configuration
+→ WeaponData
+
+Do not duplicate these responsibilities.
+
+---
+
+7. FOLDER STRUCTURE
+
+Use a modular structure similar to:
+
+Assets/Game/Combat/
+
+Core/
+    CombatSystem.cs
+    CombatController.cs
+    CombatState.cs
+    CombatStateMachine.cs
+    CombatContext.cs
+    CombatCommand.cs
+    CombatActionValidator.cs
+
+Damage/
+    DamageData.cs
+    DamageType.cs
+    DamageReceiver.cs
+    DamageResult.cs
+    IDamageable.cs
+    DamageCalculator.cs
+
+Health/
+    HealthComponent.cs
+
+HitDetection/
+    WeaponHitbox.cs
+    HitboxManager.cs
+    HitInfo.cs
+    Hurtbox.cs
+
+Attacks/
+    AttackData.cs
+    AttackDefinition.cs
+    AttackController.cs
+    ComboController.cs
+    AttackInstance.cs
+
+Defense/
+    DodgeController.cs
+    BlockController.cs
+    ParryController.cs
+    RiposteController.cs
+    InvulnerabilityController.cs
+
+Stamina/
+    StaminaComponent.cs
+    StaminaCost.cs
+
+Poise/
+    PoiseComponent.cs
+    StaggerController.cs
+
+Targeting/
+    LockOnSystem.cs
+    LockOnTarget.cs
+    TargetSelector.cs
+    ILockOnTarget.cs
+
+Weapons/
+    Weapon.cs
+    WeaponData.cs
+    WeaponController.cs
+
+Animation/
+    CombatAnimator.cs
+    AnimationEventReceiver.cs
+    AnimationIDs.cs
+
+Effects/
+    HitReaction.cs
+    HitStop.cs
+    CameraShake.cs
+    CombatEventRouter.cs
+
+AI/
+    EnemyCombatController.cs
+    EnemyCombatStateMachine.cs
+    EnemyAttackController.cs
+    EnemyAttackData.cs
+    EnemyDecisionSystem.cs
+
+Abilities/
+    Ability.cs
+    AbilityData.cs
+
+Debug/
+    CombatDebug.cs
+    CombatGizmos.cs
+
+Use namespace:
+
+Game.Combat
+
+and appropriate subnamespaces.
+
+---
+
+8. CORE COMBAT STATES
+
+The combat state machine should support:
+
+- Idle
+- Locomotion
+- Attack
+- HeavyAttack
+- Dodge
+- Block
+- Parry
+- Hit
+- Stagger
+- Riposte
+- Dead
+
+States must prevent conflicting actions.
+
+Combat must support controlled animation cancel windows.
+
+---
+
+9. ACTION PRIORITY
+
+Create centralized action validation.
+
+Higher-priority actions must prevent lower-priority actions from overriding them.
+
+Recommended priority:
+
+Dead
+↓
+Stagger / Critical Reaction
+↓
+Hit Reaction
+↓
+Riposte
+↓
+Dodge / Parry
+↓
+Attack
+↓
+Block
+↓
+Locomotion
+
+Do not allow random scripts to bypass this system.
+
+Every combat action should be validated before execution.
+
+---
+
+10. COMBAT COMMAND SYSTEM
+
+Player input and AI must eventually use the same high-level combat commands.
+
+Commands should include:
+
+- Move
+- Attack
+- HeavyAttack
+- Dodge
+- Block
+- Parry
+- LockOn
+- SwitchTarget
+
+Architecture:
+
+PLAYER INPUT
+→ CombatCommand
+
+AI
+→ CombatCommand
+
+CombatCommand
+→ CombatController
+→ Combat State Machine
+
+AI must NOT directly manipulate hitboxes.
+
+---
+
+11. INPUT BUFFER
+
+Implement a proper input buffer.
+
+The player should be able to press the next action slightly before the current action finishes.
+
+Examples:
+
+Attack → press Attack near combo window → next attack executes.
+
+Recovery → press Dodge slightly early → Dodge executes when allowed.
+
+Recovery → press Block slightly early → Block executes when allowed.
+
+Input buffer must support:
+
+- configurable duration
+- action priority
+- replacement rules
+- clearing rules
+- invalid action rejection
+
+Do not use random Update() booleans as the main buffering mechanism.
+
+---
+
+12. ANIMATION-DRIVEN COMBAT
+
+Animation is a core part of combat.
+
+Architecture:
+
+Animation
+↓
+AttackData
+↓
+Attack State
+↓
+Hitbox Window
+↓
+Damage
+↓
+Reaction
+↓
+Combo Window
+↓
+Recovery
+
+Attack timing must be data-driven.
+
+AttackData should support:
+
+- attack ID
+- animation clip
+- animation ID
+- damage
+- stamina cost
+- poise damage
+- attack duration
+- startup
+- active window
+- recovery
+- combo window
+- combo next attack
+- movement
+- movement multiplier
+- rotation control
+- root motion
+- hit stop
+- camera shake
+- damage type
+- weapon requirement
+- can chain
+- can cancel
+- knockback
+- stagger power
+
+Do not hardcode individual attack timings inside controller scripts when the information belongs in AttackData.
+
+---
+
+13. ANIMATION EVENTS
+
+Do not put all combat logic inside Animation Events.
+
+Animation Events should only be used for timing-sensitive notifications such as:
+
+- hitbox ON
+- hitbox OFF
+- combo window start
+- combo window end
+- root-motion control
+- attack animation finished
+
+The CODE owns:
+
+- combat state
+- damage
+- stamina
+- poise
+- action validation
+- attack transitions
+
+Avoid hardcoded animation clip names.
+
+Prefer IDs, hashes and ScriptableObject references.
+
+---
+
+14. ROOT MOTION
+
+Support both:
+
+- root-motion attacks
+- non-root-motion attacks
+
+Root motion must be optional per attack.
+
+Do not build the entire locomotion system around root motion.
+
+Combat may temporarily request controlled movement during an attack.
+
+Normal locomotion should remain independent.
+
+---
+
+15. ROTATION
+
+Combat rotation must be separate from normal locomotion rotation.
+
+Support:
+
+- normal movement rotation
+- lock-on rotation
+- attack rotation
+- target-facing attacks
+- rotation lock
+- configurable attack rotation speed
+
+Do not constantly force the player to face the target.
+
+Rotation behavior must be configurable per attack.
+
+---
+
+16. ATTACK SYSTEM
+
+Use ScriptableObject AttackData.
+
+First vertical slice:
+
+- one sword
+- light attack
+- 3-hit combo
+- heavy attack
+
+Attack lifecycle:
+
+Startup
+→ Active
+→ Recovery
+
+Each attack must support:
+
+- stamina cost
+- damage
+- poise damage
+- hitbox timing
+- combo window
+- cancel window
+- movement
+- rotation
+- animation
+- hit reaction
+
+---
+
+17. COMBO SYSTEM
+
+Implement a 3-hit light attack combo.
+
+Example:
+
+Light 1
+→ Light 2
+→ Light 3
+
+The player should not be able to spam arbitrary attacks.
+
+Use:
+
+- combo buffer
+- combo window
+- AttackData references
+- attack instance IDs
+
+Each attack should know which attack can follow it.
+
+Do not hardcode a massive combo tree into one MonoBehaviour.
+
+---
+
+18. WEAPON SYSTEM
+
+Weapons must be data-driven.
+
+WeaponData should eventually support:
+
+- weapon type
+- weapon class
+- damage
+- scaling
+- attack set
+- stamina cost
+- poise damage
+- range
+- weight
+- requirements
+- elemental properties
+- critical modifier
+- animation set
+
+First vertical slice only needs one sword.
+
+Architecture should later support:
+
+- sword
+- greatsword
+- dagger
+- spear
+- axe
+- hammer
+- bow
+- staff
+- shield
+
+Do not create a separate combat system for every weapon.
+
+---
+
+19. HIT DETECTION
+
+Hit detection must be animation/timing driven.
+
+WeaponHitbox becomes active only during the attack active window.
+
+Every attack instance must track targets already hit.
+
+Use a per-attack:
+
+HashSet<IDamageable>
+
+or equivalent mechanism.
+
+The same target must not receive multiple hits from one attack unless AttackData explicitly allows multi-hit behavior.
+
+Support:
+
+- multiple hitboxes
+- multiple targets
+- layer filtering
+- faction filtering
+- friendly-fire rules
+- critical hit detection
+- future positional attacks
+
+Avoid expensive physics searches every frame.
+
+Cache references.
+
+---
+
+20. DAMAGE PIPELINE
+
+Never directly subtract enemy HP from a Weapon script.
+
+Use:
+
+Attack
+→ WeaponHitbox
+→ HitInfo
+→ DamageData
+→ DamageReceiver
+→ Defense Calculation
+→ Health / Poise
+→ Reaction
+→ Effects
+
+DamageData should contain:
+
+- damage
+- poiseDamage
+- damageType
+- attacker
+- target
+- hitPoint
+- hitDirection
+- attackID
+- isCritical
+- canStagger
+- knockback
+- staggerPower
+
+---
+
+21. DAMAGE TYPES
+
+Prepare architecture for:
+
+- Physical
+- Slash
+- Strike
+- Pierce
+- Fire
+- Ice
+- Lightning
+- Dark
+- Holy
+- Bleed
+- Poison
+
+Do not implement a complex elemental/resistance system yet.
+
+Only ensure the architecture can support it later.
+
+---
+
+22. HEALTH
+
+Create reusable HealthComponent.
+
+Health should be independent from player/enemy-specific scripts.
+
+Support:
+
+- current health
+- max health
+- damage
+- healing
+- death
+- death event
+
+Both player and enemies should use the same fundamental health interface.
+
+---
+
+23. INVULNERABILITY
+
+Create a centralized invulnerability system.
+
+It must support:
+
+- dodge iFrames
+- parry
+- riposte
+- scripted invulnerability
+- boss phases
+- death
+
+Do NOT disable colliders to implement iFrames.
+
+DamageReceiver must check invulnerability state before applying damage.
+
+---
+
+24. STAMINA
+
+Create independent StaminaComponent.
+
+Support:
+
+- max stamina
+- current stamina
+- regeneration
+- regeneration delay
+- attack cost
+- heavy attack cost
+- dodge cost
+- block drain
+- sprint cost
+
+Stamina must NOT be tightly coupled to PlayerController.
+
+Stamina rules should be configurable.
+
+---
+
+25. DODGE
+
+Dodge should support:
+
+- directional dodge
+- stamina cost
+- animation
+- movement
+- configurable duration
+- iFrames
+- recovery
+- optional lock-on direction
+
+Do NOT disable colliders during dodge.
+
+Use InvulnerabilityController.
+
+Dodge should have clear:
+
+Startup
+→ iFrame
+→ Recovery
+
+timing.
+
+---
+
+26. LOCK-ON
+
+Create LockOnSystem.
+
+Support:
+
+- nearest target
+- distance filtering
+- angle filtering
+- line-of-sight
+- target prioritization
+- left/right target switching
+- up/down target switching if needed
+- camera tracking
+- target death handling
+- target leaving range
+- manual unlock
+- automatic unlock rules
+
+Do not use FindObjectsOfType every frame.
+
+Cache or maintain a target registry where appropriate.
+
+Create:
+
+ILockOnTarget
+
+for valid targets.
+
+Camera logic must remain separate from CombatController.
+
+---
+
+27. CAMERA
+
+Create a separate:
+
+CameraCombatController
+
+responsible for combat camera behavior.
+
+It may handle:
+
+- lock-on camera
+- target framing
+- combat distance
+- camera rotation
+- camera shake
+- hit reactions
+- cinematic riposte camera later
+
+CombatController must NOT directly own the camera.
+
+If Cinemachine already exists, integrate with the current system rather than replacing it unnecessarily.
+
+---
+
+28. POISE
+
+Create PoiseComponent.
+
+Both player and enemies should be able to use it.
+
+Support:
+
+- max poise
+- current poise
+- poise damage
+- recovery
+- stagger threshold
+- stagger state
+
+When poise reaches the required threshold:
+
+→ Stagger
+
+Poise must be separate from HP.
+
+---
+
+29. HIT REACTION
+
+Create modular HitReaction system.
+
+Eventually support:
+
+- light hit
+- heavy hit
+- directional hit
+- stagger
+- knockback
+- knockdown
+- launch
+- death
+
+Reaction can depend on:
+
+- damage
+- damage type
+- poise damage
+- attack type
+- direction
+- critical hit
+- enemy type
+
+Only implement the minimum required reactions during the vertical slice.
+
+---
+
+30. BLOCK
+
+Block should support:
+
+- block angle
+- damage reduction
+- stamina drain
+- poise damage
+- guard break
+- blocked-hit reaction
+
+If stamina reaches zero:
+
+→ Guard Break / Stagger
+
+Do not simply make the player invulnerable while blocking.
+
+Architecture must allow shields and different block efficiencies later.
+
+---
+
+31. PARRY
+
+Parry should have:
+
+Startup
+→ Active
+→ Recovery
+
+Successful parry:
+
+Enemy Attack
+→ Parry Detection
+→ Enemy Parried State
+→ Riposte Window
+
+Failed parry:
+
+Parry
+→ Recovery
+
+Parry timing must be configurable.
+
+Do not make parry simply equivalent to block.
+
+---
+
+32. RIPOSTE
+
+Riposte should support:
+
+- valid distance
+- valid direction
+- target validation
+- animation
+- high damage
+- partial defense bypass
+- hit stop
+- camera shake
+- special reaction
+
+Riposte should only be available during a valid Riposte Window.
+
+Prepare architecture for future backstab/critical attacks.
+
+---
+
+33. POSITIONAL / CRITICAL ATTACKS
+
+Prepare extension points for:
+
+- backstab
+- riposte
+- critical attacks
+- weak points
+- directional damage
+- future execution attacks
+
+Do not fully implement backstab unless required by the current phase.
+
+---
+
+34. ENEMY AI
+
+Enemy AI should initially support:
+
+- Idle
+- Patrol
+- Detect
+- Chase
+- Attack
+- Recover
+- Hit
+- Stagger
+- Dead
+
+AI must support:
+
+- detection range
+- attack range
+- preferred distance
+- vision
+- approach behavior
+- attack decision
+- recovery
+- cooldown
+- target tracking
+
+Keep AI decision-making separate from combat execution.
+
+Architecture:
+
+AI Decision
+→ CombatCommand
+→ CombatController
+→ AttackData
+→ Animation
+→ Hitbox
+
+---
+
+35. ENEMY ATTACK DATA
+
+Enemy attacks must also be data-driven.
+
+EnemyAttackData or compatible AttackData should support:
+
+- attack range
+- preferred distance
+- damage
+- poise damage
+- startup
+- active window
+- recovery
+- cooldown
+- tracking
+- movement
+- attack angle
+- attack priority
+
+Do not hardcode enemy attack timings inside AI scripts.
+
+---
+
+36. SHARED PLAYER / ENEMY COMBAT
+
+Player and enemy should share the same fundamental systems:
+
+- IDamageable
+- ICombatEntity
+- IPoise
+- ILockOnTarget
+- HealthComponent
+- StaminaComponent where appropriate
+- PoiseComponent
+- Damage pipeline
+
+Enemy-specific behavior belongs in AI.
+
+Do not create completely separate damage architectures.
+
+---
+
+37. BOSS-READY ARCHITECTURE
+
+Do NOT implement a complete boss framework now.
+
+However, architecture must eventually support:
+
+- multiple phases
+- phase transitions
+- unique attack sets
+- phase-specific resistances
+- special attacks
+- arena mechanics
+- scripted events
+- stagger thresholds
+- cinematic attacks
+
+Boss-specific behavior must NOT be hardcoded into EnemyCombatController.
+
+---
+
+38. COMBAT EVENTS
+
+Create a clean event system for:
+
+- AttackStarted
+- AttackActive
+- AttackHit
+- AttackFinished
+- DamageTaken
+- DamageDealt
+- BlockStarted
+- BlockedHit
+- GuardBroken
+- DodgeStarted
+- DodgeFinished
+- ParryStarted
+- ParrySuccess
+- ParryFailed
+- StaggerStarted
+- StaggerFinished
+- RiposteStarted
+- DeathStarted
+- DeathFinished
+
+These events should allow:
+
+- UI
+- VFX
+- SFX
+- camera
+- hit stop
+- analytics/debugging
+
+without tightly coupling these systems to combat logic.
+
+---
+
+39. AUDIO / VFX HOOKS
+
+Do not implement final audio/VFX yet.
+
+Create clean extension points for:
+
+- weapon swing
+- impact
+- armor hit
+- flesh hit
+- parry
+- guard break
+- dodge
+- hit VFX
+- blood
+- elemental effects
+- camera shake
+- controller vibration
+
+Combat logic must not depend directly on specific assets.
+
+---
+
+40. HIT STOP
+
+Create a modular HitStop system.
+
+It should support configurable duration based on:
+
+- normal hit
+- heavy hit
+- critical hit
+- parry
+- riposte
+- boss hit
+
+Do not implement global Time.timeScale hacks throughout combat scripts.
+
+Create one controlled system responsible for hit stop.
+
+---
+
+41. COMBAT FEEL
+
+Combat must feel:
+
+- responsive
+- deliberate
+- weighty
+- readable
+- impactful
+
+Avoid:
+
+- floaty movement
+- instant attack direction changes
+- zero commitment
+- instant animation cancellation
+- attacks with no recovery
+- random hit detection
+- excessive camera shake
+
+The player should feel committed once an attack starts.
+
+---
+
+42. MOVEMENT DURING ATTACKS
+
+Attacks may move the character.
+
+Movement should be controlled by AttackData.
+
+Support:
+
+- forward movement
+- movement multiplier
+- root motion
+- controlled translation
+- attack tracking
+
+Do not allow unrestricted movement during attacks.
+
+---
+
+43. COMBAT TIMING
+
+Every attack should conceptually have:
+
+Startup
+Active
+Recovery
+
+and optionally:
+
+Cancel Window
+Combo Window
+Movement Window
+
+These timings must be configurable.
+
+---
+
+44. SAVE / LOAD PREPARATION
+
+Combat components must not depend on scene-specific static state.
+
+Avoid static global combat state.
+
+Important configuration should be serializable or stored in ScriptableObjects where appropriate.
+
+Do not implement save/load yet.
+
+Simply avoid architecture that would make future save/load unnecessarily difficult.
+
+---
+
+45. MULTIPLAYER
+
+Do NOT implement multiplayer.
+
+However, avoid unnecessary static/global state.
+
+Combat actions should have clear ownership:
+
+- attacker
+- target
+- action
+- attack instance
+- timestamp/state
+
+---
+
+46. DEBUG TOOLS
+
+Create developer debug functionality.
+
+When enabled, display:
+
+- current combat state
+- current attack
+- attack phase
+- stamina
+- poise
+- target
+- iFrame status
+- hitbox status
+- buffered action
+- animation state
+
+Optional Gizmos:
+
+- weapon hitbox
+- hurtbox
+- lock-on radius
+- attack range
+- AI vision
+- target
+- detection range
+
+Debug tools should be easy to disable in production.
+
+---
+
+47. PERFORMANCE
+
+Target stable performance on mid-range PC hardware.
+
+Avoid:
+
+- FindObjectsOfType in Update
+- FindFirstObjectByType in Update
+- repeated GetComponent in hot paths
+- LINQ in per-frame combat logic
+- unnecessary allocations
+- Instantiate/Destroy spam
+
+Cache references.
+
+Use physics queries intelligently.
+
+Use pooling later for:
+
+- hit VFX
+- damage effects
+- projectiles
+- floating damage numbers
+
+---
+
+48. ERROR HANDLING
+
+If a required reference is missing:
+
+- fail gracefully
+- log a clear development error
+- avoid silently creating broken state
+
+Use validation where appropriate.
+
+Do not fill the code with excessive meaningless null checks.
+
+---
+
+49. CODE QUALITY
+
+Use:
+
 - namespaces
-- assembly definitions
+- XML documentation for important public APIs
+- private fields
+- [SerializeField] where appropriate
+- interfaces
+- events
+- ScriptableObjects
+- composition
+- clear naming
+- small focused classes
 
-Сначала составь краткий технический отчёт:
+Avoid:
 
-1. Что уже существует.
-2. Что можно использовать.
-3. Что нужно изменить.
-4. Что нужно создать.
-5. Какие существующие системы нельзя ломать.
+- unnecessary singletons
+- static global state
+- giant manager classes
+- duplicated logic
+- magic numbers
+- hardcoded animation names
+- hardcoded attack timings
 
-После анализа НЕ переписывай существующий проект без необходимости.
+---
 
-Сохраняй совместимость с текущей архитектурой.
+50. TESTABILITY
 
-==================================================
-4. АРХИТЕКТУРА
-==================================================
+Keep pure calculations separate from MonoBehaviour logic where reasonable.
 
-Создай модульную архитектуру.
+It should be possible to test independently:
 
-Предпочтительная структура:
+- damage calculation
+- stamina cost
+- poise damage
+- action validation
+- attack transitions
 
-Assets/
-└── AERAVEN/
-    ├── Combat/
-    │   ├── Core/
-    │   ├── Damage/
-    │   ├── HitDetection/
-    │   ├── Attacks/
-    │   ├── Poise/
-    │   ├── Critical/
-    │   ├── StatusEffects/
-    │   └── Interfaces/
-    │
-    ├── Player/
-    │   ├── Controller/
-    │   ├── StateMachine/
-    │   ├── Resources/
-    │   ├── Camera/
-    │   └── Input/
-    │
-    ├── Weapons/
-    │   ├── Data/
-    │   ├── Runtime/
-    │   ├── Melee/
-    │   ├── Bow/
-    │   └── Abilities/
-    │
-    ├── Magic/
-    │   ├── Data/
-    │   ├── Runtime/
-    │   └── Spells/
-    │
-    ├── Enemies/
-    │   ├── AI/
-    │   ├── Combat/
-    │   ├── Perception/
-    │   ├── Data/
-    │   └── Boss/
-    │
-    ├── Roguelite/
-    │   ├── Run/
-    │   ├── Rewards/
-    │   ├── Builds/
-    │   └── Seeds/
-    │
-    ├── Multiplayer/
-    │   ├── Player/
-    │   ├── Combat/
-    │   ├── Enemy/
-    │   └── State/
-    │
-    ├── UI/
-    │   ├── HUD/
-    │   ├── Combat/
-    │   └── Mobile/
-    │
-    └── Tests/
-Если проект уже имеет другую структуру — не перестраивай всё автоматически.
-Адаптируй архитектуру.
-================================================== 5. CORE COMBAT ARCHITECTURE
-Создай следующие основные системы:
-CombatSystem DamageSystem HitDetectionSystem AttackSystem PoiseSystem CriticalSystem StatusEffectSystem ResourceSystem TargetingSystem
-Используй интерфейсы.
-Например:
-IDamageable IAttacker IHitReceiver IPoiseReceiver IStatusEffectReceiver ICombatTarget
-Не создавай жёсткие зависимости между конкретными оружиями и врагами.
-================================================== 6. PLAYER STATE MACHINE
-Создай Player State Machine.
-Минимальные состояния:
-Idle Move Sprint Attack HeavyAttack Dodge Block Parry Cast Hit Stagger GuardBreak Jump Fall Interact Dead Downed Revive
-Система должна позволять:
-CurrentState ChangeState CanEnterState ExitState StateUpdate
-Не использовать огромный PlayerController.cs на несколько тысяч строк.
-Разделяй ответственность.
-================================================== 7. PLAYER RESOURCES
-Основные ресурсы:
-HP Stamina Mana
-Создай универсальный Resource System.
-Например:
-ResourceType:
-Health Stamina Mana
-Должны поддерживаться:
-Current Maximum Regeneration Consumption Damage Restore RegenerationDelay
-================================================== 8. STAMINA
-Stamina используется для:
-light attack
-heavy attack
-dodge
-block
-sprint
-charged bow
-некоторые abilities
-Начальные значения:
-Max Stamina = 100
-Рекомендуемые стартовые значения:
-Light Attack = 10 Heavy Attack = 25 Dodge = 22 Sprint = 10–15 per second
-Stamina regeneration:
-Regeneration Delay ≈ 0.5 sec Regeneration ≈ 25/sec
-ВСЕ эти значения должны находиться в конфиге / ScriptableObject.
-Не хардкодить значения внутри gameplay scripts.
-================================================== 9. MANA
-Max Mana = 100.
-Mana используется магией.
-Mana regeneration должна быть медленной.
-Например:
-Regeneration Delay = 2 sec Regeneration = 5–10/sec
-Все параметры должны быть настраиваемыми.
-================================================== 10. ATTACK SYSTEM
-Каждая атака состоит из:
-STARTUP ACTIVE RECOVERY
-AttackData должен содержать:
-attack ID
+without requiring the entire scene.
+
+---
+
+51. DO NOT IMPLEMENT YET
+
+Do NOT implement these systems during the initial combat framework:
+
+- multiplayer
+- networking
+- inventory
+- full RPG stats
+- crafting
+- quests
+- loot
+- skill trees
+- complex magic
+- advanced boss AI
+- complete GAS
+- procedural world systems
+- online features
+
+Only create extension points where necessary.
+
+---
+
+52. PHASE ROADMAP
+
+Follow this exact order.
+
+PHASE 1 — PROJECT AUDIT
+
+No code changes.
+
+Analyze current project and references.
+
+STOP.
+
+---
+
+PHASE 2 — CORE ARCHITECTURE
+
+Create:
+
+- CombatSystem
+- CombatController
+- CombatState
+- CombatStateMachine
+- CombatContext
+- CombatCommand
+- CombatActionValidator
+- ICombatEntity
+- IDamageable
+- IPoise
+- ILockOnTarget
+
+No attacks.
+
+No AI.
+
+No weapon.
+
+No dodge.
+
+No parry.
+
+No block.
+
+STOP.
+
+---
+
+PHASE 3 — INPUT + COMBAT STATE MACHINE
+
+Integrate existing Input System.
+
+Create:
+
+CombatInputHandler
+
+Commands:
+
+- AttackPressed
+- HeavyAttackPressed
+- DodgePressed
+- BlockPressed
+- ParryPressed
+- LockOnPressed
+
+Add input buffering.
+
+Integrate with existing movement without unnecessarily rewriting it.
+
+STOP.
+
+---
+
+PHASE 4 — ANIMATION FOUNDATION
+
+Create:
+
+- CombatAnimator
+- AnimationEventReceiver
+- AnimationIDs
+
+Connect combat states to Animator.
+
+Support:
+
+- attack state
+- recovery
+- animation completion
+- hitbox timing notifications
+- combo window notifications
+- root motion toggle
+
+Do not implement final combat damage yet.
+
+STOP.
+
+---
+
+PHASE 5 — WEAPON + HIT DETECTION + DAMAGE
+
+Create:
+
+- Weapon
+- WeaponData
+- WeaponController
+- WeaponHitbox
+- HitInfo
+- DamageData
+- DamageReceiver
+- DamageResult
+- HealthComponent
+
+Create one test sword.
+
+Implement one basic light attack.
+
+Attack must:
+
+- start
+- activate hitbox
+- detect target
+- apply damage
+- prevent duplicate hit
+- produce hit reaction
+- finish
+
+STOP.
+
+---
+
+PHASE 6 — COMBO + HEAVY ATTACK
+
+Implement:
+
+- 3-hit light combo
+- combo buffer
+- combo window
+- heavy attack
+- recovery
+- animation cancel rules
+
+STOP.
+
+---
+
+PHASE 7 — STAMINA + DODGE + IFRAMES
+
+Implement:
+
+- StaminaComponent
+- stamina regeneration
+- stamina costs
+- DodgeController
+- directional dodge
+- iFrames
+- dodge recovery
+
+STOP.
+
+---
+
+PHASE 8 — LOCK-ON
+
+Implement:
+
+- LockOnSystem
+- LockOnTarget
+- TargetSelector
+- target filtering
+- target switching
+- camera integration
+
+STOP.
+
+---
+
+PHASE 9 — ENEMY AI
+
+Implement:
+
+- EnemyCombatController
+- EnemyCombatStateMachine
+- EnemyDecisionSystem
+- EnemyAttackController
+- EnemyAttackData
+
+Basic behavior:
+
+Idle
+→ Detect
+→ Chase
+→ Attack
+→ Recover
+→ Hit
+→ Stagger
+→ Dead
+
+STOP.
+
+---
+
+PHASE 10 — POISE + STAGGER
+
+Implement:
+
+- PoiseComponent
+- StaggerController
+
+Connect:
+
 damage
-poise damage
-stamina cost
-startup duration
-active duration
-recovery duration
-attack animation
-hitbox configuration
-damage type
-element
-critical multiplier
-movement modifier
-can combo
-combo window
+→ poise damage
+→ threshold
+→ stagger
+→ recovery
+
+STOP.
+
+---
+
+PHASE 11 — BLOCK
+
+Implement:
+
+- BlockController
+- block angle
+- damage reduction
+- stamina drain
+- guard break
+- blocked hit reaction
+
+STOP.
+
+---
+
+PHASE 12 — PARRY + RIPOSTE
+
+Implement:
+
+- ParryController
+- RiposteController
+- timing windows
+- successful parry
+- failed parry
+- riposte window
+- riposte attack
+
+STOP.
+
+---
+
+PHASE 13 — COMBAT FEEDBACK
+
+Implement modular:
+
+- HitStop
+- CameraShake
+- HitReaction
+- CombatEventRouter
+- VFX hooks
+- SFX hooks
+
+STOP.
+
+---
+
+PHASE 14 — DEBUG + POLISH
+
+Add:
+
+- combat debug overlay
+- Gizmos
+- attack visualization
+- hitbox visualization
+- lock-on visualization
+- stamina/poise debug
+- state debug
+- performance checks
+
+STOP.
+
+---
+
+PHASE 15 — ARCHITECTURE REVIEW
+
+Perform a complete review.
+
+Check for:
+
+- duplicate systems
+- unnecessary coupling
+- large classes
+- obsolete Unity APIs
+- performance issues
+- incorrect references
+- serialized field problems
+- animation synchronization
+- state conflicts
+- input problems
+- damage duplication
+- lock-on problems
+- AI problems
+
+Suggest improvements.
+
+Do not perform large refactors without approval.
+
+STOP.
+
+---
+
+53. FINAL VERTICAL SLICE
+
+The completed first combat vertical slice should contain:
+
+PLAYER:
+
+- third-person movement
+- camera
+- lock-on
+- sword
+- light attack
+- 3-hit combo
+- heavy attack
+- stamina
+- dodge
+- directional dodge
+- iFrames
+- block
+- parry
+- riposte
+- poise
+- stagger
+- hit reaction
+- death
+
+ENEMY:
+
+- detection
+- chase
+- attack
+- recovery
+- damage
+- stamina/poise where appropriate
+- stagger
+- hit reaction
+- death
+- lock-on compatibility
+
+COMBAT:
+
+- data-driven attacks
+- animation-driven hitboxes
+- damage pipeline
+- attack instance tracking
+- input buffer
+- action priority
+- combat events
+- hit stop
+- camera feedback hooks
+- VFX/SFX hooks
+- debug tools
+
+---
+
+54. FINAL QUALITY TARGET
+
+The combat should ultimately feel like a modern commercial Soulslike:
+
+- deliberate attacks
+- readable enemy telegraphs
+- meaningful stamina management
+- strong impact feedback
+- responsive dodge
+- reliable lock-on
+- satisfying parry
+- meaningful stagger/poise
+- weighty weapons
+- controlled animation commitment
+- precise hit detection
+- consistent combat rules
+- extensible enemy AI
+- scalable weapon architecture
+
+Do not clone Dark Souls or Elden Ring.
+
+Create an original combat system inspired by the genre.
+
+---
+
+55. CRITICAL DEVELOPMENT RULE
+
+DO NOT start implementing Phase 2 immediately.
+
+START WITH:
+
+PHASE 1 — PROJECT AUDIT ONLY.
+
+Inspect the project and available references.
+
+Return:
+
+1. Current architecture summary.
+2. Existing systems.
+3. Problems/conflicts.
+4. Recommended architecture.
+5. Which existing systems should be preserved.
+6. Which systems should be modified.
+7. Which reference repository/pattern is useful for each subsystem.
+8. Exact Phase 2 implementation plan.
+9. Files you expect to create/change in Phase 2.
+
+DO NOT modify project files during Phase 1.
+
+STOP AND WAIT FOR APPROVAL.
+
+UNITY 6 — PROGRESSION / CARD LEGACY / MEMORY SYSTEM
+
+РОЛЬ
+
+Ты — senior Unity 6 gameplay programmer и systems architect.
+
+Ты работаешь над 3D dark-fantasy Soulslike/action RPG.
+
+В проекте уже существует или разрабатывается отдельная Combat System. Твоя задача — создать модульную систему прогрессии, карт-наследий, характеристик, памяти и системы смерти.
+
+НЕ переписывай Combat System без необходимости.
+
+Progression должна предоставлять Combat только итоговые характеристики, модификаторы и способности.
+
+---
+
+1. ГЛАВНАЯ КОНЦЕПЦИЯ ИГРЫ
+
+В игре НЕТ классической Souls-системы с экипировкой брони.
+
+Игрок не собирает:
+
+- шлем;
+- нагрудник;
+- перчатки;
+- сапоги;
+- кольца;
+- обычные Souls-like armor sets.
+
+Основная система билда строится вокруг КАРТ.
+
+Каждая карта представляет собой наследие конкретного героя прошлого.
+
+Карта содержит:
+
+- характеристики;
+- пассивную или активную способность;
+- редкость;
+- регион;
+- историю героя;
+- фрагменты памяти;
+- собственный уровень развития.
+
+Игрок одновременно использует максимум 3 карты.
+
+Таким образом:
+
+CHARACTER PROGRESSION + CARD BUILD + LORE
+
+являются единой системой.
+
+---
+
+2. ОСНОВНЫЕ ТЕРМИНЫ
+
+Используй следующие термины в коде и дизайне.
+
+Echoes / Отголоски
+
+Универсальный ресурс развития самого персонажа.
+
+Отголоски НЕ являются душами.
+
+Игрок получает их за:
+
+- победу над врагами;
+- элитных врагов;
+- боссов;
+- события;
+- исследование;
+- специальные награды.
+
+Отголоски используются для развития персонажа и повышения уровня.
+
+---
+
+Legacy / Наследие
+
+Каждая карта — это наследие конкретного героя.
+
 Пример:
-Light Sword Attack:
-Damage = 35 Stamina = 10 Poise Damage = 10
-Heavy Sword Attack:
-Damage = 75 Stamina = 25 Poise Damage = 30
-Это стартовые значения.
-Не считать их финальным балансом.
-================================================== 11. HIT DETECTION
-НЕ использовать постоянный Collider для нанесения урона.
-Hitbox должен активироваться только в ACTIVE phase.
-Flow:
-Startup ↓ Hitbox OFF
-Active ↓ Hitbox ON
-Recovery ↓ Hitbox OFF
+
+"Arden — Last Guardian"
+
+Карта представляет не душу героя буквально, а его наследие, силу, опыт и отпечаток личности.
+
+---
+
+Legacy Shards / Осколки Наследия
+
+Ресурс развития конкретной карты.
+
+Получается:
+
+- из дубликатов карт;
+- специальных наград;
+- событий;
+- возможно, некоторых сюжетных источников.
+
+Осколки Наследия НЕ используются для прокачки самого персонажа.
+
+---
+
+Memory / Память
+
+Фрагменты истории героя и мира.
+
+Память может открываться через:
+
+- получение карты;
+- развитие карты;
+- победу над определённым врагом;
+- исследование;
+- нахождение предмета;
+- посещение места;
+- выполнение события;
+- сюжет.
+
+---
+
+Death Echo / Отпечаток смерти
+
+После смерти игрока в мире остаётся его последний отпечаток.
+
+Он может воспроизводить последние действия игрока перед смертью.
+
+Это НЕ обычный "bloodstain" Souls.
+
+---
+
+3. АРХИТЕКТУРА
+
 Создай:
-AttackHitbox HitboxController HitResult DamageContext
-DamageContext должен содержать:
-attacker
-target
-damage
-poise damage
-damage type
-element
-critical
-attack ID
-position
-direction
-Один удар не должен наносить урон одному объекту несколько раз, если это не разрешено AttackData.
-================================================== 12. DAMAGE SYSTEM
-Используй:
-FinalDamage = BaseDamage × DefenseMultiplier × AttackMultiplier × CriticalMultiplier × ElementMultiplier × StatusMultiplier
-Базовая физическая формула:
-FinalDamage = BaseDamage × (100 / (100 + EffectiveDefense))
-Пример:
-100 damage 50 defense
-100 × (100 / 150) ≈ 66.6 damage
-Создай DamageType:
-Physical Fire Ice Lightning Poison Void Holy
-Но система должна позволять добавлять новые типы без переписывания DamageSystem.
-================================================== 13. DODGE
-Dodge должен иметь:
-Startup IFrame Recovery
-Начальные значения:
-Total Duration ≈ 0.65 sec IFrame ≈ 0.30 sec Stamina Cost = 22
-I-frames должны быть привязаны к времени анимации.
-НЕ делать бессмертие на всю анимацию.
-Dodge направления:
-Forward Backward Left Right
-Направление определяется по movement input.
-================================================== 14. BLOCK
-Block:
-уменьшает damage;
-потребляет stamina;
-снижает movement speed.
-ShieldData:
-DamageReduction StaminaDamageMultiplier PoiseStability CanParry CanPerfectBlock
-Пример:
-DamageReduction = 80%
-Если:
-Incoming Damage = 100
-Player receives:
-20 HP damage
-и определённый Stamina Damage.
-================================================== 15. GUARD BREAK
-Если игрок блокирует и:
-CurrentStamina <= 0
-то:
-GuardBreak ↓ Stagger ↓ Recovery
-Создай отдельное состояние GuardBreak.
-================================================== 16. PARRY
-Parry должен иметь:
-Startup ParryWindow Recovery
-При успешном parry:
-Enemy receives:
-High Poise Damage или Forced Stagger
-После stagger:
-Critical opportunity.
-При провале:
-Player enters recovery.
-Parry НЕ должен быть обязательной механикой для прохождения игры.
-================================================== 17. POISE
-Каждый серьёзный враг имеет Poise.
-EnemyData:
-MaxPoise CurrentPoise PoiseRecovery PoiseRecoveryDelay
-Каждая атака имеет:
-PoiseDamage.
-Например:
-Light Sword = 10 Heavy Sword = 30 Hammer = 45
-Когда:
-CurrentPoise <= 0
-происходит:
-Stagger.
-После stagger:
-Poise восстанавливается.
-Создай:
-PoiseSystem PoiseBreakEvent StaggerState
-================================================== 18. CRITICAL SYSTEM
-Поддержать:
-Backstab Stagger Critical Boss Critical
-Backstab требует:
-правильное положение относительно цели;
-допустимое состояние врага;
-соответствующую атаку.
-Stagger Critical:
-Enemy ↓ Poise Break ↓ Critical Window ↓ Critical Attack
-================================================== 19. WEAPON SYSTEM
-Не создавай систему:
-Sword001 Sword002 Sword003 с простым повышением stats.
-Оружие должно иметь уникальные механики.
-Создай:
-WeaponData
-Поля:
-ID Name Category BaseDamage PoiseDamage AttackSpeed StaminaCost DamageType Element AttackSet Ability CriticalMultiplier SpecialEffect
-Категории:
-Sword GreatSword Axe Hammer Spear Bow MagicWeapon
-В будущем систему можно расширять.
-================================================== 20. УНИКАЛЬНОЕ ОРУЖИЕ
-Примеры:
-Blood Sword Ice Blade Void Blade Sun Sword Living Sword Executioner Duelist Blade
-Оружие может иметь уникальные механики.
-Например:
-Blood Sword:
-часть HP игрока → bonus damage;
-bleed synergy.
-Ice Blade:
-frost buildup.
-Void Blade:
-void portals / ranged slash.
-Living Sword:
-получает временные бонусы после убийств.
-Не реализовывай все сразу.
-Для MVP реализуй:
-1 обычный Sword 1 Heavy Sword
-================================================== 21. WEAPON HISTORY
-Архитектура должна позволять хранить:
-Kills EliteKills BossKills Criticals TimeUsed RunsUsed
-Это понадобится позже.
-================================================== 22. BOW SYSTEM
-Создай BowController.
-Режимы:
-Quick Shot Charged Shot
-Charged Shot:
-Hold ↓ Charge ↓ Release
-Bow должен использовать Stamina.
-Поддержать:
-Projectile Aim Charge Weak Point Arrow Type
-Но для MVP:
-обычная стрела.
-================================================== 23. MAGIC SYSTEM
-Создай:
-SpellData SpellController SpellCaster SpellEffect
-Типы:
-Projectile AoE Buff Debuff Control Utility
-Для MVP:
-Fireball Ice Bolt
-Fireball:
-damage
-fire status
-Ice Bolt:
-damage
-frost buildup
-================================================== 24. STATUS EFFECT SYSTEM
-Создай универсальную систему.
-StatusEffect:
-Burn Bleed Freeze Shock Poison Curse
-Каждый effect должен поддерживать:
-Duration Stacking Intensity TickInterval Source RefreshBehaviour
-Не хардкодить status effects внутри EnemyController.
-================================================== 25. ENEMY AI
-Создай AI State Machine.
-Состояния:
-Idle Patrol Detect Alert Search Chase Combat Attack Recovery Stagger Dead
-AI должен иметь:
-Perception Target selection Distance checks Attack selection Cooldown Reaction system
-Enemy не должен постоянно атаковать.
-================================================== 26. ENEMY PERCEPTION
-Поддержать:
-Vision Hearing
-Vision:
-View Distance View Angle Line of Sight
-Hearing:
-sprint
-attack
-spell
-explosion
-environmental events
-================================================== 27. ENEMY ATTACK SELECTION
-AI выбирает атаку исходя из:
-Distance Target State Cooldown Health Poise Attack availability Position
-Например:
-Close → melee Medium → ranged Player healing → interrupt Player blocking → guard-break attack Player behind → turn / defensive action
-================================================== 28. ENEMY ARCHETYPES
-Создать data-driven architecture:
-Grunt Heavy Assassin Archer Mage Support Tank Elite
-НЕ создавать 8 полностью разных AI systems.
-Один общий AI framework + разные Data/Behaviours.
-================================================== 29. ELITE MODIFIERS
-Архитектура должна позволять:
-Burning Frozen Vampiric Explosive Armored Lightning Summoner Fast Berserker
-Modifier должен быть отдельным компонентом/объектом.
-================================================== 30. BOSS SYSTEM
-Создай BossController поверх обычного Enemy AI.
-Boss должен поддерживать:
-Phases Phase transitions Unique attacks Arena mechanics Special states Critical windows
-Не делать Boss как Enemy с большим HP.
-================================================== 31. FIRST PERSON
-Основной режим:
-First Person.
-Camera должна быть отдельным модулем.
-PlayerCameraController:
-Look Pitch Yaw Sensitivity Smoothing Camera shake FOV
-Не привязывать CombatSystem напрямую к CameraSystem.
-================================================== 32. LOCK ON
-Lock-On должен быть опциональным.
-TargetingSystem:
-FindTarget SelectTarget ReleaseTarget SwitchTarget
-Поддержать:
-PC Gamepad Mobile
-В First Person lock-on должен слегка помогать направлению камеры, но НЕ полностью забирать управление у игрока.
-================================================== 33. INPUT
-Используй современный Unity Input System.
-Создай Input Actions:
-Move Look Attack HeavyAttack Dodge Block Parry Sprint Jump Interact Cast Aim LockOn SwitchTarget
-Не использовать старый Input Manager, если проект уже использует новый Input System.
-Не привязывать gameplay logic напрямую к Keyboard/Mouse keys.
-Например:
-НЕ:
-Input.GetKey(KeyCode.Space)
-А:
-Input Action → Gameplay command.
-Это позволит использовать:
-Keyboard Mouse Gamepad Touch
-без переписывания gameplay.
-================================================== 34. MOBILE
-Архитектура должна поддерживать мобильное управление.
-Mobile controls:
-Left Stick: Movement
-Right Stick: Look
-Buttons:
-Attack Heavy Dodge Block Ability Interact Lock-On
-Gameplay code НЕ должен знать, что команда пришла с телефона.
-Он должен получать:
-MoveCommand AttackCommand DodgeCommand BlockCommand
-и т.д.
-================================================== 35. THIRD PERSON FUTURE SUPPORT
-Сейчас First Person.
-Но CombatSystem НЕ должен зависеть от:
-FirstPersonCamera FirstPersonArms FPS-specific code.
-Combat должен работать независимо от камеры.
-В будущем можно добавить:
-ThirdPersonCameraController.
-================================================== 36. MULTIPLAYER
-Игра рассчитана на:
-1–4 игроков.
-Использовать Unity Netcode for GameObjects, если проект уже использует NGO.
-Архитектура должна быть server authoritative для критических gameplay events.
-Server должен авторитетно решать:
-damage
-HP
-stamina
-mana
-enemy state
-enemy damage
-death
-loot
-critical
-stagger
-boss state
-Client отправляет intent:
-Attack request Dodge request Spell request Block state Movement input
-Не доверять клиенту:
-"я нанёс 500 damage".
-================================================== 37. NETWORK COMBAT
-Пример:
-Client:
-RequestAttack(attackID)
-Server:
-ValidateAttack ValidateState ValidateCooldown ValidateStamina ExecuteAttack DetectHit CalculateDamage ApplyDamage ReplicateResult
-НЕ делать:
-Client → напрямую изменить Enemy HP.
-================================================== 38. CO-OP COMBAT
-Система должна поддерживать:
-1–4 players.
-Игроки могут взаимодействовать через:
-Freeze Shatter Poise Damage Backstab Weak Points Elemental reactions Buffs Debuffs
-Но не делать всё сразу.
-Сначала:
-2 players + shared enemy + damage synchronization.
-================================================== 39. ROGUELITE COMPATIBILITY
-CombatSystem должен быть независим от RunSystem.
-RunSystem будет управлять:
-Run Floor Seed Rewards Build Relics
-CombatSystem только предоставляет combat functionality.
-НЕ смешивать:
-RunManager PlayerCombat EnemyAI
-в один класс.
-================================================== 40. SCRIPTABLE OBJECTS
-Использовать ScriptableObjects для data.
-Создать:
-WeaponData AttackData EnemyData SpellData StatusEffectData BossPhaseData ShieldData DamageTypeData
-Gameplay code должен читать configuration из данных.
-================================================== 41. EVENTS
-Создать event architecture.
-Примеры:
-OnAttackStarted OnAttackActive OnAttackFinished OnHit OnDamageTaken OnDodge OnPerfectDodge OnBlock OnParry OnGuardBreak OnPoiseBreak OnCritical OnDeath OnStagger OnStatusApplied
-Системы должны использовать события вместо жёстких вызовов там, где это разумно.
-================================================== 42. DEBUG SYSTEM
-Создай Combat Debug Mode.
-В Editor:
-Show Hitboxes Show Hurtboxes Show Attack Phase Show Poise Show AI State Show Target Show Attack Range Show Perception Show IFrames
-Добавь:
-DebugCombatSettings
-чтобы разработчик мог включать/выключать debug visualization.
-================================================== 43. TELEMETRY / TESTING
-Добавь development logging:
-Attack ID Damage Poise damage Stamina cost Target Critical Status State transition
-Но logging должен быть отключаемым.
-НЕ оставлять Debug.Log spam в production.
-================================================== 44. PERFORMANCE
-Игра должна работать:
-PC Android iOS
-Не использовать без необходимости:
-FindObjectsOfType каждый кадр;
-Camera.main каждый кадр;
-GetComponent каждый кадр;
-Instantiate/Destroy spam;
-огромное количество Update;
-постоянные LINQ allocations;
-GC-heavy combat loops.
-Где необходимо:
-Object Pooling.
-Особенно для:
-Projectiles VFX Damage numbers Hit effects Enemy effects
-================================================== 45. MOBILE PERFORMANCE
-Combat должен быть рассчитан на mobile.
-Избегать:
-тысячи активных colliders;
-огромного количества particle systems;
-тяжёлых physics queries;
-дорогих AI calculations каждый кадр.
-AI и combat queries должны иметь контролируемую частоту.
-================================================== 46. ANIMATION
-Не привязывать gameplay к случайным Animation Events без необходимости.
-AttackData должен определять timing.
-Animator должен отвечать за визуальное представление.
-Combat state machine отвечает за gameplay state.
-Для атаки:
-Startup Active Recovery
-Timing должен быть настраиваемым.
-================================================== 47. ANIMATION EVENTS
-Если Animation Events используются:
-Они должны сообщать:
-BeginHitbox EndHitbox Footstep WeaponTrail Impact
-Но критическая gameplay логика не должна полностью зависеть от того, что Animation Event случайно не сработал.
-================================================== 48. HARD BUT FAIR
-Запрещены:
-случайные one-shot атаки без телеграфа;
-невозможные procedural encounters;
-damage через стены;
-атаки вне range;
-invisible attacks;
-случайный spawn врага за спиной;
-бесконечные stun-lock;
-бесконечные enemy combos;
-unavoidable damage.
-Каждая опасная атака должна иметь:
-Telegraph Reaction window Counter option
-================================================== 49. MVP
-НЕ пытайся реализовать всю систему сразу.
-Работай по фазам.
-PHASE 1:
-Player Controller First Person Camera Input System HP Stamina
-PHASE 2:
-Sword Light Attack Heavy Attack Attack State Machine Hitbox
-PHASE 3:
-Enemy Enemy HP Damage Death
-PHASE 4:
-Dodge I-Frames Stamina
-PHASE 5:
-Block Guard Break
-PHASE 6:
-Poise Stagger Critical
-PHASE 7:
-Enemy AI
-PHASE 8:
-Bow
-PHASE 9:
-Magic
-PHASE 10:
-Status Effects
-PHASE 11:
-Boss
-PHASE 12:
-Multiplayer
-PHASE 13:
-Roguelite
-PHASE 14:
-Mobile controls
-================================================== 50. ПЕРВАЯ ЗАДАЧА
-Сейчас НЕ реализовывай всё.
-Сначала:
-Проанализируй проект.
-Определи текущую архитектуру.
-Найди существующий Player.
-Найди существующую Camera.
-Найди Input System.
-Найди Network System.
-Проверь текущие dependencies.
-Проверь существующие namespaces.
-Проверь существующие scripts.
-Определи конфликты.
-После этого создай файл:
-AERAVEN_COMBAT_ARCHITECTURE.md
-В нём опиши:
-текущую архитектуру;
-предлагаемую архитектуру;
-какие файлы будут созданы;
-какие файлы будут изменены;
-зависимости;
-порядок реализации;
-потенциальные проблемы.
-НЕ начинай массовое создание файлов до завершения анализа.
-================================================== 51. ПРАВИЛА РАЗРАБОТКИ
-Не ломай существующий проект.
-Не удаляй существующие scripts без необходимости.
-Не создавай дублирующие системы.
-Не создавай огромные monolithic scripts.
-Не хардкодь gameplay balance.
-Используй ScriptableObjects.
-Используй interfaces.
-Используй events.
-Делай системы тестируемыми.
-Делай системы расширяемыми.
-Учитывай multiplayer.
-Учитывай mobile.
-Не делай Third Person сейчас.
-Не создавай сложный inventory сейчас.
-Не создавай procedural generation сейчас.
-Не создавай весь roguelite сейчас.
-Сначала нужно получить качественную базовую боёвку.
-================================================== 52. ACCEPTANCE CRITERIA
-После PHASE 1–6 должна существовать рабочая сцена:
-Player + Sword + Enemy
-Игрок может:
-ходить;
-смотреть;
-атаковать;
-делать heavy attack;
-расходовать stamina;
-восстанавливать stamina;
-уклоняться;
-получать i-frames;
-блокировать;
-получить guard break;
-наносить poise damage;
-stagger enemy;
-сделать critical;
-убить enemy;
-получить damage;
-умереть.
-Все эти системы должны работать через созданную архитектуру.
-================================================== 53. FINAL RULE
-Не пытайся угадать мои существующие файлы.
-Сначала исследуй проект.
-Если система уже существует:
-→ адаптируй её.
-Если система отсутствует:
-→ создай её.
-Если существующая система плохая:
-→ сначала объясни проблему и предложи безопасный migration.
-После каждой крупной фазы:
-Проверь compilation.
-Проверь errors.
-Проверь references.
-Проверь namespace.
-Проверь prefabs.
-Проверь ScriptableObjects.
-Проверь runtime behaviour.
-Исправь ошибки.
-Не переходи к следующей фазе, если предыдущая не компилируется.
-Главная цель:
-Создать чистую, расширяемую, производительную combat architecture для AERAVEN, которая ощущается как качественный Souls-like combat, но является собственной системой и с самого начала готова к:
-First Person + 1–4 Co-op + PC + Mobile + Roguelite + Future Third Person.
 
-### Я бы сделал ещё важное изменение
+Assets/Game/Progression/
 
-**Не давай Cursor этот промпт и не говори ему сразу “реализуй всё”.** Лучше после вставки этого ТЗ дать ему команду:
+Progression/
+├── Core/
+│   ├── PlayerProgression.cs
+│   ├── ProgressionManager.cs
+│   └── ProgressionEvents.cs
+│
+├── Stats/
+│   ├── StatType.cs
+│   ├── StatValue.cs
+│   ├── StatModifier.cs
+│   ├── CharacterStats.cs
+│   └── StatCalculator.cs
+│
+├── Cards/
+│   ├── CardData.cs
+│   ├── CardInstance.cs
+│   ├── CardStats.cs
+│   ├── CardAbilityData.cs
+│   ├── CardCollection.cs
+│   ├── CardLoadout.cs
+│   ├── CardUpgradeSystem.cs
+│   └── CardEvents.cs
+│
+├── Echoes/
+│   ├── EchoCurrency.cs
+│   ├── EchoRewardData.cs
+│   └── EchoRewardService.cs
+│
+├── Milestones/
+│   ├── MilestoneData.cs
+│   ├── MilestoneOptionData.cs
+│   └── MilestoneSystem.cs
+│
+├── Memory/
+│   ├── MemoryFragmentData.cs
+│   ├── MemorySystem.cs
+│   └── WorldMemory.cs
+│
+├── Death/
+│   ├── DeathSystem.cs
+│   ├── DeathEchoData.cs
+│   ├── PlayerActionRecorder.cs
+│   ├── PlayerActionRecord.cs
+│   └── DeathEchoReplay.cs
+│
+├── Save/
+│   ├── PlayerSaveData.cs
+│   ├── SaveManager.cs
+│   └── SaveSerializer.cs
+│
+└── UI/
+    └── Later
 
-```text
-Начинай только с анализа существующего проекта.
+Namespace:
 
-Ничего массово не изменяй и не создавай.
+Game.Progression
+Game.Progression.Stats
+Game.Progression.Cards
+Game.Progression.Echoes
+Game.Progression.Milestones
+Game.Progression.Memory
+Game.Progression.Death
+Game.Progression.Save
 
-Проанализируй проект, затем создай AERAVEN_COMBAT_ARCHITECTURE.md с предлагаемой архитектурой.
+Do not put everything into one giant manager.
 
-После создания документа остановись и жди моего подтверждения.
-Так Cursor сначала разберётся с твоим конкретным Unity-проектом, а не начнёт создавать параллельно второй PlayerController, вторую камеру, вторую Input System и т.д.
-А уже после проверки документа дать:
-Архитектура одобрена.
+Keep responsibilities separated.
 
-Теперь реализуй только PHASE 1.
+---
 
-Не переходи к PHASE 2.
+4. CHARACTER STATS
 
-После реализации:
-1. Проверь compilation.
-2. Исправь ошибки.
-3. Проверь runtime.
-4. Создай краткий отчёт о созданных и изменённых файлах.
-5. Остановись.
-Это намного безопаснее для Cursor.
-И ещё: я специально заложил Input System вместо старого Input Manager и отделил input от gameplay-команд — это позволит одной боевой системе принимать управление от клавиатуры/мыши, gamepad и touch. Unity сейчас позиционирует Input System как расширяемую современную систему ввода, а для Unity 6 опубликована версия 1.17.0. �
-Документация Unity
-Для мультиплеера также оставил server-authoritative combat: NGO является высокоуровневым сетевым SDK Unity для GameObject/MonoBehaviour workflow, и для нашего случая это разумная база. �
-Документация Unity
-Следующим я бы сделал отдельное ТЗ именно на PHASE 1–6 — Player + Sword + Stamina + Dodge + Block + Poise + Stagger + Critical. Это будет уже не концепция, а буквально список конкретных C# файлов, классов, enum, ScriptableObject и связей между ними, который Cursor сможет реализовать по шагам. �
-Документация Unity +1
+Create:
+
+public enum StatType
+{
+    Health,
+    Stamina,
+    Strength,
+    Dexterity,
+    Intelligence,
+    Willpower
+}
+
+The system must support:
+
+- base values;
+- level bonuses;
+- milestone bonuses;
+- card bonuses;
+- temporary effects.
+
+Calculation order:
+
+Base Stats
+    ↓
+Level Bonuses
+    ↓
+Milestone Modifiers
+    ↓
+Card Modifiers
+    ↓
+Temporary Modifiers
+    ↓
+Final Stats
+
+Create:
+
+public class CharacterStats : MonoBehaviour
+
+Required API:
+
+int GetStat(StatType type);
+
+float GetStatFloat(StatType type);
+
+void AddModifier(StatModifier modifier);
+
+void RemoveModifier(StatModifier modifier);
+
+IReadOnlyList<StatModifier> GetModifiers(StatType type);
+
+Do not hard-code card logic inside CharacterStats.
+
+---
+
+5. STAT MODIFIERS
+
+Create:
+
+public enum ModifierType
+{
+    Flat,
+    Percent
+}
+
+Create:
+
+[Serializable]
+public class StatModifier
+{
+    public StatType StatType;
+    public ModifierType ModifierType;
+    public float Value;
+    public string SourceId;
+}
+
+The system must allow modifiers from:
+
+- cards;
+- milestones;
+- temporary effects;
+- future equipment or buffs if ever needed.
+
+Combat must be able to request final values without knowing where bonuses came from.
+
+---
+
+6. PLAYER PROGRESSION
+
+Create:
+
+public class PlayerProgression : MonoBehaviour
+
+Properties:
+
+public int Level { get; }
+public int Echoes { get; }
+
+Methods:
+
+void AddEchoes(int amount);
+
+bool CanLevelUp();
+
+int GetLevelUpCost();
+
+bool TryLevelUp(StatType stat);
+
+Level-up should:
+
+1. check cost;
+2. remove Echoes;
+3. increase level;
+4. apply the selected stat increase;
+5. fire progression event;
+6. update CharacterStats.
+
+Do not directly manipulate combat stats from UI.
+
+UI calls PlayerProgression.
+
+---
+
+7. LEVEL COST
+
+Do not create a huge manually hard-coded level table.
+
+Use a configurable formula.
+
+Create ScriptableObject:
+
+ProgressionConfig
+
+It should contain:
+
+- starting level;
+- maximum level;
+- base Echo cost;
+- level scaling;
+- stat increase values.
+
+Default formula can be:
+
+Cost = BaseCost × Level^1.5
+
+but make it configurable.
+
+Do not hard-code balancing values everywhere.
+
+---
+
+8. CARDS
+
+Cards are ScriptableObject definitions.
+
+Create:
+
+[CreateAssetMenu(menuName = "Game/Progression/Card")]
+public class CardData : ScriptableObject
+
+Fields:
+
+ID
+Display Name
+Description
+Artwork
+Frame
+Rarity
+Region
+Base Stats
+Ability
+Memory Fragments
+Maximum Level
+
+CardData is immutable design data.
+
+Do not store player-specific progress inside CardData.
+
+---
+
+9. CARD INSTANCE
+
+Create:
+
+[Serializable]
+public class CardInstance
+
+Fields:
+
+InstanceId
+CardId
+Level
+Experience
+
+CardData = template.
+
+CardInstance = player's copy.
+
+Example:
+
+CardData:
+arden_last_guardian
+
+CardInstance:
+InstanceId = unique
+CardId = arden_last_guardian
+Level = 4
+Experience = 235
+
+Do not modify CardData when upgrading a card.
+
+---
+
+10. CARD COLLECTION
+
+Create:
+
+public class CardCollection
+
+Responsibilities:
+
+- add card;
+- remove/dismantle card;
+- find card;
+- check ownership;
+- return all owned cards;
+- create CardInstance.
+
+API:
+
+CardInstance AddCard(string cardId);
+
+bool OwnsCard(string cardId);
+
+IReadOnlyList<CardInstance> GetAllCards();
+
+bool TryDismantleCard(string instanceId);
+
+Use unique instance IDs.
+
+---
+
+11. CARD LOADOUT
+
+Maximum:
+
+3 active cards
+
+Create:
+
+public class CardLoadout
+
+Required:
+
+const int MaxCards = 3;
+
+bool Equip(CardInstance card);
+
+bool Unequip(int slot);
+
+CardInstance GetCard(int slot);
+
+IReadOnlyList<CardInstance> GetEquippedCards();
+
+Prevent duplicate use of the same CardInstance.
+
+Allow design flexibility regarding duplicate CardData.
+
+Loadout changes should notify CharacterStats/CardAbilitySystem.
+
+---
+
+12. CARD STATS
+
+Card stats can contain:
+
+Health
+Stamina
+Strength
+Dexterity
+Intelligence
+Willpower
+
+Support:
+
+- flat bonuses;
+- percentage bonuses;
+- future custom stat modifiers.
+
+Do not hard-code "card X gives X".
+
+All values should be data-driven.
+
+---
+
+13. CARD ABILITIES
+
+Cards must NOT contain executable gameplay logic.
+
+Do NOT create:
+
+CardData.OnHitEnemy()
+
+Instead:
+
+CardData
+    ↓
+CardAbilityData
+    ↓
+CardAbilitySystem
+    ↓
+Effect
+
+Create:
+
+CardAbilityData : ScriptableObject
+
+It should contain data describing:
+
+- Ability ID;
+- ability name;
+- description;
+- trigger;
+- conditions;
+- effects.
+
+The execution system interprets that data.
+
+---
+
+14. ABILITY TRIGGERS
+
+Create extensible trigger types such as:
+
+public enum AbilityTrigger
+{
+    OnCombatStart,
+    OnAttack,
+    OnHit,
+    OnTakeDamage,
+    OnDodge,
+    OnBlock,
+    OnParry,
+    OnKill,
+    OnHealthChanged,
+    OnLowHealth,
+    OnStaminaChanged,
+    Passive
+}
+
+Do not implement every possible trigger immediately.
+
+Create architecture that allows adding them later.
+
+First implement only a small working subset.
+
+---
+
+15. EXAMPLE CARD
+
+Create test CardData:
+
+ID:
+arden_last_guardian
+
+Name:
+Arden — Last Guardian
+
+Stats:
++50 Health
++5 Strength
+
+Passive:
+Last Stand
+
+Trigger:
+OnLowHealth
+
+Condition:
+Health <= 30%
+
+Effect:
+Damage Taken × 0.85
+
+This is only a test implementation.
+
+Do not hard-code Arden into the system.
+
+---
+
+16. CARD UPGRADE
+
+Create:
+
+CardUpgradeSystem
+
+Card progression:
+
+Level 1
+ ↓
+Level 2
+ ↓
+Level 3
+ ↓
+Level 4
+ ↓
+Level 5
+ ↓
+Awakening
+
+Each level may modify:
+
+- stats;
+- ability strength;
+- ability parameters.
+
+All upgrade requirements must be data-driven.
+
+---
+
+17. LEGACY SHARDS
+
+Create:
+
+LegacyShardInventory
+
+or integrate it cleanly into a generic currency/resource system.
+
+A card duplicate can be dismantled:
+
+Duplicate Card
+      ↓
+Dismantle
+      ↓
+Legacy Shards
+
+The amount must come from data/configuration.
+
+Do not hard-code it into CardCollection.
+
+---
+
+18. MILESTONES
+
+Do NOT create a giant RPG skill tree.
+
+The game should use milestone choices.
+
+Create:
+
+MilestoneData : ScriptableObject
+
+Each milestone has:
+
+ID
+Name
+Required Level
+Description
+Options
+
+Each option:
+
+MilestoneOptionData
+
+Example:
+
+Milestone:
+First Awakening
+
+Option A:
++10% Maximum Health
+
+Option B:
++8% Stamina Recovery
+
+Option C:
++10% Ability Effectiveness
+
+Once selected, the choice is stored in PlayerSaveData.
+
+Make milestones one-time choices unless explicitly configured otherwise.
+
+---
+
+19. MEMORY SYSTEM
+
+Create:
+
+MemoryFragmentData : ScriptableObject
+
+Fields:
+
+ID
+Hero/Card ID
+Title
+Description
+Memory Type
+Requirements
+Reward/Event
+
+Memory types:
+
+public enum MemoryType
+{
+    Dialogue,
+    Scene,
+    Location,
+    Item,
+    Event,
+    Lore
+}
+
+Memory unlock conditions must be data-driven.
+
+Examples:
+
+Obtain Card
+Defeat Boss
+Find Item
+Visit Location
+Use Card X times
+Reach Card Level
+Complete Quest
+
+Do not implement every condition immediately.
+
+Create extensible architecture and a few working examples.
+
+---
+
+20. WORLD MEMORY
+
+Create:
+
+public class WorldMemory
+
+Responsibilities:
+
+- unlock memory;
+- check memory;
+- calculate completion;
+- track region completion.
+
+API:
+
+bool IsUnlocked(string memoryId);
+
+bool Unlock(string memoryId);
+
+float GetCompletionPercent();
+
+float GetRegionCompletion(string regionId);
+
+Use IDs rather than direct references in save data.
+
+Example:
+
+World Memory
+
+Demacia: 72%
+Northern Lands: 34%
+Forgotten City: 91%
+
+The exact regions are configurable.
+
+---
+
+21. MEMORY MUST AFFECT THE WORLD LATER
+
+Architecture must allow memory unlocks to trigger:
+
+- dialogue;
+- NPC states;
+- quests;
+- locations;
+- events;
+- bosses;
+- items;
+- cutscenes;
+- alternate story paths.
+
+Do NOT implement the entire quest/story system now.
+
+Expose events/hooks.
+
+---
+
+22. DEATH SYSTEM
+
+Create:
+
+public class DeathSystem
+
+When player dies:
+
+Player Death
+    ↓
+Capture Last Actions
+    ↓
+Create Death Echo
+    ↓
+Save Death Location
+    ↓
+Spawn Death Echo
+
+Do not create a Souls bloodstain clone.
+
+The death echo should be a replay of the player's recent actions.
+
+---
+
+23. PLAYER ACTION RECORDER
+
+Create:
+
+public class PlayerActionRecorder
+
+Record only important actions, not every frame.
+
+Possible actions:
+
+public enum PlayerAction
+{
+    Move,
+    Attack,
+    HeavyAttack,
+    Dodge,
+    Block,
+    Parry,
+    Ability,
+    Heal,
+    Hit,
+    Death
+}
+
+Record:
+
+Timestamp
+Action
+Position
+Rotation
+Animation/State ID if available
+
+Keep a rolling buffer, for example 8–10 seconds.
+
+Make duration configurable.
+
+---
+
+24. DEATH ECHO DATA
+
+Create:
+
+[Serializable]
+public class DeathEchoData
+{
+    public Vector3 Position;
+    public Quaternion Rotation;
+
+    public List<PlayerActionRecord> Actions;
+
+    public int StoredEchoes;
+}
+
+Do not serialize live Unity components into this data.
+
+Only serializable gameplay information.
+
+---
+
+25. DEATH ECHO REPLAY
+
+Create:
+
+public class DeathEchoReplay : MonoBehaviour
+
+It should:
+
+1. receive DeathEchoData;
+2. move through recorded positions;
+3. reproduce actions;
+4. play appropriate animations;
+5. visually represent the player's final attempt.
+
+The replay must be lightweight.
+
+Do NOT record Animator state every frame.
+
+Do NOT record physics every frame.
+
+Prefer action-based replay.
+
+---
+
+26. DEATH RESOURCE BEHAVIOR
+
+When the player dies:
+
+Current Echoes
+      ↓
+Stored in Death Echo
+
+The player can return and recover them.
+
+If the player dies again before recovery:
+
+Old Death Echo
+      ↓
+Lost
+
+This behavior must be isolated inside DeathSystem and configurable.
+
+Do not spread death logic through Combat.
+
+---
+
+27. COMBAT INTEGRATION
+
+Progression must NOT own combat.
+
+Combat asks Progression/CharacterStats for values.
+
+Example:
+
+int strength = characterStats.GetStat(StatType.Strength);
+
+Damage calculation can use:
+
+Base Attack
++
+Strength
++
+Dexterity
++
+Card Modifiers
++
+Milestone Modifiers
++
+Temporary Effects
+
+Progression should expose modifiers/effects.
+
+Combat should remain responsible for:
+
+- attacks;
+- damage;
+- hit detection;
+- stamina consumption;
+- dodge;
+- block;
+- parry;
+- stagger;
+- death.
+
+---
+
+28. CARD ABILITIES + COMBAT
+
+Card abilities can listen to combat events.
+
+For example:
+
+CombatEvent:
+OnHit
+     ↓
+CardAbilitySystem
+     ↓
+Check equipped cards
+     ↓
+Check triggers
+     ↓
+Apply effect
+
+Do not make Combat directly search through CardCollection.
+
+Use an event interface or centralized event channel.
+
+---
+
+29. EVENTS
+
+Create progression events such as:
+
+OnLevelChanged
+OnEchoesChanged
+OnStatChanged
+OnCardObtained
+OnCardEquipped
+OnCardUnequipped
+OnCardUpgraded
+OnMilestoneUnlocked
+OnMemoryUnlocked
+OnPlayerDeath
+OnDeathEchoCreated
+OnDeathEchoRecovered
+
+Avoid excessive global static events.
+
+Use a clean event architecture.
+
+---
+
+30. SAVE SYSTEM
+
+Never save ScriptableObject state directly.
+
+Save IDs and runtime state.
+
+Example:
+
+[Serializable]
+public class PlayerSaveData
+{
+    public int Level;
+    public int Echoes;
+
+    public List<StatSaveData> Stats;
+
+    public List<CardSaveData> Cards;
+
+    public List<string> EquippedCardInstanceIds;
+
+    public List<string> CompletedMilestones;
+
+    public List<string> UnlockedMemories;
+
+    public WorldMemorySaveData WorldMemory;
+
+    public DeathEchoSaveData DeathEcho;
+}
+
+Card save:
+
+InstanceId
+CardId
+Level
+Experience
+
+Use stable IDs.
+
+---
+
+31. SCRIPTABLE OBJECT RULES
+
+ScriptableObjects contain DESIGN DATA.
+
+Runtime/player state must be stored in runtime classes and save data.
+
+Never:
+
+CardData.level++
+
+Never:
+
+CardData.owner = player
+
+Never store mutable player progress in shared ScriptableObjects.
+
+---
+
+32. UI ARCHITECTURE
+
+Do not build final polished UI yet.
+
+Prepare interfaces for:
+
+Character screen
+
+Level
+Echoes
+Stats
+Next Level Cost
+
+[Strength]
+[Dexterity]
+[Intelligence]
+[Willpower]
+
+Card screen
+
+Collection
+     ↓
+Card
+     ↓
+Stats
+Ability
+Level
+Memories
+Upgrade
+
+Loadout
+
+[ Card 1 ]
+[ Card 2 ]
+[ Card 3 ]
+
+Memory
+
+Hero
+  ├── Memory 01 ✓
+  ├── Memory 02 ✓
+  ├── Memory 03 ?
+  └── Memory 04 ?
+
+Death Echo
+
+Show:
+
+Your last echo remains...
+
+Do not spend time on final art/UI styling yet.
+
+---
+
+33. PERFORMANCE
+
+Do NOT:
+
+FindObjectsOfType every frame
+
+Do NOT:
+
+FindObjectsByType every frame
+
+Do NOT constantly rebuild card modifiers every frame.
+
+When loadout changes:
+
+Recalculate modifiers
+
+Cache results.
+
+Use events when possible.
+
+Avoid allocations in combat loops.
+
+Death replay must be lightweight.
+
+---
+
+34. TEST DATA
+
+Create a small test dataset.
+
+At least:
+
+Card 1
+
+Arden — Last Guardian
+
+Tank/defense oriented.
+
+Card 2
+
+Lyra — Ember of Dawn
+
+Fire/ability oriented.
+
+Card 3
+
+Kael — Silent Hunter
+
+Dexterity/critical oriented.
+
+Each should have:
+
+- different stats;
+- different ability;
+- at least 2 memory fragments;
+- multiple upgrade levels.
+
+These are test assets only and must be easy to replace.
+
+---
+
+35. DEVELOPMENT ORDER
+
+Implement in exactly this order.
+
+PHASE 1 — AUDIT
+
+First inspect the existing project.
+
+Identify:
+
+- current player controller;
+- existing stat systems;
+- existing inventory;
+- existing save system;
+- existing combat system;
+- existing ScriptableObject conventions;
+- existing event architecture;
+- existing namespaces;
+- existing UI architecture.
+
+DO NOT MODIFY CODE IN PHASE 1.
+
+Report:
+
+1. Existing systems.
+2. Conflicts.
+3. Reusable systems.
+4. Missing systems.
+5. Files that should be modified.
+6. Files that should be created.
+7. Risks.
+
+Then STOP and wait.
+
+---
+
+PHASE 2 — STATS
+
+Implement:
+
+- StatType;
+- StatModifier;
+- CharacterStats;
+- StatCalculator.
+
+Test final stat calculation.
+
+---
+
+PHASE 3 — PLAYER PROGRESSION
+
+Implement:
+
+- Echo currency;
+- level;
+- level cost;
+- level-up;
+- stat increases;
+- progression events.
+
+Test:
+
+Gain Echoes
+→ Level Up
+→ Increase Stat
+→ Final Stats Update
+
+---
+
+PHASE 4 — CARD DATA
+
+Implement:
+
+- CardData;
+- CardStats;
+- CardAbilityData;
+- CardInstance.
+
+Create test cards.
+
+---
+
+PHASE 5 — COLLECTION
+
+Implement:
+
+- CardCollection;
+- ownership;
+- unique instance IDs;
+- dismantling;
+- Legacy Shards.
+
+---
+
+PHASE 6 — LOADOUT
+
+Implement:
+
+- 3 card slots;
+- equip;
+- unequip;
+- modifier rebuilding.
+
+Test:
+
+Equip Card
+→ Stats change
+
+Unequip Card
+→ Stats revert
+
+---
+
+PHASE 7 — CARD ABILITIES
+
+Implement:
+
+- trigger architecture;
+- condition system;
+- effect system;
+- small number of working abilities.
+
+Integrate with Combat events without coupling systems.
+
+---
+
+PHASE 8 — CARD UPGRADES
+
+Implement:
+
+- card XP/levels;
+- Legacy Shards;
+- upgrade requirements;
+- awakening architecture.
+
+---
+
+PHASE 9 — MILESTONES
+
+Implement:
+
+- MilestoneData;
+- choices;
+- one-time selection;
+- modifiers;
+- save state.
+
+---
+
+PHASE 10 — MEMORY
+
+Implement:
+
+- MemoryFragmentData;
+- MemorySystem;
+- unlock conditions;
+- WorldMemory;
+- events.
+
+---
+
+PHASE 11 — DEATH ECHO
+
+Implement:
+
+- PlayerActionRecorder;
+- rolling action buffer;
+- DeathSystem;
+- DeathEchoData;
+- DeathEchoReplay;
+- recovery;
+- second-death replacement.
+
+---
+
+PHASE 12 — SAVE
+
+Implement complete save/load.
+
+Test:
+
+Quit game
+→ Start game
+→ Cards remain
+→ Level remains
+→ Stats remain
+→ Milestones remain
+→ Memories remain
+→ Death Echo remains if applicable
+
+---
+
+PHASE 13 — INTEGRATION TEST
+
+Test the complete loop:
+
+Kill Enemy
+    ↓
+Receive Echoes
+    ↓
+Level Up
+    ↓
+Improve Stat
+    ↓
+Equip 3 Cards
+    ↓
+Card Modifiers Affect Stats
+    ↓
+Card Ability Affects Combat
+    ↓
+Explore World
+    ↓
+Unlock Memory
+    ↓
+Die
+    ↓
+Death Echo Appears
+    ↓
+Return
+    ↓
+Recover Echoes
+
+---
+
+36. DESIGN RULES
+
+The following rules are mandatory.
+
+1. No Souls terminology in code.
+2. Do not call Echoes "Souls".
+3. Cards are Legacy/Nasledie.
+4. CardData and CardInstance must remain separate.
+5. ScriptableObjects contain static design data.
+6. Save data contains runtime/player state.
+7. Combat must not depend directly on CardCollection.
+8. Progression must not control combat.
+9. Avoid giant manager classes.
+10. Avoid hard-coded card-specific logic.
+11. Avoid giant switch statements for every card.
+12. Use data-driven abilities.
+13. Use stable IDs.
+14. Keep systems modular.
+15. Keep future multiplayer/networking out of scope.
+16. Do not implement unnecessary systems before they are needed.
+17. Do not replace existing working systems without a concrete reason.
+18. Follow the project's existing coding conventions where reasonable.
+19. Do not introduce third-party dependencies unless absolutely necessary.
+20. Do not create a giant generic framework just for theoretical future features.
+
+---
+
+37. IMPORTANT DESIGN PRINCIPLE
+
+The system should communicate this fantasy:
+
+The player is not collecting dead people's souls.
+
+The player is inheriting what the world remembers about them.
+
+Cards represent those inheritances.
+
+Echoes represent the player's own accumulated journey.
+
+Memories reveal the people behind the cards.
+
+Death Echoes preserve the player's own last moments.
+
+The mechanics should reinforce this narrative rather than simply rename Souls mechanics.
+
+---
+
+38. FINAL QUALITY REQUIREMENTS
+
+Before declaring a phase complete:
+
+- compile the project;
+- fix compiler errors;
+- avoid warnings where practical;
+- verify references;
+- verify ScriptableObjects;
+- verify save/load;
+- verify no duplicated systems;
+- verify no unnecessary dependencies;
+- verify Combat remains independent;
+- verify no runtime state is stored in shared ScriptableObjects.
+
+After each phase provide:
+
+PHASE:
+Status:
+
+Created:
+- ...
+
+Modified:
+- ...
+
+Tests:
+- ...
+
+Issues:
+- ...
+
+Next:
+- ...
+
+Do not silently continue into the next phase if the current phase has architectural problems.
+
+---
+
+FIRST ACTION
+
+Start with PHASE 1 — AUDIT ONLY.
+
+Inspect the existing Unity project.
+
+Do NOT write code.
+
+Do NOT modify files.
+
+Do NOT create assets.
+
+Do NOT refactor anything.
+
+Return a concise but technically detailed audit and proposed implementation plan.
+
+Then STOP and wait for approval.
