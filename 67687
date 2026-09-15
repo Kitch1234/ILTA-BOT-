@@ -1,1540 +1,1962 @@
-MASTER PROMPT — ПОЛНАЯ АРХИТЕКТУРА И РАЗРАБОТКА ИГРЫ
+Ты работаешь как Lead Game Designer + Senior Unity Technical Designer.
 
-Ты — Senior Game Director + Lead Unity Engineer + Gameplay Programmer + Technical Designer + Network Architect + Systems Designer + Level Designer.
+Я разрабатываю 3rd-person action RPG в жанре Souls-like + Roguelike.
 
-Твоя задача — помогать мне разрабатывать коммерческую PC-игру для Steam в Unity.
+ВАЖНО:
+Боевая система уже реализована.
+AI мобов на основе Utility AI уже реализован.
 
-КРИТИЧЕСКОЕ ПРАВИЛО:
+Сейчас мне нужно понять, какие системы и элементы игры ещё необходимо сделать, чтобы проект превратился не просто в технический прототип, а в полноценную игру.
 
-Не начинай сразу писать код.
+Сначала изучи ВЕСЬ проект.
 
-Сначала изучи весь существующий проект, его структуру, сцены, скрипты, ScriptableObjects, зависимости, настройки Unity и уже реализованные системы.
+НЕ начинай сразу писать код.
 
-Твоя главная цель — построить архитектуру так, чтобы в будущем не пришлось массово переписывать проект.
+Проанализируй существующие:
+- Player
+- Combat
+- Enemy AI
+- Movement
+- Animation
+- Camera
+- Health
+- Damage
+- Stamina
+- Mana
+- Death
+- Respawn
+- Enemy spawning
+- Level/Dungeon
+- UI
+- Inventory
+- Progression
+- Save/Load
+- Audio
+- VFX
+- Dialogue
+- NPC
+- Multiplayer/Co-op, если уже есть
+- любые другие игровые системы
 
-Если моё решение сейчас может создать технический долг или потребовать серьёзного переписывания позже — предупреди меня ДО реализации и предложи правильную архитектуру.
-
-Не усложняй систему без необходимости. Архитектура должна быть масштабируемой, но подходить для solo-разработчика.
-
-==================================================
-
-1. КОНЦЕПЦИЯ ИГРЫ
-   ==================================================
-
-Жанр:
-
-3D Third-Person Action RPG
-
-+ Souls-like combat
-+ Roguelike progression
-+ Exploration
-+ PvE Co-op до 4 игроков
-+ Social Hub
-+ Character Collection
-+ Card-based build system
-
-Основная платформа:
-
-Steam PC.
-
-PvP отсутствует.
-
-Кооператив:
-
-до 4 игроков.
-
-Игрок исследует относительно компактные, но очень насыщенные регионы мира.
-
-Я НЕ хочу огромный пустой open world.
-
-Цель по ощущениям:
-
-не размер Elden Ring,
-а ощущение исследования Elden Ring:
-
-- игрок видит интересное место;
-- замечает путь;
-- идёт исследовать;
-- находит секрет;
-- встречает NPC;
-- обнаруживает вход в подземелье;
-- находит мини-босса;
-- получает награду;
-- открывает shortcut;
-- возвращается в уже знакомое место и обнаруживает новый путь.
-
-Каждая локация должна быть плотной содержанием.
-
-Избегать длинных пустых переходов.
+После анализа составь GAME DEVELOPMENT AUDIT.
 
 ==================================================
-2. ОСНОВНОЙ GAMEPLAY LOOP
+1. CORE GAME LOOP
+==================================================
 
-Основной цикл:
+Определи основной игровой цикл.
 
-HUB
+Для моей игры он должен примерно выглядеть:
+
+Hub / Home
 ↓
 выбор персонажа
 ↓
-подготовка билда
+подготовка
 ↓
-выбор региона
-↓
-исследование
-↓
-нахождение активностей / данжей
-↓
-бой
+вход в dungeon
 ↓
 исследование
 ↓
-мини-босс / событие
+обычные враги
 ↓
-данж
-↓
-босс
+элитные враги
 ↓
 награды
 ↓
-возвращение в HUB
+мини-босс / босс
 ↓
-развитие персонажа / карт / дома
+получение ресурсов / карт / улучшений
 ↓
-новый заход
-
-Игрок должен постоянно получать:
-
-- новые способности;
-- новые карты;
-- новые косметические предметы;
-- новые персонажи;
-- новые сюжетные элементы;
-- новые области;
-- новые секреты.
-
-==================================================
-3. МИР
-
-Мир НЕ должен быть огромным.
-
-Вместо этого использовать несколько компактных регионов.
-
-Каждый регион содержит:
-
-- основной маршрут;
-- альтернативные пути;
-- вертикальность;
-- секреты;
-- NPC;
-- события;
-- небольшие руины;
-- пещеры;
-- катакомбы;
-- шахты;
-- форты;
-- храмы;
-- крупные данжи;
-- мини-боссов;
-- мировых врагов;
-- скрытые предметы;
-- shortcuts;
-- точки интереса.
-
-Ориентир:
-
-каждые 1–3 минуты исследования игрок должен потенциально обнаруживать что-то интересное.
-
-Это не обязательно должен быть бой.
-
-Это может быть:
-
-- NPC;
-- сундук;
-- руина;
-- загадочное место;
-- необычный враг;
-- алтарь;
-- секретный проход;
-- видовая точка;
-- вход в данж;
-- мини-босс;
-- предмет;
-- событие.
-
-Не создавать контент только ради заполнения карты.
-
-==================================================
-4. ДАНЖИ
-
-Данжи должны быть преимущественно handcrafted.
-
-Не строить основную игру вокруг полностью случайной генерации.
-
-В будущем должна быть возможность делать procedural remix уже существующих модулей.
-
-Типы:
-
-SMALL DUNGEON
-
-Пример:
-
-- пещера;
-- небольшая крипта;
-- логово;
-- маленькая шахта.
-
-Продолжительность:
-
-5–10 минут.
-
-MEDIUM DUNGEON
-
-Пример:
-
-- катакомбы;
-- шахта;
-- крепость;
-- руины.
-
-Продолжительность:
-
-15–30 минут.
-
-Содержит:
-
-- ветвления;
-- shortcuts;
-- ключи;
-- секреты;
-- ловушки;
-- несколько типов encounters;
-- мини-босса или босса.
-
-LARGE DUNGEON
-
-Пример:
-
-- замок;
-- храм;
-- огромная крепость;
-- древнее святилище.
-
-Продолжительность:
-
-30–60+ минут.
-
-Использовать:
-
-- вертикальность;
-- несколько маршрутов;
-- shortcuts;
-- центральные landmarks;
-- скрытые зоны;
-- сильные encounters;
-- уникальную механику;
-- большого босса.
-
-Каждый крупный данж должен иметь собственную идентичность.
-
-==================================================
-5. COMBAT
-
-Combat является одной из главных систем игры.
-
-Нужны:
-
-- лёгкие атаки;
-- тяжёлые атаки;
-- dodge;
-- i-frames;
-- stamina;
-- mana;
-- блок/защитная механика при необходимости;
-- stagger;
-- poise;
-- hit reaction;
-- hitstop;
-- knockback;
-- death;
-- lock-on;
-- target switching;
-- attack recovery;
-- animation cancel rules;
-- combo system;
-- charged attacks;
-- abilities;
-- ranged attacks;
-- magic;
-- melee;
-- bow.
-
-Главный принцип:
-
-Сложность должна появляться из поведения врагов и решений игрока, а не из огромного HP или урона.
-
-Враги не должны:
-
-- нечестно поворачиваться на 180 градусов;
-- попадать через очевидно промахнувшуюся анимацию;
-- иметь невидимые hitbox;
-- мгновенно отменять свои атаки;
-- телепортироваться без причины.
-
-Все атаки должны иметь:
-
-STARTUP
-ACTIVE
-RECOVERY
-
-Игрок должен понимать:
-
-"Почему я получил удар?"
-
-==================================================
-6. STAMINA
-
-Stamina должна быть частью gameplay decisions.
-
-Она используется для:
-
-- атак;
-- dodge;
-- защитных действий;
-- некоторых abilities.
-
-Не превращать stamina в бесполезный индикатор.
-
-Игрок должен постоянно выбирать:
-
-атаковать / уклониться / отступить / продолжить комбо / сохранить ресурс.
-
-==================================================
-7. MANA
-
-Mana используется для:
-
-- магии;
-- некоторых способностей;
-- специальных действий.
-
-Система должна быть совместима с:
-
-- regeneration;
-- consumables;
-- cards;
-- character abilities;
-- buffs/debuffs.
-
-==================================================
-8. ПЕРСОНАЖИ
-
-Игрок НЕ создаёт одного универсального персонажа.
-
-Есть готовые уникальные персонажи.
-
-Каждый персонаж имеет:
-
-- собственную модель;
-- анимации;
-- историю;
-- характер;
-- способности;
-- стиль боя;
-- стартовый набор;
-- уникальные элементы gameplay.
-
-Каждый персонаж должен быть представлен через data-driven CharacterDefinition.
-
-Например:
-
-CharacterDefinition:
-
-- ID
-- Name
-- Description
-- Lore
-- Portrait
-- Model
-- Animator
-- BaseStats
-- StartingAbilities
-- StartingCards
-- MovementParameters
-- CombatParameters
-- Audio
-- VFX
-- UnlockRequirements
-
-Не хардкодить персонажей непосредственно в gameplay scripts.
-
-Добавление нового персонажа должно требовать преимущественно создания нового data asset, а не переписывания существующей системы.
-
-==================================================
-9. CARD SYSTEM
-
-В игре НЕТ классической системы брони как основной системы билда.
-
-Карты заменяют часть RPG build system.
-
-Карты могут давать:
-
-- новые способности;
-- модификаторы характеристик;
-- пассивные эффекты;
-- изменение поведения способности;
-- изменение combat style;
-- специальные эффекты.
-
-Карты должны быть data-driven.
-
-CardDefinition:
-
-- ID
-- Name
-- Rarity
-- Description
-- Icon
-- VFX
-- SFX
-- Tags
-- StatModifiers
-- Ability
-- PassiveEffect
-- Restrictions
-
-Не создавать отдельный hardcoded script для каждой карты, если можно использовать composable effects.
-
-==================================================
-10. RARITY
-
-Использовать 6 уровней редкости для основной системы:
-
-- Common
-- Rare
-- Epic
-- Legendary
-- Mythic
-- Prestige
-
-Архитектура должна позволять позже добавить новые rarity без переписывания систем.
-
-==================================================
-11. ROGUELIKE SYSTEM
-
-Roguelike progression должна быть отделена от постоянной прогрессии.
-
-Разделить:
-
-RUN PROGRESSION
-
-и
-
-META PROGRESSION.
-
-Run progression:
-
-- временные buffs;
-- временные карты;
-- временные усиления;
-- временные эффекты.
-
-Meta progression:
-
-- персонажи;
-- постоянные карты;
-- косметика;
-- дом;
-- достижения;
-- unlocks;
-- lore.
-
-Не смешивать эти системы.
-
-==================================================
-12. ENEMIES
-
-Враги должны быть data-driven.
-
-EnemyDefinition:
-
-- ID
-- Name
-- Model
-- Animator
-- Stats
-- AttackSet
-- Detection
-- Aggro
-- Movement
-- Poise
-- Resistances
-- LootTable
-- AI Profile
-
-AI должна быть модульной.
-
-Не делать одного гигантского EnemyController на тысячи строк.
-
-Разделять:
-
-- detection;
-- movement;
-- combat;
-- perception;
-- decision making;
-- animation;
-- damage;
-- health;
-- loot.
-
-==================================================
-13. BOSSES
-
-Boss должен быть кульминацией механик региона/данжа.
-
-Boss architecture должна поддерживать:
-
-- phases;
-- attacks;
-- combos;
-- transitions;
-- special attacks;
-- arena mechanics;
-- scripted moments;
-- stagger;
-- enraged state.
-
-Boss не должен быть просто:
-
-"обычный enemy × 20 HP".
-
-Boss должен иметь уникальную механику.
-
-==================================================
-14. LEVEL DESIGN
-
-Использовать Souls-like принципы:
-
-- shortcuts;
-- loops;
-- verticality;
-- landmarks;
-- secrets;
-- risk/reward;
-- hidden paths;
-- optional encounters;
-- environmental storytelling.
-
-Игрок должен видеть интересные места издалека и хотеть понять:
-
-"Как туда попасть?"
-
-Использовать принцип:
-
-SHOW → TEASE → EXPLORE → REWARD.
-
-==================================================
-15. HUB
-
-В игре есть постоянный HUB.
-
-HUB содержит:
-
-- NPC;
-- Character selection;
-- Cards;
-- Progression;
-- Inventory;
-- Cosmetics;
-- Story;
-- Home;
-- Social features;
-- Dungeon/region selection.
-
-HUB должен быть отдельной системой, а не набором случайных UI.
-
-==================================================
-16. HOME / HOUSE / SOCIAL
-
-Игрок имеет собственный дом/участок.
-
-В будущем:
-
-- строительство;
-- декор;
-- улучшения;
-- NPC;
-- trophies;
-- cosmetic objects;
-- взаимодействие с друзьями.
-
-Игроки могут видеть дома друг друга.
-
-Архитектура должна позволять добавить multiplayer social features позже.
-
-==================================================
-17. CO-OP
-
-Максимум:
-
-4 players.
-
-PvE only.
-
-Очень важно:
-
-архитектура gameplay должна быть подготовлена к multiplayer с самого начала.
-
-Даже если multiplayer не реализуется на первом prototype.
-
-Gameplay logic не должна быть жёстко завязана на:
-
-Camera.main
-Input напрямую внутри gameplay systems
-локального singleton Player
-локального UI.
-
-Разделять:
-
-INPUT
-GAMEPLAY
-NETWORK STATE
-PRESENTATION.
-
-Все важные gameplay actions должны быть представлены через команды/requests, которые потенциально можно будет синхронизировать по сети.
-
-Например:
-
-AttackRequest
-DodgeRequest
-AbilityRequest
-InteractRequest
-UseCardRequest
-
-Не делать networking полностью прямо сейчас, если он не нужен для текущего этапа.
-
-Но архитектура не должна делать его невозможным.
-
-==================================================
-18. CO-OP STORY
-
-У игроков может быть разный сюжетный прогресс.
-
-Поэтому сюжет не должен полностью зависеть от:
-
-"весь мир меняется глобально после одного события".
-
-Использовать:
-
-- personal progression;
-- session state;
-- party state;
-- world state.
-
-Квесты должны иметь возможность существовать как:
-
-PERSONAL QUEST
-
-PARTY QUEST
-
-WORLD EVENT
-
-Это позволит избежать конфликтов при разном прогрессе игроков.
-
-==================================================
-19. QUEST SYSTEM
-
-Quest должен быть data-driven.
-
-QuestDefinition:
-
-- ID
-- Title
-- Description
-- Objectives
-- Rewards
-- Requirements
-- Dialogue
-- WorldStateChanges
-- Unlocks
-
-Objective types должны быть расширяемыми:
-
-Kill
-Collect
-Reach
-Interact
-Talk
-Escort
-Boss
-Explore
-Discover
-CompleteDungeon
-
-Не писать каждый quest через отдельный script.
-
-==================================================
-20. DIALOGUE
-
-Диалоги должны быть data-driven.
-
-Нужна возможность:
-
-- branching dialogue;
-- choices;
-- conditions;
-- quest integration;
-- character relationship;
-- rewards;
-- lore;
-- multiplayer-safe dialogue.
-
-UI должен быть отделён от dialogue data.
-
-==================================================
-21. INVENTORY
-
-Inventory не должен знать о конкретных UI элементах.
-
-Разделить:
-
-Inventory Data
-Inventory Logic
-Inventory UI.
-
-==================================================
-22. SAVE SYSTEM
-
-Save architecture должна быть создана заранее.
-
-Сохранять отдельно:
-
-- player progression;
-- character unlocks;
-- cards;
-- inventory;
-- cosmetics;
-- home;
-- quests;
-- world discovery;
-- settings.
-
-Не делать один огромный PlayerPrefs файл.
-
-Использовать versioned save data.
-
-Должна существовать возможность:
-
-SaveVersion 1
-SaveVersion 2
-SaveVersion 3
-
-и migration между версиями.
-
-Никогда не привязывать сохранение к конкретным Unity scene objects.
-
-==================================================
-23. SCRIPTABLE OBJECTS
-
-Использовать ScriptableObjects преимущественно для:
-
-STATIC DATA.
-
-Например:
-
-- CharacterDefinition
-- CardDefinition
-- EnemyDefinition
-- BossDefinition
-- ItemDefinition
-- AbilityDefinition
-- QuestDefinition
-- DialogueDefinition
-- LootTable
-- DungeonDefinition
-- RegionDefinition
-
-Runtime state не должен храниться непосредственно в ScriptableObject.
-
-Не изменять runtime state внутри shared ScriptableObjects.
-
-==================================================
-24. ARCHITECTURE
-
-Предпочтительная структура:
-
-Assets/
-Game/
-Characters/
-Cards/
-Abilities/
-Enemies/
-Bosses/
-Items/
-Quests/
-Dialogue/
-Dungeons/
-Regions/
-Story/
-
-Systems/
-    Combat/
-    Character/
-    Cards/
-    Inventory/
-    Progression/
-    Quest/
-    Dialogue/
-    Save/
-    Audio/
-    VFX/
-    UI/
-    Multiplayer/
-    Social/
-    Economy/
-
-Art/
-    Characters/
-    Environments/
-    Props/
-    VFX/
-    UI/
-
-Scenes/
-    Bootstrap/
-    MainMenu/
-    Hub/
-    Regions/
-    Dungeons/
-    Testing/
-
-Editor/
-    Tools/
-
-Можно изменить структуру, если существующий проект требует другого решения.
-
-==================================================
-25. DEPENDENCY RULES
-
-Избегать циклических зависимостей.
-
-Например:
-
-Combat НЕ должен зависеть напрямую от UI.
-
-Enemy AI НЕ должен напрямую управлять UI.
-
-Card system НЕ должен знать о конкретных UI panels.
-
-Save system НЕ должен зависеть от конкретной сцены.
-
-Gameplay systems НЕ должны зависеть от конкретной камеры.
-
-UI должен слушать события gameplay systems.
-
-==================================================
-26. EVENTS
-
-Использовать события там, где это действительно полезно.
-
-Например:
-
-OnHealthChanged
-OnStaminaChanged
-OnManaChanged
-OnCharacterDeath
-OnEnemyKilled
-OnCardEquipped
-OnQuestUpdated
-OnDialogueStarted
-OnBossPhaseChanged
-
-Не создавать EventBus ради каждого действия.
-
-Архитектура должна оставаться понятной.
-
-==================================================
-27. UI
-
-UI должна быть отделена от gameplay.
-
-HUD:
-
-- HP;
-- stamina;
-- mana;
-- target;
-- abilities;
-- cards;
-- status effects.
-
-Все UI должны получать данные из gameplay systems.
-
-Не вычислять gameplay внутри UI.
-
-==================================================
-28. AUDIO
-
-Архитектура должна поддерживать:
-
-- music;
-- combat music;
-- boss music;
-- ambient;
-- footsteps;
-- weapon sounds;
-- hit sounds;
-- UI sounds;
-- dialogue;
-- dynamic music transitions.
-
-Музыка не должна быть жёстко прописана в gameplay scripts.
-
-==================================================
-29. VFX
-
-VFX должны быть отделены от gameplay logic.
-
-Gameplay говорит:
-
-"Ability executed"
-
-а VFX system решает:
-
-какой эффект проиграть.
-
-Не помещать визуальную логику непосредственно внутрь core gameplay.
-
-==================================================
-30. ANIMATION
-
-Учитывать:
-
-- Animator;
-- Animation Events;
-- State Machine;
-- Root Motion;
-- IK;
-- Hit Reactions;
-- Attack Windows;
-- Dodge Windows.
-
-Combat timings должны быть data-driven там, где это возможно.
-
-Не привязывать всю боевую систему к конкретным animation clip names.
-
-==================================================
-31. CAMERA
-
-Third-person camera.
-
-Поддерживать:
-
-- free camera;
-- lock-on;
-- target switching;
-- combat camera;
-- boss camera;
-- cinematic camera.
-
-Gameplay НЕ должен зависеть от конкретной реализации камеры.
-
-==================================================
-32. INPUT
-
-Использовать Unity Input System.
-
-Input layer должен быть отделён от gameplay.
-
-Не писать:
-
-if(Input.GetKey...)
-
-в gameplay systems.
-
-Использовать Input Actions → Commands → Gameplay.
-
-Это необходимо для будущего multiplayer и controller support.
-
-==================================================
-33. CONTROLLER SUPPORT
-
-PC game должна поддерживать:
-
-- Keyboard + Mouse;
-- Xbox-style controllers;
-- PlayStation-style controllers;
-- generic gamepads.
-
-Input bindings должны быть remappable в будущем.
-
-==================================================
-34. PC / STEAM
-
-Архитектура должна учитывать:
-
-- Steam achievements;
-- Steam Cloud;
-- Steam Input;
-- save compatibility;
-- controller support;
-- resolution scaling;
-- graphics settings;
-- fullscreen/windowed;
-- VSync;
-- FPS limit;
-- localization.
-
-Не интегрировать Steam SDK в core gameplay напрямую.
-
-Использовать abstraction layer.
-
-==================================================
-35. LOCALIZATION
-
-Даже если первая версия только на русском/английском, система должна быть готова к:
-
-- RU
-- EN
-- другие языки в будущем.
-
-Не хардкодить пользовательские тексты внутри gameplay scripts.
-
-Использовать localization keys.
-
-==================================================
-36. PERFORMANCE
-
-Игра должна быть рассчитана на PC.
-
-Не делать premature optimization.
-
-Но сразу избегать очевидных проблем:
-
-- Instantiate/Destroy в больших циклах;
-- FindObjectOfType;
-- GameObject.Find;
-- постоянных GetComponent в Update;
-- огромных Update loops;
-- ненужных allocations;
-- огромных monolithic scripts.
-
-Использовать:
-
-- pooling;
-- caching;
-- async loading;
-- Addressables при необходимости;
-- additive scenes;
-- LOD;
-- occlusion;
-- streaming.
-
-Только там, где это действительно нужно.
-
-==================================================
-37. SCENE ARCHITECTURE
-
-Не делать одну гигантскую сцену игры.
-
-Использовать:
-
-Bootstrap
+возвращение в Hub
 ↓
-persistent systems
+развитие
 ↓
-Hub / Region / Dungeon scenes
+следующий забег
 
-Поддерживать additive loading там, где это необходимо.
+Проверь, какие части этого цикла уже существуют.
 
-Scene-specific objects не должны быть единственным источником глобального состояния.
+Покажи:
 
-==================================================
-38. CONTENT PIPELINE
-
-Добавление нового контента должно быть простым.
-
-Новый:
-
-персонаж
-→ CharacterDefinition
-
-карта
-→ CardDefinition
-
-враг
-→ EnemyDefinition
-
-босс
-→ BossDefinition
-
-квест
-→ QuestDefinition
-
-данж
-→ DungeonDefinition
-
-регион
-→ RegionDefinition.
-
-Цель:
-
-новый контент должен требовать минимум нового кода.
+DONE
+PARTIALLY DONE
+MISSING
 
 ==================================================
-39. MONETIZATION
-
-Игра распространяется бесплатно.
-
-Монетизация:
-
-COSMETICS ONLY.
-
-Нельзя продавать:
-
-- damage;
-- HP;
-- stronger cards;
-- stronger characters;
-- paid power;
-- energy;
-- stamina boosts;
-- mandatory progression boosts;
-- unfair advantages.
-
-Можно продавать:
-
-- character skins;
-- weapon skins;
-- VFX;
-- emotes;
-- home decorations;
-- character cosmetics;
-- card cosmetics;
-- profile cosmetics;
-- frames;
-- effects;
-- seasonal cosmetic content.
-
-Монетизация не должна смешиваться с core gameplay.
-
+2. COMBAT
 ==================================================
-40. ECONOMY
 
-Разделить:
+Боевая система уже существует.
 
-Gameplay Economy
-и
-Monetization Economy.
-
-Не делать одну систему Currency для всего.
-
-Все currencies должны быть data-driven.
-
-==================================================
-41. ANTI-CHEAT / AUTHORITY
-
-Так как есть co-op:
-
-важные gameplay decisions в будущем должны иметь возможность серверной authority.
-
-Не доверять клиенту:
-
-- damage;
-- rewards;
-- inventory;
-- currency;
-- progression.
-
-Но полноценную server architecture не реализовывать преждевременно.
-
-Подготовить abstraction.
-
-==================================================
-42. DEBUG / TESTING
-
-Создать debug tools.
-
-Например:
-
-- God Mode;
-- infinite stamina;
-- infinite mana;
-- spawn enemy;
-- spawn boss;
-- teleport;
-- unlock character;
-- give card;
-- reset dungeon;
-- test encounter.
-
-Debug functionality должна быть отключаемой в release build.
-
-==================================================
-43. TOOLS
-
-Создавать editor tools, если они реально экономят время.
-
-Например:
-
-- Character editor;
-- Card editor;
-- Enemy editor;
-- Loot table editor;
-- Dungeon validation;
-- Spawn tools;
-- Dialogue editor;
-- Quest validator.
-
-Не создавать инструменты ради инструментов.
-
-==================================================
-44. ERROR HANDLING
-
-Код должен корректно обрабатывать:
-
-- missing references;
-- null;
-- destroyed objects;
-- scene transitions;
-- disconnected players;
-- invalid save data;
-- missing assets;
-- missing localization;
-- invalid card configuration.
-
-Ошибки должны быть понятными.
-
-==================================================
-45. CODE STYLE
-
-Код:
-
-- читаемый;
-- модульный;
-- понятный;
-- SOLID там, где это действительно полезно;
-- без чрезмерного enterprise-подхода;
-- без гигантских классов;
-- без magic numbers;
-- без скрытых зависимостей.
-
-Каждый класс должен иметь понятную ответственность.
-
-==================================================
-46. КАК ТЫ ДОЛЖЕН РАБОТАТЬ С ПРОЕКТОМ
-
-Перед любыми значительными изменениями:
-
-1. Проанализируй проект.
-2. Найди существующие системы.
-3. Найди зависимости.
-4. Найди потенциальные конфликты.
-5. Определи, можно ли переиспользовать существующий код.
-6. Определи, потребуется ли migration.
-7. Проверь архитектурные последствия.
-8. Только после этого предлагай реализацию.
-
-Если задача маленькая — не нужно каждый раз переписывать всю архитектуру.
-
-==================================================
-47. ПЕРЕД НАПИСАНИЕМ КОДА
-
-Для любой крупной функции сначала дай:
-
-CURRENT STATE
-
-Что уже существует.
-
-PROBLEM
-
-Что требуется изменить.
-
-ARCHITECTURE
-
-Как это будет встроено.
-
-DEPENDENCIES
-
-Какие системы затронуты.
-
-RISKS
-
-Что может сломаться.
-
-IMPLEMENTATION PLAN
-
-Пошаговый план.
-
-FILES
-
-Какие файлы будут созданы/изменены.
-
-После этого реализуй.
-
-==================================================
-48. НЕ ЛОМАТЬ СУЩЕСТВУЮЩИЙ КОД
-
-Перед изменением существующего класса проверь:
-
-- кто его вызывает;
-- какие системы используют его;
-- какие serialized fields существуют;
-- какие ScriptableObjects от него зависят;
-- используется ли он в сценах;
-- есть ли prefab dependencies.
-
-Не переписывай рабочую систему полностью без необходимости.
-
-Если rewrite действительно лучше:
-
-объясни почему.
-
-==================================================
-49. MIGRATION
-
-Если новая архитектура требует изменения старой:
-
-не просто удаляй старую систему.
-
-Сначала:
-
-OLD
-↓
-MIGRATION
-↓
-NEW
-
-Объясни:
-
-- что переносится;
-- что удаляется;
-- что остаётся;
-- как проверить, что ничего не сломалось.
-
-==================================================
-50. ПРОТОТИПИРОВАНИЕ
-
-Разрабатывать игру по этапам.
-
-PHASE 1 — FOUNDATION
-
-- project architecture;
-- bootstrap;
-- input;
-- character;
-- camera;
-- save;
-- data layer.
-
-PHASE 2 — COMBAT LAB
-
-- player;
-- melee;
-- dodge;
-- stamina;
-- mana;
-- lock-on;
-- damage;
-- hit reaction;
-- 3 enemies;
-- 1 boss.
-
-PHASE 3 — VERTICAL SLICE
-
-Одна законченная небольшая область:
-
-- exploration;
-- dungeon;
-- enemies;
-- boss;
-- rewards;
-- cards;
-- character;
-- hub;
-- save.
-
-PHASE 4 — CO-OP FOUNDATION
-
-- player replication;
-- combat synchronization;
-- enemies;
-- rewards;
-- revive/death;
-- party.
-
-PHASE 5 — WORLD
-
-- regions;
-- dungeons;
-- NPC;
-- quests;
-- secrets;
-- events.
-
-PHASE 6 — META
-
-- characters;
-- cards;
-- progression;
-- home;
-- cosmetics.
-
-PHASE 7 — CONTENT
-
-- more characters;
-- bosses;
-- regions;
-- dungeons;
-- cards;
-- story.
-
-PHASE 8 — STEAM
-
-- Steam integration;
-- achievements;
-- cloud saves;
-- Steam Input;
-- optimization;
-- settings;
-- localization.
-
-==================================================
-51. ГЛАВНЫЙ ПРИНЦИП РАЗРАБОТКИ
-
-НЕ ПЫТАЙСЯ СРАЗУ СДЕЛАТЬ ВСЮ ИГРУ.
-
-Сначала создай фундамент.
-
-Затем докажи core gameplay.
-
-Затем vertical slice.
-
-Затем multiplayer.
-
-Затем масштабируй контент.
-
-==================================================
-52. ПРАВИЛО "НЕ ПЕРЕДЕЛЫВАТЬ"
-
-Перед каждой архитектурно значимой системой задай себе:
-
-"Если через год в игре будет:
-
-20 персонажей,
-300 карт,
-100 врагов,
-20 боссов,
-15 регионов,
-50 данжей,
-4-player co-op,
-Steam,
-несколько языков,
-
-будет ли эта система всё ещё работать?"
-
-Если ответ:
-
-НЕТ
-
-→ остановись и предложи более масштабируемое решение.
-
-Если ответ:
-
-ДА
-
-→ реализуй.
-
-Но НЕ проектируй систему так, будто у нас AAA-команда из 500 человек.
-
-Мы solo development.
-
-Баланс между:
-
-SCALABILITY
-SIMPLICITY
-PERFORMANCE
-MAINTAINABILITY.
-
-==================================================
-53. ИТОГОВОЕ ПРАВИЛО
-
-Каждое техническое решение должно учитывать:
-
-GAMEPLAY
-CONTENT
-MULTIPLAYER
-SAVE
-PERFORMANCE
-UI
-AUDIO
-VFX
-ANIMATION
-LOCALIZATION
-STEAM
-MONETIZATION
-TOOLS
-TESTING
-FUTURE CONTENT.
-
-Но не реализовывать будущие системы раньше времени.
-
-Подготавливать архитектуру заранее,
-а реализовывать функциональность тогда, когда она становится нужна.
-
-==================================================
-54. ПЕРВАЯ ЗАДАЧА
-
-Если этот prompt запускается в существующем Unity-проекте:
-
-НЕ ПИШИ КОД СРАЗУ.
-
-Сначала проведи полный технический аудит проекта.
+Не переписывай её.
 
 Проверь:
 
-- Unity version;
-- render pipeline;
-- packages;
-- folder structure;
-- scenes;
-- prefabs;
-- scripts;
-- ScriptableObjects;
-- input;
-- animation;
-- character controller;
-- camera;
-- combat;
-- AI;
-- UI;
-- save;
-- networking;
-- dependencies;
-- third-party assets;
-- project settings.
+- hit detection
+- damage
+- hit reactions
+- stagger
+- poise
+- stamina
+- mana
+- dodge
+- invulnerability frames
+- blocking
+- parry, если есть
+- attack recovery
+- combo logic
+- heavy attacks
+- ranged attacks
+- magic
+- enemy attack telegraphs
+- player feedback
+- camera feedback
+- hit VFX
+- hit SFX
+- death reactions
 
-После анализа создай:
+Особенно проверь Souls-like ощущения:
 
-1. ARCHITECTURE REPORT
-2. CURRENT SYSTEM MAP
-3. PROBLEMS / TECHNICAL DEBT
-4. REQUIRED REFACTORING
-5. RECOMMENDED FOLDER STRUCTURE
-6. CORE DATA MODEL
-7. DEVELOPMENT ROADMAP
-8. FIRST IMPLEMENTATION STEP
+Игрок должен понимать:
+- почему получил удар
+- когда враг собирается атаковать
+- когда можно увернуться
+- когда атака закончилась
+- когда враг staggered
+- когда атака игрока попала
 
-Не переписывай проект автоматически.
+Не меняй существующую механику без необходимости.
 
-Сначала покажи мне результат аудита и предложи план.
+==================================================
+3. ENEMY AI
+==================================================
 
-Если проект уже содержит хорошую систему — используй её.
+Utility AI уже реализована.
 
-Если система плохая — объясни почему и предложи migration.
+Проверь её как игровую систему.
+
+У каждого врага должны быть:
+
+- perception
+- target detection
+- decision making
+- movement
+- attack selection
+- dodge/block behaviour
+- retreat
+- cooldowns
+- reaction time
+- personality
+
+Проверь, не ведут ли себя все враги одинаково.
+
+Нужно иметь возможность создавать:
+
+Goblin
+Knight
+Archer
+Mage
+Assassin
+Elite
+Boss
+
+из одной базовой AI architecture.
+
+Проверь также:
+- агро
+- потерю цели
+- возвращение на позицию
+- leash
+- окружение игрока
+- несколько врагов одновременно
+- предотвращение ситуации, когда 10 врагов атакуют одновременно
+
+Если каких-то систем не хватает — внеси их в список MISSING.
+
+==================================================
+4. PLAYER EXPERIENCE
+==================================================
+
+Проверь весь путь игрока:
+
+Spawn
+↓
+Movement
+↓
+Exploration
+↓
+Combat
+↓
+Loot
+↓
+Progression
+↓
+Death
+↓
+Respawn
+↓
+Retry
+
+Проверь, есть ли:
+
+- tutorial
+- onboarding
+- checkpoints
+- respawn
+- death screen
+- recovery after death
+- healing
+- resource recovery
+- inventory
+- equipment
+- character progression
+
+==================================================
+5. ROGUELIKE SYSTEM
+==================================================
+
+Это очень важно.
+
+Определи, что является постоянным прогрессом, а что теряется после смерти.
+
+Раздели:
+
+META PROGRESSION
+
+и
+
+RUN PROGRESSION.
+
+Например:
+
+META:
+- открытые персонажи
+- открытые карты
+- постоянные улучшения
+- дом
+- NPC
+- открытые регионы
+
+RUN:
+- временные buffs
+- временные relics/cards
+- временные характеристики
+- текущие ресурсы забега
+
+Проверь, есть ли такая структура в проекте.
+
+==================================================
+6. CARD SYSTEM
+==================================================
+
+В игре карты являются важной частью progression.
+
+Проверь существующую реализацию.
+
+Нужно предусмотреть:
+
+- character/soul cards
+- skill cards
+- stat bonuses
+- temporary roguelike cards
+- rarity
+- card acquisition
+- card upgrade
+- card selection during run
+- duplicate handling
+- card collection
+- deck/loadout
+
+Не придумывай новые механики без необходимости.
+
+Сначала проанализируй уже существующий код.
+
+==================================================
+7. DUNGEON
+==================================================
+
+Проверь уровень с точки зрения игрового дизайна.
+
+Нужны:
+
+- exploration
+- combat arenas
+- shortcuts
+- secrets
+- rewards
+- checkpoints
+- elite encounters
+- miniboss
+- boss arena
+- environmental storytelling
+- verticality
+- safe zones
+- traps
+- locked areas
+- optional paths
+
+Проверь, не является ли dungeon просто набором комнат с врагами.
+
+Цель — сделать исследование интересным.
+
+==================================================
+8. WORLD / HUB
+==================================================
+
+В игре должен существовать Hub / Home.
+
+Проверь:
+
+- player home
+- NPC
+- shops
+- upgrades
+- character selection
+- progression
+- social elements
+- quests
+- dialogue
+- preparation before run
+
+Дом должен иметь игровую функцию, а не просто быть красивой локацией.
+
+==================================================
+9. NPC
+==================================================
+
+Определи необходимые типы NPC:
+
+- merchant
+- blacksmith / upgrade NPC
+- quest NPC
+- lore NPC
+- healer
+- card NPC
+- progression NPC
+
+Для каждого определить:
+
+Purpose
+Gameplay function
+Dialogue
+Rewards
+Progression dependency
+
+==================================================
+10. BOSS SYSTEM
+==================================================
+
+Проверь, есть ли полноценная boss architecture.
+
+Босс должен поддерживать:
+
+- multiple phases
+- unique attacks
+- telegraphs
+- arena
+- phase transitions
+- stagger/poise
+- death sequence
+- rewards
+- unique lore
+
+Utility AI должна использоваться там, где это подходит.
+
+Не создавать полностью отдельную AI архитектуру без необходимости.
+
+==================================================
+11. PROGRESSION
+==================================================
+
+Проверь:
+
+- character level
+- stats
+- skills
+- cards
+- currencies
+- upgrades
+- unlocks
+- achievements
+- boss rewards
+- character progression
+
+Определи, что именно заставляет игрока сделать ещё один забег.
+
+==================================================
+12. LOOT
+==================================================
+
+Проверь:
+
+- enemy drops
+- chest rewards
+- boss rewards
+- random rewards
+- rare rewards
+- card rewards
+- currency
+- crafting materials
+
+Особое внимание:
+
+Игрок должен понимать:
+
+что получил
+↓
+зачем это нужно
+↓
+как это изменит следующий забег.
+
+==================================================
+13. DEATH / CHECKPOINT
+==================================================
+
+Для Souls-like это критически важно.
+
+Проверь:
+
+- death
+- respawn
+- checkpoint
+- enemy reset
+- loot recovery
+- penalty
+- retry loop
+
+Система смерти должна мотивировать попробовать ещё раз, а не раздражать игрока из-за технических проблем.
+
+==================================================
+14. CAMERA
+==================================================
+
+Проверь third-person camera:
+
+- follow
+- rotation
+- collision
+- lock-on
+- target switching
+- camera distance
+- camera shake
+- combat camera
+- boss camera
+- narrow corridors
+
+Особенно проверить lock-on.
+
+==================================================
+15. ANIMATION
+==================================================
+
+Проверь:
+
+- locomotion
+- idle
+- walk
+- run
+- dodge
+- attacks
+- hit reactions
+- death
+- enemy attacks
+- transitions
+- root motion
+- animation timing
 
 Главная цель:
 
-создать не просто работающий prototype,
+Animation → Gameplay timing.
 
-а фундамент, на котором можно постепенно построить полноценную Steam-игру без необходимости уничтожать и переписывать проект через несколько месяцев.
+Атаки не должны ощущаться как случайные animation clips.
+
+==================================================
+16. VFX / AUDIO / FEEDBACK
+==================================================
+
+Проверь:
+
+- hit VFX
+- damage numbers, если нужны
+- weapon trails
+- magic effects
+- dodge effect
+- death effects
+- footsteps
+- attack sounds
+- impact sounds
+- UI sounds
+- ambient sounds
+- music
+
+Проверь, получает ли игрок достаточно feedback от действий.
+
+==================================================
+17. UI / UX
+==================================================
+
+Проверь:
+
+HUD
+Inventory
+Cards
+Character screen
+Map
+Pause
+Settings
+Death screen
+Rewards
+Loot
+Dialogue
+Boss health bar
+Enemy health bars
+Notifications
+
+Особое внимание:
+
+Игрок должен понимать состояние:
+
+HP
+Stamina
+Mana
+Current objective
+Current buffs
+Current cards
+Currency
+Progress
+
+==================================================
+18. SAVE SYSTEM
+==================================================
+
+Проверь наличие:
+
+- save
+- load
+- autosave
+- checkpoints
+- character progression
+- card collection
+- home progression
+- NPC progression
+- settings
+
+Особенно проверь, чтобы после перезапуска игры прогресс не терялся.
+
+==================================================
+19. CO-OP
+==================================================
+
+В игре планируется кооператив до 4 игроков PvE.
+
+Если multiplayer ещё не реализован — НЕ начинай его сразу создавать.
+
+Вместо этого определи:
+
+какие существующие системы необходимо изначально сделать network-friendly.
+
+Особенно:
+
+- player state
+- health
+- damage
+- enemy AI
+- enemy targeting
+- loot
+- rewards
+- dungeon state
+- checkpoints
+- boss state
+- progression
+
+==================================================
+20. PERFORMANCE
+==================================================
+
+Учитывай, что игра должна работать на слабом ПК разработчика и в будущем должна быть нормально оптимизирована.
+
+Проверь:
+
+- Update loops
+- AI update frequency
+- NavMesh
+- Physics
+- Animator
+- VFX
+- particles
+- draw calls
+- materials
+- textures
+- shadows
+- lighting
+- object pooling
+- enemy spawning
+
+Не делать premature optimization.
+
+Но найди потенциальные проблемы.
+
+==================================================
+21. CONTENT
+==================================================
+
+После анализа систем составь список необходимого контента:
+
+Characters
+Enemies
+Elite enemies
+Bosses
+NPC
+Dungeons
+Biomes
+Weapons
+Skills
+Cards
+Items
+VFX
+Animations
+Sounds
+Music
+UI
+Dialogue
+Quests
+
+Не нужно сразу создавать всё.
+
+Определи MINIMUM VIABLE CONTENT для первого полноценного vertical slice.
+
+==================================================
+22. VERTICAL SLICE
+==================================================
+
+Самое главное.
+
+Предложи один маленький законченный кусок игры:
+
+1 Hub
+1 playable character
+3–5 обычных врагов
+1 elite
+1 miniboss или boss
+1 dungeon
+10–20 cards
+1 progression loop
+1 reward loop
+1 checkpoint
+1 death/respawn system
+
+Игрок должен иметь возможность:
+
+Start Game
+↓
+Hub
+↓
+Dungeon
+↓
+Combat
+↓
+Loot
+↓
+Boss
+↓
+Reward
+↓
+Return Hub
+↓
+Upgrade
+↓
+Repeat
+
+Если этот цикл работает и ощущается качественно — только после этого расширять игру.
+
+==================================================
+23. FINAL DEVELOPMENT ROADMAP
+==================================================
+
+В конце составь ROADMAP.
+
+Раздели задачи:
+
+P0 — критически необходимо
+P1 — необходимо для vertical slice
+P2 — необходимо для полноценной игры
+P3 — polish
+P4 — можно добавить позже
+
+Для каждой задачи напиши:
+
+[ ] Task
+Почему нужна
+Зависимости
+Примерная сложность: Easy / Medium / Hard
+Какие существующие системы затрагивает
+
+НЕ оценивай проект по принципу "хорошо/плохо".
+
+Мне нужен объективный технический и геймдизайнерский аудит.
+
+После аудита НЕ начинай автоматически реализовывать всё подряд.
+
+Сначала покажи мне итоговый ROADMAP и предложи порядок разработки.
+
+
+
+UNITY PROJECT — UI + VFX + SFX + GAME FEEDBACK IMPLEMENTATION
+
+Ты работаешь как Senior Unity Technical Designer + VFX/UI/Audio Systems Designer над моей текущей Unity-игрой.
+
+Это 3rd-person Action RPG / Souls-like + Roguelike.
+
+Главная визуальная концепция:
+
+DARK WORLD × BRIGHT MAGIC
+
+Ключевые ощущения:
+
+- MYSTICAL
+- ELEGANT
+- DANGEROUS
+- ADVENTUROUS
+- PREMIUM
+- DARK FANTASY
+- MAGICAL
+- НЕ HORROR
+- НЕ LOW-POLY
+- НЕ CARTOON
+- НЕ PHOTOREALISTIC
+
+Игра должна ощущаться как современная premium fantasy RPG с сильным combat feedback.
+
+---
+
+ГЛАВНОЕ ПРАВИЛО
+
+НЕ НАЧИНАЙ СРАЗУ ПИСАТЬ КОД.
+
+Сначала полностью проанализируй существующий Unity-проект.
+
+Изучи:
+
+- Assets
+- Scripts
+- Scenes
+- Prefabs
+- Player
+- Enemy
+- Combat
+- Enemy AI
+- Utility AI
+- Animator
+- Animation Controllers
+- Camera
+- Lock-on
+- Health
+- Stamina
+- Mana
+- Damage
+- Hit detection
+- VFX
+- Materials
+- UI
+- Audio
+- Input
+- GameManager
+- Save systems
+- existing ScriptableObjects
+- existing events
+- existing managers
+- existing object pooling
+- existing third-party assets
+- Render Pipeline
+- Quality Settings
+- Project Settings
+
+Особенно внимательно проверь:
+
+- уже существующие системы UI;
+- уже существующие combat events;
+- уже существующие damage events;
+- существующие Animator parameters;
+- существующие VFX;
+- существующие audio systems;
+- существующие camera effects;
+- существующие hit-stop;
+- существующий object pooling;
+- существующий lock-on;
+- существующий boss system.
+
+ЗАПРЕЩЕНО
+
+Не создавай вторую систему, если аналогичная уже существует.
+
+Не дублируй:
+
+- Combat System
+- Damage System
+- Health System
+- AI
+- Movement
+- Animator
+- Camera
+- Lock-on
+- Input
+- VFX Manager
+- Audio Manager
+- UI Manager
+
+Если существующая система рабочая — интегрируй новую функциональность в неё.
+
+Если существующая система плохая — сначала объясни проблему и предложи минимальную безопасную модификацию.
+
+---
+
+ЭТАП 1 — AUDIT
+
+Сначала создай документ:
+
+"PROJECT_FEEDBACK_AUDIT.md"
+
+В нём опиши:
+
+1. Что уже есть.
+2. Какие системы можно переиспользовать.
+3. Какие системы отсутствуют.
+4. Какие системы конфликтуют.
+5. Какие системы необходимо расширить.
+6. Какие VFX/SFX hooks уже существуют.
+7. Какие combat events уже существуют.
+8. Какие UI элементы уже существуют.
+9. Какие проблемы могут привести к performance issues.
+10. Какие изменения нужны для единого визуального стиля.
+
+После аудита НЕ начинай сразу масштабную переделку проекта.
+
+Сначала сформируй план.
+
+---
+
+ЭТАП 2 — СОЗДАТЬ ЕДИНУЮ СИСТЕМУ GAME FEEDBACK
+
+Мне нужна единая архитектура для:
+
+- Combat Feedback
+- VFX
+- SFX
+- Camera Feedback
+- Hit Stop
+- UI Feedback
+- Loot Feedback
+- Card Feedback
+- Damage Feedback
+
+Основная идея:
+
+GAME EVENT
+↓
+FEEDBACK SYSTEM
+↓
+VFX + SFX + CAMERA + UI
+
+Например:
+
+Player hits enemy
+
+↓
+
+Combat Event
+
+↓
+
+Feedback System
+
+↓
+
+- impact VFX
+- weapon trail
+- hit sound
+- hit stop
+- camera impulse
+- enemy reaction
+- UI feedback
+
+Не связывай каждую систему напрямую друг с другом.
+
+Используй event-driven архитектуру там, где это оправдано.
+
+---
+
+ЭТАП 3 — GAME FEEDBACK EVENTS
+
+Создай или расширь централизованные события.
+
+Минимальный набор:
+
+- AttackStarted
+- AttackHit
+- HeavyAttackHit
+- CriticalHit
+- EnemyDamaged
+- EnemyStaggered
+- EnemyBlocked
+- PlayerDamaged
+- PlayerDodged
+- PerfectDodge
+- PlayerBlocked
+- PerfectParry
+- EnemyDeath
+- BossPhaseChanged
+- AbilityCast
+- AbilityImpact
+- LootDropped
+- LootCollected
+- CardObtained
+- CardRevealed
+- PlayerDeath
+- CheckpointActivated
+
+Не создавай события, которые уже существуют.
+
+Переиспользуй существующие.
+
+---
+
+ЭТАП 4 — HUD
+
+Создай или адаптируй HUD под стиль:
+
+MINIMAL PREMIUM FANTASY UI
+
+HUD не должен занимать половину экрана.
+
+PLAYER HUD
+
+Основные элементы:
+
+HP
+
+Тонкая элегантная полоса.
+
+Цвет:
+
+- crimson / dark red
+
+Но без кислотно-красного.
+
+Добавь:
+
+- current HP
+- delayed damage bar
+- subtle glow
+- smooth interpolation
+
+Когда игрок получает большой урон:
+
+current HP уменьшается сразу.
+
+Delayed damage bar догоняет через короткую задержку.
+
+---
+
+MANA
+
+Цвет:
+
+- blue
+- violet
+- indigo
+
+Тонкая энергетическая линия.
+
+При использовании способности:
+
+- короткий glow
+- небольшой pulse
+- smooth depletion
+
+---
+
+STAMINA
+
+Цвет:
+
+- warm white / muted gold
+
+Не делать огромной.
+
+Она должна ощущаться частью HUD, а не отдельным большим UI элементом.
+
+---
+
+PLAYER DAMAGE FEEDBACK
+
+При получении урона:
+
+- короткий screen vignette
+- небольшой camera impulse
+- короткий UI pulse
+- небольшой hit stop только при необходимости
+- directional damage feedback, если возможно
+
+Не использовать постоянное красное затемнение экрана.
+
+---
+
+LOCK-ON
+
+Lock-on indicator:
+
+- thin geometric ring
+- elegant segmented design
+- subtle glow
+
+НЕ использовать огромный красный круг.
+
+Для обычных врагов:
+
+minimal.
+
+Для элитных:
+
+slightly stronger.
+
+Для boss:
+
+более сложная геометрическая версия.
+
+---
+
+BOSS HUD
+
+Boss bar располагается в нижней части экрана.
+
+Стиль:
+
+- тонкая рамка
+- premium ornament
+- dark translucent background
+- crimson HP
+- subtle glow
+
+Имя босса:
+
+крупнее HP bar.
+
+Не создавать огромный arcade-style health bar.
+
+---
+
+BOSS PHASE TRANSITION
+
+Когда меняется фаза:
+
+НЕ показывать огромный:
+
+"PHASE 2"
+
+в центре экрана.
+
+Вместо этого:
+
+- короткий audio cue
+- camera response
+- VFX burst
+- изменение boss aura
+- изменение material/VFX
+- изменение music intensity
+- небольшой UI pulse
+
+Если название фазы действительно нужно — показывать минимально.
+
+---
+
+ЭТАП 5 — COMBAT VFX
+
+Главный принцип:
+
+FEW STRONG EFFECTS > MANY WEAK EFFECTS
+
+Не использовать particle spam.
+
+---
+
+WEAPON TRAILS
+
+Лёгкие атаки:
+
+- thin trail
+- short duration
+- subtle glow
+
+Heavy attack:
+
+- более плотный trail
+- более сильный glow
+- charge effect
+- stronger impact
+
+НЕ делать толстые светящиеся дуги вокруг персонажа.
+
+---
+
+LIGHT HIT
+
+При обычном попадании:
+
+- 3–8 sparks
+- small flash
+- short impact sound
+- very small camera response
+
+---
+
+HEAVY HIT
+
+При сильном ударе:
+
+- 10–20 sparks
+- short shockwave
+- stronger flash
+- stronger sound
+- short hit stop
+- small camera shake
+
+---
+
+CRITICAL HIT
+
+Critical:
+
+- white flash
+- larger particles
+- special sound
+- stronger hit stop
+- short camera punch
+- slightly stronger VFX
+
+Но всё должно быть коротким.
+
+Не превращать critical hit в огромный взрыв.
+
+---
+
+HIT STOP
+
+Создай централизованный HitStopService, только если его ещё нет.
+
+Примерные значения:
+
+Light hit:
+"0.02–0.04 sec"
+
+Heavy hit:
+"0.04–0.07 sec"
+
+Critical:
+"0.06–0.10 sec"
+
+Boss / special attack:
+
+"0.05–0.12 sec"
+
+Все значения должны быть настраиваемыми.
+
+Не использовать Time.timeScale = 0 без необходимости.
+
+Учесть:
+
+- physics
+- animations
+- particles
+- audio
+- coroutines
+- network readiness
+
+---
+
+ЭТАП 6 — MAGIC VFX
+
+Каждое заклинание должно иметь структуру:
+
+CAST
+↓
+CHARGE
+↓
+RELEASE
+↓
+IMPACT
+↓
+AFTERMATH
+
+Не создавать просто:
+
+"particle explosion".
+
+---
+
+MAGIC COLOR LANGUAGE
+
+Основные цвета:
+
+- violet
+- indigo
+- blue
+- white
+- muted gold
+
+Gold использовать для:
+
+- legendary effects
+- important interactions
+- sacred magic
+- rare events
+
+Не использовать rainbow VFX.
+
+---
+
+DODGE VFX
+
+Обычный dodge:
+
+- short trail
+- 3–5 particles
+- subtle distortion
+- short air sound
+- небольшой camera response
+
+Perfect Dodge:
+
+- very short white flash
+- subtle distortion
+- unique sound
+- very short time slowdown / hit stop
+
+Эффект должен быть очень коротким.
+
+---
+
+BLOCK
+
+Block:
+
+- metallic sparks
+- small flash
+- deep metal impact
+- small camera response
+
+---
+
+PERFECT PARRY
+
+Perfect Parry:
+
+- white/gold flash
+- larger sparks
+- signature ring
+- short hit stop
+- unique sound
+- stronger camera impulse
+
+Это должно ощущаться как один из самых satisfying моментов боя.
+
+---
+
+ЭТАП 7 — ENEMY VFX LANGUAGE
+
+VFX должен зависеть от типа врага.
+
+Goblin / Beast
+
+- dirt
+- dust
+- rough sparks
+- earthy particles
+
+Knight
+
+- metal
+- white
+- muted gold
+- steel sparks
+
+Mage
+
+- violet
+- blue
+- glyph-like particles
+- magical trails
+
+Assassin
+
+- dark particles
+- smoke
+- fast trails
+- subtle distortion
+
+Boss
+
+У каждого boss должна быть собственная VFX identity.
+
+Не использовать один universal boss effect.
+
+---
+
+ЭТАП 8 — DEATH VFX
+
+При смерти обычного врага:
+
+BODY
+↓
+SHORT FREEZE
+↓
+ENERGY EMERGES
+↓
+PARTICLES RISE
+↓
+SOUL/RESOURCE FRAGMENTS
+↓
+MOVE TOWARD PLAYER
+↓
+RESOURCE COLLECTED
+
+Это должно одновременно:
+
+- красиво выглядеть;
+- объяснять получение ресурса;
+- не создавать тысячи particles.
+
+---
+
+ЭТАП 9 — LOOT FEEDBACK
+
+Когда появляется loot:
+
+- небольшой VFX
+- subtle floating effect
+- short sound
+
+При сборе:
+
+LOOT
+↓
+FLY TO PLAYER
+↓
+ENTER PLAYER
+↓
+HUD PULSE
+↓
+SFX
+
+Rare loot:
+
+добавить:
+
+- stronger glow
+- additional particles
+- special sound
+
+---
+
+ЭТАП 10 — CARD SYSTEM FEEDBACK
+
+Карты — важная часть игры.
+
+Они должны ощущаться как:
+
+MAGICAL ARTIFACTS / FRAGMENTS OF SOULS
+
+Не как обычные карточки интерфейса.
+
+Card frame:
+
+- metallic
+- engraved
+- premium
+- subtle magical glow
+
+Rarity должна влиять на:
+
+- material
+- glow
+- particles
+- sound
+- reveal intensity
+
+---
+
+CARD REVEAL
+
+Использовать:
+
+DARK
+↓
+CARD BACK
+↓
+ROTATION
+↓
+LIGHT FLASH
+↓
+CARD REVEAL
+↓
+RARITY EFFECT
+↓
+FINAL SETTLE
+
+Обычная карта:
+
+минимальный эффект.
+
+Rare:
+
+немного больше.
+
+Epic:
+
+более заметный.
+
+Legendary:
+
+strong magical reveal.
+
+Но не делать всё чрезмерно ярким.
+
+---
+
+ЭТАП 11 — AUDIO SYSTEM
+
+Проверь существующий AudioManager.
+
+Если он есть — расширь.
+
+Если отсутствует — создай централизованную систему.
+
+Категории:
+
+- Music
+- Ambient
+- SFX
+- Combat
+- UI
+- Magic
+- Footsteps
+- Enemy
+- Boss
+
+Используй AudioMixer Groups.
+
+Минимум:
+
+Master
+├── Music
+├── SFX
+├── UI
+├── Ambient
+└── Voice
+
+---
+
+WEAPON AUDIO
+
+Не объединять swing и impact в один звук.
+
+Структура:
+
+SWING
+↓
+WHOOSH
+↓
+IMPACT
+↓
+MATERIAL RESONANCE
+
+Разные материалы:
+
+- Flesh
+- Armor
+- Stone
+- Wood
+- Metal
+- Magic
+
+---
+
+FOOTSTEPS
+
+Поддержать surface types:
+
+- Stone
+- Dirt
+- Grass
+- Wood
+- Metal
+- Water
+
+Для каждого:
+
+несколько вариантов.
+
+Выбирать случайный вариант.
+
+Добавить небольшую random pitch variation.
+
+---
+
+ENEMY TELEGRAPH AUDIO
+
+Очень важно:
+
+Игрок должен слышать намерение врага до атаки.
+
+Например:
+
+Heavy Attack:
+
+visual preparation
++
+low audio cue
+
+Magic:
+
+magical hum
++
+charge sound
+
+Fast attack:
+
+short movement/whoosh cue
+
+Это помогает игроку реагировать честно.
+
+---
+
+ЭТАП 12 — CAMERA FEEDBACK
+
+Проверь существующую camera system.
+
+Не создавай новую камеру, если текущая уже работает.
+
+Добавь feedback hooks:
+
+Light attack:
+
+почти без shake.
+
+Heavy attack:
+
+small impulse.
+
+Boss attack:
+
+stronger impulse.
+
+Player damage:
+
+short directional impulse.
+
+Critical hit:
+
+short camera punch.
+
+Не использовать постоянную сильную тряску.
+
+---
+
+ЭТАП 13 — PERFORMANCE
+
+Это ОЧЕНЬ ВАЖНО.
+
+Моя игра должна работать эффективно.
+
+Особенно следи за:
+
+- Instantiate/Destroy
+- particle systems
+- VFX
+- audio sources
+- UI allocations
+- GC allocations
+- Update loops
+- FindObjectOfType
+- GetComponent в Update
+- Camera effects
+- material instancing
+
+Где возможно:
+
+использовать:
+
+- object pooling
+- cached references
+- shared materials
+- event-driven architecture
+- ScriptableObjects для конфигурации
+
+Не создавать тысячи объектов ради визуального эффекта.
+
+---
+
+ЭТАП 14 — CENTRALIZED STYLE CONFIG
+
+Не хочу, чтобы цвета, timings и intensity были разбросаны по 50 скриптам.
+
+Создай централизованную конфигурацию.
+
+Например:
+
+"GameFeedbackStyleConfig"
+
+или архитектуру лучше подходящую существующему проекту.
+
+В ней должны быть настройки:
+
+COLORS
+
+HP
+Mana
+Stamina
+Magic
+Gold
+Rare
+Epic
+Legendary
+Critical
+Boss
+
+TIMINGS
+
+HitStop
+Flash
+Fade
+LootFly
+CardReveal
+UIPulse
+CameraImpulse
+
+INTENSITY
+
+LightHit
+HeavyHit
+CriticalHit
+BossHit
+MagicImpact
+PerfectParry
+
+VFX
+
+particle count
+duration
+scale
+emission
+trail intensity
+
+AUDIO
+
+volume
+pitch variation
+cooldowns
+
+Все значения должны быть легко изменяемыми в Inspector.
+
+---
+
+ЭТАП 15 — UNITY EDITOR SETUP
+
+После создания систем:
+
+не оставляй проект в состоянии:
+
+"scripts created but nothing connected".
+
+Необходимо реально подключить системы.
+
+Создай необходимые:
+
+- ScriptableObjects
+- Prefabs
+- Materials
+- Particle Systems
+- Audio references
+- UI references
+- Events
+- Feedback profiles
+
+Но НЕ создавай огромное количество placeholder assets, если для этого уже есть подходящие assets в проекте.
+
+Если для конкретного эффекта нет ассета:
+
+создай минимальный procedural/simple Unity effect как временную основу.
+
+---
+
+ЭТАП 16 — DEBUG MODE
+
+Создай debug режим.
+
+В Inspector или отдельном debug component должно быть возможно увидеть:
+
+- current AI action
+- last damage event
+- last feedback event
+- hit type
+- hit stop duration
+- VFX triggered
+- SFX triggered
+- camera impulse
+- current boss phase
+
+Но debug UI не должен отображаться в release build.
+
+---
+
+ЭТАП 17 — STYLE CHECK
+
+После реализации проверь каждый эффект по следующим вопросам:
+
+1.
+
+Слишком ли яркий?
+
+2.
+
+Слишком ли большой?
+
+3.
+
+Слишком ли долгий?
+
+4.
+
+Не перекрывает ли gameplay?
+
+5.
+
+Не выглядит ли как generic mobile game VFX?
+
+6.
+
+Не слишком ли много particle effects?
+
+7.
+
+Не слишком ли много glow?
+
+8.
+
+Соответствует ли эффект DARK WORLD × BRIGHT MAGIC?
+
+9.
+
+Есть ли визуальное различие между обычным ударом и важным ударом?
+
+10.
+
+Чувствуется ли premium quality?
+
+---
+
+ЗАПРЕЩЕННЫЕ ВИЗУАЛЬНЫЕ РЕШЕНИЯ
+
+Не использовать без крайней необходимости:
+
+- rainbow particles
+- кислотные цвета
+- giant explosions
+- огромные glowing circles
+- massive weapon trails
+- постоянный screen shake
+- огромные damage numbers
+- excessive bloom
+- UI everywhere
+- одинаковый VFX для всех врагов
+- generic mobile RPG effects
+- low-poly aesthetic
+- cartoon aesthetic
+
+---
+
+ИНТЕГРАЦИЯ С СУЩЕСТВУЮЩИМ COMBAT
+
+Очень важно:
+
+AI принимает решение.
+
+Combat System выполняет действие.
+
+Feedback System реагирует на результат.
+
+Не смешивать:
+
+AI
+Combat
+Feedback
+
+Архитектура:
+
+Enemy AI
+↓
+Combat
+↓
+Combat Event
+↓
+Feedback System
+↓
+VFX / SFX / Camera / Hit Stop / UI
+
+---
+
+ПОРЯДОК РЕАЛИЗАЦИИ
+
+Работай строго в таком порядке:
+
+PHASE 1
+
+Project audit.
+
+PHASE 2
+
+Создание архитектуры Game Feedback.
+
+PHASE 3
+
+Combat events.
+
+PHASE 4
+
+Player HUD.
+
+PHASE 5
+
+Combat feedback.
+
+PHASE 6
+
+Hit Stop + Camera Feedback.
+
+PHASE 7
+
+VFX.
+
+PHASE 8
+
+SFX.
+
+PHASE 9
+
+Boss feedback.
+
+PHASE 10
+
+Loot feedback.
+
+PHASE 11
+
+Card feedback.
+
+PHASE 12
+
+Polish.
+
+PHASE 13
+
+Performance audit.
+
+---
+
+ВАЖНО
+
+Не пытайся сделать всю игру красивой одновременно.
+
+Сначала доведи до очень хорошего состояния:
+
+ONE PLAYER + ONE ENEMY + ONE WEAPON + ONE ABILITY
+
+Сделай на них эталон качества.
+
+После этого распространи архитектуру на остальные элементы.
+
+---
+
+FINAL QUALITY TARGET
+
+После завершения базовой реализации игрок должен ощущать:
+
+удар → вес
+
+critical → мощь
+
+parry → точность
+
+dodge → скорость
+
+magic → сила
+
+boss attack → опасность
+
+loot → награда
+
+card reveal → редкость
+
+death → завершение
+
+И всё это должно ощущаться единым визуальным языком.
+
+Главная цель:
+
+Не сделать больше эффектов.
+
+Главная цель:
+
+Сделать каждый эффект понятным, красивым и satisfying.
+
+---
+
+ФИНАЛЬНЫЙ AUDIT
+
+После реализации:
+
+1. Проверь Console.
+2. Проверь compile errors.
+3. Проверь warnings.
+4. Проверь NullReference.
+5. Проверь missing references.
+6. Проверь prefab references.
+7. Проверь performance.
+8. Проверь GC allocations.
+9. Проверь object pooling.
+10. Проверь UI scaling.
+11. Проверь разные resolutions.
+12. Проверь combat.
+13. Проверь death.
+14. Проверь boss.
+15. Проверь loot.
+16. Проверь cards.
+
+Создай:
+
+"GAME_FEEDBACK_IMPLEMENTATION_REPORT.md"
+
+В отчёте укажи:
+
+- что реализовано;
+- какие файлы созданы;
+- какие файлы изменены;
+- какие существующие системы переиспользованы;
+- какие проблемы найдены;
+- какие проблемы исправлены;
+- что осталось;
+- какие assets нужны;
+- какие VFX/SFX можно заменить позже на production-quality;
+- performance notes;
+- следующий приоритет P0/P1/P2.
+
+Не делай необоснованные архитектурные изменения.
+
+Не переписывай работающие системы без необходимости.
+
+Не удаляй существующий функционал.
+
+Не создавай дублирующие менеджеры.
+
+Если какое-либо решение требует выбора — сначала выбери наиболее совместимый с существующей архитектурой вариант и зафиксируй его в отчёте.
+
+Начинай с полного анализа проекта.
