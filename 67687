@@ -1,1962 +1,689 @@
-Ты работаешь как Lead Game Designer + Senior Unity Technical Designer.
-
-Я разрабатываю 3rd-person action RPG в жанре Souls-like + Roguelike.
+Ты работаешь над моей существующей игрой на Unreal Engine 5.8.
 
 ВАЖНО:
-Боевая система уже реализована.
-AI мобов на основе Utility AI уже реализован.
+Не создавай новый проект.
+Не удаляй существующие системы.
+Не переписывай существующие Blueprint/C++ без необходимости.
+Сначала полностью проанализируй текущий проект, его GameMode, Character, PlayerController, PlayerState, HUD, UI, Input, Save System, Multiplayer и существующие Gameplay Systems.
 
-Сейчас мне нужно понять, какие системы и элементы игры ещё необходимо сделать, чтобы проект превратился не просто в технический прототип, а в полноценную игру.
+ПРОЕКТ:
+3D action RPG / Soulslike.
+Визуальное направление:
+Soulframe × Elden Ring, но НЕ копия.
+Не horror.
+Fantasy adventure.
+Мир должен ощущаться большим и исследовательским, но без огромных пустых пространств.
 
-Сначала изучи ВЕСЬ проект.
-
-НЕ начинай сразу писать код.
-
-Проанализируй существующие:
-- Player
-- Combat
-- Enemy AI
-- Movement
-- Animation
-- Camera
-- Health
-- Damage
-- Stamina
-- Mana
-- Death
-- Respawn
-- Enemy spawning
-- Level/Dungeon
-- UI
-- Inventory
-- Progression
-- Save/Load
-- Audio
-- VFX
-- Dialogue
+Геймплей:
+- third-person
+- melee combat
+- магия
+- лук
+- stamina
+- mana
+- сложные PvE-сражения
+- dungeon exploration
+- climbing
+- до 4 игроков в PvE co-op
+- PvP отсутствует
+- фиксированные playable characters
+- персонажи имеют собственную историю
+- экипировка и предметы
+- исследование мира
 - NPC
-- Multiplayer/Co-op, если уже есть
-- любые другие игровые системы
+- сундуки
+- интерактивные объекты
 
-После анализа составь GAME DEVELOPMENT AUDIT.
+Я УЖЕ УСТАНОВИЛ ТРИ ПЛАГИНА:
 
-==================================================
-1. CORE GAME LOOP
-==================================================
+1. Narrative Inventory
+2. Narrative Interaction
+3. Narrative Navigator
 
-Определи основной игровой цикл.
+Также используй Narrative Common UI, если он необходим для работы этих плагинов.
 
-Для моей игры он должен примерно выглядеть:
+Официальная документация:
+Narrative Inventory:
+https://docs.narrativetools.io/inventory/
 
-Hub / Home
-↓
-выбор персонажа
-↓
-подготовка
-↓
-вход в dungeon
-↓
-исследование
-↓
-обычные враги
-↓
-элитные враги
-↓
-награды
-↓
-мини-босс / босс
-↓
-получение ресурсов / карт / улучшений
-↓
-возвращение в Hub
-↓
-развитие
-↓
-следующий забег
+Narrative Interaction:
+https://docs.narrativetools.io/interaction/
 
-Проверь, какие части этого цикла уже существуют.
-
-Покажи:
-
-DONE
-PARTIALLY DONE
-MISSING
+Narrative Navigator:
+https://docs.narrativetools.io/navigator/
 
 ==================================================
-2. COMBAT
+ЭТАП 1 — АНАЛИЗ ПРОЕКТА
 ==================================================
 
-Боевая система уже существует.
-
-Не переписывай её.
+Сначала НЕ ПИШИ КОД.
 
 Проверь:
 
-- hit detection
-- damage
-- hit reactions
-- stagger
-- poise
-- stamina
-- mana
-- dodge
-- invulnerability frames
-- blocking
-- parry, если есть
-- attack recovery
-- combo logic
-- heavy attacks
-- ranged attacks
-- magic
-- enemy attack telegraphs
-- player feedback
-- camera feedback
-- hit VFX
-- hit SFX
-- death reactions
+- какие Character Blueprint существуют
+- какой Character является главным
+- какой PlayerController используется
+- какой PlayerState используется
+- какой GameMode используется
+- какой GameInstance используется
+- какие Enhanced Input Actions уже существуют
+- какие UI Widget существуют
+- какой HUD существует
+- есть ли существующая система Save/Load
+- есть ли Multiplayer/Replication
+- есть ли Gameplay Ability System
+- какие плагины уже включены
+- установлены ли Narrative Inventory
+- Narrative Interaction
+- Narrative Navigator
+- Narrative Common UI
 
-Особенно проверь Souls-like ощущения:
+Найди конфликты между существующими системами и Narrative.
 
-Игрок должен понимать:
-- почему получил удар
-- когда враг собирается атаковать
-- когда можно увернуться
-- когда атака закончилась
-- когда враг staggered
-- когда атака игрока попала
+После анализа создай краткий отчёт:
 
-Не меняй существующую механику без необходимости.
+1. Existing Architecture
+2. Existing Player Systems
+3. Existing UI
+4. Existing Input
+5. Existing Multiplayer
+6. Existing Save System
+7. Narrative Plugins
+8. Conflicts
+9. Что необходимо изменить
 
-==================================================
-3. ENEMY AI
-==================================================
-
-Utility AI уже реализована.
-
-Проверь её как игровую систему.
-
-У каждого врага должны быть:
-
-- perception
-- target detection
-- decision making
-- movement
-- attack selection
-- dodge/block behaviour
-- retreat
-- cooldowns
-- reaction time
-- personality
-
-Проверь, не ведут ли себя все враги одинаково.
-
-Нужно иметь возможность создавать:
-
-Goblin
-Knight
-Archer
-Mage
-Assassin
-Elite
-Boss
-
-из одной базовой AI architecture.
-
-Проверь также:
-- агро
-- потерю цели
-- возвращение на позицию
-- leash
-- окружение игрока
-- несколько врагов одновременно
-- предотвращение ситуации, когда 10 врагов атакуют одновременно
-
-Если каких-то систем не хватает — внеси их в список MISSING.
+Только после этого переходи к реализации.
 
 ==================================================
-4. PLAYER EXPERIENCE
+ЭТАП 2 — NARRATIVE INVENTORY
 ==================================================
 
-Проверь весь путь игрока:
+Интегрируй Narrative Inventory в существующего игрока.
 
-Spawn
-↓
-Movement
-↓
-Exploration
-↓
-Combat
-↓
-Loot
-↓
-Progression
-↓
-Death
-↓
-Respawn
-↓
-Retry
+Главная идея:
 
-Проверь, есть ли:
+Inventory = полноценная RPG inventory/equipment система.
 
-- tutorial
-- onboarding
-- checkpoints
-- respawn
-- death screen
-- recovery after death
+Нужны:
+
+- Weapons
+- Armor
+- Accessories
+- Consumables
+- Quest Items
+- Materials
+- Key Items
+- Currency
+- Special Items
+
+Категории:
+
+WEAPONS
+- sword
+- greatsword
+- bow
+- staff
+- magic weapon
+
+ARMOR
+- head
+- chest
+- gloves
+- legs
+
+ACCESSORIES
+- ring
+- talisman
+- special accessory
+
+CONSUMABLES
 - healing
-- resource recovery
-- inventory
-- equipment
-- character progression
+- mana
+- buffs
+- antidotes
+- temporary effects
+
+MATERIALS
+- crafting materials
+- dungeon materials
+- upgrade materials
+
+QUEST ITEMS
+- keys
+- quest objects
+- story objects
 
 ==================================================
-5. ROGUELIKE SYSTEM
+EQUIPMENT
+==================================================
+
+Оборудование должно быть реально связано с персонажем.
+
+При equip:
+
+Weapon:
+- меняется weapon mesh
+- weapon появляется в руках/слоте
+- меняются доступные attacks/abilities при необходимости
+
+Armor:
+- меняется внешний вид персонажа
+- equipment data сохраняется
+
+Accessory:
+- применяется соответствующий gameplay effect
+
+Не создавай новую систему экипировки поверх Narrative Inventory,
+если необходимая функциональность уже существует в Narrative.
+
+Используй существующую архитектуру Narrative.
+
+==================================================
+СТАТЫ
+==================================================
+
+Подготовь архитектуру под:
+
+HP
+Max HP
+Stamina
+Max Stamina
+Mana
+Max Mana
+Attack
+Defense
+Magic Power
+Poise
+Weight
+Move Speed
+
+Но НЕ ломай существующую combat system.
+
+Inventory должен только передавать необходимые modifiers в существующую систему.
+
+Если существующей stat system нет —
+создай минимальную модульную систему,
+которую потом можно подключить к combat.
+
+==================================================
+ВЕС
+==================================================
+
+Сделай систему:
+
+Equip Load =
+Current Equipment Weight / Maximum Equipment Load
+
+Подготовь категории:
+
+Light
+Medium
+Heavy
+Overloaded
+
+Но пока не привязывай это напрямую к конкретным цифрам без анализа существующего combat/movement.
+
+==================================================
+ИНВЕНТАРЬ В ВИДЕ КНИГИ
 ==================================================
 
 Это очень важно.
 
-Определи, что является постоянным прогрессом, а что теряется после смерти.
+Я НЕ хочу стандартный MMO inventory.
 
-Раздели:
+В дальнейшем Inventory должен выглядеть как раскрытая книга.
 
-META PROGRESSION
+Левая страница:
+- категории
+- список предметов
+- оружие
+- броня
+- consumables
+- materials
+- quest items
 
-и
+Правая страница:
+- выбранный предмет
+- 3D preview / icon
+- название
+- описание
+- характеристики
+- weight
+- requirements
+- effects
+- buttons Equip / Use / Drop
 
-RUN PROGRESSION.
+Визуальное направление:
 
-Например:
+Dark fantasy adventure.
+Старая фэнтезийная книга.
+Кожа.
+Металл.
+Пергамент.
+Тёмные материалы.
+Минималистичный UI.
 
-META:
-- открытые персонажи
-- открытые карты
-- постоянные улучшения
-- дом
-- NPC
-- открытые регионы
+НЕ копируй интерфейс Elden Ring напрямую.
 
-RUN:
-- временные buffs
-- временные relics/cards
-- временные характеристики
-- текущие ресурсы забега
+Сначала НЕ переделывай весь Narrative Inventory UI.
 
-Проверь, есть ли такая структура в проекте.
+Сначала добейся полностью работающей inventory/equipment системы.
 
-==================================================
-6. CARD SYSTEM
-==================================================
+После этого создай отдельный UI layer:
 
-В игре карты являются важной частью progression.
+WBP_BookInventory
 
-Проверь существующую реализацию.
-
-Нужно предусмотреть:
-
-- character/soul cards
-- skill cards
-- stat bonuses
-- temporary roguelike cards
-- rarity
-- card acquisition
-- card upgrade
-- card selection during run
-- duplicate handling
-- card collection
-- deck/loadout
-
-Не придумывай новые механики без необходимости.
-
-Сначала проанализируй уже существующий код.
+и подключи его к Narrative Inventory.
 
 ==================================================
-7. DUNGEON
+ЭТАП 3 — NARRATIVE INTERACTION
 ==================================================
 
-Проверь уровень с точки зрения игрового дизайна.
+Используй Narrative Interaction как основную систему взаимодействия с миром.
 
 Нужны:
 
-- exploration
-- combat arenas
-- shortcuts
-- secrets
-- rewards
-- checkpoints
-- elite encounters
-- miniboss
-- boss arena
-- environmental storytelling
-- verticality
-- safe zones
-- traps
-- locked areas
-- optional paths
-
-Проверь, не является ли dungeon просто набором комнат с врагами.
-
-Цель — сделать исследование интересным.
-
-==================================================
-8. WORLD / HUB
-==================================================
-
-В игре должен существовать Hub / Home.
-
-Проверь:
-
-- player home
-- NPC
-- shops
-- upgrades
-- character selection
-- progression
-- social elements
-- quests
-- dialogue
-- preparation before run
-
-Дом должен иметь игровую функцию, а не просто быть красивой локацией.
-
-==================================================
-9. NPC
-==================================================
-
-Определи необходимые типы NPC:
-
-- merchant
-- blacksmith / upgrade NPC
-- quest NPC
-- lore NPC
-- healer
-- card NPC
-- progression NPC
-
-Для каждого определить:
-
-Purpose
-Gameplay function
-Dialogue
-Rewards
-Progression dependency
-
-==================================================
-10. BOSS SYSTEM
-==================================================
-
-Проверь, есть ли полноценная boss architecture.
-
-Босс должен поддерживать:
-
-- multiple phases
-- unique attacks
-- telegraphs
-- arena
-- phase transitions
-- stagger/poise
-- death sequence
-- rewards
-- unique lore
-
-Utility AI должна использоваться там, где это подходит.
-
-Не создавать полностью отдельную AI архитектуру без необходимости.
-
-==================================================
-11. PROGRESSION
-==================================================
-
-Проверь:
-
-- character level
-- stats
-- skills
-- cards
-- currencies
-- upgrades
-- unlocks
-- achievements
-- boss rewards
-- character progression
-
-Определи, что именно заставляет игрока сделать ещё один забег.
-
-==================================================
-12. LOOT
-==================================================
-
-Проверь:
-
-- enemy drops
-- chest rewards
-- boss rewards
-- random rewards
-- rare rewards
-- card rewards
-- currency
-- crafting materials
-
-Особое внимание:
-
-Игрок должен понимать:
-
-что получил
-↓
-зачем это нужно
-↓
-как это изменит следующий забег.
-
-==================================================
-13. DEATH / CHECKPOINT
-==================================================
-
-Для Souls-like это критически важно.
-
-Проверь:
-
-- death
-- respawn
-- checkpoint
-- enemy reset
-- loot recovery
-- penalty
-- retry loop
-
-Система смерти должна мотивировать попробовать ещё раз, а не раздражать игрока из-за технических проблем.
-
-==================================================
-14. CAMERA
-==================================================
-
-Проверь third-person camera:
-
-- follow
-- rotation
-- collision
-- lock-on
-- target switching
-- camera distance
-- camera shake
-- combat camera
-- boss camera
-- narrow corridors
-
-Особенно проверить lock-on.
-
-==================================================
-15. ANIMATION
-==================================================
-
-Проверь:
-
-- locomotion
-- idle
-- walk
-- run
-- dodge
-- attacks
-- hit reactions
-- death
-- enemy attacks
-- transitions
-- root motion
-- animation timing
-
-Главная цель:
-
-Animation → Gameplay timing.
-
-Атаки не должны ощущаться как случайные animation clips.
-
-==================================================
-16. VFX / AUDIO / FEEDBACK
-==================================================
-
-Проверь:
-
-- hit VFX
-- damage numbers, если нужны
-- weapon trails
-- magic effects
-- dodge effect
-- death effects
-- footsteps
-- attack sounds
-- impact sounds
-- UI sounds
-- ambient sounds
-- music
-
-Проверь, получает ли игрок достаточно feedback от действий.
-
-==================================================
-17. UI / UX
-==================================================
-
-Проверь:
-
-HUD
-Inventory
-Cards
-Character screen
-Map
-Pause
-Settings
-Death screen
-Rewards
-Loot
-Dialogue
-Boss health bar
-Enemy health bars
-Notifications
-
-Особое внимание:
-
-Игрок должен понимать состояние:
-
-HP
-Stamina
-Mana
-Current objective
-Current buffs
-Current cards
-Currency
-Progress
-
-==================================================
-18. SAVE SYSTEM
-==================================================
-
-Проверь наличие:
-
-- save
-- load
-- autosave
-- checkpoints
-- character progression
-- card collection
-- home progression
-- NPC progression
-- settings
-
-Особенно проверь, чтобы после перезапуска игры прогресс не терялся.
-
-==================================================
-19. CO-OP
-==================================================
-
-В игре планируется кооператив до 4 игроков PvE.
-
-Если multiplayer ещё не реализован — НЕ начинай его сразу создавать.
-
-Вместо этого определи:
-
-какие существующие системы необходимо изначально сделать network-friendly.
-
-Особенно:
-
-- player state
-- health
-- damage
-- enemy AI
-- enemy targeting
+CHESTS
+- открытие
 - loot
-- rewards
-- dungeon state
-- checkpoints
-- boss state
-- progression
+- locked chest
+- key requirement
 
-==================================================
-20. PERFORMANCE
-==================================================
-
-Учитывай, что игра должна работать на слабом ПК разработчика и в будущем должна быть нормально оптимизирована.
-
-Проверь:
-
-- Update loops
-- AI update frequency
-- NavMesh
-- Physics
-- Animator
-- VFX
-- particles
-- draw calls
-- materials
-- textures
-- shadows
-- lighting
-- object pooling
-- enemy spawning
-
-Не делать premature optimization.
-
-Но найди потенциальные проблемы.
-
-==================================================
-21. CONTENT
-==================================================
-
-После анализа систем составь список необходимого контента:
-
-Characters
-Enemies
-Elite enemies
-Bosses
 NPC
-Dungeons
-Biomes
-Weapons
-Skills
-Cards
-Items
-VFX
-Animations
-Sounds
-Music
-UI
-Dialogue
-Quests
+- interaction
+- dialogue trigger
+- merchant trigger
+- quest trigger
 
-Не нужно сразу создавать всё.
+WORLD OBJECTS
+- doors
+- levers
+- switches
+- pickups
+- interactable objects
 
-Определи MINIMUM VIABLE CONTENT для первого полноценного vertical slice.
+DEAD ENEMIES
+- loot interaction
 
 ==================================================
-22. VERTICAL SLICE
+INTERACTION UI
 ==================================================
 
-Самое главное.
+Не делай постоянные floating labels.
 
-Предложи один маленький законченный кусок игры:
+Когда игрок смотрит на интерактивный объект:
 
-1 Hub
-1 playable character
-3–5 обычных врагов
-1 elite
-1 miniboss или boss
-1 dungeon
-10–20 cards
-1 progression loop
-1 reward loop
-1 checkpoint
-1 death/respawn system
+показывать небольшую подсказку:
+
+[ E ] Открыть
+[ E ] Поговорить
+[ E ] Поднять
+[ E ] Открыть сундук
+
+Текст должен зависеть от типа объекта.
+
+Пример:
+
+Chest:
+[ E ] Открыть
+
+NPC:
+[ E ] Поговорить
+
+Item:
+[ E ] Поднять
+
+Door:
+[ E ] Открыть
+
+Используй Narrative Interaction, а не отдельную самописную систему trace,
+если Narrative уже предоставляет необходимую функциональность.
+
+==================================================
+ЭТАП 4 — NARRATIVE NAVIGATOR
+==================================================
+
+Используй Navigator для:
+
+- World Map
+- Compass
+- Waypoints
+- Markers
+
+ВАЖНО:
+
+Я НЕ хочу постоянную большую minimap как в MMORPG.
+
+Основной интерфейс исследования:
+
+верхняя часть экрана:
+COMPASS
+
+При открытии карты:
+
+полноэкранная WORLD MAP.
+
+Игрок может:
+
+- открыть карту
+- поставить собственный marker
+- удалить marker
+- видеть важные точки
+- видеть dungeon entrances
+- видеть discovered locations
+- видеть NPC locations
+- видеть objectives
+
+==================================================
+MAP PHILOSOPHY
+==================================================
+
+Не делай карту полностью открытой с самого начала.
+
+Подготовь архитектуру:
+
+Undiscovered
+Discovered
+Visited
+
+Новые области открываются по мере исследования.
+
+Dungeon locations должны иметь собственные markers.
+
+Например:
+
+Dungeon
+Boss
+NPC
+Merchant
+Quest
+Portal
+Camp
+Important Location
+
+==================================================
+COMPASS
+==================================================
+
+Компас должен быть минималистичным.
+
+Показывать:
+
+N
+NE
+E
+SE
+S
+SW
+W
+NW
+
+и важные markers.
+
+Не перегружай экран.
+
+Игрок должен самостоятельно исследовать мир.
+
+==================================================
+WAYPOINTS
+==================================================
 
 Игрок должен иметь возможность:
 
-Start Game
-↓
-Hub
-↓
-Dungeon
-↓
-Combat
-↓
-Loot
-↓
-Boss
-↓
-Reward
-↓
-Return Hub
-↓
-Upgrade
-↓
-Repeat
+Set Marker
+Remove Marker
 
-Если этот цикл работает и ощущается качественно — только после этого расширять игру.
+Пример:
+
+Player смотрит на карту
+↓
+нажимает кнопку Marker
+↓
+выбирает точку
+↓
+ставится waypoint
+↓
+waypoint отображается на compass
+
+Подготовить поддержку разных типов marker.
 
 ==================================================
-23. FINAL DEVELOPMENT ROADMAP
+MULTIPLAYER
 ==================================================
 
-В конце составь ROADMAP.
+Игра рассчитана на PvE co-op до 4 игроков.
 
-Раздели задачи:
+Поэтому обязательно проверь Replication.
 
-P0 — критически необходимо
-P1 — необходимо для vertical slice
-P2 — необходимо для полноценной игры
-P3 — polish
-P4 — можно добавить позже
-
-Для каждой задачи напиши:
-
-[ ] Task
-Почему нужна
-Зависимости
-Примерная сложность: Easy / Medium / Hard
-Какие существующие системы затрагивает
-
-НЕ оценивай проект по принципу "хорошо/плохо".
+Inventory:
+- inventory state
+- equipment
+- item changes
 
-Мне нужен объективный технический и геймдизайнерский аудит.
-
-После аудита НЕ начинай автоматически реализовывать всё подряд.
-
-Сначала покажи мне итоговый ROADMAP и предложи порядок разработки.
-
-
-
-UNITY PROJECT — UI + VFX + SFX + GAME FEEDBACK IMPLEMENTATION
-
-Ты работаешь как Senior Unity Technical Designer + VFX/UI/Audio Systems Designer над моей текущей Unity-игрой.
-
-Это 3rd-person Action RPG / Souls-like + Roguelike.
-
-Главная визуальная концепция:
-
-DARK WORLD × BRIGHT MAGIC
-
-Ключевые ощущения:
+Interaction:
+- chest state
+- doors
+- pickups
+- world interactions
 
-- MYSTICAL
-- ELEGANT
-- DANGEROUS
-- ADVENTUROUS
-- PREMIUM
-- DARK FANTASY
-- MAGICAL
-- НЕ HORROR
-- НЕ LOW-POLY
-- НЕ CARTOON
-- НЕ PHOTOREALISTIC
+Navigator:
+- personal markers должны быть локальными игроку
+- общие world discoveries при необходимости могут быть replicated
 
-Игра должна ощущаться как современная premium fantasy RPG с сильным combat feedback.
-
----
-
-ГЛАВНОЕ ПРАВИЛО
-
-НЕ НАЧИНАЙ СРАЗУ ПИСАТЬ КОД.
+Не создавать PvP системы.
 
-Сначала полностью проанализируй существующий Unity-проект.
+==================================================
+SAVE / LOAD
+==================================================
 
-Изучи:
+Проверь существующий Save System.
 
-- Assets
-- Scripts
-- Scenes
-- Prefabs
-- Player
-- Enemy
-- Combat
-- Enemy AI
-- Utility AI
-- Animator
-- Animation Controllers
-- Camera
-- Lock-on
-- Health
-- Stamina
-- Mana
-- Damage
-- Hit detection
-- VFX
-- Materials
-- UI
-- Audio
-- Input
-- GameManager
-- Save systems
-- existing ScriptableObjects
-- existing events
-- existing managers
-- existing object pooling
-- existing third-party assets
-- Render Pipeline
-- Quality Settings
-- Project Settings
+Не создавай второй Save System без необходимости.
 
-Особенно внимательно проверь:
+Сохранять:
 
-- уже существующие системы UI;
-- уже существующие combat events;
-- уже существующие damage events;
-- существующие Animator parameters;
-- существующие VFX;
-- существующие audio systems;
-- существующие camera effects;
-- существующие hit-stop;
-- существующий object pooling;
-- существующий lock-on;
-- существующий boss system.
+Inventory
+Equipment
+Currency
+Discovered locations
+World markers
+Quest-related items
+Opened important chests
+Player progression
 
-ЗАПРЕЩЕНО
+Если Narrative предоставляет подходящий механизм —
+используй его.
 
-Не создавай вторую систему, если аналогичная уже существует.
+==================================================
+UX
+==================================================
 
-Не дублируй:
+Общий UX должен быть ближе к:
 
-- Combat System
-- Damage System
-- Health System
-- AI
-- Movement
-- Animator
-- Camera
-- Lock-on
-- Input
-- VFX Manager
-- Audio Manager
-- UI Manager
+modern Soulslike action RPG
 
-Если существующая система рабочая — интегрируй новую функциональность в неё.
+а не:
 
-Если существующая система плохая — сначала объясни проблему и предложи минимальную безопасную модификацию.
+MMORPG
+mobile RPG
+classic RPG inventory
 
----
+Игрок большую часть времени находится в мире.
 
-ЭТАП 1 — AUDIT
+UI минимальный.
 
-Сначала создай документ:
-
-"PROJECT_FEEDBACK_AUDIT.md"
-
-В нём опиши:
-
-1. Что уже есть.
-2. Какие системы можно переиспользовать.
-3. Какие системы отсутствуют.
-4. Какие системы конфликтуют.
-5. Какие системы необходимо расширить.
-6. Какие VFX/SFX hooks уже существуют.
-7. Какие combat events уже существуют.
-8. Какие UI элементы уже существуют.
-9. Какие проблемы могут привести к performance issues.
-10. Какие изменения нужны для единого визуального стиля.
-
-После аудита НЕ начинай сразу масштабную переделку проекта.
-
-Сначала сформируй план.
-
----
-
-ЭТАП 2 — СОЗДАТЬ ЕДИНУЮ СИСТЕМУ GAME FEEDBACK
-
-Мне нужна единая архитектура для:
-
-- Combat Feedback
-- VFX
-- SFX
-- Camera Feedback
-- Hit Stop
-- UI Feedback
-- Loot Feedback
-- Card Feedback
-- Damage Feedback
-
-Основная идея:
-
-GAME EVENT
-↓
-FEEDBACK SYSTEM
-↓
-VFX + SFX + CAMERA + UI
-
-Например:
-
-Player hits enemy
-
-↓
-
-Combat Event
-
-↓
-
-Feedback System
-
-↓
-
-- impact VFX
-- weapon trail
-- hit sound
-- hit stop
-- camera impulse
-- enemy reaction
-- UI feedback
-
-Не связывай каждую систему напрямую друг с другом.
-
-Используй event-driven архитектуру там, где это оправдано.
-
----
-
-ЭТАП 3 — GAME FEEDBACK EVENTS
-
-Создай или расширь централизованные события.
-
-Минимальный набор:
-
-- AttackStarted
-- AttackHit
-- HeavyAttackHit
-- CriticalHit
-- EnemyDamaged
-- EnemyStaggered
-- EnemyBlocked
-- PlayerDamaged
-- PlayerDodged
-- PerfectDodge
-- PlayerBlocked
-- PerfectParry
-- EnemyDeath
-- BossPhaseChanged
-- AbilityCast
-- AbilityImpact
-- LootDropped
-- LootCollected
-- CardObtained
-- CardRevealed
-- PlayerDeath
-- CheckpointActivated
-
-Не создавай события, которые уже существуют.
-
-Переиспользуй существующие.
-
----
-
-ЭТАП 4 — HUD
-
-Создай или адаптируй HUD под стиль:
-
-MINIMAL PREMIUM FANTASY UI
-
-HUD не должен занимать половину экрана.
-
-PLAYER HUD
-
-Основные элементы:
+Основной gameplay screen:
 
 HP
+Stamina
+Mana
+minimal interaction prompt
+minimal compass
 
-Тонкая элегантная полоса.
+Никаких десятков floating UI elements.
 
-Цвет:
+==================================================
+ARCHITECTURE
+==================================================
 
-- crimson / dark red
+Не делай всё в одном Blueprint.
 
-Но без кислотно-красного.
+Используй:
 
-Добавь:
+Components
+Subsystems
+Data Assets
+Structs
+Interfaces
+Enums
 
-- current HP
-- delayed damage bar
-- subtle glow
-- smooth interpolation
+если это соответствует архитектуре проекта.
 
-Когда игрок получает большой урон:
+Предпочтительно:
 
-current HP уменьшается сразу.
+BP_PlayerCharacter
+BP_PlayerController
+BP_PlayerState
+GameInstance / Subsystems
 
-Delayed damage bar догоняет через короткую задержку.
+и Narrative components.
 
----
+Создавай собственные классы только там,
+где Narrative не предоставляет нужной функциональности.
 
-MANA
+==================================================
+ВАЖНО: НЕ ЛОМАТЬ ПЛАГИНЫ
+==================================================
 
-Цвет:
+НЕ изменяй исходный код Narrative plugins.
 
-- blue
-- violet
-- indigo
+НЕ редактируй файлы внутри:
 
-Тонкая энергетическая линия.
+Plugins/NarrativeInventory
+Plugins/NarrativeInteraction
+Plugins/NarrativeNavigator
+Plugins/NarrativeCommonUI
 
-При использовании способности:
+Если нужна кастомизация —
+делай её через:
 
-- короткий glow
-- небольшой pulse
-- smooth depletion
+Blueprint inheritance
+Data Assets
+Components
+Interfaces
+Widget subclasses
+Configuration
 
----
+==================================================
+ВИЗУАЛЬНЫЙ СТИЛЬ
+==================================================
 
-STAMINA
+Игра:
 
-Цвет:
+Soulframe × Elden Ring
 
-- warm white / muted gold
+но оригинальный IP.
 
-Не делать огромной.
+Не копируй:
+- названия
+- UI
+- иконки
+- шрифты
+- конкретные элементы интерфейса
+- карты
+- персонажей
+- лор
 
-Она должна ощущаться частью HUD, а не отдельным большим UI элементом.
+Используй только общие принципы Soulslike:
 
----
+- минималистичный HUD
+- исследование
+- мрачноватая fantasy atmosphere
+- высокая читаемость
+- важность world exploration
+- минимальное количество UI
+- большое внимание к окружению
 
-PLAYER DAMAGE FEEDBACK
+При этом игра НЕ должна выглядеть как horror.
 
-При получении урона:
+==================================================
+ПОРЯДОК РЕАЛИЗАЦИИ
+==================================================
 
-- короткий screen vignette
-- небольшой camera impulse
-- короткий UI pulse
-- небольшой hit stop только при необходимости
-- directional damage feedback, если возможно
+Работай строго по этапам:
 
-Не использовать постоянное красное затемнение экрана.
+1. Analyze project
+2. Fix plugin dependencies
+3. Enable Narrative Common UI
+4. Integrate Inventory
+5. Integrate Equipment
+6. Integrate Interaction
+7. Integrate Navigator
+8. Integrate Save/Load
+9. Verify Multiplayer
+10. Create Book Inventory UI
+11. Create Soulslike HUD
+12. Test everything
 
----
+После каждого крупного этапа:
 
-LOCK-ON
+- Compile
+- Check Blueprint errors
+- Check warnings
+- Test PIE
+- Test multiplayer if applicable
 
-Lock-on indicator:
+НЕ переходи к следующему этапу,
+если предыдущий содержит критические ошибки.
 
-- thin geometric ring
-- elegant segmented design
-- subtle glow
+==================================================
+ФИНАЛЬНАЯ ПРОВЕРКА
+==================================================
 
-НЕ использовать огромный красный круг.
+После реализации проверь:
 
-Для обычных врагов:
+[ ] Player has Narrative Inventory
+[ ] Items can be picked up
+[ ] Items can be equipped
+[ ] Equipment changes player
+[ ] Weapons work with existing combat
+[ ] Consumables work
+[ ] Inventory saves
+[ ] Interaction works
+[ ] Chests work
+[ ] NPC interaction works
+[ ] Doors/interactables work
+[ ] Navigator map opens
+[ ] Compass works
+[ ] Player can place waypoint
+[ ] Dungeon markers work
+[ ] Discovered locations work
+[ ] UI works with keyboard
+[ ] UI works with controller
+[ ] Multiplayer replication works
+[ ] No duplicate systems were created
+[ ] No Narrative plugin source was modified
+[ ] No existing game systems were broken
 
-minimal.
+В конце предоставь:
 
-Для элитных:
-
-slightly stronger.
-
-Для boss:
-
-более сложная геометрическая версия.
-
----
-
-BOSS HUD
-
-Boss bar располагается в нижней части экрана.
-
-Стиль:
-
-- тонкая рамка
-- premium ornament
-- dark translucent background
-- crimson HP
-- subtle glow
-
-Имя босса:
-
-крупнее HP bar.
-
-Не создавать огромный arcade-style health bar.
-
----
-
-BOSS PHASE TRANSITION
-
-Когда меняется фаза:
-
-НЕ показывать огромный:
-
-"PHASE 2"
-
-в центре экрана.
-
-Вместо этого:
-
-- короткий audio cue
-- camera response
-- VFX burst
-- изменение boss aura
-- изменение material/VFX
-- изменение music intensity
-- небольшой UI pulse
-
-Если название фазы действительно нужно — показывать минимально.
-
----
-
-ЭТАП 5 — COMBAT VFX
+1. Какие файлы/Blueprint были изменены
+2. Какие новые Blueprint созданы
+3. Какие Components добавлены
+4. Какие Input Actions добавлены
+5. Какие Data Assets созданы
+6. Какие плагины включены
+7. Какие зависимости необходимы
+8. Что уже полностью работает
+9. Что осталось сделать
+10. Какие ошибки/warnings остались
 
 Главный принцип:
 
-FEW STRONG EFFECTS > MANY WEAK EFFECTS
+НЕ просто "подключи три плагина".
 
-Не использовать particle spam.
+Сделай из них единую основу для:
 
----
+Inventory + Equipment + Interaction + World Navigation
 
-WEAPON TRAILS
-
-Лёгкие атаки:
-
-- thin trail
-- short duration
-- subtle glow
-
-Heavy attack:
-
-- более плотный trail
-- более сильный glow
-- charge effect
-- stronger impact
-
-НЕ делать толстые светящиеся дуги вокруг персонажа.
-
----
-
-LIGHT HIT
-
-При обычном попадании:
-
-- 3–8 sparks
-- small flash
-- short impact sound
-- very small camera response
-
----
-
-HEAVY HIT
-
-При сильном ударе:
-
-- 10–20 sparks
-- short shockwave
-- stronger flash
-- stronger sound
-- short hit stop
-- small camera shake
-
----
-
-CRITICAL HIT
-
-Critical:
-
-- white flash
-- larger particles
-- special sound
-- stronger hit stop
-- short camera punch
-- slightly stronger VFX
-
-Но всё должно быть коротким.
-
-Не превращать critical hit в огромный взрыв.
-
----
-
-HIT STOP
-
-Создай централизованный HitStopService, только если его ещё нет.
-
-Примерные значения:
-
-Light hit:
-"0.02–0.04 sec"
-
-Heavy hit:
-"0.04–0.07 sec"
-
-Critical:
-"0.06–0.10 sec"
-
-Boss / special attack:
-
-"0.05–0.12 sec"
-
-Все значения должны быть настраиваемыми.
-
-Не использовать Time.timeScale = 0 без необходимости.
-
-Учесть:
-
-- physics
-- animations
-- particles
-- audio
-- coroutines
-- network readiness
-
----
-
-ЭТАП 6 — MAGIC VFX
-
-Каждое заклинание должно иметь структуру:
-
-CAST
-↓
-CHARGE
-↓
-RELEASE
-↓
-IMPACT
-↓
-AFTERMATH
-
-Не создавать просто:
-
-"particle explosion".
-
----
-
-MAGIC COLOR LANGUAGE
-
-Основные цвета:
-
-- violet
-- indigo
-- blue
-- white
-- muted gold
-
-Gold использовать для:
-
-- legendary effects
-- important interactions
-- sacred magic
-- rare events
-
-Не использовать rainbow VFX.
-
----
-
-DODGE VFX
-
-Обычный dodge:
-
-- short trail
-- 3–5 particles
-- subtle distortion
-- short air sound
-- небольшой camera response
-
-Perfect Dodge:
-
-- very short white flash
-- subtle distortion
-- unique sound
-- very short time slowdown / hit stop
-
-Эффект должен быть очень коротким.
-
----
-
-BLOCK
-
-Block:
-
-- metallic sparks
-- small flash
-- deep metal impact
-- small camera response
-
----
-
-PERFECT PARRY
-
-Perfect Parry:
-
-- white/gold flash
-- larger sparks
-- signature ring
-- short hit stop
-- unique sound
-- stronger camera impulse
-
-Это должно ощущаться как один из самых satisfying моментов боя.
-
----
-
-ЭТАП 7 — ENEMY VFX LANGUAGE
-
-VFX должен зависеть от типа врага.
-
-Goblin / Beast
-
-- dirt
-- dust
-- rough sparks
-- earthy particles
-
-Knight
-
-- metal
-- white
-- muted gold
-- steel sparks
-
-Mage
-
-- violet
-- blue
-- glyph-like particles
-- magical trails
-
-Assassin
-
-- dark particles
-- smoke
-- fast trails
-- subtle distortion
-
-Boss
-
-У каждого boss должна быть собственная VFX identity.
-
-Не использовать один universal boss effect.
-
----
-
-ЭТАП 8 — DEATH VFX
-
-При смерти обычного врага:
-
-BODY
-↓
-SHORT FREEZE
-↓
-ENERGY EMERGES
-↓
-PARTICLES RISE
-↓
-SOUL/RESOURCE FRAGMENTS
-↓
-MOVE TOWARD PLAYER
-↓
-RESOURCE COLLECTED
-
-Это должно одновременно:
-
-- красиво выглядеть;
-- объяснять получение ресурса;
-- не создавать тысячи particles.
-
----
-
-ЭТАП 9 — LOOT FEEDBACK
-
-Когда появляется loot:
-
-- небольшой VFX
-- subtle floating effect
-- short sound
-
-При сборе:
-
-LOOT
-↓
-FLY TO PLAYER
-↓
-ENTER PLAYER
-↓
-HUD PULSE
-↓
-SFX
-
-Rare loot:
-
-добавить:
-
-- stronger glow
-- additional particles
-- special sound
-
----
-
-ЭТАП 10 — CARD SYSTEM FEEDBACK
-
-Карты — важная часть игры.
-
-Они должны ощущаться как:
-
-MAGICAL ARTIFACTS / FRAGMENTS OF SOULS
-
-Не как обычные карточки интерфейса.
-
-Card frame:
-
-- metallic
-- engraved
-- premium
-- subtle magical glow
-
-Rarity должна влиять на:
-
-- material
-- glow
-- particles
-- sound
-- reveal intensity
-
----
-
-CARD REVEAL
-
-Использовать:
-
-DARK
-↓
-CARD BACK
-↓
-ROTATION
-↓
-LIGHT FLASH
-↓
-CARD REVEAL
-↓
-RARITY EFFECT
-↓
-FINAL SETTLE
-
-Обычная карта:
-
-минимальный эффект.
-
-Rare:
-
-немного больше.
-
-Epic:
-
-более заметный.
-
-Legendary:
-
-strong magical reveal.
-
-Но не делать всё чрезмерно ярким.
-
----
-
-ЭТАП 11 — AUDIO SYSTEM
-
-Проверь существующий AudioManager.
-
-Если он есть — расширь.
-
-Если отсутствует — создай централизованную систему.
-
-Категории:
-
-- Music
-- Ambient
-- SFX
-- Combat
-- UI
-- Magic
-- Footsteps
-- Enemy
-- Boss
-
-Используй AudioMixer Groups.
-
-Минимум:
-
-Master
-├── Music
-├── SFX
-├── UI
-├── Ambient
-└── Voice
-
----
-
-WEAPON AUDIO
-
-Не объединять swing и impact в один звук.
-
-Структура:
-
-SWING
-↓
-WHOOSH
-↓
-IMPACT
-↓
-MATERIAL RESONANCE
-
-Разные материалы:
-
-- Flesh
-- Armor
-- Stone
-- Wood
-- Metal
-- Magic
-
----
-
-FOOTSTEPS
-
-Поддержать surface types:
-
-- Stone
-- Dirt
-- Grass
-- Wood
-- Metal
-- Water
-
-Для каждого:
-
-несколько вариантов.
-
-Выбирать случайный вариант.
-
-Добавить небольшую random pitch variation.
-
----
-
-ENEMY TELEGRAPH AUDIO
-
-Очень важно:
-
-Игрок должен слышать намерение врага до атаки.
-
-Например:
-
-Heavy Attack:
-
-visual preparation
-+
-low audio cue
-
-Magic:
-
-magical hum
-+
-charge sound
-
-Fast attack:
-
-short movement/whoosh cue
-
-Это помогает игроку реагировать честно.
-
----
-
-ЭТАП 12 — CAMERA FEEDBACK
-
-Проверь существующую camera system.
-
-Не создавай новую камеру, если текущая уже работает.
-
-Добавь feedback hooks:
-
-Light attack:
-
-почти без shake.
-
-Heavy attack:
-
-small impulse.
-
-Boss attack:
-
-stronger impulse.
-
-Player damage:
-
-short directional impulse.
-
-Critical hit:
-
-short camera punch.
-
-Не использовать постоянную сильную тряску.
-
----
-
-ЭТАП 13 — PERFORMANCE
-
-Это ОЧЕНЬ ВАЖНО.
-
-Моя игра должна работать эффективно.
-
-Особенно следи за:
-
-- Instantiate/Destroy
-- particle systems
-- VFX
-- audio sources
-- UI allocations
-- GC allocations
-- Update loops
-- FindObjectOfType
-- GetComponent в Update
-- Camera effects
-- material instancing
-
-Где возможно:
-
-использовать:
-
-- object pooling
-- cached references
-- shared materials
-- event-driven architecture
-- ScriptableObjects для конфигурации
-
-Не создавать тысячи объектов ради визуального эффекта.
-
----
-
-ЭТАП 14 — CENTRALIZED STYLE CONFIG
-
-Не хочу, чтобы цвета, timings и intensity были разбросаны по 50 скриптам.
-
-Создай централизованную конфигурацию.
-
-Например:
-
-"GameFeedbackStyleConfig"
-
-или архитектуру лучше подходящую существующему проекту.
-
-В ней должны быть настройки:
-
-COLORS
-
-HP
-Mana
-Stamina
-Magic
-Gold
-Rare
-Epic
-Legendary
-Critical
-Boss
-
-TIMINGS
-
-HitStop
-Flash
-Fade
-LootFly
-CardReveal
-UIPulse
-CameraImpulse
-
-INTENSITY
-
-LightHit
-HeavyHit
-CriticalHit
-BossHit
-MagicImpact
-PerfectParry
-
-VFX
-
-particle count
-duration
-scale
-emission
-trail intensity
-
-AUDIO
-
-volume
-pitch variation
-cooldowns
-
-Все значения должны быть легко изменяемыми в Inspector.
-
----
-
-ЭТАП 15 — UNITY EDITOR SETUP
-
-После создания систем:
-
-не оставляй проект в состоянии:
-
-"scripts created but nothing connected".
-
-Необходимо реально подключить системы.
-
-Создай необходимые:
-
-- ScriptableObjects
-- Prefabs
-- Materials
-- Particle Systems
-- Audio references
-- UI references
-- Events
-- Feedback profiles
-
-Но НЕ создавай огромное количество placeholder assets, если для этого уже есть подходящие assets в проекте.
-
-Если для конкретного эффекта нет ассета:
-
-создай минимальный procedural/simple Unity effect как временную основу.
-
----
-
-ЭТАП 16 — DEBUG MODE
-
-Создай debug режим.
-
-В Inspector или отдельном debug component должно быть возможно увидеть:
-
-- current AI action
-- last damage event
-- last feedback event
-- hit type
-- hit stop duration
-- VFX triggered
-- SFX triggered
-- camera impulse
-- current boss phase
-
-Но debug UI не должен отображаться в release build.
-
----
-
-ЭТАП 17 — STYLE CHECK
-
-После реализации проверь каждый эффект по следующим вопросам:
-
-1.
-
-Слишком ли яркий?
-
-2.
-
-Слишком ли большой?
-
-3.
-
-Слишком ли долгий?
-
-4.
-
-Не перекрывает ли gameplay?
-
-5.
-
-Не выглядит ли как generic mobile game VFX?
-
-6.
-
-Не слишком ли много particle effects?
-
-7.
-
-Не слишком ли много glow?
-
-8.
-
-Соответствует ли эффект DARK WORLD × BRIGHT MAGIC?
-
-9.
-
-Есть ли визуальное различие между обычным ударом и важным ударом?
-
-10.
-
-Чувствуется ли premium quality?
-
----
-
-ЗАПРЕЩЕННЫЕ ВИЗУАЛЬНЫЕ РЕШЕНИЯ
-
-Не использовать без крайней необходимости:
-
-- rainbow particles
-- кислотные цвета
-- giant explosions
-- огромные glowing circles
-- massive weapon trails
-- постоянный screen shake
-- огромные damage numbers
-- excessive bloom
-- UI everywhere
-- одинаковый VFX для всех врагов
-- generic mobile RPG effects
-- low-poly aesthetic
-- cartoon aesthetic
-
----
-
-ИНТЕГРАЦИЯ С СУЩЕСТВУЮЩИМ COMBAT
-
-Очень важно:
-
-AI принимает решение.
-
-Combat System выполняет действие.
-
-Feedback System реагирует на результат.
-
-Не смешивать:
-
-AI
-Combat
-Feedback
-
-Архитектура:
-
-Enemy AI
-↓
-Combat
-↓
-Combat Event
-↓
-Feedback System
-↓
-VFX / SFX / Camera / Hit Stop / UI
-
----
-
-ПОРЯДОК РЕАЛИЗАЦИИ
-
-Работай строго в таком порядке:
-
-PHASE 1
-
-Project audit.
-
-PHASE 2
-
-Создание архитектуры Game Feedback.
-
-PHASE 3
-
-Combat events.
-
-PHASE 4
-
-Player HUD.
-
-PHASE 5
-
-Combat feedback.
-
-PHASE 6
-
-Hit Stop + Camera Feedback.
-
-PHASE 7
-
-VFX.
-
-PHASE 8
-
-SFX.
-
-PHASE 9
-
-Boss feedback.
-
-PHASE 10
-
-Loot feedback.
-
-PHASE 11
-
-Card feedback.
-
-PHASE 12
-
-Polish.
-
-PHASE 13
-
-Performance audit.
-
----
-
-ВАЖНО
-
-Не пытайся сделать всю игру красивой одновременно.
-
-Сначала доведи до очень хорошего состояния:
-
-ONE PLAYER + ONE ENEMY + ONE WEAPON + ONE ABILITY
-
-Сделай на них эталон качества.
-
-После этого распространи архитектуру на остальные элементы.
-
----
-
-FINAL QUALITY TARGET
-
-После завершения базовой реализации игрок должен ощущать:
-
-удар → вес
-
-critical → мощь
-
-parry → точность
-
-dodge → скорость
-
-magic → сила
-
-boss attack → опасность
-
-loot → награда
-
-card reveal → редкость
-
-death → завершение
-
-И всё это должно ощущаться единым визуальным языком.
-
-Главная цель:
-
-Не сделать больше эффектов.
-
-Главная цель:
-
-Сделать каждый эффект понятным, красивым и satisfying.
-
----
-
-ФИНАЛЬНЫЙ AUDIT
-
-После реализации:
-
-1. Проверь Console.
-2. Проверь compile errors.
-3. Проверь warnings.
-4. Проверь NullReference.
-5. Проверь missing references.
-6. Проверь prefab references.
-7. Проверь performance.
-8. Проверь GC allocations.
-9. Проверь object pooling.
-10. Проверь UI scaling.
-11. Проверь разные resolutions.
-12. Проверь combat.
-13. Проверь death.
-14. Проверь boss.
-15. Проверь loot.
-16. Проверь cards.
-
-Создай:
-
-"GAME_FEEDBACK_IMPLEMENTATION_REPORT.md"
-
-В отчёте укажи:
-
-- что реализовано;
-- какие файлы созданы;
-- какие файлы изменены;
-- какие существующие системы переиспользованы;
-- какие проблемы найдены;
-- какие проблемы исправлены;
-- что осталось;
-- какие assets нужны;
-- какие VFX/SFX можно заменить позже на production-quality;
-- performance notes;
-- следующий приоритет P0/P1/P2.
-
-Не делай необоснованные архитектурные изменения.
-
-Не переписывай работающие системы без необходимости.
-
-Не удаляй существующий функционал.
-
-Не создавай дублирующие менеджеры.
-
-Если какое-либо решение требует выбора — сначала выбери наиболее совместимый с существующей архитектурой вариант и зафиксируй его в отчёте.
-
-Начинай с полного анализа проекта.
+моей PvE Soulslike action RPG на UE 5.8.
