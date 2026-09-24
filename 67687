@@ -1,722 +1,475 @@
-Ты работаешь над AAA-quality Soulslike проектом на Unreal Engine 5.8.
+ЗАДАЧА: полностью подготовить Sigma Girl для Unreal Engine 5.8
 
-ЗАДАЧА:
-Создай и полностью интегрируй визуальную HUD/UI систему игры в духе Elden Ring / Dark Souls, но НЕ копируй их интерфейс напрямую.
+Ты работаешь как Technical Character Artist + Unreal Engine 5.8 Technical Animator.
 
-Используй уже установленные плагины:
-1. Narrative Inventory — Inventory & Equipment System
-2. Narrative Interaction — Interaction System
-3. Narrative Navigator — Maps / Compass / Waypoints
+Цель: взять готовую модель Sigma Girl из CGTrader, подготовить её в Blender, создать корректный humanoid skeleton, skin/weights, экспортировать в FBX и полностью подключить персонажа в существующий Unreal Engine 5.8 проект.
 
-Также используй другие уже установленные UI/Tools плагины проекта, если они помогают реализовать систему.
+ВАЖНО:
 
-==================================================
-ОБЩИЙ ВИЗУАЛЬНЫЙ СТИЛЬ
-==================================================
-
-Стиль:
-- dark fantasy Soulslike
-- premium AAA presentation
-- визуально близко к Elden Ring / Dark Souls
-- серьезный, минималистичный интерфейс
-- никаких дешевых sci-fi элементов
-- никаких ярких mobile-game UI
-- никаких огромных панелей, постоянно закрывающих экран
-- никаких кислотных цветов
-- никаких low-poly UI элементов
-
-HUD должен ощущаться частью мира игры.
-
-Используй:
-- темный полупрозрачный фон
-- тонкие декоративные рамки
-- старинные металлические элементы
-- темное золото
-- приглушенный серый
-- теплый белый
-- очень умеренный красный/синий/голубой для состояний
-- мягкие свечения только там, где они действительно нужны
-- легкую текстуру старого металла / пергамента
-- subtle vignette
-- мягкие fade/scale анимации
-
-Главный принцип:
-HUD должен быть минималистичным и не мешать игровому процессу.
+- НЕ создавать новый проект UE.
+- НЕ удалять существующие системы.
+- НЕ ломать существующие Blueprint, Combat System, UI, AI или Multiplayer.
+- Перед любыми изменениями сначала проанализировать текущий проект.
+- Все изменения должны быть обратимыми.
+- Если возможно, создавать backup перед изменением.
+- Не менять внешний вид Sigma Girl без необходимости.
+- Не использовать MetaHuman.
+- Не использовать Paragon.
+- Не использовать low-poly стилизацию.
+- Персонаж должен выглядеть как качественный humanoid персонаж для Soulslike RPG.
 
 ==================================================
-1. ОСНОВНОЙ COMBAT HUD
-==================================================
+ЭТАП 1 — АНАЛИЗ
 
-В левом нижнем углу:
+1. Найди исходную Sigma Girl модель.
+2. Определи формат:
+   - BLEND
+   - FBX
+   - OBJ
+3. Проанализируй:
+   - количество mesh objects;
+   - тело;
+   - голову;
+   - волосы;
+   - одежду;
+   - обувь;
+   - аксессуары;
+   - материалы;
+   - UV;
+   - textures;
+   - scale;
+   - orientation;
+   - polygon count.
+4. Определи, есть ли уже skeleton/armature.
+5. Если skeleton отсутствует — создать новый humanoid skeleton.
+6. Если skeleton существует, сначала проверить его совместимость с UE5.
 
-PLAYER STATUS:
-
-HP BAR
-- длинная горизонтальная полоса
-- красный цвет
-- темная металлическая рамка
-- небольшой декоративный элемент слева
-- плавное уменьшение HP
-- damage feedback
-- healing feedback
-
-MANA BAR
-- синяя/голубая
-- расположить под HP
-- тоньше HP
-
-STAMINA BAR
-- зеленая/желтовато-зеленая
-- расположить под Mana
-- быстро реагирует на расход выносливости
-
-Не использовать огромные полосы.
-
-HP > Mana > Stamina по визуальному приоритету.
-
-Добавить:
-- плавную interpolation
-- delayed damage bar
-- low HP warning
-- low stamina feedback
-- subtle animation
+Не выполнять destructive operations до завершения анализа.
 
 ==================================================
-2. PLAYER / CHARACTER STATUS
-==================================================
+ЭТАП 2 — BLENDER PREPARATION
 
-Рядом с HP:
+Подготовить модель:
 
-LEVEL
-SOULS / CURRENCY
-BUFFS
-DEBUFFS
+- персонаж стоит вертикально;
+- facing direction корректное;
+- единый масштаб;
+- rotation/scale применены;
+- корректная A-Pose;
+- ноги стоят симметрично;
+- руки находятся в естественном положении;
+- модель не пересекает саму себя без необходимости.
 
-Количество баффов и дебаффов должно автоматически изменяться.
+Сохранить исходную модель отдельно.
 
-Каждый buff/debuff:
-- небольшая иконка
-- тонкая рамка
-- tooltip при наведении/фокусе
-- duration indicator
+Создать рабочий файл:
 
-Не делать огромные квадратные панели.
-
-==================================================
-3. QUICK ITEM SYSTEM
-==================================================
-
-В нижней части экрана:
-
-QUICK ITEM SLOT
-
-Показывать:
-- текущий расходник
-- количество
-- иконку
-- название при необходимости
-
-Добавить возможность переключения предметов.
-
-Визуально:
-- маленькая темная рамка
-- золотой/белый highlight выбранного предмета
-- плавное переключение
-
-Не копировать UI Elden Ring 1:1.
+SigmaGirl_UE5.blend
 
 ==================================================
-4. QUICK SKILL / ABILITY
-==================================================
+ЭТАП 3 — SKELETON
 
-Создать отдельный слот для:
-- Weapon Skill
-- Magic
-- Special Ability
+Создать humanoid skeleton, ориентированный на Unreal Engine.
 
-Показывать:
-- icon
-- cooldown / resource
-- selected state
+Минимальная hierarchy:
 
-Если способность недоступна:
-- затемнение
-- subtle red/gray state
+root
+└── pelvis
+├── spine_01
+│   └── spine_02
+│       └── spine_03
+│           ├── neck_01
+│           │   └── head
+│           ├── clavicle_l
+│           │   └── upperarm_l
+│           │       └── lowerarm_l
+│           │           └── hand_l
+│           └── clavicle_r
+│               └── upperarm_r
+│                   └── lowerarm_r
+│                       └── hand_r
+├── thigh_l
+│   └── calf_l
+│       └── foot_l
+│           └── ball_l
+└── thigh_r
+└── calf_r
+└── foot_r
+└── ball_r
 
-==================================================
-5. TARGET / ENEMY HUD
-==================================================
+Добавить пальцы:
+thumb
+index
+middle
+ring
+pinky
 
-При выборе врага:
+для обеих рук.
 
-Enemy Name
-HP Bar
-Boss HP Bar
+Стороны использовать последовательно:
+_l
+_r
 
-Обычный враг:
-- небольшая полоса HP
-- имя над/рядом с полосой
-
-Elite:
-- более выраженный UI
-
-Boss:
-- большая полоса в нижней части экрана
-- имя босса
-- decorative frame
-- фазовые изменения
-- плавная анимация появления
-
-Boss HUD должен выглядеть премиально, но не перегруженно.
-
-==================================================
-6. INTERACTION HUD
-==================================================
-
-Использовать Narrative Interaction.
-
-При приближении к объекту:
-
-[ ICON ]  Interact
-        Open Chest
-
-или
-
-[ ICON ]  Talk
-        NPC Name
-
-или
-
-[ ICON ]  Collect
-        Item Name
-
-Интерактивный UI должен:
-- появляться плавно
-- исчезать плавно
-- показывать правильный action
-- учитывать keyboard/mouse/gamepad
-- поддерживать rebinding
-
-Использовать систему Narrative Interaction вместо создания второй параллельной interaction system.
+Не создавать ненужные leaf bones.
 
 ==================================================
-7. NAVIGATION HUD
-==================================================
+ЭТАП 4 — SKINNING
 
-Использовать Narrative Navigator.
+Привязать:
 
-Добавить:
+- Body
+- Head
+- Clothing
 
-COMPASS
-- сверху экрана
-- минималистичная металлическая рамка
-- точки интереса
-- NPC
-- objective
-- dungeon entrance
-- important locations
+к skeleton.
 
-WAYPOINTS:
-- subtle markers
-- distance
-- objective indicator
+Сначала использовать Automatic Weights.
 
-Не делать интерфейс похожим на современную GPS-навигацию.
+Затем автоматически проверить наиболее проблемные области:
 
-Навигация должна выглядеть как часть fantasy-world.
+- плечи;
+- локти;
+- запястья;
+- таз;
+- колени;
+- голеностоп;
+- шея.
 
-==================================================
-8. MAP
-==================================================
+Если обнаружены очевидные ошибки деформации — исправить weights.
 
-Использовать Narrative Navigator для карты.
+Создать тестовые poses:
 
-Создать отдельный Map Screen:
+1. A-Pose
+2. Arms Up
+3. Arms Forward
+4. Squat
+5. Left Knee Up
+6. Right Knee Up
+7. Sword Pose
 
-- parchment / dark fantasy map
-- muted colors
-- hand-drawn feeling
-- regions
-- discovered locations
-- dungeon entrances
-- NPC locations
-- player position
-- waypoint
-
-Но НЕ использовать чрезмерно hand-painted стиль.
-
-Карта должна быть читаемой и современной по UX.
+Если модель сильно деформируется — остановить экспорт и исправить weights.
 
 ==================================================
-9. INVENTORY
-==================================================
+ЭТАП 5 — HAIR / CLOTHING
 
-Использовать Narrative Inventory.
+Волосы и одежду не объединять в один mesh без необходимости.
 
-Создать полноценный Inventory Screen.
+Сохранить логическое разделение:
 
-Категории:
+SigmaGirl_Body
+SigmaGirl_Hair
+SigmaGirl_Clothing
+SigmaGirl_Boots
+SigmaGirl_Accessories
 
-Weapons
-Armor
-Accessories
-Consumables
-Materials
-Quest Items
-Key Items
+Волосы должны корректно следовать head.
 
-Визуальная концепция:
+Одежда должна следовать соответствующим костям.
 
-НЕ обычное современное меню.
-
-Сделать ощущение:
-"открывается древняя книга / inventory codex".
-
-Основная область:
-- темная книга
-- две страницы
-- металлические/кожаные элементы
-- предметы располагаются на страницах
-- выбранный предмет подсвечивается
-
-Правая часть:
-Item Name
-Description
-Stats
-Weight
-Requirements
-Effects
-
-Добавить:
-- item comparison
-- equipment slots
-- rarity
-- quantity
-- drag/drop где уместно
-- controller navigation
+Не применять сложную cloth simulation на данном этапе.
 
 ==================================================
-10. EQUIPMENT
-==================================================
+ЭТАП 6 — WEAPON SOCKETS
 
-Использовать Narrative Inventory.
+Подготовить attachment points:
 
-Создать Equipment Screen:
+weapon_r
+weapon_l
+back_weapon
+hip_weapon
 
-Head
-Chest
-Hands
-Legs
-Weapon
-Offhand
-Accessory 1
-Accessory 2
-Accessory 3
+Основные attachment bones:
 
-Показывать силуэт персонажа в центре.
-
-Equipment slots должны быть:
-- небольшими
-- премиальными
-- темными
-- с металлической рамкой
-
-Не использовать огромные UI карточки.
+hand_r
+hand_l
+spine_03
+pelvis
 
 ==================================================
-11. CHARACTER SCREEN
-==================================================
+ЭТАП 7 — FBX EXPORT
 
-Создать отдельную страницу:
+Подготовить FBX для Unreal Engine 5.8.
 
-Character
+Экспортировать:
 
-Показывать:
+- Skeletal Mesh
+- Skeleton
 
-Level
-HP
-Mana
-Stamina
-Attack Power
-Defense
-Poise
-Weight
-Attributes
-Resistances
+Не экспортировать ненужные Blender helpers.
 
-Attributes:
+Не создавать Leaf Bones.
 
-Vigor
-Mind
-Endurance
-Strength
-Dexterity
-Intelligence
-Faith
-Arcane
+Проверить scale и orientation.
 
-Если текущая система характеристик отличается от этого списка —
-НЕ ломай существующую gameplay-систему.
-Адаптируй UI под реальные параметры проекта.
+Использовать совместимый с Unreal FBX workflow.
+
+Создать:
+
+SigmaGirl_UE5.fbx
 
 ==================================================
-12. BOOK / MENU SYSTEM
-==================================================
+ЭТАП 8 — UNREAL ENGINE 5.8
 
-Основное меню игрока должно быть выполнено как единый fantasy codex/book.
+Найди существующий Unreal Engine проект.
 
-Разделы:
+Сначала проанализируй:
 
-Character
-Inventory
-Equipment
-Skills
-Map
-Quests
-Codex
-Settings
+- существующий Character Blueprint;
+- существующий Skeleton;
+- Animation Blueprint;
+- IK Rig;
+- IK Retargeter;
+- Combat System;
+- Movement System;
+- Dodge;
+- Attack;
+- Lock-On;
+- Multiplayer architecture.
 
-Переход между страницами:
+НЕ заменять существующий Character Blueprint.
 
-- page flip animation
-- subtle sound
-- smooth transition
-- no instant hard cuts
+Если существует Character Base — использовать его.
 
-Не использовать тяжелые 3D эффекты, которые будут снижать FPS.
+Создать отдельную папку:
 
-==================================================
-13. QUEST / OBJECTIVE UI
-==================================================
+Content/Characters/SigmaGirl/
 
-В мире:
+Структура:
 
-Objective:
-"Find the Forgotten Gate"
-
-Distance:
-125m
-
-Минималистичный marker.
-
-При открытии меню:
-Quest Log
-
-Показывать:
-Main Quest
-Side Quest
-Character Quest
-Completed
+Content/Characters/SigmaGirl/
+├── Mesh/
+├── Materials/
+├── Textures/
+├── Animation/
+├── IK/
+├── Blueprints/
+└── Data/
 
 ==================================================
-14. NOTIFICATIONS
-==================================================
+ЭТАП 9 — IMPORT
 
-Создать систему уведомлений:
+Импортировать SigmaGirl_UE5.fbx как Skeletal Mesh.
 
-+100 Souls
-New Item
-New Weapon
-New Quest
-Quest Completed
-New Area Discovered
-Boss Defeated
+Создать новый Skeleton только если текущий skeleton проекта несовместим.
 
-Уведомления должны:
-- появляться плавно
-- иметь небольшую анимацию
-- автоматически исчезать
-- складываться в очередь
-- не спамить экран
+Названия:
 
-==================================================
-15. DIALOGUE UI
-==================================================
+SK_SigmaGirl
+SKEL_SigmaGirl
 
-Для NPC dialogue создать:
+Проверить:
 
-- имя NPC
-- portrait
-- dialogue text
-- choices
-- continue indicator
-
-Визуально:
-dark fantasy
-minimal
-premium
-без огромного textbox на весь экран.
+- materials;
+- textures;
+- normals;
+- tangents;
+- skeleton hierarchy;
+- proportions.
 
 ==================================================
-16. DEATH / RESPAWN UI
-==================================================
+ЭТАП 10 — IK RIG
 
-При смерти:
+Создать:
 
-screen fade
-desaturation
-subtle vignette
-death message
+IK_SigmaGirl
 
-После смерти:
-Respawn / Continue
+Retarget Root:
 
-Все переходы должны быть плавными.
+pelvis
 
-==================================================
-17. GAMEPAD + KEYBOARD
-==================================================
+Создать chains:
 
-UI обязан поддерживать:
+Spine
+LeftArm
+RightArm
+LeftLeg
+RightLeg
+Neck
+LeftHand
+RightHand
+LeftFoot
+RightFoot
 
-Keyboard + Mouse
-Gamepad
-
-Использовать Common UI / Unreal Enhanced Input там, где это уже доступно.
-
-Каждая интерактивная кнопка должна иметь:
-- focused state
-- hover state
-- pressed state
-- disabled state
-
-Gamepad navigation должна работать без мыши.
+Проверить alignment.
 
 ==================================================
-18. RESPONSIVE UI
-==================================================
+ЭТАП 11 — IK RETARGETER
 
-HUD должен корректно работать:
+Найти существующий UE5 Manny IK Rig.
 
-16:9
-21:9
-16:10
-разных разрешениях
+Создать:
 
-Не использовать абсолютные координаты там, где можно использовать Anchors / SizeBox / Overlay / Canvas appropriately.
+RTG_Manny_To_SigmaGirl
 
-==================================================
-19. PERFORMANCE
-==================================================
+Source:
+UE5 Manny
 
-Проект рассчитан также на слабый ПК.
+Target:
+SigmaGirl
 
-Поэтому:
+Настроить Retarget Pose.
 
-НЕ использовать:
-- тяжелые Tick-based UI операции
-- постоянное создание/удаление Widget
-- тяжелые Blur материалы на весь экран
-- дорогие UI shaders
-- unnecessary render targets
-- постоянные bindings к данным
+Sigma Girl должна находиться в корректной базовой позе.
 
-Использовать:
-- event-driven updates
-- widget pooling где необходимо
-- invalidation panels
-- efficient data binding
-- async loading для больших inventory assets
-- lightweight animations
+Проверить:
 
-HUD не должен заметно влиять на FPS.
+- spine;
+- arms;
+- hands;
+- hips;
+- legs;
+- feet;
+- head.
 
 ==================================================
-20. ARCHITECTURE
-==================================================
+ЭТАП 12 — ПЕРВЫЙ ТЕСТ
 
-Перед реализацией:
+НЕ переносить сразу всю библиотеку анимаций.
 
-1. Просканируй весь UE проект.
-2. Найди существующие:
-   - Player Character
-   - Player Controller
-   - Game Mode
-   - Game Instance
-   - Inventory
-   - Equipment
-   - Interaction
-   - Navigation
-   - Combat
-   - Health
-   - Mana
-   - Stamina
-   - Abilities
-   - Save System
-   - Multiplayer systems
-   - существующие Widgets
-   - Common UI
-   - Narrative plugins
+Сначала перенести:
 
-3. НЕ создавай дубликаты уже существующих систем.
+Idle
+Walk
+Run
 
-4. Narrative Inventory должен отвечать за Inventory/Equipment.
+Проверить визуально.
 
-5. Narrative Interaction должен отвечать за взаимодействия.
+Если всё корректно:
 
-6. Narrative Navigator должен отвечать за Compass/Map/Waypoints.
-
-7. Новый UI должен интегрироваться с существующими gameplay systems.
-
-==================================================
-21. VISUAL DESIGN SYSTEM
-==================================================
-
-Создай единый UI Design System:
-
-UI colors:
-Primary:
-dark charcoal
-
-Secondary:
-aged metal
-
-Accent:
-muted gold
-
-HP:
-deep red
-
-Mana:
-deep blue
-
-Stamina:
-muted green
-
-Warning:
-dark amber
-
-Text:
-warm white
-
-Secondary Text:
-gray
-
-Создай единые:
-
-Margins
-Padding
-Font hierarchy
-Icon sizes
-Border thickness
-Corner treatment
-Animation timings
-Opacity levels
-
-Все элементы должны выглядеть частью одного UI.
-
-==================================================
-22. ANIMATION
-==================================================
-
-Добавить:
-
-HUD Fade In
-HUD Fade Out
-Health Damage
-Health Heal
-Stamina Drain
-Mana Drain
-Item Select
-Menu Open
-Menu Close
-Page Flip
-Tab Switch
-Inventory Select
-Tooltip Open
-Notification
-Boss Intro
+Dodge
+Roll
+Light Attack
+Heavy Attack
+Hit React
 Death
-Respawn
-
-Анимации должны быть:
-slow enough to feel premium
-fast enough not to interrupt gameplay.
 
 ==================================================
-23. AUDIO HOOKS
-==================================================
+ЭТАП 13 — ANIMATION BLUEPRINT
 
-Создать hooks/events для:
+Создать:
 
-UI_Open
-UI_Close
-UI_Select
-UI_Confirm
-UI_Cancel
-Item_Equip
-Item_Use
-Page_Flip
-Notification
-Quest_Update
-Boss_Encounter
+ABP_SigmaGirl
 
-Не добавляй тяжелую аудиосистему, если в проекте уже существует аналогичная.
+Но если проект уже имеет общий humanoid Animation Blueprint, НЕ создавать дубликат без необходимости.
 
-==================================================
-24. IMPORTANT
-==================================================
+Использовать существующую архитектуру проекта.
 
-НЕ делай просто набор отдельных красивых Widgets.
+Поддержать:
 
-Создай полноценную СОГЛАСОВАННУЮ HUD/UI SYSTEM.
-
-Все элементы должны выглядеть как части одной игры.
-
-Главный визуальный ориентир:
-
-Dark Souls / Elden Ring / high-quality dark fantasy RPG.
-
-Но:
-
-НЕ копировать интерфейс Elden Ring пиксель-в-пиксель.
-НЕ копировать конкретные ассеты.
-НЕ копировать copyrighted UI artwork.
-
-Создать оригинальную визуальную систему с похожими принципами:
-minimalism
-dark fantasy
-subtle gold
-metal frames
-high readability
-low screen obstruction
-premium AAA presentation.
+Idle
+Walk
+Run
+Sprint
+Strafe
+Turn
+Attack
+Heavy Attack
+Dodge
+Roll
+Parry
+Hit React
+Death
 
 ==================================================
-ПОРЯДОК РАБОТЫ
+ЭТАП 14 — CHARACTER BLUEPRINT
+
+Создать только если существующий Character Base требует отдельного child Blueprint:
+
+BP_SigmaGirl
+
+Наследование:
+
+BP_SigmaGirl
+→ Character_Base
+
+или использовать существующий character architecture проекта.
+
+Подключить:
+
+- Skeletal Mesh
+- Animation Blueprint
+- movement
+- stamina
+- mana
+- health
+- combat
+- lock-on
+
+Не дублировать существующие systems.
+
 ==================================================
+ЭТАП 15 — WEAPON SOCKETS
 
-Сначала:
+Создать sockets:
 
-1. Проанализируй весь проект.
-2. Проанализируй установленные Narrative plugins.
-3. Найди существующие UI systems.
-4. Составь карту зависимостей.
-5. Определи, какие системы уже существуют.
-6. Определи, какие элементы нужно создать.
-7. Только после этого начинай реализацию.
+weapon_r
+weapon_l
+back_weapon
+hip_weapon
 
-После реализации:
+Проверить тестовым Sword Blueprint.
 
-- Compile Blueprints
-- Compile C++
-- Fix warnings/errors
-- Проверить Widget references
-- Проверить multiplayer replication
-- Проверить gamepad navigation
-- Проверить inventory
-- Проверить equipment
-- Проверить interaction
-- Проверить navigator
-- Проверить map
-- Проверить HUD
-- Проверить resolution scaling
-- Проверить отсутствие Tick-heavy UI
+Проверить:
 
-Не ломай существующие gameplay systems.
+- меч правильно находится в руке;
+- меч не вращается неправильно;
+- socket orientation корректная;
+- weapon attach/detach работает.
 
-Если существующая система уже выполняет нужную функцию —
-ИНТЕГРИРУЙСЯ С НЕЙ, а не создавай второй аналог.
+==================================================
+ЭТАП 16 — QUALITY CHECK
 
-Итог:
-получить готовую production-ready Soulslike HUD/UI architecture для UE 5.8 с визуальным качеством AAA dark-fantasy RPG.
+Провести финальную проверку.
+
+Проверить:
+
+[ ] Character импортируется без ошибок
+[ ] Skeleton корректный
+[ ] IK Rig работает
+[ ] IK Retargeter работает
+[ ] Idle работает
+[ ] Walk работает
+[ ] Run работает
+[ ] Dodge работает
+[ ] Roll работает
+[ ] Attack работает
+[ ] Hit React работает
+[ ] Death работает
+[ ] Weapon socket работает
+[ ] Hair следует за головой
+[ ] Clothing следует за телом
+[ ] Materials корректны
+[ ] Textures корректны
+[ ] Нет очевидных deformation errors
+[ ] Нет сломанных Blueprint references
+[ ] Нет удалённых существующих систем
+[ ] Character работает в Play Mode
+
+==================================================
+ПРАВИЛО РАБОТЫ
+
+Работай поэтапно.
+
+После каждого крупного этапа проверяй результат.
+
+Если автоматизация не может выполнить действие безопасно:
+
+1. не делай опасное предположение;
+2. остановись;
+3. сообщи точное место проблемы;
+4. предложи конкретное исправление.
+
+Не симулируй успешное выполнение.
+
+В конце создай короткий отчёт:
+
+1. Что сделано.
+2. Какие assets созданы.
+3. Какие assets изменены.
+4. Какие проблемы найдены.
+5. Что осталось сделать вручную.
+6. Как проверить Sigma Girl в Play Mode.
+
+Главный приоритет:
+
+СТАБИЛЬНОСТЬ ПРОЕКТА > АВТОМАТИЗАЦИЯ > СКОРОСТЬ.
