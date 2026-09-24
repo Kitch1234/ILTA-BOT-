@@ -1,589 +1,826 @@
-Ты работаешь как Senior Unreal Engine 5.8.3 Technical Artist + Rendering Engineer + Multiplayer Performance Engineer.
+Ты — Senior Unreal Engine 5.8 Gameplay/Combat Engineer.
 
-ПРОЕКТ:
-
-- Unreal Engine 5.8.3
-- 3D Soulslike Action RPG
-- PvE, до 4 игроков в кооперативе
-- Без PvP
-- Визуальное направление: Elden Ring / Dark Souls / Soulframe
-- Не horror
-- Не low-poly
-- Используются Nanite, Lumen, PCG, World Partition/HLOD
-- Цель: стабильные 60 FPS на слабом/среднем игровом ПК
-- Приоритет: стабильность, FPS, низкое потребление VRAM/RAM и отсутствие резких просадок FPS
-- Нельзя ухудшать визуальный стиль без необходимости
+Работаешь непосредственно с моим существующим UE 5.8 проектом. Нужно реализовать и привести к единой архитектуре полноценную Soulslike Combat System с ощущением боя уровня современных action RPG, ориентируясь по принципам Elden Ring / Dark Souls, но НЕ копируя их код, ассеты, анимации, VFX или другие защищённые материалы.
 
 ВАЖНО:
-Сначала ПРОАНАЛИЗИРУЙ ВЕСЬ ПРОЕКТ.
-Не меняй настройки вслепую.
-Не удаляй существующие системы, Blueprint, C++, ассеты, плагины или gameplay-функции.
-Перед изменением проверь, что конкретная настройка действительно существует в UE 5.8.3.
-Если название настройки изменилось в UE 5.8.3 — найди актуальный эквивалент.
-Не создавай дублирующиеся системы.
+
+- Сначала проанализируй ВЕСЬ существующий проект.
+- Не создавай дублирующие системы.
+- Не ломай уже работающие Combat, Character, AI, Animation, UI и Multiplayer системы.
+- Если система уже существует — расширь и интегрируй её.
+- Перед изменением файлов проверь их зависимости.
+- Все изменения должны быть совместимы с UE 5.8.
+- Приоритет: производительность, стабильность и multiplayer compatibility.
+- Игра рассчитана на PvE до 4 игроков.
+- PvP не нужен.
+- Не использовать дорогие сторонние решения, если это можно сделать средствами UE 5.8.
+- Не использовать placeholder-системы там, где уже существует рабочая система.
 
 ==================================================
 
-1. ОБЩАЯ ОПТИМИЗАЦИЯ
+1. COMBAT CORE
    ==================================================
 
-Проведи полный Performance Audit проекта:
+Создай/приведи в порядок центральную Combat System.
 
-- Game Thread
-- Render Thread
-- RHI
-- GPU
-- CPU
-- Memory
-- VRAM
-- Animation
-- AI
-- Physics
-- Niagara
-- Materials
-- Lighting
-- Shadows
-- Nanite
-- Lumen
-- PCG
-- World Partition
-- HLOD
-- Multiplayer replication
+Поддержать:
 
-Найди реальные bottleneck'и.
+- Light Attack
+- Heavy Attack
+- Charged Heavy Attack
+- Running Attack
+- Jump Attack
+- Dash Attack
+- Back Attack
+- Combo Chains
+- Weapon Skills
+- Magic Attacks
+- Bow/Ranged Attacks
+- Critical Attack
+- Execution
+- Death Blow
 
-Не оптимизируй систему, если она не является bottleneck.
+Каждая атака должна иметь:
 
-Используй Unreal profiling tools:
+- Damage
+- Stamina Cost
+- Mana Cost при необходимости
+- Attack Type
+- Damage Type
+- Poise Damage
+- Hit Reaction Type
+- Combo ID
+- Attack ID
+- Startup
+- Active Window
+- Recovery
+- Cancel Window
+- Hit Stop
+- VFX
+- SFX
+- Camera Feedback
 
-- Unreal Insights
-- Stat Unit
-- Stat GPU
-- Stat Game
-- Stat RHI
-- Stat Nanite
-- Stat Lumen
-- MemReport
-- ProfileGPU
-- другие подходящие встроенные инструменты UE 5.8.3.
-
-==================================================
-2. NANITE
-
-Настрой Nanite для проекта.
-
-Включить Nanite для подходящих:
-
-- зданий
-- стен
-- скал
-- камней
-- крупных декораций
-- архитектуры
-- крупных объектов окружения
-
-Не включать Nanite автоматически для:
-
-- UI
-- маленьких объектов
-- неподходящей растительности
-- материалов с тяжёлым Masked/Opacity
-- объектов, где Nanite не даёт преимущества
-- skeletal персонажей, если конкретный asset не поддерживает/не выигрывает от Nanite
-
-Проверь:
-
-- Nanite triangle count
-- instances
-- overdraw
-- material complexity
-- WPO
-- foliage
-- Nanite streaming
+Используй Data Assets/Data Tables там, где это рационально, чтобы характеристики атак не были жёстко зашиты в Blueprint.
 
 ==================================================
-3. LUMEN
+2. ANIMATION SYSTEM
 
-Настрой Lumen для слабого/среднего ПК.
+Использовать существующую Animation System проекта.
 
-Цель:
-хорошее динамическое освещение без Cinematic/Ultra нагрузки.
+Организовать:
 
-Использовать:
+- Animation Montages
+- Montage Sections
+- Combo Windows
+- Attack Windows
+- Animation Notifies
+- Notify States
+- Root Motion только там, где это действительно необходимо
+- Animation Layers
+- Upper Body Combat Layer
+- Hit Reaction Layer
+- Locomotion Layer
 
-- Lumen Global Illumination
-- Lumen Reflections
-- Medium quality как стартовый профиль
+Не делай отдельную систему для каждого оружия.
 
-Hardware Ray Tracing:
-OFF, если он не нужен конкретной системе.
+Создай масштабируемую архитектуру:
 
-Не использовать дорогие настройки только ради максимального качества.
+Weapon Type
+→ Attack Set
+→ Animation Set
+→ Damage Profile
+→ VFX Profile
+→ SFX Profile
 
-Проверь:
+Поддержать минимум:
 
-- Lumen Scene
-- Screen Traces
-- reflections
-- lighting update cost
-- GPU cost
+- Sword
+- Greatsword
+- Dagger
+- Bow
+- Staff/Magic Weapon
 
-Создай возможность легко переключать:
-LOW / MEDIUM / HIGH
-
-Но основной профиль должен быть MEDIUM.
-
-==================================================
-4. TSR / RESOLUTION
-
-Использовать TSR.
-
-Целевой FPS:
-60.
-
-Начальный Screen Percentage:
-75–80%.
-
-Не делать разрешение настолько низким, чтобы изображение стало заметно мыльным.
-
-Проверить:
-
-- TSR history
-- ghosting
-- foliage
-- motion artifacts
-- UI sharpness
+Архитектура должна позволять легко добавить новые типы оружия.
 
 ==================================================
-5. SHADOWS
+3. WEAPON HIT DETECTION
 
-Настроить Virtual Shadow Maps с учётом слабого GPU.
+Не использовать простой один Overlap Box для всего оружия.
 
-Не использовать чрезмерно большую shadow distance.
+Сделать корректный Weapon Trace:
 
-Проверить:
+Weapon Socket Start
+→ Weapon Socket End
+→ Sweep/Trace
+→ Hit Result
+→ Damage Processing
 
-- Virtual Shadow Maps
-- shadow resolution
-- shadow caching
-- distant shadows
-- dynamic shadows
+Учитывать движение оружия между кадрами, чтобы быстрые атаки не проходили сквозь врага.
 
-Не каждый маленький источник света должен отбрасывать дорогие динамические тени.
+Добавить:
 
-==================================================
-6. LIGHTING
+- Multiple trace points
+- Start/End sockets
+- Active attack window
+- Prevent duplicate hits
+- Multi-target attacks
+- Friendly-fire filtering
+- Team filtering
+- Backstab detection
+- Critical detection
+- Hit location
+- Hit normal
+- Surface type
 
-Оптимизировать количество динамических lights.
+Разные поверхности должны иметь разные реакции:
 
-Не создавать десятки дорогих shadow-casting lights без необходимости.
-
-Для обычного окружения использовать разумную комбинацию:
-
-- Directional Light
-- Lumen
-- ограниченное количество Point/Spot Lights
-- emissive materials там, где подходят
-
-MegaLights использовать только там, где оно реально улучшает сцену и не создаёт ненужную нагрузку.
-
-==================================================
-7. PCG
-
-Оптимизировать PCG.
-
-Использовать PCG для:
-
-- деревьев
-- кустов
-- камней
-- травы
-- мелкого окружения
-- декораций
-
-По возможности:
-
-- Editor Generation
-- Partitioned PCG
-- caching
-- instancing
-
-Не выполнять тяжёлую генерацию каждый кадр.
-
-Runtime PCG использовать только там, где это действительно необходимо gameplay-системе.
-
-Проверить:
-
-- PCG graph complexity
-- number of generated actors
-- ISM/HISM usage
-- memory
-- generation time
+- Flesh
+- Armor
+- Metal
+- Stone
+- Wood
+- Shield
+- Magical Barrier
 
 ==================================================
-8. WORLD PARTITION / HLOD
+4. DAMAGE SYSTEM
 
-Если проект использует большую карту:
+Создать масштабируемую Damage System.
 
-Настроить World Partition.
+Поддержать:
 
-Использовать разумные:
+Physical
+Slash
+Strike
+Pierce
+Magic
+Fire
+Lightning
+Frost
+Poison
+Bleed
+Holy/Light
+Dark
 
-- Grid Size
-- Loading Range
-- Runtime Grid
-- HLOD
+Damage должен учитывать:
 
-Не загружать огромные части мира одновременно.
+- Weapon Damage
+- Character Stats
+- Scaling
+- Attack Modifier
+- Enemy Resistance
+- Damage Type
+- Critical Modifier
+- Status Modifier
 
-HLOD использовать для дальних объектов.
+Не создавать хаотичные переменные Damage в разных Blueprint.
 
-Не допускать:
-
-- чрезмерного количества loaded actors
-- слишком маленьких streaming cells
-- постоянного streaming туда-сюда
-
-==================================================
-9. FOLIAGE
-
-Оптимизировать foliage.
-
-Использовать:
-
-- instancing
-- ISM/HISM где подходит
-- разумную density
-- cull distance
-- LOD
-- Nanite только там, где это действительно выгодно
-
-Проверить masked materials и overdraw.
-
-Не создавать тысячи отдельных Actor вместо instances.
+Все основные параметры должны проходить через единую Combat/Damage архитектуру.
 
 ==================================================
-10. AI
+5. POISE / STAGGER
 
-Проект имеет Soulslike combat.
+Создать Soulslike-style Poise System.
 
-Нужно оптимизировать AI для ситуации:
+Каждый персонаж должен иметь:
 
-4 игрока
-+
-много мобов
-+
-NPC
-+
-боссы.
+- Max Poise
+- Current Poise
+- Poise Recovery
+- Poise Damage
+- Stagger Threshold
 
-Не использовать Tick для всего AI без необходимости.
-
-Использовать:
-
-- timers
-- event-driven logic
-- Behavior Tree services с разумной частотой
-- State Tree, если подходит
-- distance-based update
-- AI LOD
-- dormancy/deactivation для дальних NPC
+Разные атаки наносят разный Poise Damage.
 
 Пример:
 
-0–30 метров:
-FULL AI
+Light Attack → низкий Poise Damage
+Heavy Attack → высокий
+Charged Heavy → очень высокий
+Critical → гарантированный stagger/critical state при выполнении условий
 
-30–60 метров:
-REDUCED UPDATE
+После достижения порога:
 
-60+ метров:
-LOW UPDATE
+Poise Break
+→ Stagger
+→ Vulnerable State
+→ Critical Opportunity
 
-Очень дальние:
-DORMANT / INACTIVE
-
-Но НЕ ломай gameplay и агро-систему.
-
-==================================================
-11. ANIMATION
-
-Оптимизировать:
-
-- Animation Blueprint
-- Update Rate Optimization
-- Animation Budget Allocator
-- montages
-- IK
-- Control Rig
-- facial animation, если используется
-
-Игроки:
-FULL QUALITY
-
-Ближние враги:
-FULL/REDUCED
-
-Дальние враги:
-REDUCED
-
-Не ухудшать анимацию персонажа игрока.
+После определённого времени без получения Poise Damage начинается восстановление.
 
 ==================================================
-12. NIAGARA / VFX
+6. HIT REACTION SYSTEM
 
-Оптимизировать:
+Создать полноценную directional Hit Reaction System.
 
-- combat VFX
-- magic
-- hit effects
-- particles
-- environment effects
+Поддержать:
 
-Использовать:
+- Front Hit
+- Back Hit
+- Left Hit
+- Right Hit
+- Head Hit
+- Light Hit
+- Heavy Hit
+- Stagger
+- Knockback
+- Knockdown
+- Launch
+- Guard Break
+- Death
 
-- scalability
-- bounds optimization
-- culling
-- разумный particle count
-- LOD
+Направление рассчитывать относительно персонажа.
 
-Не создавать дорогие эффекты на каждом ударе, если одновременно присутствует много игроков/мобов.
+Не создавать десятки независимых Blueprint.
 
-==================================================
-13. MATERIALS
+Использовать единую систему определения:
 
-Проверить все тяжёлые материалы.
+Hit Direction
++
+Hit Strength
++
+Damage Type
++
+Poise State
 
-Найти:
-
-- слишком сложные Material Graph
-- большое количество texture samples
-- дорогой World Position Offset
-- дорогой Pixel Depth Offset
-- ненужный translucency
-- ненужный refraction
-- слишком много уникальных материалов
-
-Где возможно использовать:
-
-- Material Instances
-- shared materials
-- texture atlases
-- разумные texture sizes
-
-Не ухудшать внешний вид без необходимости.
+→ Hit Reaction.
 
 ==================================================
-14. MULTIPLAYER / 4 PLAYERS
+7. BLOCK / PARRY / DODGE
 
-Игра:
-4-player PvE co-op.
+Реализовать:
 
-Сделать сервер авторитетным для gameplay.
+BLOCK:
 
-Реплицировать только необходимое:
+- Guard
+- Guard Stamina Damage
+- Guard Hit Reaction
+- Guard Break
 
-- Player state
-- HP
-- stamina
-- mana
-- combat state
-- attacks
-- damage
-- enemy state
-- boss state
-- loot
-- inventory
-- quests
-- important interactions
+PARRY:
 
-НЕ реплицировать без необходимости:
+- Parry Window
+- Successful Parry
+- Failed Parry
+- Parry VFX
+- Parry SFX
+- Parry Camera Feedback
+- Riposte/Critical Opportunity
 
-- локальный UI
-- локальные VFX
-- косметические эффекты
-- частицы
-- локальные camera effects
-- декоративные объекты
+DODGE:
 
-Проверить:
+- Forward
+- Backward
+- Left
+- Right
 
-- Net Update Frequency
-- relevancy
-- dormancy
-- replication conditions
-- RPC frequency
-- bandwidth
-- replicated actors
+Добавить:
 
-Не допускать ненужного network traffic.
+- Dodge i-frames
+- Dodge stamina cost
+- Dodge recovery
+- Dodge attack
+- Attack → Dodge cancel при допустимом окне
+
+I-frame значения должны быть вынесены в параметры, а не жёстко прописаны в логике.
 
 ==================================================
-15. ACTOR TICK
+8. CRITICAL / BACKSTAB
 
-Найди все Blueprint Actors, которые используют Tick.
+Создать:
 
-Для каждого определить:
-нужен Tick или нет.
+- Backstab Detection
+- Critical Opportunity
+- Critical Attack
+- Execution
+- Critical Animation
+- Critical Camera
+- Critical VFX
+- Critical SFX
+- Critical Hit Stop
 
-Если Tick не нужен:
-отключить.
+Проверять:
 
-Если нужен:
-уменьшить частоту или заменить Tick на:
+- Relative Position
+- Facing Direction
+- Target State
+- Distance
+- Attack Type
 
-- Timer
-- Event
-- Delegate
-- Gameplay Event
-- State change
-
-Особенно проверить:
-
-- AI
-- NPC
-- interaction
-- inventory
-- environment
-- pickups
-- combat.
+Не разрешать критические атаки при невозможных состояниях.
 
 ==================================================
-16. PHYSICS
+9. STATUS EFFECTS
 
-Не использовать дорогую физику для декоративных объектов без необходимости.
+Создать расширяемую систему Status Effects.
 
-Проверить:
+Минимум:
 
-- collision complexity
-- physics simulation
-- ragdolls
-- destructibles
-- Chaos
-- collision channels
+- Bleed
+- Poison
+- Frost
+- Burn
+- Shock
 
-Декоративные объекты должны иметь простую collision или вообще не иметь collision, если она не нужна.
+Каждый эффект должен иметь:
 
-==================================================
-17. SCALABILITY
-
-Создать/настроить:
-
-LOW
-MEDIUM
-HIGH
-EPIC
-
-Основной target:
-
-MEDIUM.
-
-LOW должен позволять играть на слабом ПК.
-
-Настройки должны отдельно контролировать:
-
-- resolution
-- TSR
-- Lumen
-- shadows
-- effects
-- foliage
-- view distance
-- post processing
-- textures
+- Accumulation
+- Resistance
+- Threshold
+- Proc
+- Duration
+- Damage
+- Cooldown
 - VFX
+- SFX
+- UI Feedback
+
+Архитектура должна позволять добавлять новые эффекты без переписывания Combat Core.
 
 ==================================================
-18. ЦЕЛЕВЫЕ ПОКАЗАТЕЛИ
+10. VFX
 
-Главная цель:
+Интегрировать Niagara.
 
-60 FPS.
+Создать точки интеграции для:
 
-Необходимо стремиться к:
+- Sword Swing
+- Heavy Swing
+- Charged Attack
+- Weapon Trail
+- Hit Impact
+- Blood Impact
+- Armor Impact
+- Shield Impact
+- Metal Sparks
+- Magic Impact
+- Fire
+- Lightning
+- Frost
+- Poison
+- Bleed
+- Parry
+- Guard Break
+- Poise Break
+- Critical
+- Death
 
-Frame Time:
-~16.6 ms
+VFX не должны запускаться постоянно.
+
+Они должны вызываться Combat Events / Gameplay Cues / соответствующими Animation Notifies.
+
+Учитывать multiplayer replication.
+
+==================================================
+11. SOUND SYSTEM
+
+Интегрировать Sound System проекта.
+
+Поддержать:
+
+Weapon Swing
+Weapon Impact
+Armor Impact
+Flesh Impact
+Shield Impact
+Parry
+Guard Break
+Poise Break
+Critical
+Death
+Dodge
+Footsteps
+Character Grunts
+Magic
+Status Effects
+
+Использовать Surface Type для выбора подходящего звука.
+
+Пример:
+
+Sword → Stone
+= Metal/Stone impact
+
+Sword → Flesh
+= Flesh impact
+
+Sword → Shield
+= Shield impact
+
+Не проигрывать один и тот же звук постоянно без variation.
+
+Добавить random pitch/variation там, где это уместно.
+
+==================================================
+12. HIT STOP
+
+Создать централизованный Hit Stop System.
+
+Разные значения для:
+
+Light Hit
+Heavy Hit
+Critical
+Parry
+Poise Break
+Death
+
+Hit Stop не должен ломать multiplayer simulation.
+
+Не останавливать весь мир без необходимости.
+
+Сделать систему параметризуемой.
+
+==================================================
+13. CAMERA FEEDBACK
+
+Создать:
+
+- Light Hit Camera Shake
+- Heavy Hit Camera Shake
+- Critical Camera Shake
+- Parry Camera Shake
+- Guard Break Camera Shake
+- FOV Kick
+- Camera Impulse
+
+Эффекты должны быть короткими и контролируемыми.
+
+Не создавать постоянное сильное трясение камеры.
+
+Все параметры вынести в настройки.
+
+==================================================
+14. COMBAT UI
+
+Интегрировать существующий UI.
+
+Добавить визуальный feedback:
+
+- Damage Number при необходимости
+- Critical Indicator
+- Status Effect
+- Stagger/Poise Break Feedback
+- Lock-On Indicator
+- Stamina Feedback
+- Mana Feedback
+- Skill Cooldown/Availability
+- Target State
+
+UI не должен перегружать экран.
+
+==================================================
+15. LOCK-ON
+
+Создать Soulslike-style Target Lock.
+
+Поддержать:
+
+- Nearest Target
+- Target Priority
+- Target Distance
+- Switch Left
+- Switch Right
+- Target Lost
+- Occlusion Check
+- Large Boss Target
+- Multiplayer compatibility
+
+Камера и персонаж должны корректно взаимодействовать с Lock-On.
+
+==================================================
+16. ENEMY COMBAT AI
+
+Интегрировать существующий AI.
+
+НЕ переписывать AI полностью без необходимости.
+
+Добавить Combat States:
+
+Idle
+Investigate
+Alert
+Chase
+Approach
+Attack
+Combo
+Defend
+Dodge
+Parry
+Stagger
+Recover
+Retreat
+Special Attack
+Dead
+
+Создать систему Combat Slots/Attack Slots.
+
+Цель:
+
+Если вокруг игрока 8 врагов, они НЕ должны одновременно атаковать.
+
+Пример:
+
+Enemy 1 → Attack
+Enemy 2 → Prepare
+Enemy 3 → Circle
+Enemy 4 → Wait
+Enemy 5 → Reposition
+Enemy 6 → Wait
+
+Это должно создавать контролируемый Soulslike combat flow.
+
+==================================================
+17. MULTIPLAYER
+
+Игра рассчитана на 1–4 игроков PvE.
+
+Combat должен быть server authoritative.
+
+Реплицировать только необходимые gameplay events.
+
+Особое внимание:
+
+- Damage
+- Hit
+- Death
+- Stagger
+- Status Effects
+- Critical
+- VFX
+- SFX
+- Combat State
+- Target State
+
+Не отправлять лишний трафик каждый кадр.
+
+Не использовать локальную логику, которая приводит к разным результатам на клиентах.
+
+==================================================
+18. PERFORMANCE
+
+Проект должен работать на слабом/среднем ПК.
 
 Приоритет:
 
-GPU:
-≤ 16.6 ms
+- CPU optimization
+- GPU optimization
+- Niagara optimization
+- Animation optimization
+- AI optimization
+- Network optimization
 
-Game Thread:
-≤ 16.6 ms
+Избегать:
 
-Render Thread:
-≤ 16.6 ms
+- Tick там, где можно использовать Events
+- постоянных Get All Actors Of Class
+- бесконечных Overlap
+- дорогих traces каждый кадр
+- лишних Cast
+- постоянного создания/уничтожения объектов
+- чрезмерных Niagara particles
+- лишних replicated variables
 
-При 4 игроках + большом количестве врагов не должно происходить резких просадок из-за:
-
-- AI
-- replication
-- animation
-- VFX
-- Lumen
-- PCG
-- shadows.
-
-==================================================
-19. НЕ ДЕЛАТЬ
-
-ЗАПРЕЩЕНО:
-
-- удалять gameplay
-- удалять ассеты
-- удалять плагины
-- менять дизайн игры
-- менять боевую систему
-- менять управление
-- удалять multiplayer
-- заменять Nanite на обычные meshes без причины
-- полностью отключать Lumen без тестирования альтернативы
-- отключать PCG без анализа
-- снижать качество персонажа ради окружения
-- создавать дубликаты систем
-- менять Blueprint без проверки его использования
+Использовать Event Driven архитектуру.
 
 ==================================================
-20. ФИНАЛЬНЫЙ ОТЧЁТ
+19. COMBAT EVENT ARCHITECTURE
 
-После анализа выведи:
+Создай единую цепочку:
 
-1. Найденные bottleneck'и.
-2. Что было изменено.
-3. Почему это было изменено.
-4. Какие настройки UE 5.8.3 были изменены.
-5. Какие Blueprint были изменены.
-6. Какие материалы были изменены.
-7. Какие PCG Graph были изменены.
-8. Какие AI системы были оптимизированы.
-9. Какие multiplayer systems были оптимизированы.
-10. Какие ассеты требуют ручной оптимизации.
-11. Что осталось неоптимизированным.
-12. Какой ожидаемый GPU/CPU bottleneck.
-13. Какие тесты нужно выполнить.
-14. Команды/консольные команды для проверки FPS.
-15. Какие настройки можно дополнительно снизить, если FPS <60.
+INPUT
+↓
+COMBAT ABILITY
+↓
+ANIMATION
+↓
+ATTACK WINDOW
+↓
+WEAPON TRACE
+↓
+HIT RESULT
+↓
+DAMAGE
+↓
+POISE
+↓
+STATUS
+↓
+HIT REACTION
+↓
+VFX
+↓
+SFX
+↓
+CAMERA
+↓
+HIT STOP
+↓
+UI
 
-ВАЖНО:
+Не допускай, чтобы каждый компонент самостоятельно вычислял одно и то же событие.
 
-НЕ ПРЕДПОЛАГАЙ, что оптимизация выполнена только потому, что настройки изменены.
+Например:
 
-После каждого крупного изменения:
+Hit Event должен содержать:
 
-- проверить проект на ошибки;
-- проверить Blueprint;
-- проверить компиляцию;
-- проверить PIE;
-- проверить multiplayer;
-- проверить FPS;
-- проверить визуальные артефакты.
+- Attacker
+- Target
+- Damage
+- Damage Type
+- Hit Location
+- Hit Normal
+- Hit Direction
+- Poise Damage
+- Critical
+- Status
+- Surface Type
+- Weapon Type
 
-Сначала АНАЛИЗ.
-Потом ПЛАН.
-Потом ИЗМЕНЕНИЯ.
-Потом ПРОВЕРКА.
+==================================================
+20. DEBUG TOOLS
 
-Не делай всё одним слепым массовым изменением.
+Создать Combat Debug Mode.
+
+При включении показывать:
+
+- Weapon Trace
+- Hitboxes
+- Attack Windows
+- Current Attack
+- Current Combat State
+- Poise
+- Stamina
+- Damage
+- Hit Direction
+- Target
+- I-Frame State
+- Parry Window
+- Combo Window
+
+Добавить возможность включать/выключать debug visualization.
+
+==================================================
+21. НЕ НАЧИНАЙ СРАЗУ ПЕРЕПИСЫВАТЬ ПРОЕКТ
+
+СНАЧАЛА:
+
+1. Просканируй весь проект.
+2. Найди существующие Combat Blueprint/C++ классы.
+3. Найди Character.
+4. Найди Animation Blueprint.
+5. Найди Montages.
+6. Найди Weapon System.
+7. Найди Damage System.
+8. Найди AI.
+9. Найди Niagara.
+10. Найди Audio.
+11. Найди Camera.
+12. Найди UI.
+13. Найди Multiplayer/Replication.
+14. Определи, какие системы уже работают.
+15. Определи дубли.
+16. Составь архитектурную карту текущего проекта.
+
+После анализа покажи:
+
+CURRENT SYSTEM
+→ PROBLEM
+→ REQUIRED CHANGE
+→ FILE/ASSET
+→ DEPENDENCIES
+→ RISK
+
+Только после этого начинай реализацию.
+
+==================================================
+22. IMPLEMENTATION ORDER
+
+Работай строго по этапам:
+
+PHASE 1
+Combat Core
+
+PHASE 2
+Weapon Trace
+
+PHASE 3
+Damage
+
+PHASE 4
+Poise/Stagger
+
+PHASE 5
+Hit Reaction
+
+PHASE 6
+Dodge/Block/Parry
+
+PHASE 7
+Critical/Backstab
+
+PHASE 8
+Animation Integration
+
+PHASE 9
+VFX
+
+PHASE 10
+SFX
+
+PHASE 11
+Camera + Hit Stop
+
+PHASE 12
+Enemy Combat AI
+
+PHASE 13
+Lock-On
+
+PHASE 14
+Status Effects
+
+PHASE 15
+Multiplayer
+
+PHASE 16
+Optimization
+
+PHASE 17
+Debug/Test
+
+После каждого этапа:
+
+- Compile
+- Проверить ошибки
+- Проверить Blueprint warnings
+- Проверить references
+- Проверить multiplayer
+- Проверить performance
+- Не переходить дальше, если предыдущий этап сломан.
+
+==================================================
+23. FINAL QUALITY CHECK
+
+После реализации проведи полный аудит проекта.
+
+Проверь:
+
+□ Light Attack
+□ Heavy Attack
+□ Combo
+□ Charged Attack
+□ Running Attack
+□ Jump Attack
+□ Dodge
+□ Block
+□ Parry
+□ Guard Break
+□ Poise
+□ Stagger
+□ Backstab
+□ Critical
+□ Damage
+□ Status Effects
+□ Hit Reaction
+□ Weapon Trace
+□ VFX
+□ SFX
+□ Hit Stop
+□ Camera Shake
+□ Lock-On
+□ Enemy AI
+□ Boss compatibility
+□ 4-player PvE
+□ Replication
+□ Performance
+□ Debug Tools
+
+Особенно проверь:
+
+- Нет ли duplicate Combat Systems.
+- Нет ли логики на Tick, которую можно заменить Events.
+- Нет ли ошибок replication.
+- Нет ли infinite loops.
+- Нет ли memory leaks.
+- Нет ли ненужных casts.
+- Нет ли постоянных дорогих searches.
+- Не ломаются ли существующие персонажи и AI.
+
+ЦЕЛЬ:
+
+Получить единую, расширяемую и производительную Soulslike Combat System для UE 5.8, которая ощущается тяжёлой, отзывчивой и кинематографичной:
+
+Attack
+→ Animation
+→ Weapon Contact
+→ Damage
+→ Poise
+→ Hit Reaction
+→ VFX
+→ SFX
+→ Camera Feedback
+→ Hit Stop
+→ Enemy Response
+
+Все элементы должны быть синхронизированы и работать как единая система.
