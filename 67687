@@ -1,826 +1,722 @@
-Ты — Senior Unreal Engine 5.8 Gameplay/Combat Engineer.
+Ты работаешь над AAA-quality Soulslike проектом на Unreal Engine 5.8.
 
-Работаешь непосредственно с моим существующим UE 5.8 проектом. Нужно реализовать и привести к единой архитектуре полноценную Soulslike Combat System с ощущением боя уровня современных action RPG, ориентируясь по принципам Elden Ring / Dark Souls, но НЕ копируя их код, ассеты, анимации, VFX или другие защищённые материалы.
+ЗАДАЧА:
+Создай и полностью интегрируй визуальную HUD/UI систему игры в духе Elden Ring / Dark Souls, но НЕ копируй их интерфейс напрямую.
 
-ВАЖНО:
+Используй уже установленные плагины:
+1. Narrative Inventory — Inventory & Equipment System
+2. Narrative Interaction — Interaction System
+3. Narrative Navigator — Maps / Compass / Waypoints
 
-- Сначала проанализируй ВЕСЬ существующий проект.
-- Не создавай дублирующие системы.
-- Не ломай уже работающие Combat, Character, AI, Animation, UI и Multiplayer системы.
-- Если система уже существует — расширь и интегрируй её.
-- Перед изменением файлов проверь их зависимости.
-- Все изменения должны быть совместимы с UE 5.8.
-- Приоритет: производительность, стабильность и multiplayer compatibility.
-- Игра рассчитана на PvE до 4 игроков.
-- PvP не нужен.
-- Не использовать дорогие сторонние решения, если это можно сделать средствами UE 5.8.
-- Не использовать placeholder-системы там, где уже существует рабочая система.
+Также используй другие уже установленные UI/Tools плагины проекта, если они помогают реализовать систему.
 
 ==================================================
+ОБЩИЙ ВИЗУАЛЬНЫЙ СТИЛЬ
+==================================================
 
-1. COMBAT CORE
-   ==================================================
+Стиль:
+- dark fantasy Soulslike
+- premium AAA presentation
+- визуально близко к Elden Ring / Dark Souls
+- серьезный, минималистичный интерфейс
+- никаких дешевых sci-fi элементов
+- никаких ярких mobile-game UI
+- никаких огромных панелей, постоянно закрывающих экран
+- никаких кислотных цветов
+- никаких low-poly UI элементов
 
-Создай/приведи в порядок центральную Combat System.
+HUD должен ощущаться частью мира игры.
 
-Поддержать:
+Используй:
+- темный полупрозрачный фон
+- тонкие декоративные рамки
+- старинные металлические элементы
+- темное золото
+- приглушенный серый
+- теплый белый
+- очень умеренный красный/синий/голубой для состояний
+- мягкие свечения только там, где они действительно нужны
+- легкую текстуру старого металла / пергамента
+- subtle vignette
+- мягкие fade/scale анимации
 
-- Light Attack
-- Heavy Attack
-- Charged Heavy Attack
-- Running Attack
-- Jump Attack
-- Dash Attack
-- Back Attack
-- Combo Chains
-- Weapon Skills
-- Magic Attacks
-- Bow/Ranged Attacks
-- Critical Attack
-- Execution
-- Death Blow
-
-Каждая атака должна иметь:
-
-- Damage
-- Stamina Cost
-- Mana Cost при необходимости
-- Attack Type
-- Damage Type
-- Poise Damage
-- Hit Reaction Type
-- Combo ID
-- Attack ID
-- Startup
-- Active Window
-- Recovery
-- Cancel Window
-- Hit Stop
-- VFX
-- SFX
-- Camera Feedback
-
-Используй Data Assets/Data Tables там, где это рационально, чтобы характеристики атак не были жёстко зашиты в Blueprint.
+Главный принцип:
+HUD должен быть минималистичным и не мешать игровому процессу.
 
 ==================================================
-2. ANIMATION SYSTEM
+1. ОСНОВНОЙ COMBAT HUD
+==================================================
 
-Использовать существующую Animation System проекта.
+В левом нижнем углу:
 
-Организовать:
+PLAYER STATUS:
 
-- Animation Montages
-- Montage Sections
-- Combo Windows
-- Attack Windows
-- Animation Notifies
-- Notify States
-- Root Motion только там, где это действительно необходимо
-- Animation Layers
-- Upper Body Combat Layer
-- Hit Reaction Layer
-- Locomotion Layer
+HP BAR
+- длинная горизонтальная полоса
+- красный цвет
+- темная металлическая рамка
+- небольшой декоративный элемент слева
+- плавное уменьшение HP
+- damage feedback
+- healing feedback
 
-Не делай отдельную систему для каждого оружия.
+MANA BAR
+- синяя/голубая
+- расположить под HP
+- тоньше HP
 
-Создай масштабируемую архитектуру:
+STAMINA BAR
+- зеленая/желтовато-зеленая
+- расположить под Mana
+- быстро реагирует на расход выносливости
 
-Weapon Type
-→ Attack Set
-→ Animation Set
-→ Damage Profile
-→ VFX Profile
-→ SFX Profile
+Не использовать огромные полосы.
 
-Поддержать минимум:
+HP > Mana > Stamina по визуальному приоритету.
 
-- Sword
-- Greatsword
-- Dagger
-- Bow
-- Staff/Magic Weapon
-
-Архитектура должна позволять легко добавить новые типы оружия.
+Добавить:
+- плавную interpolation
+- delayed damage bar
+- low HP warning
+- low stamina feedback
+- subtle animation
 
 ==================================================
-3. WEAPON HIT DETECTION
+2. PLAYER / CHARACTER STATUS
+==================================================
 
-Не использовать простой один Overlap Box для всего оружия.
+Рядом с HP:
 
-Сделать корректный Weapon Trace:
+LEVEL
+SOULS / CURRENCY
+BUFFS
+DEBUFFS
 
-Weapon Socket Start
-→ Weapon Socket End
-→ Sweep/Trace
-→ Hit Result
-→ Damage Processing
+Количество баффов и дебаффов должно автоматически изменяться.
 
-Учитывать движение оружия между кадрами, чтобы быстрые атаки не проходили сквозь врага.
+Каждый buff/debuff:
+- небольшая иконка
+- тонкая рамка
+- tooltip при наведении/фокусе
+- duration indicator
+
+Не делать огромные квадратные панели.
+
+==================================================
+3. QUICK ITEM SYSTEM
+==================================================
+
+В нижней части экрана:
+
+QUICK ITEM SLOT
+
+Показывать:
+- текущий расходник
+- количество
+- иконку
+- название при необходимости
+
+Добавить возможность переключения предметов.
+
+Визуально:
+- маленькая темная рамка
+- золотой/белый highlight выбранного предмета
+- плавное переключение
+
+Не копировать UI Elden Ring 1:1.
+
+==================================================
+4. QUICK SKILL / ABILITY
+==================================================
+
+Создать отдельный слот для:
+- Weapon Skill
+- Magic
+- Special Ability
+
+Показывать:
+- icon
+- cooldown / resource
+- selected state
+
+Если способность недоступна:
+- затемнение
+- subtle red/gray state
+
+==================================================
+5. TARGET / ENEMY HUD
+==================================================
+
+При выборе врага:
+
+Enemy Name
+HP Bar
+Boss HP Bar
+
+Обычный враг:
+- небольшая полоса HP
+- имя над/рядом с полосой
+
+Elite:
+- более выраженный UI
+
+Boss:
+- большая полоса в нижней части экрана
+- имя босса
+- decorative frame
+- фазовые изменения
+- плавная анимация появления
+
+Boss HUD должен выглядеть премиально, но не перегруженно.
+
+==================================================
+6. INTERACTION HUD
+==================================================
+
+Использовать Narrative Interaction.
+
+При приближении к объекту:
+
+[ ICON ]  Interact
+        Open Chest
+
+или
+
+[ ICON ]  Talk
+        NPC Name
+
+или
+
+[ ICON ]  Collect
+        Item Name
+
+Интерактивный UI должен:
+- появляться плавно
+- исчезать плавно
+- показывать правильный action
+- учитывать keyboard/mouse/gamepad
+- поддерживать rebinding
+
+Использовать систему Narrative Interaction вместо создания второй параллельной interaction system.
+
+==================================================
+7. NAVIGATION HUD
+==================================================
+
+Использовать Narrative Navigator.
 
 Добавить:
 
-- Multiple trace points
-- Start/End sockets
-- Active attack window
-- Prevent duplicate hits
-- Multi-target attacks
-- Friendly-fire filtering
-- Team filtering
-- Backstab detection
-- Critical detection
-- Hit location
-- Hit normal
-- Surface type
+COMPASS
+- сверху экрана
+- минималистичная металлическая рамка
+- точки интереса
+- NPC
+- objective
+- dungeon entrance
+- important locations
 
-Разные поверхности должны иметь разные реакции:
+WAYPOINTS:
+- subtle markers
+- distance
+- objective indicator
 
-- Flesh
-- Armor
-- Metal
-- Stone
-- Wood
-- Shield
-- Magical Barrier
+Не делать интерфейс похожим на современную GPS-навигацию.
+
+Навигация должна выглядеть как часть fantasy-world.
 
 ==================================================
-4. DAMAGE SYSTEM
+8. MAP
+==================================================
 
-Создать масштабируемую Damage System.
+Использовать Narrative Navigator для карты.
 
-Поддержать:
+Создать отдельный Map Screen:
 
-Physical
-Slash
-Strike
-Pierce
-Magic
-Fire
-Lightning
-Frost
-Poison
-Bleed
-Holy/Light
-Dark
+- parchment / dark fantasy map
+- muted colors
+- hand-drawn feeling
+- regions
+- discovered locations
+- dungeon entrances
+- NPC locations
+- player position
+- waypoint
 
-Damage должен учитывать:
+Но НЕ использовать чрезмерно hand-painted стиль.
 
-- Weapon Damage
-- Character Stats
-- Scaling
-- Attack Modifier
-- Enemy Resistance
-- Damage Type
-- Critical Modifier
-- Status Modifier
-
-Не создавать хаотичные переменные Damage в разных Blueprint.
-
-Все основные параметры должны проходить через единую Combat/Damage архитектуру.
+Карта должна быть читаемой и современной по UX.
 
 ==================================================
-5. POISE / STAGGER
+9. INVENTORY
+==================================================
 
-Создать Soulslike-style Poise System.
+Использовать Narrative Inventory.
 
-Каждый персонаж должен иметь:
+Создать полноценный Inventory Screen.
 
-- Max Poise
-- Current Poise
-- Poise Recovery
-- Poise Damage
-- Stagger Threshold
+Категории:
 
-Разные атаки наносят разный Poise Damage.
+Weapons
+Armor
+Accessories
+Consumables
+Materials
+Quest Items
+Key Items
 
-Пример:
+Визуальная концепция:
 
-Light Attack → низкий Poise Damage
-Heavy Attack → высокий
-Charged Heavy → очень высокий
-Critical → гарантированный stagger/critical state при выполнении условий
+НЕ обычное современное меню.
 
-После достижения порога:
+Сделать ощущение:
+"открывается древняя книга / inventory codex".
 
-Poise Break
-→ Stagger
-→ Vulnerable State
-→ Critical Opportunity
+Основная область:
+- темная книга
+- две страницы
+- металлические/кожаные элементы
+- предметы располагаются на страницах
+- выбранный предмет подсвечивается
 
-После определённого времени без получения Poise Damage начинается восстановление.
+Правая часть:
+Item Name
+Description
+Stats
+Weight
+Requirements
+Effects
+
+Добавить:
+- item comparison
+- equipment slots
+- rarity
+- quantity
+- drag/drop где уместно
+- controller navigation
 
 ==================================================
-6. HIT REACTION SYSTEM
+10. EQUIPMENT
+==================================================
 
-Создать полноценную directional Hit Reaction System.
+Использовать Narrative Inventory.
 
-Поддержать:
+Создать Equipment Screen:
 
-- Front Hit
-- Back Hit
-- Left Hit
-- Right Hit
-- Head Hit
-- Light Hit
-- Heavy Hit
-- Stagger
-- Knockback
-- Knockdown
-- Launch
-- Guard Break
-- Death
+Head
+Chest
+Hands
+Legs
+Weapon
+Offhand
+Accessory 1
+Accessory 2
+Accessory 3
 
-Направление рассчитывать относительно персонажа.
+Показывать силуэт персонажа в центре.
 
-Не создавать десятки независимых Blueprint.
+Equipment slots должны быть:
+- небольшими
+- премиальными
+- темными
+- с металлической рамкой
 
-Использовать единую систему определения:
-
-Hit Direction
-+
-Hit Strength
-+
-Damage Type
-+
-Poise State
-
-→ Hit Reaction.
+Не использовать огромные UI карточки.
 
 ==================================================
-7. BLOCK / PARRY / DODGE
+11. CHARACTER SCREEN
+==================================================
 
-Реализовать:
+Создать отдельную страницу:
 
-BLOCK:
+Character
 
-- Guard
-- Guard Stamina Damage
-- Guard Hit Reaction
-- Guard Break
+Показывать:
 
-PARRY:
+Level
+HP
+Mana
+Stamina
+Attack Power
+Defense
+Poise
+Weight
+Attributes
+Resistances
 
-- Parry Window
-- Successful Parry
-- Failed Parry
-- Parry VFX
-- Parry SFX
-- Parry Camera Feedback
-- Riposte/Critical Opportunity
+Attributes:
 
-DODGE:
+Vigor
+Mind
+Endurance
+Strength
+Dexterity
+Intelligence
+Faith
+Arcane
 
-- Forward
-- Backward
-- Left
-- Right
+Если текущая система характеристик отличается от этого списка —
+НЕ ломай существующую gameplay-систему.
+Адаптируй UI под реальные параметры проекта.
+
+==================================================
+12. BOOK / MENU SYSTEM
+==================================================
+
+Основное меню игрока должно быть выполнено как единый fantasy codex/book.
+
+Разделы:
+
+Character
+Inventory
+Equipment
+Skills
+Map
+Quests
+Codex
+Settings
+
+Переход между страницами:
+
+- page flip animation
+- subtle sound
+- smooth transition
+- no instant hard cuts
+
+Не использовать тяжелые 3D эффекты, которые будут снижать FPS.
+
+==================================================
+13. QUEST / OBJECTIVE UI
+==================================================
+
+В мире:
+
+Objective:
+"Find the Forgotten Gate"
+
+Distance:
+125m
+
+Минималистичный marker.
+
+При открытии меню:
+Quest Log
+
+Показывать:
+Main Quest
+Side Quest
+Character Quest
+Completed
+
+==================================================
+14. NOTIFICATIONS
+==================================================
+
+Создать систему уведомлений:
+
++100 Souls
+New Item
+New Weapon
+New Quest
+Quest Completed
+New Area Discovered
+Boss Defeated
+
+Уведомления должны:
+- появляться плавно
+- иметь небольшую анимацию
+- автоматически исчезать
+- складываться в очередь
+- не спамить экран
+
+==================================================
+15. DIALOGUE UI
+==================================================
+
+Для NPC dialogue создать:
+
+- имя NPC
+- portrait
+- dialogue text
+- choices
+- continue indicator
+
+Визуально:
+dark fantasy
+minimal
+premium
+без огромного textbox на весь экран.
+
+==================================================
+16. DEATH / RESPAWN UI
+==================================================
+
+При смерти:
+
+screen fade
+desaturation
+subtle vignette
+death message
+
+После смерти:
+Respawn / Continue
+
+Все переходы должны быть плавными.
+
+==================================================
+17. GAMEPAD + KEYBOARD
+==================================================
+
+UI обязан поддерживать:
+
+Keyboard + Mouse
+Gamepad
+
+Использовать Common UI / Unreal Enhanced Input там, где это уже доступно.
+
+Каждая интерактивная кнопка должна иметь:
+- focused state
+- hover state
+- pressed state
+- disabled state
+
+Gamepad navigation должна работать без мыши.
+
+==================================================
+18. RESPONSIVE UI
+==================================================
+
+HUD должен корректно работать:
+
+16:9
+21:9
+16:10
+разных разрешениях
+
+Не использовать абсолютные координаты там, где можно использовать Anchors / SizeBox / Overlay / Canvas appropriately.
+
+==================================================
+19. PERFORMANCE
+==================================================
+
+Проект рассчитан также на слабый ПК.
+
+Поэтому:
+
+НЕ использовать:
+- тяжелые Tick-based UI операции
+- постоянное создание/удаление Widget
+- тяжелые Blur материалы на весь экран
+- дорогие UI shaders
+- unnecessary render targets
+- постоянные bindings к данным
+
+Использовать:
+- event-driven updates
+- widget pooling где необходимо
+- invalidation panels
+- efficient data binding
+- async loading для больших inventory assets
+- lightweight animations
+
+HUD не должен заметно влиять на FPS.
+
+==================================================
+20. ARCHITECTURE
+==================================================
+
+Перед реализацией:
+
+1. Просканируй весь UE проект.
+2. Найди существующие:
+   - Player Character
+   - Player Controller
+   - Game Mode
+   - Game Instance
+   - Inventory
+   - Equipment
+   - Interaction
+   - Navigation
+   - Combat
+   - Health
+   - Mana
+   - Stamina
+   - Abilities
+   - Save System
+   - Multiplayer systems
+   - существующие Widgets
+   - Common UI
+   - Narrative plugins
+
+3. НЕ создавай дубликаты уже существующих систем.
+
+4. Narrative Inventory должен отвечать за Inventory/Equipment.
+
+5. Narrative Interaction должен отвечать за взаимодействия.
+
+6. Narrative Navigator должен отвечать за Compass/Map/Waypoints.
+
+7. Новый UI должен интегрироваться с существующими gameplay systems.
+
+==================================================
+21. VISUAL DESIGN SYSTEM
+==================================================
+
+Создай единый UI Design System:
+
+UI colors:
+Primary:
+dark charcoal
+
+Secondary:
+aged metal
+
+Accent:
+muted gold
+
+HP:
+deep red
+
+Mana:
+deep blue
+
+Stamina:
+muted green
+
+Warning:
+dark amber
+
+Text:
+warm white
+
+Secondary Text:
+gray
+
+Создай единые:
+
+Margins
+Padding
+Font hierarchy
+Icon sizes
+Border thickness
+Corner treatment
+Animation timings
+Opacity levels
+
+Все элементы должны выглядеть частью одного UI.
+
+==================================================
+22. ANIMATION
+==================================================
 
 Добавить:
 
-- Dodge i-frames
-- Dodge stamina cost
-- Dodge recovery
-- Dodge attack
-- Attack → Dodge cancel при допустимом окне
-
-I-frame значения должны быть вынесены в параметры, а не жёстко прописаны в логике.
-
-==================================================
-8. CRITICAL / BACKSTAB
-
-Создать:
-
-- Backstab Detection
-- Critical Opportunity
-- Critical Attack
-- Execution
-- Critical Animation
-- Critical Camera
-- Critical VFX
-- Critical SFX
-- Critical Hit Stop
-
-Проверять:
-
-- Relative Position
-- Facing Direction
-- Target State
-- Distance
-- Attack Type
-
-Не разрешать критические атаки при невозможных состояниях.
-
-==================================================
-9. STATUS EFFECTS
-
-Создать расширяемую систему Status Effects.
-
-Минимум:
-
-- Bleed
-- Poison
-- Frost
-- Burn
-- Shock
-
-Каждый эффект должен иметь:
-
-- Accumulation
-- Resistance
-- Threshold
-- Proc
-- Duration
-- Damage
-- Cooldown
-- VFX
-- SFX
-- UI Feedback
-
-Архитектура должна позволять добавлять новые эффекты без переписывания Combat Core.
-
-==================================================
-10. VFX
-
-Интегрировать Niagara.
-
-Создать точки интеграции для:
-
-- Sword Swing
-- Heavy Swing
-- Charged Attack
-- Weapon Trail
-- Hit Impact
-- Blood Impact
-- Armor Impact
-- Shield Impact
-- Metal Sparks
-- Magic Impact
-- Fire
-- Lightning
-- Frost
-- Poison
-- Bleed
-- Parry
-- Guard Break
-- Poise Break
-- Critical
-- Death
-
-VFX не должны запускаться постоянно.
-
-Они должны вызываться Combat Events / Gameplay Cues / соответствующими Animation Notifies.
-
-Учитывать multiplayer replication.
-
-==================================================
-11. SOUND SYSTEM
-
-Интегрировать Sound System проекта.
-
-Поддержать:
-
-Weapon Swing
-Weapon Impact
-Armor Impact
-Flesh Impact
-Shield Impact
-Parry
-Guard Break
-Poise Break
-Critical
+HUD Fade In
+HUD Fade Out
+Health Damage
+Health Heal
+Stamina Drain
+Mana Drain
+Item Select
+Menu Open
+Menu Close
+Page Flip
+Tab Switch
+Inventory Select
+Tooltip Open
+Notification
+Boss Intro
 Death
-Dodge
-Footsteps
-Character Grunts
-Magic
-Status Effects
+Respawn
 
-Использовать Surface Type для выбора подходящего звука.
-
-Пример:
-
-Sword → Stone
-= Metal/Stone impact
-
-Sword → Flesh
-= Flesh impact
-
-Sword → Shield
-= Shield impact
-
-Не проигрывать один и тот же звук постоянно без variation.
-
-Добавить random pitch/variation там, где это уместно.
+Анимации должны быть:
+slow enough to feel premium
+fast enough not to interrupt gameplay.
 
 ==================================================
-12. HIT STOP
+23. AUDIO HOOKS
+==================================================
 
-Создать централизованный Hit Stop System.
+Создать hooks/events для:
 
-Разные значения для:
+UI_Open
+UI_Close
+UI_Select
+UI_Confirm
+UI_Cancel
+Item_Equip
+Item_Use
+Page_Flip
+Notification
+Quest_Update
+Boss_Encounter
 
-Light Hit
-Heavy Hit
-Critical
-Parry
-Poise Break
-Death
-
-Hit Stop не должен ломать multiplayer simulation.
-
-Не останавливать весь мир без необходимости.
-
-Сделать систему параметризуемой.
+Не добавляй тяжелую аудиосистему, если в проекте уже существует аналогичная.
 
 ==================================================
-13. CAMERA FEEDBACK
+24. IMPORTANT
+==================================================
 
-Создать:
+НЕ делай просто набор отдельных красивых Widgets.
 
-- Light Hit Camera Shake
-- Heavy Hit Camera Shake
-- Critical Camera Shake
-- Parry Camera Shake
-- Guard Break Camera Shake
-- FOV Kick
-- Camera Impulse
+Создай полноценную СОГЛАСОВАННУЮ HUD/UI SYSTEM.
 
-Эффекты должны быть короткими и контролируемыми.
+Все элементы должны выглядеть как части одной игры.
 
-Не создавать постоянное сильное трясение камеры.
+Главный визуальный ориентир:
 
-Все параметры вынести в настройки.
+Dark Souls / Elden Ring / high-quality dark fantasy RPG.
+
+Но:
+
+НЕ копировать интерфейс Elden Ring пиксель-в-пиксель.
+НЕ копировать конкретные ассеты.
+НЕ копировать copyrighted UI artwork.
+
+Создать оригинальную визуальную систему с похожими принципами:
+minimalism
+dark fantasy
+subtle gold
+metal frames
+high readability
+low screen obstruction
+premium AAA presentation.
 
 ==================================================
-14. COMBAT UI
-
-Интегрировать существующий UI.
-
-Добавить визуальный feedback:
-
-- Damage Number при необходимости
-- Critical Indicator
-- Status Effect
-- Stagger/Poise Break Feedback
-- Lock-On Indicator
-- Stamina Feedback
-- Mana Feedback
-- Skill Cooldown/Availability
-- Target State
-
-UI не должен перегружать экран.
-
+ПОРЯДОК РАБОТЫ
 ==================================================
-15. LOCK-ON
 
-Создать Soulslike-style Target Lock.
-
-Поддержать:
-
-- Nearest Target
-- Target Priority
-- Target Distance
-- Switch Left
-- Switch Right
-- Target Lost
-- Occlusion Check
-- Large Boss Target
-- Multiplayer compatibility
-
-Камера и персонаж должны корректно взаимодействовать с Lock-On.
-
-==================================================
-16. ENEMY COMBAT AI
-
-Интегрировать существующий AI.
-
-НЕ переписывать AI полностью без необходимости.
-
-Добавить Combat States:
-
-Idle
-Investigate
-Alert
-Chase
-Approach
-Attack
-Combo
-Defend
-Dodge
-Parry
-Stagger
-Recover
-Retreat
-Special Attack
-Dead
-
-Создать систему Combat Slots/Attack Slots.
-
-Цель:
-
-Если вокруг игрока 8 врагов, они НЕ должны одновременно атаковать.
-
-Пример:
-
-Enemy 1 → Attack
-Enemy 2 → Prepare
-Enemy 3 → Circle
-Enemy 4 → Wait
-Enemy 5 → Reposition
-Enemy 6 → Wait
-
-Это должно создавать контролируемый Soulslike combat flow.
-
-==================================================
-17. MULTIPLAYER
-
-Игра рассчитана на 1–4 игроков PvE.
-
-Combat должен быть server authoritative.
-
-Реплицировать только необходимые gameplay events.
-
-Особое внимание:
-
-- Damage
-- Hit
-- Death
-- Stagger
-- Status Effects
-- Critical
-- VFX
-- SFX
-- Combat State
-- Target State
-
-Не отправлять лишний трафик каждый кадр.
-
-Не использовать локальную логику, которая приводит к разным результатам на клиентах.
-
-==================================================
-18. PERFORMANCE
-
-Проект должен работать на слабом/среднем ПК.
-
-Приоритет:
-
-- CPU optimization
-- GPU optimization
-- Niagara optimization
-- Animation optimization
-- AI optimization
-- Network optimization
-
-Избегать:
-
-- Tick там, где можно использовать Events
-- постоянных Get All Actors Of Class
-- бесконечных Overlap
-- дорогих traces каждый кадр
-- лишних Cast
-- постоянного создания/уничтожения объектов
-- чрезмерных Niagara particles
-- лишних replicated variables
-
-Использовать Event Driven архитектуру.
-
-==================================================
-19. COMBAT EVENT ARCHITECTURE
-
-Создай единую цепочку:
-
-INPUT
-↓
-COMBAT ABILITY
-↓
-ANIMATION
-↓
-ATTACK WINDOW
-↓
-WEAPON TRACE
-↓
-HIT RESULT
-↓
-DAMAGE
-↓
-POISE
-↓
-STATUS
-↓
-HIT REACTION
-↓
-VFX
-↓
-SFX
-↓
-CAMERA
-↓
-HIT STOP
-↓
-UI
-
-Не допускай, чтобы каждый компонент самостоятельно вычислял одно и то же событие.
-
-Например:
-
-Hit Event должен содержать:
-
-- Attacker
-- Target
-- Damage
-- Damage Type
-- Hit Location
-- Hit Normal
-- Hit Direction
-- Poise Damage
-- Critical
-- Status
-- Surface Type
-- Weapon Type
-
-==================================================
-20. DEBUG TOOLS
-
-Создать Combat Debug Mode.
-
-При включении показывать:
-
-- Weapon Trace
-- Hitboxes
-- Attack Windows
-- Current Attack
-- Current Combat State
-- Poise
-- Stamina
-- Damage
-- Hit Direction
-- Target
-- I-Frame State
-- Parry Window
-- Combo Window
-
-Добавить возможность включать/выключать debug visualization.
-
-==================================================
-21. НЕ НАЧИНАЙ СРАЗУ ПЕРЕПИСЫВАТЬ ПРОЕКТ
-
-СНАЧАЛА:
-
-1. Просканируй весь проект.
-2. Найди существующие Combat Blueprint/C++ классы.
-3. Найди Character.
-4. Найди Animation Blueprint.
-5. Найди Montages.
-6. Найди Weapon System.
-7. Найди Damage System.
-8. Найди AI.
-9. Найди Niagara.
-10. Найди Audio.
-11. Найди Camera.
-12. Найди UI.
-13. Найди Multiplayer/Replication.
-14. Определи, какие системы уже работают.
-15. Определи дубли.
-16. Составь архитектурную карту текущего проекта.
-
-После анализа покажи:
-
-CURRENT SYSTEM
-→ PROBLEM
-→ REQUIRED CHANGE
-→ FILE/ASSET
-→ DEPENDENCIES
-→ RISK
-
-Только после этого начинай реализацию.
-
-==================================================
-22. IMPLEMENTATION ORDER
-
-Работай строго по этапам:
-
-PHASE 1
-Combat Core
-
-PHASE 2
-Weapon Trace
-
-PHASE 3
-Damage
-
-PHASE 4
-Poise/Stagger
-
-PHASE 5
-Hit Reaction
-
-PHASE 6
-Dodge/Block/Parry
-
-PHASE 7
-Critical/Backstab
-
-PHASE 8
-Animation Integration
-
-PHASE 9
-VFX
-
-PHASE 10
-SFX
-
-PHASE 11
-Camera + Hit Stop
-
-PHASE 12
-Enemy Combat AI
-
-PHASE 13
-Lock-On
-
-PHASE 14
-Status Effects
-
-PHASE 15
-Multiplayer
-
-PHASE 16
-Optimization
-
-PHASE 17
-Debug/Test
-
-После каждого этапа:
-
-- Compile
-- Проверить ошибки
-- Проверить Blueprint warnings
-- Проверить references
-- Проверить multiplayer
-- Проверить performance
-- Не переходить дальше, если предыдущий этап сломан.
-
-==================================================
-23. FINAL QUALITY CHECK
-
-После реализации проведи полный аудит проекта.
-
-Проверь:
-
-□ Light Attack
-□ Heavy Attack
-□ Combo
-□ Charged Attack
-□ Running Attack
-□ Jump Attack
-□ Dodge
-□ Block
-□ Parry
-□ Guard Break
-□ Poise
-□ Stagger
-□ Backstab
-□ Critical
-□ Damage
-□ Status Effects
-□ Hit Reaction
-□ Weapon Trace
-□ VFX
-□ SFX
-□ Hit Stop
-□ Camera Shake
-□ Lock-On
-□ Enemy AI
-□ Boss compatibility
-□ 4-player PvE
-□ Replication
-□ Performance
-□ Debug Tools
-
-Особенно проверь:
-
-- Нет ли duplicate Combat Systems.
-- Нет ли логики на Tick, которую можно заменить Events.
-- Нет ли ошибок replication.
-- Нет ли infinite loops.
-- Нет ли memory leaks.
-- Нет ли ненужных casts.
-- Нет ли постоянных дорогих searches.
-- Не ломаются ли существующие персонажи и AI.
-
-ЦЕЛЬ:
-
-Получить единую, расширяемую и производительную Soulslike Combat System для UE 5.8, которая ощущается тяжёлой, отзывчивой и кинематографичной:
-
-Attack
-→ Animation
-→ Weapon Contact
-→ Damage
-→ Poise
-→ Hit Reaction
-→ VFX
-→ SFX
-→ Camera Feedback
-→ Hit Stop
-→ Enemy Response
-
-Все элементы должны быть синхронизированы и работать как единая система.
+Сначала:
+
+1. Проанализируй весь проект.
+2. Проанализируй установленные Narrative plugins.
+3. Найди существующие UI systems.
+4. Составь карту зависимостей.
+5. Определи, какие системы уже существуют.
+6. Определи, какие элементы нужно создать.
+7. Только после этого начинай реализацию.
+
+После реализации:
+
+- Compile Blueprints
+- Compile C++
+- Fix warnings/errors
+- Проверить Widget references
+- Проверить multiplayer replication
+- Проверить gamepad navigation
+- Проверить inventory
+- Проверить equipment
+- Проверить interaction
+- Проверить navigator
+- Проверить map
+- Проверить HUD
+- Проверить resolution scaling
+- Проверить отсутствие Tick-heavy UI
+
+Не ломай существующие gameplay systems.
+
+Если существующая система уже выполняет нужную функцию —
+ИНТЕГРИРУЙСЯ С НЕЙ, а не создавай второй аналог.
+
+Итог:
+получить готовую production-ready Soulslike HUD/UI architecture для UE 5.8 с визуальным качеством AAA dark-fantasy RPG.
