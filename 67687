@@ -1,440 +1,596 @@
-Ты работаешь непосредственно с моим Unreal Engine 5.8 проектом.
+Ты работаешь над моей игрой на Unreal Engine 5.8.
 
-ЦЕЛЬ:
-Перенести в мой текущий UE5.8 проект полезные VFX, Niagara Systems, Niagara Emitters, Materials, Textures, Meshes, Blueprints и связанные зависимости из следующих GitHub-репозиториев:
-
-1. https://github.com/pabloolvr/SoulsLike
-2. https://github.com/PacktPublishing/Unreal-Engine-5-VFX-Cookbook
-3. https://github.com/PacktPublishing/Build-Stunning-Real-time-VFX-with-Unreal-Engine-5
-4. https://github.com/DarknessFX/Niagara_Study
-5. https://github.com/F3T1W/VFXperience
-6. https://github.com/TypeDreamMoon/DreamFX
+Задача: полностью разработать и визуально оформить игровой HUD/UI в едином профессиональном стиле, подходящем для action RPG / Soulslike.
 
 ВАЖНО:
-Не ломай существующий проект.
-Не удаляй существующие ассеты.
-Не заменяй существующие Blueprint, Materials, Niagara Systems или другие файлы без необходимости.
-Не изменяй существующую игровую логику.
-Не меняй мои Character, Combat, AI, UI, Inventory и другие системы.
-Работай максимально безопасно и создавай отдельную папку для импортированных ресурсов.
 
-========================================
-ЭТАП 1 — АНАЛИЗ ПРОЕКТА
+- Сначала ПРОАНАЛИЗИРУЙ ВЕСЬ ПРОЕКТ.
+- Найди все уже установленные плагины, UI-системы, Widget Blueprint, материалы, иконки, компоненты и существующие системы, которые можно использовать.
+- НЕ создавай дублирующие системы, если нужная функциональность уже реализована плагином.
+- Используй существующие плагины максимально эффективно.
+- Перед изменением существующих систем проверь их зависимости и совместимость.
+- Не ломай существующий gameplay, inventory, character, combat и input.
+- Если какая-либо система уже работает, подключи UI к ней, а не создавай вторую систему.
+- После реализации проверь весь проект на ошибки и битые ссылки.
 
-Сначала полностью проанализируй мой текущий UE5.8 проект.
+ВИЗУАЛЬНЫЙ СТИЛЬ
 
-Определи:
+Стиль интерфейса:
 
-- структуру Content;
-- существующие VFX;
-- существующие Niagara Systems;
-- Niagara Emitters;
-- Materials;
-- Material Instances;
-- Textures;
-- Static Meshes;
-- Skeletal Meshes;
-- Blueprints;
-- существующие папки Combat/VFX/Characters/Environment;
-- используемые naming conventions;
-- существующие зависимости.
+- dark fantasy action RPG;
+- визуальное настроение Elden Ring / Dark Souls / Soulframe;
+- не копировать интерфейс этих игр напрямую;
+- сделать собственный узнаваемый UI;
+- премиальный игровой интерфейс;
+- не мультяшный;
+- не sci-fi;
+- не futuristic;
+- не mobile-game UI;
+- не дешёвый минималистичный интерфейс;
+- не перегружать экран;
+- декоративные элементы должны напоминать металл, старую кожу, камень, руны и магические артефакты;
+- использовать тонкие рамки, орнаменты и небольшие декоративные элементы;
+- интерфейс должен выглядеть органично поверх игрового мира.
 
-Ничего пока не изменяй.
+Цветовая система:
 
-Составь внутреннюю карту проекта и используй её на следующих этапах.
+- основной цвет — тёмный графит/чёрный;
+- HP — глубокий красный;
+- Stamina — зелёный;
+- Mana/Magic — синий/фиолетовый;
+- дополнительные состояния могут использовать золотой/янтарный;
+- цвета не должны быть неоновыми;
+- прозрачность и градиенты использовать умеренно.
 
-========================================
-ЭТАП 2 — ПОЛУЧЕНИЕ GITHUB РЕПОЗИТОРИЕВ
+Главный принцип:
+UI должен быть красивым, но не мешать видеть игру.
 
-Для каждого репозитория:
+1. ОСНОВНОЙ HUD
 
-- клонируй репозиторий во временную рабочую папку;
-- изучи его структуру;
-- определи Unreal Engine версию;
-- найди Content;
-- найди Niagara;
-- найди Materials;
-- найди Textures;
-- найди Meshes;
-- найди Blueprints;
-- найди VFX;
-- найди зависимости;
-- проверь LICENSE.
+Создай основной HUD игрока.
 
-Не копируй GitHub repository целиком в мой проект.
+Размести:
 
-Нужно извлечь только полезные игровые ресурсы.
+- HP;
+- Stamina;
+- Mana/Magic;
+- уровень персонажа;
+- текущие души/валюту;
+- быстрые предметы;
+- выбранное заклинание;
+- выбранное оружие;
+- активные эффекты;
+- навигационный элемент;
+- небольшие contextual prompts.
 
-========================================
-ЭТАП 3 — ПРОВЕРКА ЛИЦЕНЗИЙ
+HP/Stamina/Mana должны быть визуально связаны между собой и выглядеть как одна система.
 
-Для каждого найденного ресурса проверь LICENSE репозитория.
+Не делай огромные полосы.
 
-Создай таблицу:
+HP должен быть главным элементом.
 
-Repository
-Asset
-License
-Commercial use
-Modification allowed
-Redistribution allowed
-Notes
+Stamina и Mana визуально вторичны.
 
-Если лицензия отсутствует или коммерческое использование неясно:
+Добавь плавную анимацию изменения значений.
 
-НЕ подключай такой ресурс автоматически в основной проект.
+При получении урона:
 
-Помести его в отдельную папку:
+- HP плавно уменьшается;
+- добавить небольшой delayed damage indicator;
+- без чрезмерных эффектов.
 
-Content/VFX_GitHub/_LicenseReview/
+При восстановлении:
 
-И сообщи мне, что его нужно проверить вручную.
+- плавное заполнение.
 
-Особенно важно для коммерческой Steam-игры.
+2. ИГРОВОЙ HUD В БОЮ
 
-========================================
-ЭТАП 4 — СТРУКТУРА ИМПОРТА
+Во время боя HUD должен оставаться минимальным.
 
-Создай:
+Показывать:
 
-Content/VFX_GitHub/
+- HP;
+- Stamina;
+- Mana;
+- quick slots;
+- weapon;
+- spell;
+- активные buffs/debuffs.
 
-Внутри:
+Добавить небольшие анимации:
 
-Content/VFX_GitHub/SoulsLike/
-Content/VFX_GitHub/VFX_Cookbook/
-Content/VFX_GitHub/RealtimeVFX/
-Content/VFX_GitHub/NiagaraStudy/
-Content/VFX_GitHub/VFXperience/
-Content/VFX_GitHub/DreamFX/
+- получение урона;
+- критическое здоровье;
+- использование предмета;
+- смена оружия;
+- смена заклинания;
+- расход stamina;
+- расход mana.
 
-Также:
+Не использовать постоянные большие панели.
 
-Content/VFX_GitHub/_LicenseReview/
-Content/VFX_GitHub/_Documentation/
+3. QUICK SLOTS
 
-Не смешивай эти ресурсы с моими существующими папками.
+Создай систему быстрых слотов.
 
-========================================
-ЭТАП 5 — ПЕРЕНОС VFX
+Предусмотреть:
 
-Перенеси только реально полезные ресурсы.
+- предмет;
+- оружие;
+- заклинание;
+- расходник.
 
-Приоритет:
+Для выбранного элемента:
 
-1. Niagara Systems
-2. Niagara Emitters
-3. Niagara Modules
-4. Materials
-5. Material Instances
-6. Textures
-7. Static Meshes
-8. Blueprints, если они непосредственно нужны VFX
-9. необходимые зависимости
+- визуальное выделение;
+- название;
+- количество;
+- cooldown, если используется;
+- короткая анимация выбора.
 
-Если Niagara System зависит от других ресурсов — перенеси ВСЕ необходимые зависимости.
+Сделай визуально похожим на часть общего UI, а не отдельный generic inventory widget.
 
-Не оставляй broken references.
+4. NAVIGATION / COMPASS
 
-После переноса каждый Niagara System должен открываться без ошибок.
-
-========================================
-ЭТАП 6 — КАТЕГОРИЗАЦИЯ
-
-После переноса классифицируй VFX.
-
-Создай:
-
-Content/VFX_GitHub/_Library/
-
-и категории:
-
-Combat/
-Magic/
-Sword/
-Weapon/
-Impact/
-Blood/
-Fire/
-Lightning/
-Ice/
-DarkMagic/
-Holy/
-Soul/
-Ghost/
-Death/
-Dodge/
-Dash/
-Parry/
-Hit/
-Buff/
-Debuff/
-Teleport/
-Environment/
-Fog/
-Smoke/
-Dust/
-Energy/
-Misc/
-
-Не дублируй ассеты без необходимости.
-
-Если один VFX подходит под несколько категорий — оставь оригинальный ресурс в его repository-папке и создай документацию/ссылку на него, а не делай лишнюю копию.
-
-========================================
-ЭТАП 7 — SOULSLIKE АДАПТАЦИЯ
-
-Моя игра — Soulslike.
-
-Визуальное направление:
-
-- Dark Souls
-- Elden Ring
-- Soulframe
-
-Но НЕ нужно копировать конкретные эффекты этих игр.
-
-Не делай:
-
-- слишком яркий Fortnite-style VFX;
-- кислотные цвета;
-- мультяшные частицы;
-- чрезмерно огромные explosions;
-- слишком сильный bloom;
-- anime-style VFX;
-- low-poly presentation.
+Добавь навигационный элемент.
 
 Предпочтительно:
 
-- тёмная fantasy атмосфера;
-- холодные/приглушённые оттенки;
-- пепел;
-- дым;
-- искры;
-- тонкие энергетические следы;
-- короткие вспышки;
-- магические руны;
-- soul particles;
-- ghost particles;
-- weapon trails;
-- impact sparks;
-- restrained glow.
+- компактный compass;
+- направления;
+- важные точки;
+- objective;
+- dungeon entrance;
+- NPC;
+- interactable objects.
 
-========================================
-ЭТАП 8 — СОЗДАНИЕ SOULSLIKE VFX PRESETS
+Не превращать его в огромную карту.
 
-Не изменяй оригинальные VFX.
+Если в проекте уже существует navigation system — используй её.
 
-Создай отдельные Material Instances / Niagara variants там, где это безопасно.
+Если есть plugin для navigation/compass — интегрируй его.
 
-Создай несколько демонстрационных вариантов:
+5. INTERACTION PROMPT
 
-NS_Soulslike_SwordSlash
-NS_Soulslike_HeavySlash
-NS_Soulslike_LightAttack
-NS_Soulslike_HeavyAttack
-NS_Soulslike_Impact
-NS_Soulslike_Parry
-NS_Soulslike_Dodge
-NS_Soulslike_Dash
-NS_Soulslike_Hit
-NS_Soulslike_Blood
-NS_Soulslike_Soul
-NS_Soulslike_Death
-NS_Soulslike_DarkMagic
-NS_Soulslike_Fire
-NS_Soulslike_Lightning
-NS_Soulslike_Teleport
+Создай красивый contextual interaction prompt.
 
-Если подходящего исходного эффекта нет — НЕ создавай сложную систему с нуля.
+Например:
 
-Просто отметь:
+[ E ] Interact
 
-MISSING — NEEDS CREATION
+Но визуально оформить его в стиле игры.
 
-========================================
-ЭТАП 9 — ТЕСТОВАЯ VFX ARENA
+Он должен появляться только когда игрок действительно может взаимодействовать с объектом.
 
-Создай отдельную тестовую карту:
+Поддержать:
 
-Content/VFX_GitHub/_VFX_Test/
+- NPC;
+- двери;
+- сундуки;
+- предметы;
+- рычаги;
+- лестницы;
+- climbing points;
+- другие interactable actors.
 
-Map:
+Добавить плавное появление/исчезновение.
 
-VFX_Test_Arena
+6. INVENTORY
 
-Размести там категории:
+Инвентарь должен быть частью моей общей концепции интерфейса.
 
-MELEE
-MAGIC
-ELEMENTAL
-SOUL
-MOVEMENT
-IMPACT
-ENVIRONMENT
+Основная идея:
+игрок открывает внутриигровую книгу, внутри которой находятся его игровые данные.
 
-Каждый VFX должен иметь:
+Создай структуру страниц:
+
+BOOK
+├── Character
+├── Inventory
+├── Equipment
+├── Skills / Abilities
+├── Spells
+├── Quests
+├── Map
+├── Journal
+├── Collections
+└── Settings
+
+Книга должна выглядеть как настоящий игровой предмет.
+
+Использовать:
+
+- две страницы;
+- центральный переплёт;
+- бумагу/пергамент;
+- металлические/кожаные элементы;
+- небольшие декоративные элементы;
+- анимацию перелистывания.
+
+Не делать интерфейс похожим на обычное современное меню.
+
+7. CHARACTER PAGE
+
+Создай страницу персонажа.
+
+Показывать:
+
+- персонажа;
+- имя;
+- уровень;
+- HP;
+- Stamina;
+- Mana;
+- основные характеристики;
+- оружие;
+- экипировку;
+- активные способности;
+- souls/currency.
+
+Информация должна быть читаемой.
+
+8. EQUIPMENT
+
+Создать визуальную страницу экипировки.
+
+Предусмотреть:
+
+- weapon;
+- secondary weapon;
+- spell;
+- accessory;
+- consumables;
+- cosmetic slots, если система существует.
+
+Использовать визуальные слоты и качественные рамки предметов.
+
+Редкость предметов:
+
+- Common;
+- Uncommon;
+- Rare;
+- Epic;
+- Legendary;
+- Mythic.
+
+Но цвета редкости должны быть приглушёнными и соответствовать dark fantasy UI.
+
+9. ITEMS
+
+Создать красивые item cards.
+
+Каждый предмет должен иметь:
+
+- icon;
+- name;
+- rarity;
+- quantity;
+- description;
+- stats;
+- type;
+- effects.
+
+При наведении/выборе:
+
+- плавно увеличивать card;
+- показывать tooltip;
+- подсвечивать важные характеристики.
+
+10. SPELLS / ABILITIES
+
+Создать отдельную страницу способностей.
+
+Для каждой способности:
+
+- icon;
+- name;
+- description;
+- cost;
+- cooldown;
+- damage/effect;
+- rarity;
+- equipped state.
+
+Сделать визуально отличающейся от обычного inventory, но в том же UI language.
+
+11. QUESTS
+
+Создать страницу заданий.
+
+Структура:
+
+QUESTS
+
+- Main
+- Side
+- Character
+- Completed
+
+Для каждого задания:
 
 - название;
-- источник;
-- категорию;
-- кнопку/Blueprint trigger или другой простой способ запуска;
-- возможность визуально сравнить эффекты.
+- описание;
+- objective;
+- reward;
+- current progress.
 
-Не подключай эту карту к основной игре.
+Добавить красивую рукописную/дневниковую подачу текста.
 
-========================================
-ЭТАП 10 — ПРОВЕРКА ПРОИЗВОДИТЕЛЬНОСТИ
+12. MAP
 
-Проверь каждый VFX:
+Создать страницу карты.
 
-- количество particles;
-- GPU/CPU simulation;
-- lifetime;
-- spawn rate;
-- material complexity;
-- texture resolution;
-- overdraw;
-- dynamic lights;
-- translucent materials;
-- Niagara scalability.
+Карта должна выглядеть как часть книги.
 
-Особенно следи за производительностью.
+Не использовать обычную современную GPS-карту.
 
-Мой проект должен работать на относительно слабом ПК.
+Использовать:
 
-Не делай VFX максимально тяжёлыми только ради красоты.
+- parchment;
+- hand-drawn-like landmarks;
+- dungeon locations;
+- discovered locations;
+- player position;
+- quest markers.
 
-Если эффект слишком дорогой:
+Но карта должна оставаться удобной для навигации.
 
-создай отдельный LOW вариант:
+13. JOURNAL / LORE
 
-NS_Название_Low
+Создать страницу журнала.
 
-с уменьшенным:
+Предусмотреть:
 
-- Spawn Rate
-- Particle Count
-- Lifetime
-- Resolution
-- Overdraw
-- Dynamic Lighting
+- NPC;
+- locations;
+- creatures;
+- lore;
+- discovered information.
 
-========================================
-ЭТАП 11 — ПРОВЕРКА UE 5.8
+Информация открывается постепенно по мере прохождения игры.
 
-Все перенесённые ресурсы должны корректно работать в Unreal Engine 5.8.
+14. NOTIFICATIONS
 
-Если старый Niagara API или Material feature больше не поддерживается:
+Создать единый notification system.
 
-- не ломай оригинал;
-- создай UE5.8-compatible копию;
-- исправь deprecated nodes/modules;
-- проверь warnings/errors.
+Использовать для:
 
-========================================
-ЭТАП 12 — НЕ ТРОГАТЬ ОСНОВНУЮ ИГРУ
+- New Item;
+- New Quest;
+- Quest Completed;
+- New Ability;
+- Level Up;
+- Location Discovered;
+- New Lore;
+- Achievement.
 
-Критически важно:
+Не использовать огромные popups.
 
-НЕ менять:
+Все уведомления должны соответствовать общей стилистике.
 
-Character Blueprint
-Combat System
-AI
+15. BOSS UI
+
+Создать отдельный boss health bar.
+
+При появлении босса:
+
+- плавно появляется;
+- имя босса;
+- HP;
+- phase indicators при необходимости.
+
+Во время смерти босса:
+
+- красивое завершение;
+- reward notification.
+
+Не копировать Dark Souls/Elden Ring один в один.
+
+16. NPC DIALOGUE
+
+Создать UI для диалогов.
+
+Визуально:
+
+- portrait NPC;
+- имя;
+- dialogue text;
+- response options.
+
+Поддержать несколько вариантов ответа.
+
+Интерфейс должен сочетаться с книгой и основным HUD.
+
+17. PAUSE MENU
+
+Создать pause menu:
+
+Resume
 Inventory
-UI
-Save System
-GameMode
-PlayerController
-Camera
-Animation Blueprint
-Input System
-World
-Level Design
+Character
+Equipment
+Map
+Quests
+Settings
+Exit
 
-если это не требуется непосредственно для тестовой VFX Arena.
+Использовать тот же визуальный язык.
 
-========================================
-ЭТАП 13 — ФИНАЛЬНАЯ ПРОВЕРКА
+18. SETTINGS
 
-После всех операций:
+Создать полноценный settings UI:
 
-1. Compile Blueprints.
-2. Проверить Materials.
-3. Проверить Niagara Systems.
-4. Проверить Niagara Emitters.
-5. Проверить отсутствующие references.
-6. Проверить Redirectors.
-7. Проверить Asset Registry.
-8. Проверить Output Log.
-9. Проверить ошибки загрузки.
-10. Проверить предупреждения.
-11. Проверить VFX Test Arena.
-12. Проверить FPS/производительность.
-13. Проверить, что основной игровой проект запускается.
+Graphics
+Audio
+Controls
+Gameplay
+Accessibility
+Language
 
-Если что-то сломалось — исправь.
+Использовать существующие UE systems/plugin systems, если они уже есть.
 
-Если исправить безопасно невозможно — откати только свои изменения.
+19. UI ANIMATIONS
 
-========================================
-ФИНАЛЬНЫЙ ОТЧЁТ
+Добавить аккуратные анимации:
 
-В конце выведи:
+- Fade In;
+- Fade Out;
+- Slide;
+- Scale;
+- Page Turn;
+- Hover;
+- Selection;
+- Damage;
+- Heal;
+- Item Pickup;
+- Notification;
+- Menu Open;
+- Menu Close.
 
-IMPORTED
+Анимации должны быть быстрыми и дорогими на вид, но дешёвыми по производительности.
 
-Список реально перенесённых ресурсов.
+20. RESPONSIVE UI
 
-LICENSE REVIEW
+UI должен корректно работать минимум на:
 
-Ресурсы, которые нельзя использовать без дополнительной проверки лицензии.
+16:9
+16:10
+21:9
 
-VFX CATEGORIES
+Не привязывать важные элементы к конкретному разрешению.
 
-Сколько найдено:
+Использовать anchors, safe zones и правильную масштабируемость UMG.
 
-Sword
-Impact
-Blood
-Magic
-Fire
-Lightning
-Soul
-Death
-Dodge
-Parry
-Dash
-Environment
-etc.
+21. GAMEPAD + KEYBOARD/MOUSE
 
-PERFORMANCE
+UI должен поддерживать:
 
-Какие эффекты тяжёлые.
+- Keyboard + Mouse;
+- Gamepad.
 
-LOW QUALITY VARIANTS
+Добавить navigation focus.
 
-Какие LOW версии созданы.
+Не допускать ситуаций, когда UI работает мышью, но невозможно нормально управлять им геймпадом.
 
-ERRORS
+22. PERFORMANCE
 
-Какие ошибки обнаружены и исправлены.
+UI должен быть оптимизирован.
 
-MISSING
+Не создавать десятки постоянно работающих Tick.
 
-Каких VFX не хватает.
+Не делать тяжёлые Binding каждый кадр без необходимости.
 
-RECOMMENDATIONS
+Использовать event-driven updates.
 
-Какие VFX стоит сделать отдельно специально под мою игру.
+Не создавать ненужные Widget instances.
 
-ВАЖНО:
+При закрытом меню:
 
-Не останавливайся после первого репозитория.
-Обработай ВСЕ указанные репозитории.
+- отключать ненужные обновления;
+- не держать тяжёлые элементы активными.
 
-Не просто скопируй файлы.
-Сначала проанализируй зависимости, лицензии и совместимость.
+23. DESIGN SYSTEM
 
-Главная задача — получить в моём UE5.8 проекте организованную библиотеку бесплатных VFX для Soulslike-игры, которую можно безопасно использовать и постепенно подключать к Combat System.
+Создай единую систему:
+
+UI Colors
+UI Fonts
+UI Borders
+UI Backgrounds
+UI Panels
+UI Buttons
+UI Cards
+UI Tooltips
+UI Icons
+UI Notifications
+UI Animations
+
+Все Widget Blueprint должны использовать эти базовые элементы.
+
+Если возможно, создать reusable базовые widgets:
+
+WBP_UI_Base
+WBP_UI_Button
+WBP_UI_Panel
+WBP_UI_ItemCard
+WBP_UI_Tooltip
+WBP_UI_Notification
+WBP_UI_Icon
+WBP_UI_Tab
+WBP_UI_ProgressBar
+
+24. ИСПОЛЬЗОВАНИЕ МОИХ ПЛАГИНОВ
+
+ОБЯЗАТЕЛЬНО сначала найди все установленные plugins.
+
+Для каждого потенциально полезного UI plugin:
+
+1. Определи, что он умеет.
+2. Проверь, используется ли он уже.
+3. Определи, какую часть HUD/UI можно построить на его основе.
+4. Не дублируй его функциональность.
+5. Если plugin уже предоставляет готовый компонент — адаптируй его визуально под мой стиль.
+
+25. РАБОТА ПО ЭТАПАМ
+
+Не пытайся хаотично менять всё сразу.
+
+Сначала:
+
+PHASE 1
+Анализ проекта и plugins.
+
+PHASE 2
+Создание UI Design System.
+
+PHASE 3
+Основной HUD.
+
+PHASE 4
+Quick Slots + Interaction + Navigation.
+
+PHASE 5
+Book UI.
+
+PHASE 6
+Inventory / Equipment / Character.
+
+PHASE 7
+Map / Quests / Journal.
+
+PHASE 8
+Dialogue / Notifications / Boss UI.
+
+PHASE 9
+Settings / Pause.
+
+PHASE 10
+Animations + Gamepad + Responsive layout.
+
+PHASE 11
+Optimization.
+
+PHASE 12
+Полная проверка проекта.
+
+26. ГЛАВНОЕ ТРЕБОВАНИЕ
+
+Мне нужен не просто функциональный UI.
+
+Мне нужен UI, который визуально создаёт ощущение полноценной premium action RPG.
+
+Игрок должен открыть меню и чувствовать, что это часть игрового мира.
+
+Не используй generic Unreal Engine UI.
+
+Не используй стандартные квадратные кнопки UE.
+
+Не используй обычные мобильные панели.
+
+Не перегружай интерфейс.
+
+Сначала изучи существующий проект и плагины, затем реализуй систему.
+
+После каждого крупного этапа проверяй Blueprint compile errors, broken references, missing assets и проблемы с Widget hierarchy.
+
+В конце сделай полный аудит UI и исправь все обнаруженные проблемы.
