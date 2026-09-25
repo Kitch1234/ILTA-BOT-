@@ -1,550 +1,1151 @@
-Ты работаешь непосредственно с моим Unreal Engine 5.8 проектом.
 
-Цель: интегрировать в текущий проект полезные системы и ресурсы из следующих GitHub-проектов:
+Ты работаешь как Senior Unreal Engine 5.8 Developer внутри моего существующего проекта.
 
-1. UnrealAssets
-   https://github.com/nikrich/unreal-assets
+ЗАДАЧА:
+Изучи и аккуратно интегрируй SimpleQuest:
 
-2. ALSXT
-   https://github.com/Voidware-Prohibited/ALSXT
+https://github.com/TheGeebus/SimpleQuest
 
-3. Free Mocap Library
-   https://github.com/mocapflow/Free-Mocap-Library-FBX-GLB
+в мой текущий Unreal Engine 5.8 проект.
 
-4. UE5 VFX Cookbook
-   https://github.com/PacktPublishing/Unreal-Engine-5-VFX-Cookbook
+SimpleQuest должен стать ОСНОВНОЙ системой для:
 
-5. UE5ActionRPG
-   https://github.com/ilchul1/UE5ActionRPG
+- квестов;
+- заданий;
+- сюжетных цепочек;
+- ветвления;
+- условий;
+- мировых событий;
+- наград;
+- progression;
+- многоэтапных заданий;
+- NPC quest giver;
+- взаимодействий, связанных с квестами;
+- изменения состояния мира.
 
-6. Makhia
-   https://github.com/ruy41321/makhia
+==================================================
 
-7. Kura
-   https://github.com/Yashashin/Kura
+1. СНАЧАЛА ПОЛНЫЙ АУДИТ
+   ==================================================
 
-ВАЖНО:
-НЕ копируй вслепую все файлы из репозиториев.
-НЕ ломай существующий проект.
-НЕ удаляй мои существующие системы.
-НЕ заменяй существующую боевую систему, AI, персонажей или UI без необходимости.
-НЕ добавляй ненужные зависимости.
-НЕ используй ModKit.
-НЕ создавай дубликаты уже существующих систем.
+НЕ устанавливай и НЕ изменяй ничего сразу.
 
-========================================
-ЭТАП 1 — ПОЛНЫЙ АУДИТ ПРОЕКТА
-
-Сначала просканируй весь Unreal Engine проект.
-
-Определи:
-
-- версию UE;
-- используемые Plugins;
-- Content;
-- Source;
-- Config;
-- Blueprints;
-- C++;
-- Character;
-- Animation;
-- AI;
-- Combat;
-- GAS;
-- UI;
-- Niagara;
-- Materials;
-- Audio;
-- Multiplayer;
-- Save System;
-- Input;
-- Enhanced Input;
-- существующие сторонние ассеты.
-
-Создай внутреннюю карту архитектуры проекта.
-
-Перед изменениями найди уже существующие аналогичные системы.
-
-Если система уже реализована и работает — НЕ заменяй её только ради использования GitHub-проекта.
-
-========================================
-ЭТАП 2 — ПРОВЕРКА GITHUB
-
-Для каждого репозитория:
-
-1. Проверь актуальную версию.
-2. Проверь поддерживаемую версию Unreal Engine.
-3. Проверь зависимости.
-4. Проверь License.
-5. Определи, что разрешено использовать в коммерческой игре.
-6. Отдельно проверь ограничения на:
-   - код;
-   - 3D-модели;
-   - текстуры;
-   - анимации;
-   - звуки;
-   - VFX;
-   - сторонние ассеты.
-7. Не копируй ресурс, если его лицензия не позволяет использовать его в коммерческом проекте.
-8. Если лицензия неизвестна — пометь ресурс как NEEDS_LICENSE_REVIEW и не включай его автоматически.
-9. Не считай GitHub автоматически источником свободных коммерческих ассетов.
-
-========================================
-ЭТАП 3 — ЧТО ИЗ КАЖДОГО ПРОЕКТА БРАТЬ
-
-UNREALASSETS
-
-Используй репозиторий прежде всего как каталог/источник ссылок.
-
-Не скачивай автоматически каждый найденный asset.
-
-Найди подходящие для моей игры:
-
-- dark fantasy;
-- medieval;
-- ruins;
-- architecture;
-- environment;
-- rocks;
-- props;
-- foliage;
-- weapons;
-- characters;
-- VFX.
-
-Отсекай:
-
-- low-poly;
-- cartoon;
-- mobile-only;
-- явно стилизованные ассеты;
-- hand-painted стиль, если он не подходит моему проекту;
-- ассеты с неизвестной лицензией.
-
-Составь список подходящих ресурсов и только после проверки лицензии интегрируй разрешённые.
-
-========================================
-ALSXT
-
-Изучи ALSXT.
-
-Определи, какие части можно использовать в моём проекте:
-
-- locomotion;
-- animation;
-- character movement;
-- networking;
-- GAS;
-- interaction;
-- camera;
-- animation systems.
-
-Не заменяй мой существующий Character Controller без проверки.
-
-Если ALSXT содержит более качественную систему для конкретной задачи — интегрируй её модульно.
-
-Особое внимание:
-
-- совместимость с моим персонажем;
-- существующие Animation Blueprint;
-- Enhanced Input;
-- multiplayer;
-- replication;
-- stamina;
-- combat.
-
-Если перенос целиком создаёт конфликт архитектуры — используй только отдельные полезные части.
-
-========================================
-FREE MOCAP LIBRARY
-
-Импортируй только подходящие анимации.
-
-Сначала классифицируй:
-
-- locomotion;
-- idle;
-- walk;
-- run;
-- sprint;
-- dodge;
-- roll;
-- jump;
-- fall;
-- attack;
-- hit;
-- stagger;
-- death;
-- interaction;
-- weapon animations.
+Сначала изучи весь проект.
 
 Проверь:
 
-- skeleton;
-- root motion;
-- orientation;
-- scale;
-- frame rate;
-- compatibility с моим персонажем.
-
-Не создавай дубликаты.
-
-Если анимацию необходимо ретаргетировать — настрой UE 5.8 IK Rig / IK Retargeter.
-
-Сделай отдельную структуру:
-
-Content/Animations/GitHub/Mocap/
-
-Не ломай существующие animation assets.
-
-========================================
-UE5 VFX COOKBOOK
-
-Проанализируй Niagara/VFX системы.
-
-Выбери эффекты, подходящие для Soulslike:
-
-- sword trails;
-- hit effects;
-- sparks;
-- impact;
-- magic;
-- fire;
-- lightning;
-- smoke;
-- dust;
-- blood-like impact;
-- environmental effects;
-- teleport;
-- death;
-- buffs/debuffs.
-
-Не переносить весь проект целиком.
-
-Переноси только необходимые:
-
-- Niagara Systems;
-- Niagara Emitters;
-- Materials;
-- Textures;
-- Meshes;
+- .uproject;
+- Engine Version;
+- Plugins;
+- Source;
+- Content;
 - Blueprints;
-- dependencies.
+- GameMode;
+- GameInstance;
+- PlayerController;
+- Character;
+- NPC;
+- AI;
+- Inventory;
+- SaveGame;
+- Dialogue;
+- Interaction;
+- Gameplay Tags;
+- GAS, если используется;
+- существующие Quest системы;
+- существующие World State системы;
+- существующие Event системы;
+- Multiplayer/Replication;
+- UI/HUD.
 
-Исправь пути зависимостей после переноса.
+Найди уже существующие:
 
-Проверь производительность.
+- Quest;
+- Objective;
+- Dialogue;
+- Interaction;
+- Reward;
+- Progression;
+- Save/Load;
+- World State.
 
-Особенно следи за:
+НЕ удаляй существующие системы автоматически.
 
-- overdraw;
-- particle count;
-- GPU cost;
-- material complexity;
-- transparency.
+Сначала определи, что можно заменить SimpleQuest, а что необходимо оставить.
 
-========================================
-UE5 ACTION RPG
+==================================================
+2. ИЗУЧИ SIMPLEQUEST
 
-Очень внимательно изучи архитектуру.
-
-Найди полезные системы:
-
-- Gameplay Ability System;
-- abilities;
-- attributes;
-- gameplay effects;
-- gameplay tags;
-- combat;
-- StateTree;
-- Motion Matching;
-- data-driven architecture;
-- character systems.
-
-НЕ копируй проект целиком.
-
-Сначала сравни его архитектуру с моей.
-
-Используй только те компоненты, которые реально улучшают мой проект.
-
-Моя игра:
-
-- Soulslike;
-- PvE;
-- до 4 игроков;
-- melee;
-- magic;
-- ranged;
-- stamina;
-- mana;
-- dodge;
-- hit reactions;
-- stagger;
-- bosses;
-- enemies.
-
-Сохрани существующие системы, если они уже работают.
-
-========================================
-MAKHIA
-
-Проанализируй combat architecture.
+Изучи исходный код SimpleQuest и SimpleCore.
 
 Особенно:
 
-- GAS;
-- combat;
-- abilities;
-- attacks;
-- hit detection;
-- damage;
-- status effects;
-- multiplayer;
-- EOS/P2P;
-- character systems.
+- Questline Graph;
+- Quest;
+- Step;
+- Objective;
+- Named Outcomes;
+- Prerequisites;
+- AND / OR / NOT;
+- Prerequisite Rules;
+- Rewards;
+- Reward Sets;
+- Quest Giver;
+- Quest Trigger;
+- Quest Observer;
+- World State;
+- Signal/Event Bus;
+- Quest Manager;
+- Save/Load;
+- Gameplay Tags;
+- Linked Questlines;
+- Activation Groups;
+- Advancement Holds.
 
-Не переносить EOS/P2P автоматически.
+Не ограничивайся README.
 
-Сначала проверь мою текущую multiplayer архитектуру.
+Посмотри реальную архитектуру plugin.
 
-Если какие-либо combat-системы можно использовать независимо — интегрируй их отдельно.
+==================================================
+3. ЛИЦЕНЗИЯ
 
-========================================
-KURA
+Проверь LICENSE репозитория.
 
-Если Kura совместим с UE 5.8, установи/настрой его только если это не создаёт конфликтов.
+SimpleQuest заявляет MIT.
 
-Используй его для организации моей библиотеки ассетов.
+Убедись, что конкретные файлы и demo content не имеют отдельных ограничений.
 
-Цель:
+Не переносить сторонние assets или demo content в коммерческую игру без проверки лицензии.
 
-Content/AssetLibrary/
+==================================================
+4. ИНТЕГРАЦИЯ
 
-и категории:
+Если всё совместимо:
 
-Environment
-Architecture
-Ruins
-Rocks
-Foliage
-Props
-Characters
-Weapons
-Armor
-Animations
-VFX
-Materials
-Audio
-UI
+установи:
 
-Не переносить в проект ненужные ассеты только ради каталогизации.
+SimpleCore
+SimpleQuest
 
-========================================
-ЭТАП 4 — СОЗДАНИЕ ЕДИНОЙ АРХИТЕКТУРЫ
+в:
 
-После анализа не оставляй проект в состоянии:
+/Plugins/
 
-"10 разных систем делают одно и то же".
+Не дублируй уже существующие плагины.
 
-Для каждой функции выбери одну основную систему.
+После установки:
+
+- Generate project files;
+- Compile Development Editor;
+- запусти UE;
+- проверь Plugins;
+- исправь compile errors;
+- исправь Blueprint errors;
+- проверь Editor startup.
+
+НЕ изменяй существующие игровые системы без необходимости.
+
+==================================================
+5. АРХИТЕКТУРА КВЕСТОВ МОЕЙ ИГРЫ
+
+Создай архитектуру, подходящую для Soulslike.
+
+Примеры:
+
+Quest:
+"Заброшенный храм"
+
+Stage 1:
+Найти вход.
+
+Stage 2:
+Открыть запечатанную дверь.
+
+Stage 3:
+Найти три символа.
+
+Stage 4:
+Активировать механизм.
+
+Stage 5:
+Победить Guardian.
+
+Stage 6:
+Вернуться к NPC.
+
+Stage 7:
+Получить награду.
+
+Но система должна поддерживать ветвление.
 
 Например:
 
-Movement
-→ одна основная locomotion system
+Игрок помог NPC
+→ Outcome: Helped
 
-Combat
-→ одна основная combat architecture
+Игрок отказался
+→ Outcome: Refused
 
-Abilities
-→ GAS, если он выбран основной системой
+Игрок убил NPC
+→ Outcome: Killed
 
-AI
-→ существующая AI архитектура + StateTree/BT там, где это действительно нужно
+Каждый outcome может вести в другую ветку.
 
-VFX
-→ Niagara
+==================================================
+6. WORLD STATE
 
-Animation
-→ UE5 Animation System + IK Rig/Retargeter
+Используй World State для событий мира.
 
-Input
-→ Enhanced Input
+Например:
 
-Multiplayer
-→ UE replication
+WorldState:
+Temple.PowerRestored
 
-Asset management
-→ Kura/обычная структура проекта
+после активации:
 
-========================================
-ЭТАП 5 — СОULSLIKE НАСТРОЙКА
+- открывается дверь;
+- включается свет;
+- появляется NPC;
+- меняется диалог;
+- открывается shortcut;
+- появляется новый enemy;
+- становится доступен новый quest.
 
-Все интегрированные системы должны соответствовать моей игре.
+НЕ связывай каждый объект напрямую с каждым квестом.
 
-Стиль:
+Используй event-driven архитектуру.
 
-Dark Souls / Elden Ring / Soulframe.
+==================================================
+7. СОЕДИНЕНИЕ С COMBAT
 
-НЕ делать:
+Combat НЕ должен напрямую зависеть от SimpleQuest.
 
-- horror;
-- ultra-realistic;
-- cartoon;
-- low-poly;
-- mobile-game style;
-- hand-painted look.
+Например:
 
-Нужен:
+Enemy defeated
 
-- dark fantasy;
-- adventure;
-- качественный medieval environment;
-- атмосферное освещение;
-- выразительные VFX;
-- тяжёлый melee combat;
-- красивые animation transitions.
+должен отправлять gameplay event.
 
-========================================
-ЭТАП 6 — PERFORMANCE
+SimpleQuest самостоятельно решает:
 
-Проект должен работать на относительно слабом ПК.
+"является ли это целью текущего квеста?"
 
-Проверь:
+То же самое для:
 
-- Nanite;
-- Lumen;
-- Virtual Shadow Maps;
-- texture memory;
-- shader complexity;
-- Niagara;
-- skeletal mesh cost;
-- animation cost;
-- AI tick;
-- CPU;
-- GPU;
-- draw calls;
+- boss defeated;
+- item picked;
+- NPC talked;
+- location reached;
+- door opened;
+- lever activated;
+- interaction completed.
+
+НЕ создавай жёсткие ссылки:
+
+Enemy → конкретный Quest.
+
+==================================================
+8. СОЕДИНЕНИЕ С INTERACTION SYSTEM
+
+Если в проекте уже есть Interaction System:
+
+Interaction
+↓
+Gameplay Event
+↓
+SimpleCore Event Bus
+↓
+Quest Objective
+↓
+Quest Progress
+
+Квест не должен напрямую управлять каждым интерактивным Actor.
+
+==================================================
+9. DIALOGUE
+
+Подготовь архитектуру:
+
+NPC
+↓
+Dialogue
+↓
+Quest Event
+↓
+Quest Outcome
+
+Например:
+
+NPC говорит:
+
+"Помоги мне найти реликвию."
+
+Игрок принимает.
+
+Quest → Started.
+
+Игрок приносит реликвию.
+
+Quest → Completed.
+
+Reward → Granted.
+
+После этого NPC получает новое состояние Dialogue.
+
+==================================================
+10. НАГРАДЫ
+
+Подготовь интеграцию с существующей системой игрока.
+
+Награды могут быть:
+
+- XP;
+- Gold;
+- предметы;
+- оружие;
+- расходники;
+- косметика;
+- новые способности;
+- новые области;
+- unlock;
+- reputation;
+- progression.
+
+НЕ создавай вторую Inventory систему, если Inventory уже существует.
+
+SimpleQuest должен сообщать:
+
+"Reward Granted"
+
+а существующая Inventory/Progression система должна выполнить выдачу.
+
+==================================================
+11. SAVE / LOAD
+
+Интегрируй состояние SimpleQuest с существующей SaveGame системой.
+
+Сохранять:
+
+- active quests;
+- completed quests;
+- current objectives;
+- outcomes;
+- world state;
+- rewards state;
+- quest branches.
+
+После загрузки:
+
+состояние должно восстанавливаться без повторного прохождения уже выполненных действий.
+
+Особенно проверь:
+
+- Level transition;
+- level streaming;
+- динамически созданные Actors;
+- повторный вход в локацию.
+
+==================================================
+12. MULTIPLAYER 1–4 PLAYERS
+
+Моя игра рассчитана на PvE co-op до 4 игроков.
+
+ВАЖНО:
+
+Не притворяйся, что SimpleQuest уже имеет полноценную server-authoritative multiplayer quest replication.
+
+Проверь реальные возможности текущей версии.
+
+Сделай архитектуру так, чтобы в будущем можно было добавить:
+
+Server
+↓
+Quest State
+↓
+Clients
+
+При этом:
+
+- не дублируй quest state на каждом клиенте;
+- не создавай race conditions;
+- не завязывай критический progression на локальный клиент;
+- не ломай single-player.
+
+Если полноценная replication SimpleQuest невозможна сейчас:
+
+создай чистый abstraction layer для будущей реализации.
+
+==================================================
+13. СОЗДАЙ ТЕСТОВУЮ СЦЕНУ
+
+Создай:
+
+/Game/Tests/SimpleQuest/
+
+и тестовую карту:
+
+L_SimpleQuestTest
+
+Сделай небольшой тест:
+
+NPC
+↓
+Quest Giver
+↓
+Objective: поговорить с NPC
+↓
+Objective: найти предмет
+↓
+Objective: открыть дверь
+↓
+Objective: победить enemy
+↓
+Boss
+↓
+Reward
+↓
+Quest Complete
+
+Добавь минимум одну ветку:
+
+Helped
+vs
+Refused
+
+И World State изменение после завершения.
+
+==================================================
+14. UI
+
+Не создавай полностью новый HUD.
+
+Используй существующий UI.
+
+Подготовь интеграцию для:
+
+- Quest notification;
+- Quest objective;
+- Quest journal;
+- Quest completed;
+- reward notification;
+- objective update.
+
+Если UI уже существует:
+
+не заменяй его.
+
+==================================================
+15. PERFORMANCE
+
+Не использовать Tick для постоянного отслеживания квестов.
+
+Использовать:
+
+- events;
+- Gameplay Tags;
+- delegates;
+- subsystems;
+- event bus.
+
+Квестовая система должна работать event-driven.
+
+==================================================
+16. ФИНАЛЬНАЯ ПРОВЕРКА
+
+После интеграции:
+
+1. Compile.
+2. Launch Editor.
+3. Открыть тестовую карту.
+4. Запустить Quest.
+5. Проверить Objective.
+6. Проверить Branch.
+7. Проверить World State.
+8. Проверить Reward.
+9. Проверить Save.
+10. Перезагрузить Save.
+11. Проверить Level Transition.
+12. Проверить отсутствие Blueprint warnings.
+13. Проверить отсутствие Tick-heavy logic.
+14. Проверить Multiplayer architecture.
+
+В конце выведи отчёт:
+
+[INSTALLED]
+Что установлено.
+
+[INTEGRATED]
+С чем интегрировано.
+
+[CREATED]
+Какие Blueprint/Class/Data Assets созданы.
+
+[MODIFIED]
+Какие существующие системы изменены.
+
+[NOT TOUCHED]
+Что специально не изменялось.
+
+[LICENSE]
+Какие лицензии проверены.
+
+[MULTIPLAYER]
+Что реально поддерживается сейчас.
+
+[TODO]
+Что осталось для полноценного 1–4 player co-op.
+
+[ERRORS]
+Какие проблемы обнаружены.
+
+[PERFORMANCE]
+Что сделано для оптимизации.
+
+Главное правило:
+
+НЕ ломай существующий проект ради SimpleQuest.
+Сначала анализ → затем интеграция → затем тест → только потом расширение.
+
+Ты работаешь как Senior Unreal Engine 5.8 Developer внутри моего существующего проекта.
+
+ЗАДАЧА:
+
+Изучи и интегрируй InteractionSystem:
+
+https://github.com/eyupalemdar/InteractionSystem
+
+в мой существующий Unreal Engine 5.8 проект.
+
+ЦЕЛЬ:
+
+Создать единую масштабируемую систему взаимодействия игрока с миром для Soulslike игры.
+
+Она должна использоваться для:
+
+- NPC;
+- дверей;
+- сундуков;
+- рычагов;
+- предметов;
+- костров;
+- алтарей;
+- лестниц;
+- механизмов;
+- квестовых объектов;
+- лута;
+- checkpoints;
+- секретных объектов;
+- mount/dismount;
+- любых интерактивных объектов.
+
+==================================================
+
+1. ПОЛНЫЙ АУДИТ ПРОЕКТА
+   ==================================================
+
+НЕ устанавливай plugin сразу.
+
+Сначала проанализируй:
+
+- .uproject;
+- Engine Version;
+- Plugins;
+- Source;
+- Content;
+- Player Character;
+- PlayerController;
+- NPC;
+- AI;
+- Interaction;
+- Dialogue;
+- Quest;
+- Inventory;
+- UI;
+- Input;
+- Multiplayer;
+- Replication;
+- SaveGame.
+
+Найди существующую систему:
+
+- Interact;
+- Use;
+- Pickup;
+- Open;
+- Talk;
+- Activate;
+- Loot;
+- Door;
+- Lever.
+
+Если такие системы существуют:
+
+НЕ создавай дубликаты.
+
+Определи, какие можно заменить или адаптировать.
+
+==================================================
+2. ИЗУЧИ REPOSITORY
+
+Изучи реальный исходный код:
+
+https://github.com/eyupalemdar/InteractionSystem
+
+Особенно:
+
+- InteractorComponent;
+- InteractableComponent;
+- Interfaces;
+- interaction rules;
+- instant interaction;
+- hold interaction;
+- replication;
+- network flow;
+- Blueprint API;
+- example project.
+
+Не ограничивайся README.
+
+Пойми, как система реально работает.
+
+==================================================
+3. ЛИЦЕНЗИЯ
+
+Проверь LICENSE.
+
+Репозиторий заявляет MIT.
+
+Проверь, нет ли стороннего content/demo assets с отдельными условиями.
+
+==================================================
+4. ИНТЕГРАЦИЯ
+
+Интегрируй plugin в:
+
+/Plugins/InteractionSystem/
+
+После этого:
+
+- Compile Development Editor;
+- запусти UE;
+- включи plugin;
+- проверь Blueprint nodes;
+- проверь interfaces;
+- исправь compatibility issues UE 5.8.
+
+НЕ меняй архитектуру plugin без необходимости.
+
+Если необходимы UE 5.8 fixes:
+
+сделай минимальные изменения и документируй их.
+
+==================================================
+5. БАЗОВАЯ АРХИТЕКТУРА
+
+Игрок:
+
+Character
+└── InteractorComponent
+
+Интерактивный объект:
+
+Actor
+└── InteractableComponent
+
+Взаимодействие:
+
+Player
+↓
+InteractorComponent
+↓
+Find Interactable
+↓
+Interaction Rule
+↓
+Server validation
+↓
+Interaction
+↓
+Gameplay Event
+
+Сделай эту архитектуру основной системой interaction.
+
+==================================================
+6. ТИПЫ INTERACTION
+
+Поддержать:
+
+INSTANT:
+
+E → открыть дверь.
+
+HOLD:
+
+удерживать E → открыть тяжёлую дверь.
+
+RULE BASED:
+
+E → проверить условия.
+
+Например:
+
+HasKey == true
+
+или:
+
+QuestCompleted == true
+
+или:
+
+PlayerLevel >= X
+
+или:
+
+BossDefeated == true
+
+или:
+
+WorldState == true.
+
+==================================================
+7. SOULSLIKE OBJECTS
+
+Создай примеры:
+
+BP_InteractableDoor
+
+BP_InteractableChest
+
+BP_InteractableLever
+
+BP_InteractableNPC
+
+BP_InteractableBonfire
+
+BP_InteractablePickup
+
+BP_InteractableAltar
+
+BP_InteractableSecret
+
+Но НЕ дублируй существующие Blueprint.
+
+Если аналог уже есть:
+
+адаптируй его.
+
+==================================================
+8. DOOR SYSTEM
+
+Дверь должна поддерживать:
+
+- open;
+- close;
+- locked;
+- unlock;
+- key requirement;
+- quest requirement;
+- animation;
+- sound;
+- VFX;
 - multiplayer replication.
 
-Не включай тяжёлые функции просто потому, что они доступны.
+Пример:
 
-Для каждого нового плагина оцени:
+Player → E
 
-CPU cost
-GPU cost
-Memory cost
-Network cost
+↓
 
-========================================
-ЭТАП 7 — MULTIPLAYER
+Server
 
-Моя игра рассчитана максимум на 4 игроков PvE.
+↓
 
-Все новые системы должны учитывать:
+CanInteract?
 
-- server authority;
-- replication;
-- replicated variables;
-- RPC;
-- relevancy;
-- prediction, где необходимо;
-- multiplayer-safe abilities;
-- multiplayer-safe VFX.
+↓
 
-Не делать PvP.
+HasKey?
 
-========================================
-ЭТАП 8 — ИНТЕГРАЦИЯ
+↓
 
-Работай по принципу:
+Unlock
 
-ANALYZE
-→ BACKUP
-→ INTEGRATE
-→ COMPILE
-→ TEST
-→ FIX
-→ OPTIMIZE
+↓
 
-После каждого крупного изменения:
+Play Door Animation
 
-1. Compile C++.
-2. Compile Blueprints.
-3. Проверить ошибки.
-4. Запустить Editor.
-5. Проверить PIE.
-6. Проверить multiplayer PIE.
-7. Проверить персонажа.
-8. Проверить combat.
-9. Проверить AI.
-10. Проверить VFX.
-11. Проверить animation.
+↓
 
-========================================
-ЭТАП 9 — НЕ УДАЛЯТЬ
+Replicate State
 
-Перед изменением любого существующего файла:
+Все игроки должны видеть одинаковое состояние двери.
 
-создай backup или используй Git commit.
+==================================================
+9. CHESTS
 
-Никогда не удаляй:
+Сундук:
 
-- существующие персонажи;
-- существующие карты;
-- существующие Blueprints;
-- существующие animations;
-- существующий combat;
-- существующий AI;
-- существующий UI;
-- существующие plugins;
+Closed
+↓
+Interact
+↓
+Server validation
+↓
+Open
+↓
+Give Loot
+↓
+Mark Opened
+↓
+Replicate
 
-без подтверждения необходимости.
+Не допускать:
 
-========================================
-ЭТАП 10 — ФИНАЛЬНЫЙ ОТЧЁТ
+двойной выдачи предметов из-за multiplayer race condition.
 
-После завершения покажи:
+Состояние:
 
-1. Какие GitHub проекты подключены.
-2. Какие конкретно файлы/системы были перенесены.
-3. Какие ассеты НЕ были перенесены.
-4. Причина отказа для каждого.
-5. Какие лицензии проверены.
-6. Какие плагины добавлены.
-7. Какие конфликты обнаружены.
-8. Какие конфликты исправлены.
-9. Что осталось сделать вручную.
-10. Какие системы теперь используются для:
+Opened = true
 
-Combat
-Movement
-Animation
-AI
-VFX
-UI
-Multiplayer
-Save
-Input
-Asset Management
+должно сохраняться.
 
-11. Покажи все ошибки компиляции/Warnings, которые остались.
-12. Проведи финальную проверку проекта целиком.
+==================================================
+10. LEVERS / SWITCHES
 
-КРИТИЧЕСКОЕ ПРАВИЛО:
+Рычаг должен уметь:
 
-Не считай задачу выполненной просто потому, что файлы скопированы.
+- activate;
+- deactivate;
+- toggle;
+- trigger event;
+- change World State;
+- открыть дверь;
+- активировать механизм;
+- запускать Quest Objective.
 
-Задача считается выполненной только после того, как проект UE 5.8:
+Например:
 
-- открывается;
-- компилируется;
-- запускается;
-- персонаж работает;
-- combat работает;
-- AI работает;
-- VFX работают;
-- анимации работают;
-- multiplayer PIE запускается;
-- существующие системы не сломаны.
+Lever Activated
+↓
+Gameplay Event
+↓
+SimpleQuest Objective
+↓
+Quest Progress
 
-Если какой-либо GitHub-проект несовместим с UE 5.8 — НЕ ломай проект ради него. Зафиксируй проблему и переходи к следующему.
+НЕ делай прямую жёсткую связь:
+
+Lever → конкретный Quest.
+
+==================================================
+11. NPC
+
+NPC interaction:
+
+Player
+↓
+Interact
+↓
+NPC
+↓
+Dialogue
+↓
+Quest
+
+Подготовь возможность:
+
+- Talk;
+- Start Quest;
+- Continue Quest;
+- Turn in Quest;
+- Trade;
+- Inspect;
+- Special interaction.
+
+Interaction System отвечает за interaction.
+
+Dialogue/Quest система отвечает за содержание.
+
+==================================================
+12. INVENTORY
+
+Pickup должен работать через существующую Inventory систему.
+
+НЕ создавай новую Inventory.
+
+Пример:
+
+Interact
+↓
+Server
+↓
+Pickup Item
+↓
+Inventory.AddItem
+↓
+Destroy/Hide Item
+↓
+Replicate
+
+Если Inventory пока отсутствует:
+
+создай только interface/abstraction:
+
+IItemReceiver
+
+а не полноценную вторую Inventory систему.
+
+==================================================
+13. SIMPLEQUEST INTEGRATION
+
+В проекте также будет SimpleQuest.
+
+Архитектура:
+
+InteractionSystem
+↓
+Gameplay Event
+↓
+SimpleCore Event Bus
+↓
+SimpleQuest Objective
+
+Пример:
+
+Lever Activated
+→ "Interaction.Lever.Activated"
+
+SimpleQuest Objective слушает событие.
+
+Другой пример:
+
+Chest Opened
+→ "Interaction.Chest.Opened"
+
+Quest Objective получает событие.
+
+Таким образом:
+
+InteractionSystem НЕ должен знать конкретный Quest.
+
+SimpleQuest НЕ должен напрямую управлять InteractionSystem.
+
+==================================================
+14. UI
+
+Создай/адаптируй interaction prompt:
+
+[E] Interact
+
+Для Hold:
+
+[Hold E] Open
+
+Для locked:
+
+[E] Locked
+
+Для требования:
+
+[E] Requires Key
+
+UI должен быть подключаемым.
+
+НЕ делай Interaction UI жёстко связанным с конкретным HUD.
+
+==================================================
+15. TRACE / DETECTION
+
+Проверь, как plugin определяет interactable.
+
+Если используется:
+
+- trace;
+- overlap;
+- interface;
+
+сохрани архитектуру plugin, если она подходит.
+
+Для Soulslike:
+
+interaction должен быть:
+
+- быстрым;
+- предсказуемым;
+- не срабатывать через стены;
+- не выбирать объект за спиной;
+- иметь ограниченную дистанцию.
+
+Если необходимо, добавь:
+
+- max interaction distance;
+- view angle;
+- line of sight;
+- priority;
+- interaction category.
+
+==================================================
+16. MULTIPLAYER
+
+КРИТИЧЕСКИ ВАЖНО.
+
+Игра:
+
+1–4 игрока
+PvE
+Co-op.
+
+Interaction должен быть server-authoritative.
+
+Нельзя доверять клиенту:
+
+- выдачу loot;
+- открытие chest;
+- изменение door state;
+- quest-critical interaction;
+- activation mechanisms.
+
+Правильная схема:
+
+Client Input
+↓
+Server RPC / validated interaction
+↓
+Server checks condition
+↓
+Server changes state
+↓
+Replicate
+↓
+All Clients
+
+Проверь существующую replication архитектуру plugin.
+
+Не создавай вторую networking system без необходимости.
+
+==================================================
+17. SAVE SYSTEM
+
+Подготовь сохранение состояния важных интерактивных объектов:
+
+- Chest opened;
+- Door unlocked;
+- Lever activated;
+- Bonfire activated;
+- Quest object state;
+- Important world mechanisms.
+
+НЕ сохраняй каждый обычный Actor вручную.
+
+Используй ID/Gameplay Tags/Guid подход, если возможно.
+
+==================================================
+18. PERFORMANCE
+
+Мой PC не очень мощный.
+
+Поэтому:
+
+- никакого Tick на каждом interactable;
+- не создавать постоянные expensive traces;
+- минимизировать replication;
+- использовать event-driven logic;
+- не делать тысячи компонентов с тяжёлой логикой;
+- не создавать постоянные casts;
+- использовать interfaces/components.
+
+Interaction detection должна быть дешёвой.
+
+==================================================
+19. СОЗДАЙ ТЕСТОВУЮ КАРТУ
+
+Создай:
+
+/Game/Tests/InteractionSystem/
+
+L_InteractionSystemTest
+
+Размести:
+
+1. обычную дверь;
+2. locked дверь;
+3. дверь с ключом;
+4. сундук;
+5. рычаг;
+6. pickup;
+7. NPC;
+8. altar;
+9. hold interaction;
+10. rule-based interaction.
+
+Проверь каждый вариант.
+
+==================================================
+20. MULTIPLAYER TEST
+
+Запусти PIE:
+
+2 players
+4 players
+
+Проверить:
+
+- оба игрока видят дверь;
+- дверь открывается одинаково;
+- сундук не выдаёт loot дважды;
+- рычаг синхронизирован;
+- pickup не дублируется;
+- NPC interaction работает;
+- interaction prompt корректный;
+- quest event отправляется корректно.
+
+==================================================
+21. ФИНАЛЬНЫЙ ОТЧЁТ
+
+После работы выведи:
+
+[INSTALLED]
+Что установлено.
+
+[INTEGRATED]
+Какие существующие системы подключены.
+
+[CREATED]
+Какие Blueprint/Class/Components созданы.
+
+[MODIFIED]
+Какие существующие системы изменены.
+
+[INTERACTION TYPES]
+Какие типы interaction работают.
+
+[MULTIPLAYER]
+Что реально работает через replication.
+
+[SAVE]
+Что сохраняется.
+
+[SIMPLEQUEST]
+Какие события готовы передаваться в SimpleQuest.
+
+[LICENSE]
+Какая лицензия проверена.
+
+[PERFORMANCE]
+Какие оптимизации выполнены.
+
+[ERRORS]
+Какие проблемы обнаружены.
+
+[TODO]
+Что осталось сделать.
+
+Главное правило:
+
+НЕ ломай существующий проект.
+НЕ создавай вторую Inventory/Quest/Dialogue систему.
+НЕ делай client-authoritative gameplay.
+НЕ используй Tick без необходимости.
+
+Сначала:
+AUDIT → DESIGN → INTEGRATION → COMPILE → TEST → MULTIPLAYER TEST → REPORT.
