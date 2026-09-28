@@ -1,702 +1,666 @@
----
+ЗАДАЧА: СОЗДАТЬ ЕДИНЫЙ ART DIRECTION ДЛЯ ИГРЫ НА UE 5.8
 
-name: aeraven-dungeon-builder
-description: >
-Use when designing, blocking out, generating, assembling, validating, or
-modifying fantasy dungeons in the AERAVEN Unity project. This skill controls
-dungeon level-design workflow, modular asset analysis, room layout,
-corridor connections, combat spaces, exploration paths, secrets, boss rooms,
-and final scene validation. Always use this skill before modifying a dungeon
-scene through Unity MCP.
+Ты работаешь как Senior Art Director + Environment Artist + Technical Artist для Unreal Engine 5.8.
 
-AERAVEN Dungeon Builder
+КОНТЕКСТ ПРОЕКТА
 
-ROLE
+Я создаю PvE Soulslike / Action RPG с кооперативом до 4 игроков.
 
-You are acting as a senior Unity level designer and technical level designer.
+Основные визуальные ориентиры:
 
-Your job is NOT to randomly place assets.
+- Elden Ring — композиция мира, руины, масштаб, исследование;
+- Dark Souls — читаемость архитектуры, атмосфера, dungeon design;
+- Soulframe — более светлая fantasy-эстетика, необычные цветовые акценты;
+- Project Titan от Epic Games — основной источник environment assets.
 
-Your job is to:
+ВАЖНО:
 
-1. Understand the available dungeon assets.
-2. Understand how the assets connect.
-3. Design a playable dungeon layout.
-4. Validate the layout.
-5. Build the layout using existing Unity assets.
-6. Validate the resulting Unity scene.
-7. Only then add decoration and secondary details.
+Игра НЕ должна выглядеть как копия Elden Ring, Dark Souls или Soulframe.
 
-The dungeon must feel intentionally designed by a human level designer.
+Project Titan НЕ должен визуально восприниматься как готовый стиль игры.
+
+Titan используется как основная библиотека environment assets, которую необходимо привести к единому визуальному языку нашей игры.
 
 ---
 
-ABSOLUTE RULES
+1. ЦЕЛЕВОЙ ART STYLE
 
-Rule 1 — Never start by placing random assets
+Основная формула:
 
-NEVER immediately create hundreds of GameObjects.
+GROUNDed DARK FANTASY
++
+STYLIZED REALISM
++
+MEDIEVAL / NORTHERN / CELTIC ARCHITECTURAL INFLUENCE
++
+SOULSLIKE WORLD COMPOSITION
++
+SOULFRAME-LIKE COLOR ACCENTS
 
-Before building:
+Стиль должен находиться между:
 
-INSPECT → PLAN → VALIDATE → BLOCKOUT → BUILD → VALIDATE → DECORATE
+- realistic fantasy;
+- stylized realism;
+- grounded dark fantasy.
 
----
+НЕ использовать:
 
-Rule 2 — Use existing assets
+- low-poly aesthetic;
+- hand-painted aesthetic;
+- cartoon style;
+- overly colorful fantasy;
+- ultra-photorealistic realism;
+- horror aesthetic;
+- чрезмерно тёмную монохромную Dark Souls-палитру.
 
-Do not create replacement primitive geometry unless explicitly requested.
+Мир должен быть мрачным и загадочным, но не депрессивным и не хоррорным.
 
-Prefer existing:
+Игрок должен ощущать:
 
-- Prefabs
-- FBX models
-- Materials
-- Modular walls
-- Floors
-- Doors
-- Arches
-- Corners
-- Pillars
-- Stairs
-- Props
-- Decorations
-
-If the project contains a Dungeon Assets Pack, inspect it before creating anything.
-
----
-
-Rule 3 — Never invent asset names
-
-Do not assume that a prefab exists.
-
-First inspect the Unity project.
-
-Use the exact asset paths and prefab names discovered in the project.
+"древний красивый fantasy-мир, переживший катастрофу".
 
 ---
 
-Rule 4 — Separate architecture from decoration
+2. ОСНОВНОЙ ВИЗУАЛЬНЫЙ ПРИНЦИП
 
-Architectural objects:
+Project Titan является ОСНОВОЙ библиотекой окружения.
 
-- floor
-- wall
-- ceiling
-- corridor
-- door
-- arch
-- stairs
-- pillars
+Не добавляй случайные ассеты только потому, что они выглядят красиво.
 
-Decoration:
+Каждый новый ассет должен пройти проверку:
 
-- torch
-- barrel
-- chest
-- skeleton
-- chains
-- table
-- statue
-- rubble
-- candles
-- small props
+1. Material consistency
+2. Scale consistency
+3. Detail density
+4. Color consistency
+5. Silhouette consistency
+6. Architectural consistency
+7. Lighting compatibility
 
-Architecture comes first.
+Если ассет нарушает общий стиль — НЕ использовать его напрямую.
 
-Decoration comes last.
+При необходимости:
 
----
-
-PHASE 1 — PROJECT INSPECTION
-
-Before building a dungeon:
-
-1. Inspect the current Unity scene.
-2. Inspect the project hierarchy.
-3. Locate dungeon-related folders.
-4. Locate Prefabs.
-5. Locate FBX assets.
-6. Locate demo/example scenes.
-7. Locate materials and textures.
-8. Identify existing dungeon systems.
-9. Check whether NavMesh / AI Navigation is installed.
-10. Check whether an existing level-generation system already exists.
-
-Do not overwrite existing systems without inspection.
+- изменить material instance;
+- изменить tint;
+- изменить roughness;
+- изменить saturation;
+- добавить dirt;
+- добавить moss;
+- добавить wetness;
+- изменить material variation;
+- изменить decal coverage;
+- изменить освещение;
+- заменить ассет.
 
 ---
 
-PHASE 2 — ASSET CATALOG
+3. ЦВЕТОВАЯ ПАЛИТРА
 
-Create an internal catalog of discovered assets.
+Основные цвета мира:
 
-Classify assets into:
+- холодный серый камень;
+- серо-бежевый;
+- тёмно-коричневое дерево;
+- приглушённый зелёный;
+- холодный серо-синий;
+- грязно-бежевые землистые оттенки.
 
-STRUCTURAL
+Не использовать чрезмерно насыщенные цвета в окружении.
 
-Examples:
+Яркие цвета должны быть РЕДКИМИ и использоваться преимущественно как акценты.
 
-- Floor
-- Wall
-- Wall_End
-- Corner
-- InnerCorner
-- OuterCorner
-- Door
-- Arch
-- Corridor
-- Stairs
-- Pillar
-- Ceiling
+Акцентные цвета:
 
-ROOM MODULES
+- золотой;
+- янтарный;
+- красный;
+- голубой;
+- бирюзовый;
+- слабый фиолетовый.
 
-Examples:
-
-- SmallRoom
-- MediumRoom
-- LargeRoom
-- Arena
-- BossRoom
-
-DECORATION
-
-Examples:
-
-- Torch
-- Chest
-- Barrel
-- Skeleton
-- Statue
-- Chains
-- Table
-- Debris
-
-For every important structural asset determine:
-
-- approximate dimensions
-- pivot position
-- forward direction
-- usable rotation
-- connection points
-- grid compatibility
-- whether it is a Prefab
-- whether it can be safely duplicated
-
-If exact dimensions cannot be determined, inspect the asset in Unity rather than guessing.
+Магия должна визуально выделяться на фоне окружения.
 
 ---
 
-PHASE 3 — UNDERSTAND MODULAR CONNECTIONS
+4. MATERIAL DIRECTION
 
-Determine how the dungeon pack is intended to connect.
+Нужно создать единую систему материалов.
 
-Look for:
+Если в проекте уже есть подходящие Master Materials — сначала изучи их и переиспользуй существующую систему вместо создания дубликатов.
 
-- matching wall lengths
-- floor dimensions
-- door widths
-- corridor widths
-- socket/connection points
-- modular grid size
-- rotation increments
+Если требуется собственная система, создай централизованный material framework.
 
-If the pack contains a Demo Scene:
+Предпочтительная структура:
 
-USE IT AS A REFERENCE.
+M_Master_Surface
 
-Analyze how the original creator assembled:
+Параметры:
 
-- rooms
-- corridors
-- corners
-- doors
-- walls
-- decoration
+- Base Color
+- Normal
+- Roughness
+- Metallic
+- AO
+- Dirt
+- Moss
+- Wetness
+- Edge Wear
+- Color Variation
+- Global Tint
+- Macro Variation
+- Detail Normal
 
-Do not copy the demo dungeon layout unless explicitly requested.
+Создавай Material Instances:
 
-Copy the construction logic, not the layout.
+- MI_Stone
+- MI_Stone_Dark
+- MI_Stone_Moss
+- MI_Stone_Wet
+- MI_Wood
+- MI_Wood_Old
+- MI_Metal
+- MI_Ruin
+- MI_Ground
+- MI_Mud
+
+НЕ создавай десятки почти одинаковых материалов.
+
+Используй Material Instances и параметры.
 
 ---
 
-PHASE 4 — ABSTRACT DUNGEON DESIGN
+5. ENVIRONMENT PRIORITY
 
-Before placing visual assets, create an abstract dungeon graph.
+Project Titan должен использоваться прежде всего для:
 
-Example:
+HIGH PRIORITY:
 
-Entrance
+- rocks;
+- cliffs;
+- terrain;
+- trees;
+- foliage;
+- grass;
+- bushes;
+- roots;
+- stones;
+- walls;
+- floors;
+- stairs;
+- bridges;
+- ruins;
+- modular architecture;
+- roads;
+- fences;
+- environmental props.
+
+MEDIUM PRIORITY:
+
+- houses;
+- towers;
+- temples;
+- gates;
+- carts;
+- barrels;
+- furniture;
+- decorative objects.
+
+LOW / SPECIAL USE:
+
+- giant fantasy objects;
+- Titan-specific objects;
+- extremely recognizable fantasy structures;
+- unusual giant skeletons;
+- highly specific landmarks.
+
+Последние использовать только как уникальные landmarks или специальные места.
+
+Не повторять один и тот же уникальный объект слишком часто.
+
+---
+
+6. АРХИТЕКТУРА
+
+Основной architectural language:
+
+- средневековый;
+- древний;
+- североевропейский;
+- Celtic influence;
+- ruined fantasy;
+- функциональный.
+
+Избегай ощущения:
+
+"Disney fantasy village".
+
+Архитектура должна выглядеть так, будто она реально существовала в мире:
+
+- здания должны иметь функциональное назначение;
+- стены должны логично соединяться;
+- лестницы должны вести куда-либо;
+- двери должны иметь смысл;
+- дороги должны соединять важные точки;
+- мосты должны быть логичны;
+- здания не должны случайно пересекаться;
+- стены не должны появляться без причины.
+
+---
+
+7. WORLD COMPOSITION
+
+Локации должны строиться как Soulslike.
+
+Не создавать огромные пустые пространства только ради масштаба.
+
+Предпочтительно:
+
+- небольшие плотные зоны;
+- вертикальность;
+- shortcuts;
+- landmarks;
+- скрытые проходы;
+- небольшие секреты;
+- руины;
+- небольшие арены;
+- dungeon entrances;
+- vistas;
+- альтернативные маршруты.
+
+Игрок должен постоянно видеть интересные направления.
+
+Каждая крупная локация должна иметь:
+
+1. Entrance
+2. Main route
+3. Secondary route
+4. Landmark
+5. Shortcut
+6. Secret
+7. Combat space
+8. Exploration space
+9. Dungeon / interior
+10. Boss / miniboss area
+
+---
+
+8. LIGHTING
+
+Lighting является частью Art Direction.
+
+НЕ пытайся сделать весь мир тёмным.
+
+Обычная outdoor-сцена:
+
+- мягкий daylight;
+- холодный ambient;
+- читаемые материалы;
+- умеренный fog.
+
+Ruins:
+
+- холодное окружение;
+- тёплые локальные источники;
+- torches;
+- fires;
+- candles.
+
+Dungeon:
+
+- ограниченный свет;
+- сильный контраст;
+- локальные источники;
+- магические источники.
+
+Magical locations:
+
+- обычное окружение остаётся относительно реалистичным;
+- магия создаёт цветовые акценты;
+- emissive используется контролируемо.
+
+Не использовать постоянную сильную туманную завесу.
+
+---
+
+9. FOLIAGE
+
+Foliage должен выглядеть естественно.
+
+Не заполняй всё травой.
+
+Создавай:
+
+- foreground;
+- midground;
+- background;
+- vegetation clusters;
+- clear paths;
+- areas of exposed ground;
+- damaged vegetation;
+- moss;
+- roots;
+- fallen trees.
+
+Оставляй пространство для gameplay.
+
+Foliage НЕ должен мешать:
+
+- чтению врагов;
+- чтению дороги;
+- navigation;
+- combat;
+- silhouettes.
+
+---
+
+10. VFX
+
+VFX должны стать одним из главных элементов уникальности игры.
+
+Окружение может происходить из Titan.
+
+Но:
+
+- magic;
+- souls;
+- weapon trails;
+- hit effects;
+- abilities;
+- portals;
+- checkpoints;
+- magical objects;
+- environmental magic
+
+должны иметь собственный визуальный язык.
+
+VFX должны быть более стилизованными, чем окружение.
+
+Но не превращать игру в cartoon.
+
+---
+
+11. CHARACTERS
+
+Characters могут иметь немного более выраженную стилизацию, чем environment.
+
+Цель:
+
+STYLIZED REALISTIC CHARACTERS.
+
+Они должны выглядеть естественно в окружении Titan, но не обязаны быть визуально идентичными environment assets.
+
+Особое внимание:
+
+- silhouette;
+- proportions;
+- materials;
+- armor;
+- cloth;
+- hair;
+- weapons;
+- color accents.
+
+Не использовать MetaHuman как основу, если для задачи он не требуется.
+
+---
+
+12. УНИКАЛЬНОСТЬ ИГРЫ
+
+Чтобы игра не выглядела как "Project Titan game", необходимо создать собственные элементы:
+
+- уникальные checkpoints;
+- уникальные shrines;
+- уникальные souls;
+- уникальные magical objects;
+- уникальные boss arenas;
+- уникальные dungeon entrances;
+- уникальные doors;
+- уникальные environmental storytelling props;
+- собственные VFX;
+- собственный UI;
+- собственные персонажи;
+- собственные weapons;
+- собственные interactive objects.
+
+Они должны постепенно формировать узнаваемость игры.
+
+---
+
+13. ПРОПОРЦИЯ ИСПОЛЬЗОВАНИЯ АССЕТОВ
+
+Целевой ориентир:
+
+70–80%:
+Project Titan / Epic environment assets
+
+10–20%:
+дополнительные совместимые environment assets / Megascans / технические материалы
+
+5–10%:
+уникальные ассеты проекта.
+
+Это НЕ строгий математический лимит.
+
+Главный критерий — визуальная целостность.
+
+---
+
+14. PERFORMANCE
+
+Это UE 5.8.
+
+Не жертвуй производительностью ради визуальных эффектов.
+
+При работе с ассетами проверяй:
+
+- Nanite;
+- LOD;
+- collision;
+- material complexity;
+- shader complexity;
+- texture memory;
+- virtual textures;
+- foliage density;
+- shadow cost;
+- VFX cost;
+- Niagara particle count;
+- draw calls;
+- instancing;
+- PCG generation cost.
+
+Не создавай unnecessarily expensive materials.
+
+Не добавляй дополнительные texture samples без необходимости.
+
+Не используй уникальные материалы там, где достаточно Material Instance.
+
+---
+
+15. PCG
+
+Если используется PCG:
+
+PCG должен использоваться для:
+
+- foliage;
+- rocks;
+- small props;
+- debris;
+- vegetation;
+- environmental variation.
+
+Но:
+
+НЕ использовать PCG для всего мира без контроля.
+
+Главные landmarks, здания, дороги, важные gameplay areas и dungeon entrances должны контролироваться вручную.
+
+PCG должен создавать естественную вариативность, а не хаос.
+
+---
+
+16. VISUAL BENCHMARK
+
+Создай одну небольшую тестовую локацию размером примерно на 10–15 минут прохождения.
+
+Структура:
+
+HUB / ENTRANCE
 ↓
-Combat Room
+FOREST
 ↓
-Exploration
+RUINS
 ↓
-Combat Room
+SMALL DUNGEON
 ↓
-Branch
-├── Secret Room
-└── Main Path
-↓
-Elite Room
-↓
-Shrine
-↓
-Large Arena
-↓
-Boss
+MINI-BOSS
 
-The abstract graph is more important than visual decoration.
+Эта локация является VISUAL BENCHMARK проекта.
+
+Не создавай остальные крупные зоны, пока этот benchmark не выглядит целостно.
 
 ---
 
-PHASE 5 — LEVEL DESIGN RULES
+17. ПОСЛЕДОВАТЕЛЬНОСТЬ РАБОТЫ
 
-The dungeon should contain variation.
+Перед изменениями:
 
-Avoid:
+1. Просканируй проект.
+2. Найди Project Titan assets.
+3. Определи существующие Material Master / Material Instances.
+4. Найди существующие PCG systems.
+5. Найди foliage systems.
+6. Найди lighting setup.
+7. Найди post-process setup.
+8. Найди существующие environment blueprints.
+9. Определи, что уже работает.
+10. НЕ создавай дубликаты существующих систем.
 
-Room → Corridor → Room → Corridor → Room
+После анализа составь краткий отчёт:
 
-Instead use:
-
-Entrance
-→ narrow corridor
-→ small combat room
-→ larger exploration space
-→ branching corridor
-→ optional secret
-→ elite encounter
-→ rest/checkpoint
-→ large arena
-→ boss
-
----
-
-SPATIAL RULES
-
-Do not create:
-
-- meaningless corridors
-- excessive empty space
-- impossible turns
-- blocked doors
-- overlapping rooms
-- rooms without gameplay purpose
-- identical rooms repeated excessively
-
-Use:
-
-- narrow spaces for tension
-- medium rooms for combat
-- large rooms for important encounters
-- vertical changes where supported
-- visual landmarks
-- secrets
-- optional routes
+- какие Titan assets используются;
+- какие материалы уже существуют;
+- какие системы можно переиспользовать;
+- какие системы требуют изменений;
+- какие ассеты конфликтуют со стилем;
+- какие ассеты лучше исключить.
 
 ---
 
-MAIN PATH
+18. ПРАВИЛО "НЕ ЛОМАТЬ ПРОЕКТ"
 
-The main path must always be readable.
+Перед изменением существующей системы:
 
-The player should understand:
+- сначала изучи зависимости;
+- проверь references;
+- не удаляй рабочие assets;
+- не переименовывай assets без необходимости;
+- не создавай дубликаты;
+- не меняй gameplay systems ради визуала;
+- не меняй project settings без необходимости;
+- делай изменения минимально инвазивными.
 
-WHERE THEY ARE
-
-WHERE THEY CAME FROM
-
-WHERE THEY CAN GO
-
-WHERE THE IMPORTANT DESTINATION IS
-
-The main path must always have a valid connection:
-
-Entrance → Boss
+Если существующая система уже решает задачу — используй её.
 
 ---
 
-BRANCHES
+19. КРИТЕРИЙ КАЧЕСТВА
 
-Branches should have a reason to exist.
+После каждой крупной итерации оценивай сцену по следующим параметрам:
 
-Good branch purposes:
+ART DIRECTION
+0–10
 
-- treasure
-- secret
-- lore
-- elite enemy
-- shortcut
-- alternate route
-- resource
-- NPC
-- puzzle
+MATERIAL CONSISTENCY
+0–10
 
-Do not create branches simply to make the map larger.
+COLOR CONSISTENCY
+0–10
 
----
+ARCHITECTURAL CONSISTENCY
+0–10
 
-ROOM TYPES
+ENVIRONMENT DENSITY
+0–10
 
-Every major room must have a purpose.
+LIGHTING
+0–10
 
-Allowed types:
+READABILITY
+0–10
 
-- Entrance
-- Combat
-- Elite
-- Exploration
-- Treasure
-- Secret
-- Shrine
-- Puzzle
-- Arena
-- Boss
+SOULSLIKE ATMOSPHERE
+0–10
 
-A room may have multiple purposes.
+PERFORMANCE
+0–10
 
-Example:
+ASSET CONSISTENCY
+0–10
 
-Elite + Treasure
+Если какой-либо показатель ниже 8/10 — найди причину и исправь её.
 
-or
+ВАЖНО:
 
-Puzzle + Secret
+Не оценивай сцену субъективно по принципу "красиво".
 
----
+Объясняй конкретно:
 
-COMBAT ROOMS
-
-Combat rooms need sufficient space for:
-
-- player movement
-- enemy movement
-- dodging
-- attacks
-- abilities
-- camera visibility
-
-Do not place decoration in locations that interfere with gameplay.
-
-Reserve enemy spawn locations.
+- какой объект выбивается;
+- какой материал конфликтует;
+- какой цвет слишком насыщенный;
+- где слишком много foliage;
+- где нарушен масштаб;
+- где нарушена композиция;
+- где освещение ломает читаемость.
 
 ---
 
-BOSS ROOM
+20. ГЛАВНЫЙ ПРИНЦИП
 
-Boss rooms must be significantly more spacious than normal combat rooms.
+НЕ ПЫТАЙСЯ СДЕЛАТЬ "КАК PROJECT TITAN".
 
-Requirements:
+Сделай:
 
-- clear player movement
-- boss spawn position
-- sufficient arena space
-- readable boundaries
-- entrance
-- optional exit
-- reward location
-- no unnecessary obstacles
+"МИР, СОБРАННЫЙ В ОСНОВНОМ ИЗ PROJECT TITAN, НО ВЫГЛЯДЯЩИЙ КАК СОБСТВЕННАЯ ИГРА."
 
-The boss arena must not feel like a normal room with a boss dropped inside it.
+Project Titan — это библиотека.
 
----
+Art Direction принадлежит нашей игре.
 
-PHASE 6 — BLOCKOUT
+Если между красивым ассетом и единым стилем существует конфликт:
 
-Before final art placement:
-
-Create a blockout.
-
-The blockout should communicate:
-
-- room boundaries
-- corridors
-- main path
-- branches
-- boss location
-- secret locations
-- combat spaces
-
-Do not spend time decorating the blockout.
+ЕДИНЫЙ СТИЛЬ ВСЕГДА ВАЖНЕЕ.
 
 ---
 
-PHASE 7 — VALIDATION
-
-Before building the final dungeon check:
-
-Connectivity
-
-Entrance can reach Boss.
-
-Room overlap
-
-No rooms intersect incorrectly.
-
-Corridor connection
-
-Every corridor connects to its intended room.
-
-Door alignment
-
-Doors are aligned with corridors.
-
-Player navigation
-
-Player has enough space to move.
-
-Combat space
-
-Combat rooms have sufficient usable space.
-
-Boss space
-
-Boss arena is sufficiently large.
-
-Dead ends
-
-Dead ends must have a gameplay reason.
-
-Navigation
-
-Check NavMesh / AI Navigation if available.
-
-Scene integrity
-
-No missing Prefabs.
-
-No missing materials.
-
-No broken references.
-
-No accidental modification of source assets.
-
----
-
-PHASE 8 — UNITY BUILD
-
-Only after the abstract layout passes validation:
-
-1. Create required parent hierarchy.
-2. Place room modules.
-3. Place corridors.
-4. Connect doors.
-5. Validate transforms.
-6. Validate overlaps.
-7. Validate navigation.
-8. Save the scene.
-
-Recommended hierarchy:
-
-Dungeon
-├── Architecture
-│   ├── Rooms
-│   ├── Corridors
-│   ├── Doors
-│   └── Stairs
-│
-├── Gameplay
-│   ├── EnemySpawns
-│   ├── PlayerSpawn
-│   ├── Checkpoints
-│   ├── Treasure
-│   └── Boss
-│
-└── Decoration
-├── Torches
-├── Props
-└── Environment
-
----
-
-PHASE 9 — DECORATION
-
-Only after architecture is correct.
-
-Decoration should reinforce the level design.
-
-Do not distribute props uniformly.
-
-Use clusters.
-
-Examples:
-
-Torch clusters near doors.
-
-Rubble near collapsed walls.
-
-Chains near prison areas.
-
-Statues near important locations.
-
-Treasure props near reward rooms.
-
-Decoration should communicate location and gameplay importance.
-
----
-
-PHASE 10 — FINAL REVIEW
-
-After construction:
-
-Inspect the actual Unity scene.
-
-Do not assume that successful tool execution means successful level construction.
-
-Verify:
-
-- hierarchy
-- transforms
-- room connections
-- player path
-- camera visibility
-- collision
-- NavMesh
-- enemy spawn points
-- boss arena
-- decoration
-- performance
-
-If possible, capture a top-down Scene View screenshot and inspect the complete dungeon.
-
----
-
-MCP BEHAVIOR
-
-When using Unity MCP:
-
-Prefer inspection tools before modification tools.
-
-Do not perform massive destructive operations.
-
-After major modifications:
-
-READ BACK THE RESULT.
-
-Never assume that an MCP command succeeded merely because the tool returned without an error.
-
-Use this cycle:
-
-INSPECT
-→ MODIFY
-→ READ BACK
-→ VALIDATE
-
----
-
-IMPORTANT — USER APPROVAL GATES
-
-For large dungeon generation tasks, stop after the abstract layout.
-
-Report:
-
-- number of rooms
-- main path
-- branches
-- secret rooms
-- elite encounters
-- boss location
-- estimated dungeon length
-
-Then continue to blockout/build only when instructed.
-
-If the user explicitly says:
-
-"Build it"
-
-then continue automatically through the remaining phases.
-
----
-
-DESIGN QUALITY STANDARD
-
-The final dungeon must not look like procedural noise.
-
-It should have:
-
-- pacing
-- rhythm
-- contrast
-- landmarks
-- intentional spaces
-- exploration
-- combat variation
-- secrets
-- anticipation
-- payoff
-
-The player should remember the dungeon as a PLACE, not as a collection of random rooms.
-
----
-
-FAILURE RECOVERY
-
-If asset connections cannot be determined:
-
-STOP.
-
-Inspect the Demo Scene or relevant Prefabs.
-
-Do not guess.
-
-If a room cannot connect cleanly:
-
-Do not force the connection.
-
-Choose another compatible module.
-
-If the dungeon graph cannot be validated:
-
-Do not build the final scene.
-
-Fix the graph first.
-
-If Unity MCP cannot provide enough information:
-
-Report exactly what information is missing and inspect available project data before proceeding.
-
----
-
-DEFAULT AERAVEN DUNGEON PROFILE
-
-Unless the user specifies otherwise:
-
-Dungeon length:
-10–20 minutes
-
-Main rooms:
-6–12
-
-Optional rooms:
-2–4
-
-Major encounters:
-2–4
-
-Elite encounters:
-1–2
-
-Secret rooms:
-1–3
-
-Checkpoint:
-1
-
-Boss:
-1
-
-The dungeon should gradually increase in intensity.
-
-Start relatively simple.
-
-Introduce the dungeon's visual language.
-
-Increase combat complexity.
-
-Introduce optional exploration.
-
-Create anticipation before the boss.
-
-Finish with a memorable boss arena.
+ФИНАЛЬНАЯ ЗАДАЧА
+
+Сначала НЕ начинай массово менять ассеты.
+
+Сначала:
+
+1. Проанализируй весь доступный Project Titan content в проекте.
+2. Проанализируй существующее окружение.
+3. Определи текущие визуальные проблемы.
+4. Создай Art Direction document внутри проекта.
+5. Создай visual benchmark scene.
+6. Настрой материалы.
+7. Настрой lighting.
+8. Настрой foliage.
+9. Настрой environment composition.
+10. Проверь производительность.
+11. Только после этого начинай переносить этот визуальный стандарт на остальные локации.
+
+В конце каждого этапа сообщай:
+
+- что найдено;
+- что изменено;
+- почему это изменено;
+- какие assets используются;
+- какие assets исключены;
+- какие проблемы остались;
+- что делать следующим этапом.
+
+НЕ ДЕЛАЙ РЕЗКИХ И НЕОБРАТИМЫХ ИЗМЕНЕНИЙ БЕЗ ПРОВЕРКИ ЗАВИСИМОСТЕЙ.
