@@ -1,2248 +1,1231 @@
-ROLE
+# HOME + FARM + SOCIAL SYSTEM
+# Roblox Soulslike Project
 
-Ты — Senior Roblox Game Developer, Luau Architect, Multiplayer Engineer, Game Designer, Systems Designer и UX Designer.
+Ты работаешь над существующим Roblox Soulslike PvE проектом.
 
-Ты помогаешь мне создать коммерческую Roblox Experience.
+Уже существуют или планируются:
+- Soulslike Combat
+- Dungeon System
+- Character System
+- Soul System
+- Echo System
+- Legacy System
+- Loot System
+- Progression
+- Co-op Multiplayer
+- Inventory
+- DataStore
+- Server-authoritative architecture
 
-Я новичок в Roblox-разработке. Я могу понимать общую логику, но не обязан знать Roblox API, Luau и архитектуру проекта.
+Твоя задача — добавить полноценную систему:
 
-Поэтому:
+HOME + FARM + CRAFTING + STORAGE + NPC + SOCIAL + FRIEND INTERACTION
 
-- объясняй важные технические решения простым языком;
-- код и архитектуру делай профессиональными;
-- не упрощай систему до плохого кода только потому, что я новичок;
-- не создавай огромные системы заранее;
-- всегда сначала анализируй существующий проект.
+Эти системы должны быть частью существующей игры, а не отдельным режимом.
 
-Главный принцип разработки:
-
-ANALYZE → PLAN → IMPLEMENT → TEST → FIX → VERIFY → NEXT
-
-Никогда не перескакивай через эти этапы.
-
----
-
-1. GAME CONCEPT
-
-Рабочее название:
-
-SOULSLIKE DUNGEON
-
-Жанр:
-
-- Action RPG
-- Soulslike
-- Roguelite
-- Cooperative PvE
-- Dungeon Crawler
-- Character-driven Adventure
-
-Платформы:
-
-- PC
-- Mobile
-- Console
-
-Игроков:
-
-1–4
-
-PvP:
-
-НЕТ.
-
-Основная игра — исключительно PvE.
-
----
-
-2. ОСНОВНАЯ ИДЕЯ
-
-Это НЕ просто:
-
-"Roblox Dark Souls".
-
-И НЕ:
-
-"Dungeon Quest с Soulslike combat".
-
-Игра должна иметь собственную идентичность.
-
-Главная особенность:
-
-DUNGEON REMEMBERS YOU
-
-Dungeon должен запоминать действия игроков и использовать их в последующих забегах.
-
-Игрок не просто проходит одинаковые комнаты снова и снова.
-
-Его действия могут:
-
-- менять NPC;
-- открывать или закрывать пути;
-- изменять некоторые комнаты;
-- создавать новые события;
-- влиять на будущие encounters;
-- создавать Echo;
-- влиять на историю персонажа;
-- открывать секреты;
-- изменять некоторые boss encounters;
-- создавать последствия.
-
-Это НЕ означает, что весь dungeon должен полностью перестраиваться после каждого действия.
-
-Используй контролируемую систему состояний и событий.
-
----
-
-3. CORE GAME LOOP
+==================================================
+1. ГЛАВНЫЙ GAME LOOP
+==================================================
 
 Основной цикл:
 
-HUB
-
+HOME
 ↓
-
-Choose Character
-
+Подготовка персонажа
 ↓
-
-Choose Soul
-
+DUNGEON
 ↓
-
-Choose Loadout
-
+Exploration
 ↓
-
-Enter Dungeon
-
-↓
-
-Explore
-
-↓
-
 Combat
-
 ↓
-
-Random Event
-
+Events
 ↓
-
-Choice
-
+Elite / Boss
 ↓
-
-Reward
-
+Loot / Death
 ↓
-
-Elite / Mini Boss
-
+Возвращение домой
 ↓
-
-Risk / Reward
-
+Storage
 ↓
-
-Main Boss
-
+Farm
 ↓
-
-Victory / Death
-
+Crafting
 ↓
-
-Memory / Consequence
-
+Character Progression
 ↓
-
-Rewards
-
+Home Progression
 ↓
-
-Return to Hub
-
+Friends / Social
 ↓
+Новый Dungeon
 
-Upgrade / Story / Cosmetics
+Главная идея:
 
-↓
+Dungeon — приключение.
 
-Next Run
+Home — постоянная база игрока.
 
----
+Farm — источник ресурсов.
 
-4. ДЛИТЕЛЬНОСТЬ ЗАБЕГА
+Loot — материал для развития.
 
-Цель:
+Character — конкретный герой.
 
-10–15 минут.
+Soul — стиль игры.
 
-Первый vertical slice:
+Legacy — история игрока.
 
-примерно 8–12 минут.
+Friends — совместное прохождение и социальное взаимодействие.
 
-Позже:
 
-10–20 минут в зависимости от сложности.
+==================================================
+2. HOME ПРИНАДЛЕЖИТ АККАУНТУ
+==================================================
 
-Не превращай игру в MMO.
+КРИТИЧЕСКОЕ ПРАВИЛО:
 
-Игрок должен понимать:
+Дом НЕ принадлежит отдельному персонажу.
 
-"Я могу сейчас быстро сыграть один полноценный run."
-
----
-
-5. DESIGN PILLARS
-
-У игры должно быть 7 основных столпов.
-
-1. COMBAT
-
-Сложный, но честный.
-
-2. EXPLORATION
-
-Игрок должен хотеть исследовать dungeon.
-
-3. CHOICE
-
-Игрок регулярно принимает решения.
-
-4. CONSEQUENCE
-
-Некоторые решения имеют последствия.
-
-5. MEMORY
-
-Dungeon помнит часть действий.
-
-6. CHARACTER
-
-Персонажи имеют собственную историю и gameplay identity.
-
-7. CO-OP SYNERGY
-
-4 игрока должны иметь возможность комбинировать способности.
-
----
-
-6. НЕ КОПИРОВАТЬ ДРУГИЕ ИГРЫ
-
-Можно использовать знакомые жанровые принципы:
-
-- dodge;
-- stamina;
-- parry;
-- bosses;
-- loot;
-- rarity;
-- dungeon;
-- roguelite;
-- character builds.
-
-Но нельзя буквально копировать:
-
-- названия;
-- персонажей;
-- UI;
-- карты;
-- боссы;
-- способности;
-- lore;
-- визуальные решения;
-- copyrighted assets.
-
-Игра должна иметь собственную визуальную и игровую идентичность.
-
----
-
-7. CHARACTERS
-
-Не делай персонажей просто "классами".
-
-Персонаж должен иметь:
-
-- имя;
-- визуальный образ;
-- историю;
-- личную мотивацию;
-- уникальную механику;
-- базовое оружие;
-- несколько уникальных способностей;
-- собственные story events.
-
-Первый MVP:
-
-KNIGHT
-
-Особенности:
-
-- sword;
-- shield;
-- counter;
-- guard;
-- high survivability.
-
-MAGE
-
-Особенности:
-
-- magic;
-- ranged combat;
-- elemental interactions;
-- lower survivability.
-
-HUNTER
-
-Особенности:
-
-- bow;
-- mobility;
-- traps;
-- marks;
-- ranged attacks.
-
-Не создавай десятки персонажей.
-
-Сначала 3.
-
----
-
-8. CHARACTER IDENTITY
-
-Каждый персонаж должен ощущаться иначе.
-
-НЕ:
-
-Knight = +20% HP
-
-Mage = +20% Magic
-
-Hunter = +20% Bow.
-
-Это слишком примитивно.
-
-Вместо этого:
-
-Knight:
-
-- perfect guard;
-- counter;
-- stagger;
-- shield mechanics.
-
-Mage:
-
-- elemental combinations;
-- spell charging;
-- mana management.
-
-Hunter:
-
-- marks;
-- traps;
-- mobility;
-- precision attacks.
-
----
-
-9. SOUL SYSTEM
-
-Главная система progression.
-
-Персонаж может получать Souls.
-
-Soul — это не просто +5 Damage.
-
-Soul должен менять стиль игры.
-
-Примеры:
-
-SOUL OF THE FALLEN
-
-После perfect dodge появляется Echo, который выполняет короткую атаку.
-
-SOUL OF FLAME
-
-Последовательные атаки постепенно заряжают огненный эффект.
-
-SOUL OF THE HUNTER
-
-Marked enemies получают специальные interactions.
-
-SOUL OF THE GUARDIAN
-
-Successful parry создаёт временный shield.
-
-SOUL OF THE LOST
-
-После смерти оставляет особый Echo.
-
-Soul должна быть:
-
-- заменяемой;
-- конфигурируемой;
-- комбинируемой;
-- расширяемой.
-
-Не привязывай Souls непосредственно к конкретному персонажу.
-
----
-
-10. ECHO SYSTEM
-
-Это одна из главных уникальных механик игры.
-
-Когда игрок умирает при определённых условиях:
-
-создаётся Echo.
-
-Echo представляет собой "след" прошлого забега.
-
-Echo может:
-
-- выглядеть как предыдущий персонаж;
-- использовать часть предыдущего оружия;
-- использовать ограниченный набор предыдущих способностей;
-- повторять определённые действия;
-- охранять часть lost reward;
-- становиться enemy encounter;
-- становиться lore element.
-
-Echo НЕ должен полностью копировать весь AI игрока.
-
-Используй ограниченный набор записанных действий или заранее определённые behaviour patterns.
-
----
-
-11. ECHO OF THE PLAYER
-
-Пример:
-
-Игрок погиб, используя:
-
-- sword;
-- dodge;
-- heavy attack.
-
-В следующем забеге можно встретить его Echo.
-
-Echo:
-
-- атакует sword;
-- иногда dodges;
-- использует heavy attack.
-
-После победы:
-
-игрок получает часть lost reward или специальный Memory fragment.
-
----
-
-12. LEGACY SYSTEM
-
-Игрок может оставлять Legacy.
-
-Legacy — история прошлого персонажа.
+Дом принадлежит аккаунту.
 
 Например:
 
-Character:
+ACCOUNT
+├── HOME
+├── FARM
+├── STORAGE
+├── NPCs
+├── TROPHIES
+├── ACHIEVEMENTS
+├── LEGACY
+└── CHARACTERS
 
-ARTHUR
+Characters:
+├── Knight
+├── Mage
+└── Hunter
 
-Runs:
+Все персонажи используют один дом.
 
-7
+Если игрок сменил Knight на Mage:
 
-Bosses defeated:
+- дом остаётся;
+- ферма остаётся;
+- ресурсы остаются;
+- NPC остаются;
+- трофеи остаются;
+- развитие дома остаётся.
 
-14
 
-Deaths:
+==================================================
+3. ФИЗИЧЕСКИЙ HOME
+==================================================
 
-5
+Дом должен быть настоящей игровой зоной, а не просто меню.
 
-Special achievement:
+Базовая структура:
 
-"Defeated The Bell Keeper without healing."
+HOME
+├── Main House
+├── Storage
+├── Farm
+├── Crafting Station
+├── Alchemy Station
+├── Blacksmith
+├── Trophy Area
+├── NPC Area
+├── Garden
+└── Guest Area
 
-Эта информация может отображаться:
+На первом этапе достаточно:
 
-- в Hub;
-- в profile;
-- на memorial;
-- в character screen.
+- House
+- Storage
+- Farm
+- Basic Crafting
+- Player Spawn
+- Guest System
 
-Legacy не должна превращаться в обычный power inflation.
+Архитектура должна позволять позже добавить остальные системы.
 
-Главная ценность Legacy:
 
-история.
+==================================================
+4. HOME LEVEL
+==================================================
 
----
+Добавить отдельный Home Level.
 
-13. DUNGEON MEMORY
-
-Dungeon должен иметь контролируемое состояние.
-
-Пример:
-
-Player:
-
-- убил NPC;
-- спас NPC;
-- использовал определённую способность;
-- открыл secret;
-- активировал altar;
-- уничтожил object.
-
-Следующий run может изменить:
-
-- dialogue;
-- NPC;
-- reward;
-- room event;
-- enemy composition;
-- secret path.
-
-Не меняй всё сразу.
-
-Используй Event Flags / Memory Flags.
-
----
-
-14. CHOICE SYSTEM
-
-В dungeon должны появляться решения.
+Home Level НЕ равен Character Level.
 
 Пример:
 
-SAFE PATH
+HOME LEVEL 1
+- Basic House
+- 3 Farm Plots
+- Small Storage
 
-Меньше enemies.
+HOME LEVEL 2
+- Expanded Storage
+- Workshop
 
-Награда обычная.
+HOME LEVEL 3
+- Alchemy Station
+- Additional Farm Plots
 
-CURSED PATH
+HOME LEVEL 4
+- Blacksmith
 
-Больше enemies.
+HOME LEVEL 5
+- Trophy Hall
 
-Награда выше.
+HOME LEVEL 6
+- Advanced Garden
 
-UNKNOWN PATH
+HOME LEVEL 7
+- Expanded Guest Area
 
-Неизвестный encounter.
+HOME LEVEL 8+
+- новые комнаты
+- дополнительные функции
+- косметические улучшения
 
----
+При повышении Home Level дом должен визуально изменяться.
 
-Другой пример:
+Не просто менять число в UI.
 
-NPC просит помощи.
 
-Игрок может:
+==================================================
+5. HOME CUSTOMIZATION
+==================================================
 
-HELP
+В будущем архитектура должна поддерживать:
 
-IGNORE
+- мебель;
+- декоративные объекты;
+- растения;
+- освещение;
+- стены;
+- украшения;
+- трофеи;
+- статуи;
+- banners;
+- cosmetic house themes.
 
-ATTACK
+Игрок должен постепенно превращать дом в собственное место.
 
-Каждый вариант может иметь разные последствия.
+Все размещение объектов контролируется сервером.
 
-Но не каждая ситуация обязана иметь три варианта.
+Клиент не может произвольно создавать объекты.
 
----
 
-15. RISK / REWARD
+==================================================
+6. STORAGE
+==================================================
 
-В dungeon периодически должны встречаться рискованные решения.
-
-Пример:
-
-Sacrifice 30% HP
-
-→ получить rare reward.
-
-Или:
-
-Curse
-
-→ enemies +25% strength
-
-→ higher loot chance.
-
-Игрок должен сам решать:
-
-"Рискнуть или безопасно пройти?"
-
----
-
-16. RANDOM EVENTS
-
-Добавить систему Dungeon Events.
-
-Примеры:
-
-MERCHANT
-
-Продаёт ограниченный набор странных предметов.
-
-LOST KNIGHT
-
-NPC просит помощи.
-
-MIMIC
-
-Сундук оказывается врагом.
-
-CURSED ALTAR
-
-Даёт мощный buff с отрицательным эффектом.
-
-BLOOD ROOM
-
-Игрок жертвует HP ради reward.
-
-LOST SOUL
-
-Игрок может помочь потерянной душе.
-
-SECRET DOOR
-
-Неизвестное помещение.
-
-EXECUTIONER
-
-Появляется mini-boss.
-
-SHRINE
-
-Временный buff.
-
-Events должны быть data/config driven.
-
----
-
-17. DUNGEON STRUCTURE
-
-Первый dungeon должен быть ручным.
-
-Пример:
-
-ENTRY
-
-↓
-
-ROOM
-
-↓
-
-ROOM
-
-↓
-
-EVENT
-
-↓
-
-ROOM
-
-↓
-
-ELITE
-
-↓
-
-CHOICE
-
-↓
-
-TREASURE
-
-↓
-
-BOSS
-
-Не делай сразу procedural generation.
-
-Но архитектура должна позволять позже:
-
-Room Pool
-
-↓
-
-Rules
-
-↓
-
-Random Selection
-
-↓
-
-Dungeon Generation
-
----
-
-18. SECRET ROOMS
-
-Добавить secrets.
-
-Secret может открываться через:
-
-- определённую способность;
-- определённое действие;
-- NPC choice;
-- hidden object;
-- отсутствие убийств;
-- определённый Soul;
-- выполнение условия;
-- исследование.
-
-Secret rewards:
-
-- Souls;
-- cosmetics;
-- lore;
-- unique items;
-- alternate boss encounter.
-
----
-
-19. DUNGEON SHOULD NOT FEEL LIKE A CORRIDOR
-
-Даже маленький dungeon должен иметь:
-
-- alternate route;
-- side room;
-- secret;
-- landmark;
-- shortcut;
-- optional encounter.
-
-Игрок должен хотя бы иногда выбирать:
-
-"Куда идти?"
-
----
-
-20. COMBAT
-
-Combat должен быть Soulslike-inspired.
-
-Основные системы:
-
-- Light Attack;
-- Heavy Attack;
-- Dodge;
-- I-Frames;
-- Stamina;
-- Block;
-- Parry;
-- Hit Reaction;
-- Stagger;
-- Knockback;
-- Death.
-
-Не добавляй всё одновременно.
-
-Vertical Slice:
-
-1. Light attack
-2. Heavy attack
-3. Dodge
-4. Stamina
-5. Hit reaction
-6. Enemy attack
-7. Boss
-
-После этого:
-
-Parry.
-
----
-
-21. COMBAT MUST BE FAIR
-
-Каждая сильная enemy attack должна иметь:
-
-- readable animation;
-- telegraph;
-- startup;
-- active window;
-- recovery.
-
-Игрок должен понимать:
-
-"Почему я получил damage?"
-
-Не используй invisible unavoidable damage.
-
----
-
-22. CO-OP SYNERGY
-
-Кооп не должен быть просто:
-
-4 игрока → одновременно бьют врага.
-
-Добавить interactions.
-
-Пример:
-
-Mage:
-
-FROZEN
-
-↓
-
-Knight:
-
-HEAVY ATTACK
-
-↓
-
-SHATTER
-
----
-
-Hunter:
-
-OIL TRAP
-
-↓
-
-Mage:
-
-FIRE
-
-↓
-
-IGNITION
-
----
-
-Knight:
-
-GUARD BREAK
-
-↓
-
-Hunter:
-
-MARKED SHOT
-
-↓
-
-BONUS DAMAGE
-
----
-
-Synergy должна быть:
-
-- понятной;
-- визуально читаемой;
-- ограниченной;
-- не обязательной для прохождения.
-
----
-
-23. FRIENDLY FIRE
-
-По умолчанию:
-
-OFF.
-
-Не позволяй случайно убивать союзников.
-
----
-
-24. ENEMIES
-
-Первый MVP:
-
-SKELETON
-
-Melee.
-
-ARCHER
-
-Ranged.
-
-KNIGHT
-
-Elite.
-
-Но каждый enemy должен иметь behavioural identity.
-
-Не делай:
-
-Skeleton = HP 100.
-
-Skeleton должен иметь хотя бы:
-
-- attack pattern;
-- reaction;
-- recovery;
-- positioning behaviour.
-
----
-
-25. BOSS
-
-Первый Boss:
-
-THE FALLEN KNIGHT
-
-Но Boss должен быть не просто enemy с огромным HP.
-
-Boss должен иметь:
-
-- unique arena;
-- telegraphed attacks;
-- phases;
-- mechanics;
-- punish windows;
-- reward.
-
----
-
-26. BOSS PHASE DESIGN
-
-Phase 1:
-
-- basic combo;
-- heavy attack;
-- ground attack.
-
-Phase 2:
-
-- faster attacks;
-- new attack;
-- arena interaction.
-
-Phase 3, если она нужна:
-
-Не просто:
-
-"Boss gets +100% damage."
-
-Вместо этого:
-
-изменить правила боя.
-
-Например:
-
-- arena hazards;
-- darkness;
-- destroyed platforms;
-- summoned enemies;
-- changed attack patterns.
-
----
-
-27. BOSS PUZZLE ELEMENT
-
-Некоторые боссы могут требовать действия перед полноценным боем.
-
-Например:
-
-Boss:
-
-THE BELL KEEPER
-
-Игрок должен:
-
-- найти 3 bells;
-- отключить ritual;
-- пережить ambush;
-- открыть arena.
-
-После этого начинается boss fight.
-
-Не все боссы должны работать так.
-
----
-
-28. BOSS MEMORY
-
-Некоторые Boss encounters могут учитывать Memory.
-
-Например:
-
-если игрок ранее помог определённому NPC,
-
-NPC может появиться в boss encounter.
-
-Если игрок уничтожил NPC,
-
-NPC может отсутствовать.
-
-Это не должно полностью менять игру.
-
-Используй ограниченное количество meaningful variations.
-
----
-
-29. DEATH
-
-Death не должна быть просто:
-
-"You died → respawn."
-
-После смерти:
-
-- показывай причину;
-- создавай Echo при подходящих условиях;
-- фиксируй Memory;
-- обновляй Legacy;
-- возвращай игрока в подходящую точку.
-
-Не отнимай весь прогресс без очень веской причины.
-
----
-
-30. LOOT
-
-Loot должен быть интересным.
+Создать постоянное хранилище.
 
 Категории:
 
-- weapons;
-- relics;
-- Souls;
-- consumables;
-- cosmetics;
-- lore items.
-
-Не превращай игру в endless gear treadmill.
-
----
-
-31. ITEMS WITH HISTORY
-
-Некоторые редкие предметы могут иметь Legacy.
-
-Например:
-
-BROKEN KING'S SWORD
-
-Предмет может записывать:
-
-- количество владельцев;
-- количество boss kills;
-- количество deaths.
-
-При определённых условиях он может получать cosmetic/title effects.
-
-Не делай из этого обязательную систему для всех предметов.
-
----
-
-32. RARITY
-
-Используй:
-
-Common
-
-Uncommon
-
-Rare
-
-Epic
-
-Legendary
-
-Mythic
-
-Но rarity не должна автоматически означать:
-
-"больше damage".
-
-Редкий предмет может быть:
-
-- уникальной механикой;
-- utility;
-- visual effect;
-- alternative playstyle;
-- lore.
-
----
-
-33. INVENTORY
-
-Categories:
-
-- Weapons
-- Souls
-- Relics
+- Materials
+- Seeds
 - Consumables
-- Cosmetics
-- Quest/Lore
+- Boss Materials
+- Souls
+- Crafting Items
+- Quest Items
 
-Inventory должен быть расширяемым.
+Примеры:
 
----
+Bone
+Iron
+Crystal
+Beast Hide
+Ancient Fang
+Moonroot
+Bloodflower
+Shadow Mushroom
 
-34. PROGRESSION
+Storage имеет ограниченную вместимость.
 
-Основная progression:
+Вместимость увеличивается через Home Upgrades.
 
-Character
 
-+ 
+==================================================
+7. LOOT ECONOMY
+==================================================
 
-Souls
+Не создавать большое количество бесполезного лута.
 
-+ 
+Каждый важный ресурс должен иметь назначение.
 
-Relics
+Bone:
+- Crafting
+- Alchemy
+- Selling
 
-+ 
+Iron:
+- Weapon Upgrade
+- Crafting
+- Selling
 
-Knowledge
+Crystal:
+- Magic Crafting
+- Alchemy
+- Rare Upgrades
 
-+ 
+Boss Material:
+- Unique Crafting
+- Soul-related progression
+- Trophy
 
-Unlocks
+Seeds:
+- Farming
 
-+ 
+Редкие предметы могут иметь несколько вариантов использования.
 
-Cosmetics
 
-Не делай всю progression вокруг:
+==================================================
+8. FARM
+==================================================
 
-Level 1 → Level 2 → Level 1000.
+Создать физическую ферму возле дома.
 
----
+Начальный вариант:
 
-35. LORE
+Farm
+├── Plot 1
+├── Plot 2
+└── Plot 3
 
-Каждый основной персонаж должен иметь:
+Позже количество участков увеличивается вместе с Home Level.
 
-- personal story;
-- motivation;
-- secret;
-- character arc.
+Игрок может:
 
-NPC не должны выдавать огромные стены текста.
+1. посадить семя;
+2. ждать роста;
+3. получить урожай;
+4. использовать урожай;
+5. продать урожай;
+6. использовать урожай в Crafting / Alchemy.
 
-Используй короткие dialogue sequences.
 
----
+==================================================
+9. CROPS
+==================================================
 
-36. MICRO-STORIES
+Создать config-driven систему растений.
 
-NPC могут иметь небольшие сюжетные линии.
+Примеры:
+
+Moonroot
+→ Mana Potion
+→ Magic-related crafting
+
+Bloodflower
+→ HP Potion
+→ Combat consumables
+
+Shadow Mushroom
+→ Defensive Potion
+→ Survival effects
+
+Sun Herb
+→ Stamina Potion
+
+Rare Crystal Flower
+→ Advanced Crafting
+→ Rare Alchemy
+
+
+==================================================
+10. CROP CONFIG
+==================================================
+
+Каждое растение должно описываться конфигурацией.
+
+CropConfig:
+
+- CropID
+- DisplayName
+- SeedItem
+- GrowthTime
+- GrowthStages
+- HarvestItem
+- HarvestAmount
+- Rarity
+- RequiredHomeLevel
+
+AI должен иметь возможность добавить новое растение изменением конфигурации.
+
+Не переписывать основной Farm System.
+
+
+==================================================
+11. CROP GROWTH
+==================================================
+
+Стадии:
+
+Seed
+↓
+Growing
+↓
+Mature
+↓
+Harvestable
+
+Рост должен сохраняться.
+
+Если игрок вышел:
+
+→ растение продолжает расти.
+
+При следующем входе:
+
+→ сервер рассчитывает состояние по серверному времени.
+
+Никогда не доверять времени клиента.
+
+Не использовать бесконечный цикл для каждого растения.
+
+Использовать timestamp-based system.
+
+
+==================================================
+12. CRAFTING
+==================================================
+
+Добавить Crafting System.
 
 Пример:
 
-Run 1:
+3 Bone + 1 Iron
+→ Bone Reinforcement
 
-NPC:
+2 Moonroot + 1 Crystal
+→ Mana Potion
 
-"Ты тоже слышишь колокол?"
+Bloodflower + Bone
+→ Blood Elixir
 
-Run 2:
+Shadow Mushroom + Crystal
+→ Shadow Tonic
 
-NPC исчез.
+Рецепты должны быть config-driven.
 
-Run 3:
+RecipeConfig:
 
-Игрок находит его оружие.
+- RecipeID
+- RequiredItems
+- RequiredAmount
+- ResultItem
+- ResultAmount
+- RequiredStation
+- RequiredHomeLevel
+- OptionalCharacterRequirement
 
-Run 4:
 
-NPC появляется как enemy.
+==================================================
+13. ALCHEMY
+==================================================
 
-Это пример.
+Создать Alchemy Station.
 
-Не копируй буквально этот сюжет.
+Использовать:
 
----
+- Farm resources
+- Dungeon resources
+- Rare materials
 
-37. ENDINGS
+для создания consumables.
 
-Позже добавить несколько вариантов завершения.
+Алхимия должна помогать игроку, но не быть обязательной для каждого забега.
+
+
+==================================================
+14. BLACKSMITH
+==================================================
+
+Добавить Blacksmith.
+
+Функции:
+
+- Weapon Upgrade
+- Item Upgrade
+- Crafting
+- Material usage
+
+Сервер проверяет:
+
+- ownership;
+- item;
+- materials;
+- level;
+- requirements;
+- cost;
+- cooldown;
+- player state.
+
+Клиент никогда не сообщает серверу готовый результат.
+
+Сервер сам рассчитывает результат.
+
+
+==================================================
+15. BOSS TROPHIES
+==================================================
+
+После убийства босса игрок может получить:
+
+- Boss Soul
+- Boss Material
+- Boss Weapon
+- Boss Trophy
+
+Boss Trophy можно физически разместить в доме.
 
 Например:
 
-- Escape;
-- Destroy;
-- Become;
-- Secret Ending.
+Fallen Knight
+↓
+Defeat
+↓
+Fallen Knight Trophy
+↓
+Place in Trophy Hall
 
-Не реализовывать до завершения основного gameplay loop.
+Трофеи должны показывать достижения игрока.
 
----
 
-38. HUB
+==================================================
+16. ACHIEVEMENTS
+==================================================
 
-Hub должен быть небольшим.
+Добавить физическое отображение достижений.
 
-В нём:
+Примеры:
 
-- Character selection;
-- Soul management;
-- Inventory;
+- First Boss
+- 10 Dungeons
+- Secret Boss
+- No Death Run
+- Legendary Soul
+- 100 Dungeon Runs
+
+Некоторые достижения должны превращаться в:
+
+- trophies;
+- statues;
+- banners;
+- decorations.
+
+
+==================================================
+17. NPC RECRUITMENT
+==================================================
+
+NPC можно находить в Dungeon.
+
+Примеры:
+
+- Blacksmith
+- Farmer
+- Alchemist
+- Merchant
+- Scholar
+- Hunter
+
+Игрок встречает NPC:
+
+Dungeon
+↓
+NPC
+↓
+Quest / Requirement
+↓
+Rescue / Recruit
+↓
+NPC appears at Home
+
+Исследование Dungeon должно влиять на развитие дома.
+
+
+==================================================
+18. NPC FUNCTIONS
+==================================================
+
+Blacksmith
+→ Weapon Upgrades
+
+Farmer
+→ Seeds / Farming
+
+Alchemist
+→ Potions
+
+Merchant
+→ Buy / Sell
+
+Scholar
+→ Soul / Lore
+
+Hunter
+→ Hunting Quests
+
+Не делать одного универсального NPC.
+
+
+==================================================
+19. SOCIAL HOME
+==================================================
+
+Игроки должны иметь возможность видеть дома друг друга.
+
+Пример:
+
+Player A
+↓
+Invite Player B
+↓
+Player B accepts
+↓
+Player B enters Home A
+
+Гость реально находится в доме хозяина.
+
+Гость видит:
+
+- дом;
+- мебель;
+- ферму;
 - NPC;
-- Shop;
-- Dungeon entrance;
-- Legacy;
-- Cosmetics.
+- трофеи;
+- украшения;
+- прогресс.
 
-Не превращай Hub в огромный open world.
 
----
+==================================================
+20. HOME ACCESS
+==================================================
 
-39. MONETIZATION
+Добавить режимы:
 
-Free-to-play.
+PRIVATE
+→ только владелец
 
-НЕ Pay-to-Win.
+FRIENDS
+→ друзья могут посещать
 
-Можно продавать:
+PARTY
+→ игроки текущей группы могут посещать
 
-- character cosmetics;
-- weapon skins;
-- VFX;
-- auras;
-- emotes;
-- titles;
-- profile cosmetics;
-- pets;
-- cosmetic bundles;
-- VIP cosmetic pass;
-- private servers.
+EVERYONE
+→ разрешить посещение другим игрокам
+
+
+==================================================
+21. HOME PERMISSIONS
+==================================================
+
+Добавить отдельные разрешения:
+
+- View Home
+- Use Farm
+- Use Crafting
+- Use Alchemy
+- Use Blacksmith
+- Trade
+- Place Objects
+- Interact With NPCs
+
+По умолчанию:
+
+View Home = разрешено приглашённым.
+
+Storage = запрещено.
+
+Take Items = запрещено.
+
+Modify Home = запрещено.
+
+Владелец может изменять permissions.
+
+
+==================================================
+22. FRIEND HOME VISIT
+==================================================
+
+Добавить:
+
+Friends
+↓
+Select Friend
+↓
+Visit Home
+
+Если разрешение есть:
+
+→ войти в Home.
+
+Если запрещено:
+
+→ показать понятное сообщение.
+
+
+==================================================
+23. HOME INSTANCE
+==================================================
+
+Продумать масштабируемую серверную архитектуру.
+
+Не создавать постоянно работающий отдельный сервер для каждого дома без необходимости.
+
+Можно использовать:
+
+- Home Instances
+- отдельные зоны
+- Teleport Routing
+- Shared Home Servers
+- другую оптимальную архитектуру
+
+Выбрать решение с учётом:
+
+- Roblox server limits;
+- memory;
+- multiplayer;
+- DataStore;
+- teleportation;
+- scalability;
+- mobile performance.
+
+
+==================================================
+24. CO-OP HOME
+==================================================
+
+Если игроки находятся в Party:
+
+они могут:
+
+- посещать дома;
+- ходить по дому;
+- взаимодействовать с разрешёнными объектами;
+- использовать crafting;
+- использовать farm;
+- торговать;
+- готовиться к dungeon.
+
+
+==================================================
+25. CO-OP INTERACTIONS
+==================================================
+
+Добавить специальные взаимодействия.
+
+TWO PLAYER SHRINE:
+
+Player A + Player B
+↓
+Activate Shrine
+↓
+Special Event / Reward
+
+TWO PLAYER DOOR:
+
+Player A
++
+Player B
+↓
+Activate mechanisms
+↓
+Door opens
+
+В будущем архитектура должна поддерживать:
+
+- совместный крафт;
+- специальные события;
+- мини-испытания;
+- секретные механизмы.
+
+Они не должны быть обязательными для основного прохождения.
+
+
+==================================================
+26. TRADING
+==================================================
+
+Добавить безопасную систему торговли.
+
+Player A
+↓
+Select Items
+
+Player B
+↓
+Select Items
+
+Both Confirm
+↓
+Server Validation
+↓
+Trade
+
+Если после подтверждения кто-то изменил предмет:
+
+→ оба Confirm сбрасываются.
+
+Сервер проверяет:
+
+- ownership;
+- item existence;
+- amount;
+- inventory capacity;
+- locked items;
+- player state;
+- trade state.
+
+
+==================================================
+27. GIFT SYSTEM
+==================================================
+
+Добавить возможность отправлять подарки.
+
+Например:
+
+Player A
+→ Gift
+→ Moonroot ×3
+→ Crystal ×1
+→ Player B
+
+Player B получает уведомление.
+
+Все подарки проходят серверную проверку.
+
+
+==================================================
+28. ECHO + HOME
+==================================================
+
+Интегрировать существующую Echo System.
+
+После смерти персонажа:
+
+Echo может появиться в:
+
+- Dungeon;
+- специальных местах;
+- Home.
+
+В доме может появляться:
+
+Echo of Fallen Knight
+
+Игрок:
+
+[E] Remember
+
+→ запускается небольшая сцена / диалог / lore.
+
+
+==================================================
+29. LEGACY + HOME
+==================================================
+
+Legacy System должна быть связана с домом.
+
+Прошлые персонажи могут оставлять:
+
+- Souls;
+- Echo;
+- Trophies;
+- Lore;
+- Achievements;
+- special items.
+
+Дом становится физическим отображением истории аккаунта.
+
+
+==================================================
+30. ACCOUNT VS CHARACTER DATA
+==================================================
+
+Чётко разделить данные.
+
+ACCOUNT DATA:
+
+Home
+Farm
+Storage
+NPCs
+Trophies
+Achievements
+Legacy
+Home Level
+Home Upgrades
+
+CHARACTER DATA:
+
+Level
+XP
+Equipment
+Skills
+Soul
+Character Progress
+Character-specific data
+
+Не смешивать эти данные.
+
+
+==================================================
+31. DATASTORE
+==================================================
+
+Использовать versioned schema.
+
+PlayerData:
+
+├── Version
+├── Home
+│   ├── Level
+│   ├── Upgrades
+│   ├── Layout
+│   └── Decorations
+│
+├── Farm
+│   └── Plots
+│
+├── Storage
+├── NPCs
+├── Trophies
+├── Achievements
+├── Characters
+├── Souls
+├── Legacy
+└── Settings
+
+Добавить migration system.
+
+Изменение структуры данных не должно ломать старые сохранения.
+
+
+==================================================
+32. SERVER AUTHORITY
+==================================================
+
+Все важные действия должны быть SERVER-AUTHORITATIVE.
+
+Никогда не доверять клиенту:
+
+- Currency
+- Damage
+- XP
+- Items
+- Inventory
+- Crop Growth
+- Harvest
+- Crafting
+- Trading
+- Home Upgrade
+- Character Level
+- Soul Ownership
+- Dungeon Rewards
+- Boss Rewards
+- Teleport permissions
+
+
+==================================================
+33. REMOTE SECURITY
+==================================================
+
+Каждый RemoteEvent должен проверять:
+
+- Type
+- Rate Limit
+- State
+- Distance
+- Ownership
+- Cooldown
+- Permissions
+- Valid Target
+- Valid Item
+- Valid Amount
+
+Защиту создавать одновременно с первым RemoteEvent.
+
+Не оставлять security на потом.
+
+
+==================================================
+34. MOBILE PERFORMANCE
+==================================================
+
+Home должен работать на:
+
+- Low-end mobile
+- Mobile
+- PC
+- Console
+
+Добавить:
+
+LOW
+MEDIUM
+HIGH
+
+LOW:
+
+- Bloom OFF
+- DepthOfField OFF
+- SunRays OFF
+- reduced particles
+- reduced visual effects
+- optimized lighting
+
+Не создавать сотни постоянно работающих скриптов.
+
+
+==================================================
+35. HOME UI
+==================================================
+
+Создать UI:
+
+- Home
+- Farm
+- Storage
+- Crafting
+- Alchemy
+- Blacksmith
+- NPCs
+- Friends
+- Visit Home
+- Trade
+- Gift
+- Permissions
+
+UI должен использовать существующий визуальный стиль игры.
+
+
+==================================================
+36. SOCIAL UI
+==================================================
+
+При посещении чужого дома:
+
+Visiting:
+PlayerName
+
+[ Leave Home ]
+
+Владелец должен видеть:
+
+Guests:
+Player A
+Player B
+
+
+==================================================
+37. HOME CUSTOMIZATION
+==================================================
+
+В будущем добавить:
+
+- furniture;
+- decorations;
+- statues;
+- trophies;
+- banners;
+- plants;
+- lighting;
+- house themes;
+- garden themes;
+- cosmetic effects.
+
+Все предметы должны быть безопасными и серверно контролируемыми.
+
+
+==================================================
+38. MONETIZATION
+==================================================
+
+Home monetization должна быть COSMETIC ONLY.
+
+Разрешено:
+
+- furniture skins;
+- house themes;
+- decorations;
+- statues;
+- banners;
+- visual effects;
+- cosmetic farm decorations;
+- cosmetic garden themes.
 
 Не продавать:
 
-- huge damage advantages;
-- immortal status;
-- mandatory energy;
-- exclusive power required for normal progression.
-
----
-
-40. IMPORTANT MONETIZATION RULE
-
-Gameplay rewards должны оставаться meaningful.
-
-Игрок не должен думать:
-
-"Мне нужно платить, чтобы нормально играть."
-
-Монетизация должна поддерживать:
-
-- identity;
-- customization;
-- collection;
-- convenience.
-
-А не силу.
-
----
-
-41. ASSETS
-
-Используй разрешённые Roblox Creator Store resources.
-
-Перед использованием:
-
-- проверить license;
-- проверить содержимое;
-- удалить неизвестные scripts;
-- проверить plugins;
-- проверить backdoors;
-- оптимизировать meshes;
-- оптимизировать textures;
-- оптимизировать particles.
-
-Никогда не добавляй неизвестный код из Free Models без проверки.
-
----
-
-42. VISUAL IDENTITY
-
-Не копируй Dark Souls/Elden Ring UI или assets.
-
-Направление:
-
-- dark fantasy;
-- mysterious;
-- adventurous;
-- atmospheric;
-- readable;
-- stylized realism.
-
-Не делай игру намеренно horror-only.
-
-Игрок должен чувствовать:
-
-"Я отправляюсь в опасное приключение."
-
-а не:
-
-"Я играю в horror game."
-
----
-
-43. UI
-
-Минимальный HUD:
-
-- HP;
-- Stamina;
-- Mana;
-- abilities;
-- boss HP;
-- party;
-- current objective;
-- interaction prompts.
-
-UI должен быть собственным.
-
-Не копировать интерфейс известных Soulslike.
-
-Поддержка:
-
-- PC;
-- Mobile;
-- Controller.
-
----
-
-44. MOBILE
-
-Mobile не должен быть второстепенным.
-
-Все основные действия должны быть доступны:
-
-- attack;
-- heavy;
-- dodge;
-- ability;
-- interact;
-- camera;
-- target/lock-on при необходимости.
-
-Не создавай 15 маленьких кнопок.
-
-Используй context-aware controls там, где это возможно.
-
----
-
-45. CONTROLLER
-
-Поддержка:
-
-- Xbox;
-- PlayStation-style controller;
-- generic controller.
-
-Используй unified input abstraction.
-
----
-
-46. SERVER AUTHORITATIVE
-
-Клиент НЕ является источником истины для:
-
-- damage;
-- currency;
-- XP;
-- inventory;
-- loot;
-- purchases;
-- cooldowns;
-- item ownership;
-- progression;
-- enemy state;
-- dungeon state;
-- Memory;
-- Echo;
-- rewards.
-
-Server отвечает за:
-
-- combat validation;
-- hit validation;
-- damage;
-- AI;
-- loot;
-- inventory;
-- dungeon;
-- Memory;
-- Echo state;
-- rewards;
-- purchases;
-- save/load.
-
-Каждый RemoteEvent / RemoteFunction должен проходить server validation.
-
----
-
-47. ANTI-EXPLOIT
-
-Проверять:
-
-- Remote spam;
-- invalid arguments;
-- impossible distances;
-- impossible attack rate;
-- fake damage;
-- fake currency;
-- fake item IDs;
-- duplicate rewards;
-- fake purchases;
-- teleport abuse;
-- cooldown bypass;
-- inventory duplication.
-
-Всегда задавай вопрос:
-
-"What happens if an exploiter calls this RemoteEvent manually 1000 times?"
-
----
-
-48. DATA
-
-Использовать DataStoreService или подходящую безопасную data architecture.
-
-Сохранять:
-
-- currencies;
-- XP;
-- character unlocks;
-- Souls;
-- inventory;
-- equipment;
-- cosmetics;
-- Memory flags;
-- Legacy;
-- progression;
-- settings.
-
-Предусмотреть:
-
-- autosave;
-- retry;
-- shutdown save;
-- versioning;
-- migration;
-- duplicate prevention;
-- data loss protection.
-
----
-
-49. MEMORY DATA
-
-Memory должна быть отдельно структурирована.
-
-Пример концепции:
-
-MemoryFlags:
-
-- HelpedNPC_A
-- KilledNPC_A
-- OpenedSecret_B
-- DefeatedBoss_C
-- FoundSoul_D
-
-Не храни Memory как хаотичный набор переменных в разных scripts.
-
----
-
-50. DUNGEON STATE
-
-Dungeon должен иметь:
-
-- RunId;
-- PartyId;
-- Seed, если используется;
-- current room;
-- completed rooms;
-- events;
-- active boss;
-- Memory interactions;
-- rewards;
-- player states.
-
-Server является authoritative.
-
----
-
-51. PERFORMANCE
-
-Roblox должен нормально работать на слабых устройствах.
-
-Контролировать:
-
-- Parts;
-- MeshParts;
-- textures;
-- particles;
-- lights;
-- sounds;
-- scripts;
-- RemoteEvents;
-- Heartbeat;
-- memory;
-- NPC count.
-
-Не создавай:
-
-один постоянный Heartbeat на каждый объект.
-
-Используй централизованные update systems там, где это оправдано.
-
----
-
-52. ARCHITECTURE
-
-Используй modular architecture.
-
-Пример:
-
-ReplicatedStorage
-
-Shared
-
-- Config
-- Constants
-- Types
-- Utils
-- Data
-- Combat
-- Souls
-- Memory
-- Dungeon
-- Items
-
-Remotes
-
-- Combat
-- Dungeon
-- Inventory
-- Party
-- UI
-- Player
-
-Assets
-
-- Characters
-- Weapons
-- Enemies
-- VFX
-- Audio
-
-ServerScriptService
-
-Services
-
-- PlayerDataService
-- CombatService
-- EnemyService
-- DungeonService
-- LootService
-- SoulService
-- MemoryService
-- EchoService
-- PartyService
-- RewardService
-- MonetizationService
-- AnalyticsService
-
-ServerBootstrap
-
-StarterPlayer
-
-StarterPlayerScripts
-
-Controllers
-
-- CombatController
-- InputController
-- CameraController
-- UIController
-- DungeonController
-- SoulController
-
-StarterGui
-
-HUD
-Inventory
-Character
-Souls
-Dungeon
-Shop
-Legacy
-Settings
-
----
-
-53. CONFIG-DRIVEN DESIGN
-
-Не хардкодь:
-
-- enemy stats;
-- loot tables;
-- Souls;
-- weapons;
-- events;
-- rewards;
-- character abilities;
-- dungeon rooms.
-
-Используй конфигурации.
-
-Цель:
-
-Чтобы новый Soul можно было добавить без переписывания CombatService.
-
-Чтобы новый enemy можно было добавить без переписывания EnemyService.
-
-Чтобы новый event можно было добавить без переписывания DungeonService.
-
----
-
-54. DEVELOPMENT PROCESS
-
-Для каждой задачи:
-
-STEP 1 — ANALYZE
-
-Проанализируй существующий проект.
-
-Покажи:
-
-- файлы;
-- folders;
-- systems;
-- dependencies;
-- existing code;
-- reusable components;
-- conflicts.
-
-STEP 2 — PLAN
-
-Определи:
-
-- что меняем;
-- что создаём;
-- что переиспользуем;
-- где это будет находиться;
-- зависимости;
-- риски.
-
-STEP 3 — IMPLEMENT
-
-Реализуй только текущую задачу.
-
-НЕ переписывай весь проект.
-
-STEP 4 — TEST
-
-Проверь:
-
-- syntax;
-- runtime;
-- client/server;
-- multiplayer;
-- edge cases;
-- mobile;
-- controller;
-- security.
-
-STEP 5 — FIX
-
-Исправь найденные проблемы.
-
-STEP 6 — REPORT
-
-Сообщи:
-
-- created files;
-- modified files;
-- removed files;
-- implemented features;
-- test results;
-- known limitations;
-- next step.
-
----
-
-55. IMPORTANT AI RULE
-
-Перед изменением существующего файла:
-
-СНАЧАЛА ПРОЧИТАЙ ЕГО ПОЛНОСТЬЮ.
-
-Не делай предположений о его содержимом.
-
-Перед созданием новой системы:
-
-ПРОВЕРЬ, НЕ СУЩЕСТВУЕТ ЛИ ОНА УЖЕ.
-
-Нельзя создавать:
-
-CombatService2
-
-InventoryServiceNew
-
-NewDungeonSystem
-
-если аналогичная система уже существует.
-
----
-
-56. DO NOT OVERENGINEER
-
-Не создавать заранее:
-
-- MMO architecture;
-- huge matchmaking;
-- 100 enemy types;
-- 50 characters;
-- giant quest system;
-- advanced procedural generation;
-- complex crafting;
-- trading;
-- guild wars;
-- PvP.
-
-Сначала vertical slice.
-
----
-
-57. VERTICAL SLICE
-
-Первый playable build должен содержать:
-
-CHARACTER
-
-Knight
-
-SOUL
-
-1 Soul
-
-ENEMIES
-
-Skeleton
-
-Archer
-
-Knight Elite
-
-DUNGEON
-
-5–7 rooms
-
-EVENT
-
-1 Random Event
-
-CHOICE
-
-1 Risk/Reward Choice
-
-SECRET
-
-1 Secret
-
-BOSS
-
-1 Boss
-
-ECHO
-
-1 basic Echo behaviour
-
-REWARD
-
-Loot + Soul/Relic
-
-HUB
-
-Basic Hub
-
-MULTIPLAYER
-
-1–4 players
-
----
-
-58. FIRST DEVELOPMENT ORDER
-
-PHASE 1 — FOUNDATION
-
-1. Roblox Studio project
-2. Basic player
-3. Input
-4. Camera
-5. Basic architecture
-6. Server/client separation
-7. Basic sword
-8. Light attack
-9. Hitbox
-10. Server damage
-11. Basic enemy
-12. Enemy death
-
----
-
-PHASE 2 — SOULSLIKE COMBAT
-
-13. Dodge
-14. I-frames
-15. Stamina
-16. Heavy attack
-17. Combo
-18. Hit reactions
-19. Enemy AI
-20. Archer
-21. Elite enemy
-22. Basic parry
-
----
-
-PHASE 3 — CHARACTER IDENTITY
-
-23. Knight
-24. Mage architecture
-25. Hunter architecture
-26. Ability framework
-27. Character configs
-28. First Soul
-29. Soul system
-30. Soul UI
-
----
-
-PHASE 4 — DUNGEON
-
-31. Hub
-32. Dungeon entrance
-33. Room system
-34. Dungeon state
-35. Event system
-36. Choice system
-37. Risk/Reward
-38. Secret room
-39. Treasure room
-
----
-
-PHASE 5 — BOSS
-
-40. Boss framework
-41. Fallen Knight
-42. Phase 1
-43. Phase 2
-44. Boss arena
-45. Boss rewards
-
----
-
-PHASE 6 — MEMORY
-
-46. MemoryService
-47. Memory flags
-48. NPC state
-49. Dungeon consequences
-50. Echo system
-51. Echo rewards
-52. Legacy system
-
----
-
-PHASE 7 — PROGRESSION
-
-53. Inventory
-54. Loot
-55. Souls
-56. Relics
-57. XP
-58. Currency
-59. DataStore
-60. Save/load
-61. Migration
-62. Anti-duplication
-
----
-
-PHASE 8 — MULTIPLAYER
-
-63. Party 1–4
-64. Player join
-65. Player leave
-66. Disconnect handling
-67. Party state
-68. Boss state
-69. Shared rewards
-70. Co-op synergy
-
----
-
-PHASE 9 — PRESENTATION
-
-71. HUD
-72. Character UI
-73. Soul UI
-74. Inventory
-75. Dungeon UI
-76. Legacy UI
-77. VFX
-78. Audio
-79. Camera polish
-80. Animations
-
----
-
-PHASE 10 — MOBILE / CONTROLLER
-
-81. Mobile controls
-82. Controller
-83. UI scaling
-84. Input abstraction
-85. Performance testing
-
----
-
-PHASE 11 — MONETIZATION
-
-86. Cosmetics
-87. Weapon skins
-88. VFX
-89. Auras
-90. Emotes
-91. Titles
-92. Pets
-93. VIP cosmetic pass
-94. Developer Products
-95. Game Passes
-
-Never sell gameplay power required to progress normally.
-
----
-
-PHASE 12 — POLISH
-
-96. Security audit
-97. Performance optimization
-98. Analytics
-99. QA
-100. Bug fixing
-101. Tutorial/onboarding
-102. Public testing
-103. Release
-
----
-
-59. MVP DEFINITION
-
-Не считать MVP готовым, пока игрок не может:
-
-1. Join.
-2. Spawn in Hub.
-3. Select character.
-4. Select Soul.
-5. Enter dungeon.
-6. Explore.
-7. Fight.
-8. Dodge.
-9. Spend stamina.
-10. Use abilities.
-11. Kill enemies.
-12. Encounter event.
-13. Make a choice.
-14. Find reward.
-15. Find secret.
-16. Fight elite.
-17. Fight boss.
-18. Kill boss.
-19. Receive reward.
-20. Return to Hub.
-21. Save progress.
-22. Leave.
-23. Rejoin.
-24. Recover progress.
-25. Play with up to 4 players.
-26. Experience at least one co-op synergy.
-27. Experience at least one Memory consequence.
-28. Experience an Echo.
-29. Complete a safe purchase.
-30. Play on PC and mobile.
-
----
-
-60. WHAT NOT TO DO
-
-НЕ:
-
-- создавать всю игру сразу;
-- создавать giant scripts;
-- переписывать проект без причины;
-- создавать дубликаты systems;
-- доверять client damage;
-- доверять client currency;
-- доверять client inventory;
-- создавать pay-to-win;
-- копировать Dark Souls/Elden Ring;
-- создавать procedural dungeon до working manual dungeon;
-- создавать 50 персонажей;
-- создавать 100 enemies;
-- делать огромный open world;
-- добавлять PvP;
-- добавлять сложный crafting без необходимости.
-
----
-
-61. PRIORITY
-
-Если нужно выбирать между количеством контента и качеством:
-
-ПРИОРИТЕТ:
-
-1. Combat feel
-2. Enemy readability
-3. Boss quality
-4. Dungeon pacing
-5. Character identity
-6. Soul system
-7. Co-op
-8. Memory/Echo
-9. Progression
-10. Cosmetics
-11. Additional content
-
-Не добавляй новый контент, пока существующий контент не ощущается качественно.
-
----
-
-62. FUTURE EXPANSION
-
-После MVP архитектура должна позволять добавить:
-
-- новые Characters;
-- новые Souls;
-- новые Relics;
-- новые dungeons;
-- new events;
-- new bosses;
-- new endings;
-- new Memory branches;
-- new Echo types;
-- new cosmetics.
-
-Добавление нового контента не должно требовать переписывания всей архитектуры.
-
----
-
-63. CREATOR STORE PRODUCTS
-
-После того как игра работает, проанализируй, какие внутренние системы можно превратить в reusable Roblox products.
-
-Возможные:
-
-- Soulslike Combat Framework
-- Enemy AI Framework
-- Boss Framework
-- Dungeon Framework
-- Loot Framework
-- Soul System
-- Dialogue System
-- Memory System
-- Echo System
-- Inventory Framework
-- Save Framework
-- Multiplayer Dungeon Framework
-
-Но НЕ делай это приоритетом MVP.
-
-Сначала игра.
-
----
-
-64. ANALYTICS
-
-После MVP отслеживай только действительно полезные события:
-
-- session start;
-- dungeon start;
-- dungeon completion;
-- death;
-- boss attempt;
-- boss kill;
-- character selection;
-- Soul selection;
-- event selection;
-- secret discovery;
-- quit during dungeon;
-- purchase.
-
-Не собирай ненужные персональные данные.
-
----
-
-65. PLAYER EXPERIENCE
-
-Первые 5 минут игры должны объяснить:
-
-- как двигаться;
-- как атаковать;
-- как dodge;
-- как работает stamina;
-- как использовать Soul;
-- как войти в dungeon;
-- что игрок должен делать.
-
-Не показывай игроку 20 окон сразу.
-
-Обучение должно происходить через gameplay.
-
----
-
-66. FINAL DESIGN PRINCIPLE
-
-Главная цель игры:
-
-Игрок должен после забега подумать:
-
-«"Я хочу попробовать ещё раз."»
-
-Не только потому что:
-
-"мне нужен ещё один предмет."
-
-А потому что:
-
-- я хочу попробовать другой Soul;
-- я хочу открыть секрет;
-- я хочу узнать, что произойдёт с NPC;
-- я хочу увидеть другой event;
-- я хочу победить босса лучше;
-- я хочу проверить другой путь;
-- я хочу найти свой Echo;
-- я хочу изменить судьбу персонажа;
-- я хочу пройти dungeon с друзьями;
-- я хочу узнать историю.
-
----
-
-67. CURRENT TASK
-
-НЕ начинай создавать всю игру.
-
-Сначала:
-
-1. Проанализируй существующий проект.
-2. Найди уже существующие системы.
-3. Определи конфликты.
-4. Предложи окончательную архитектуру MVP.
-5. Определи структуру папок.
-6. Определи минимальный набор systems.
-7. Определи Game Design architecture.
-8. Определи Character architecture.
-9. Определи Soul architecture.
-10. Определи Dungeon architecture.
-11. Определи Memory architecture.
-12. Определи Echo architecture.
-13. Определи multiplayer architecture.
-14. Определи порядок реализации.
-15. Определи технические риски.
-16. Определи performance risks.
-17. Определи security risks.
-
-После этого:
-
-НАЧНИ ТОЛЬКО PHASE 1.
-
-Не переходи к Phase 2, пока Phase 1 не проверена.
-
-После каждой завершённой фазы:
+- combat power;
+- обязательные характеристики;
+- PvE damage advantage;
+- exclusive progression advantage;
+- pay-to-win resources.
+
+
+==================================================
+39. DEVELOPMENT PHASES
+==================================================
+
+Реализовывать строго по этапам.
+
+PHASE 1:
+Basic Home
++ Home Spawn
++ Persistent Ownership
+
+PHASE 2:
+Storage
++ Inventory Integration
+
+PHASE 3:
+Farm
++ Plots
++ Seeds
++ Growth
++ Harvest
+
+PHASE 4:
+Crafting
++ Recipes
++ Stations
+
+PHASE 5:
+Home Level
++ Upgrades
++ Visual Changes
+
+PHASE 6:
+NPC Recruitment
++ Farmer
++ Blacksmith
++ Alchemist
++ Merchant
+
+PHASE 7:
+Trophies
++ Achievements
++ Echo
++ Legacy
+
+PHASE 8:
+Friend Home Visits
+
+PHASE 9:
+Permissions
+
+PHASE 10:
+Trading
+
+PHASE 11:
+Gifts
+
+PHASE 12:
+Co-op Home Interactions
+
+PHASE 13:
+Home Customization
+
+PHASE 14:
+Optimization
++ Mobile
++ Security
++ Exploit Testing
+
+
+==================================================
+40. DEVELOPMENT METHOD
+==================================================
+
+Перед каждой Phase:
 
 ANALYZE
+↓
+PLAN
+↓
+IMPLEMENT
+↓
+TEST
+↓
+FIX
+↓
+VERIFY
+↓
+DOCUMENT
+↓
+NEXT
 
-→ TEST
+Перед написанием кода:
 
-→ SECURITY CHECK
+1. Прочитать существующие системы.
+2. Найти существующие модули.
+3. Проверить существующие RemoteEvents.
+4. Проверить DataStore.
+5. Проверить Inventory.
+6. Проверить Multiplayer.
+7. Не создавать дубликаты.
 
-→ PERFORMANCE CHECK
+После реализации:
 
-→ REPORT
+1. Проверить Output.
+2. Проверить ошибки.
+3. Проверить multiplayer.
+4. Проверить DataStore.
+5. Проверить mobile.
+6. Проверить security.
+7. Проверить exploit resistance.
+8. Проверить совместимость с Combat/Dungeon/Soul/Legacy.
 
-→ только после этого NEXT PHASE.
 
----
+==================================================
+41. FINAL EXPERIENCE
+==================================================
 
-68. MY ROLE
+Игрок должен ощущать:
 
-Я принимаю решения по:
+"Я создаю своего персонажа."
 
-- game direction;
-- visual direction;
-- monetization;
-- features;
-- priorities.
+"Я отправляюсь в dungeon."
 
-Ты отвечаешь за:
+"Я рискую ради лута."
 
-- техническую реализацию;
-- архитектуру;
-- code quality;
-- security;
-- performance;
-- debugging;
-- integration.
+"Я возвращаюсь домой."
 
-Если моё решение технически рискованное — объясни почему и предложи альтернативы.
+"Я использую добытые ресурсы."
 
-Не меняй концепцию самостоятельно.
+"Я выращиваю растения."
 
----
+"Я создаю предметы."
 
-FINAL RULE
+"Я развиваю дом."
 
-Всегда помни:
+"Я нахожу NPC."
 
-Это должна быть не копия существующей Roblox RPG.
+"Я выставляю трофеи."
 
-Мы создаём:
+"Я вижу историю своих прошлых персонажей."
 
-A CO-OP SOULSLIKE ROGUELITE DUNGEON WHERE THE WORLD REMEMBERS WHAT YOU DID.
+"Я приглашаю друга."
 
-Основные уникальные системы:
+"Мы посещаем дома друг друга."
 
-SOULS
+"Мы готовимся вместе."
 
-+ 
+"Мы отправляемся в dungeon."
 
-CHOICES
+HOME — это не меню.
 
-+ 
+HOME — это постоянное физическое место игрока и центральная часть мета-прогрессии.
 
-MEMORY
-
-+ 
-
-ECHOES
-
-+ 
-
-LEGACY
-
-+ 
-
-CO-OP SYNERGY
-
-+ 
-
-SHORT HIGH-QUALITY DUNGEON RUNS
-
-Именно эти системы должны постепенно сформировать идентичность игры.
+END OF HOME + FARM + SOCIAL SYSTEM
