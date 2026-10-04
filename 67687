@@ -1,1231 +1,2217 @@
-# HOME + FARM + SOCIAL SYSTEM
-# Roblox Soulslike Project
+Ты — senior Roblox game developer, gameplay programmer, technical designer и level designer.
 
-Ты работаешь над существующим Roblox Soulslike PvE проектом.
+Создай полноценную Roblox-игру в жанре CO-OP Fantasy Survivors / Roguelite, вдохновлённую структурой современных Roblox survival-wave игр.
 
-Уже существуют или планируются:
-- Soulslike Combat
-- Dungeon System
-- Character System
-- Soul System
-- Echo System
-- Legacy System
-- Loot System
-- Progression
-- Co-op Multiplayer
-- Inventory
-- DataStore
-- Server-authoritative architecture
-
-Твоя задача — добавить полноценную систему:
-
-HOME + FARM + CRAFTING + STORAGE + NPC + SOCIAL + FRIEND INTERACTION
-
-Эти системы должны быть частью существующей игры, а не отдельным режимом.
+ВАЖНО:
+Не копируй чужие ассеты, текстуры, персонажей, логотипы, названия, UI-графику или исходный код.
+Можно использовать похожую игровую структуру и общие жанровые механики, но реализация должна быть собственной.
+Используй бесплатные Roblox Creator Store / DevForum ассеты только с разрешённой лицензией.
+Основной визуальный стиль — STYLIZED FANTASY.
 
 ==================================================
-1. ГЛАВНЫЙ GAME LOOP
+1. КОНЦЕПЦИЯ
 ==================================================
 
-Основной цикл:
+Игрок находится в fantasy hub.
 
-HOME
-↓
-Подготовка персонажа
+В hub игрок:
+
+- выбирает героя/класс;
+- смотрит экипировку;
+- улучшает постоянные характеристики;
+- открывает оружие;
+- открывает питомцев;
+- выбирает dungeon;
+- собирается с другими игроками;
+- начинает забег.
+
+После старта игрок переносится в большую подземную локацию.
+
+Основной gameplay:
+
+PLAYER
 ↓
 DUNGEON
 ↓
-Exploration
+ENEMY WAVES
 ↓
-Combat
+AUTO COMBAT
 ↓
-Events
+XP
 ↓
-Elite / Boss
+LEVEL UP
 ↓
-Loot / Death
+CHOOSE UPGRADE
 ↓
-Возвращение домой
+STRONGER ENEMIES
 ↓
-Storage
+WEAPON EVOLUTION
 ↓
-Farm
+ELITE ENEMIES
 ↓
-Crafting
+BOSS
 ↓
-Character Progression
+FINAL PHASE
 ↓
-Home Progression
+EXTRACTION / REWARD
 ↓
-Friends / Social
+HUB
 ↓
-Новый Dungeon
+PERMANENT PROGRESSION
 
-Главная идея:
+Основной режим — 1–4 игрока CO-OP.
 
-Dungeon — приключение.
-
-Home — постоянная база игрока.
-
-Farm — источник ресурсов.
-
-Loot — материал для развития.
-
-Character — конкретный герой.
-
-Soul — стиль игры.
-
-Legacy — история игрока.
-
-Friends — совместное прохождение и социальное взаимодействие.
-
+Сервер должен технически поддерживать до 30 игроков в hub, но dungeon run рассчитан на небольшую party.
 
 ==================================================
-2. HOME ПРИНАДЛЕЖИТ АККАУНТУ
+2. ВИЗУАЛЬНЫЙ СТИЛЬ
 ==================================================
 
-КРИТИЧЕСКОЕ ПРАВИЛО:
+Строго придерживайся STYLIZED FANTASY.
 
-Дом НЕ принадлежит отдельному персонажу.
+Не использовать:
 
-Дом принадлежит аккаунту.
+- photorealism;
+- realistic PBR environment;
+- ultra-realistic characters;
+- horror;
+- voxel Minecraft-style;
+- слишком примитивный low-poly;
+- sci-fi;
+- anime characters.
 
-Например:
+Визуальное направление:
 
-ACCOUNT
-├── HOME
-├── FARM
-├── STORAGE
-├── NPCs
-├── TROPHIES
-├── ACHIEVEMENTS
-├── LEGACY
-└── CHARACTERS
+- stylized fantasy;
+- chunky geometry;
+- крупные силуэты;
+- слегка преувеличенные пропорции;
+- stylized materials;
+- clean readable shapes;
+- fantasy medieval architecture;
+- насыщенные, но контролируемые цвета;
+- красивые glowing VFX;
+- большие читаемые оружия;
+- выразительные классы персонажей.
 
-Characters:
-├── Knight
-├── Mage
-└── Hunter
+Окружение должно напоминать современную stylized fantasy Roblox RPG.
 
-Все персонажи используют один дом.
+Используй Inno's Stylized Asset Pack как один из визуальных ориентиров для окружения, но не копируй чужую игру или её конкретные композиции.
 
-Если игрок сменил Knight на Mage:
-
-- дом остаётся;
-- ферма остаётся;
-- ресурсы остаются;
-- NPC остаются;
-- трофеи остаются;
-- развитие дома остаётся.
-
+Весь новый контент должен визуально сочетаться между собой.
 
 ==================================================
-3. ФИЗИЧЕСКИЙ HOME
+3. HUB
 ==================================================
 
-Дом должен быть настоящей игровой зоной, а не просто меню.
+Создай большой fantasy hub.
 
-Базовая структура:
+В hub должны быть:
 
-HOME
-├── Main House
-├── Storage
-├── Farm
-├── Crafting Station
-├── Alchemy Station
-├── Blacksmith
-├── Trophy Area
-├── NPC Area
-├── Garden
-└── Guest Area
+1. Spawn
+2. Class/Character area
+3. Weapon area
+4. Upgrade area
+5. Pet area
+6. Shop
+7. Dungeon portal
+8. Daily reward
+9. Quest NPC
+10. Party area
+11. Leaderboard
+12. Settings
+13. Inventory
+14. Collection
+15. Tutorial area
 
-На первом этапе достаточно:
+Hub должен ощущаться как небольшая fantasy village/castle.
 
-- House
-- Storage
-- Farm
-- Basic Crafting
-- Player Spawn
-- Guest System
+Используй:
 
-Архитектура должна позволять позже добавить остальные системы.
+- medieval houses;
+- castle;
+- stone walls;
+- wooden bridges;
+- banners;
+- lanterns;
+- trees;
+- rocks;
+- market props;
+- fountains;
+- torches;
+- NPCs;
+- dungeon portals.
 
+Не делай огромный пустой мир.
+Hub должен быть компактным и удобным для игрока.
 
 ==================================================
-4. HOME LEVEL
+4. DUNGEON
 ==================================================
 
-Добавить отдельный Home Level.
+Главная игровая карта — БОЛЬШОЕ FANTASY DUNGEON.
 
-Home Level НЕ равен Character Level.
+Это не маленькая арена.
+
+Игрок должен свободно перемещаться по большой локации.
+
+Dungeon состоит из:
+
+- central combat areas;
+- corridors;
+- side rooms;
+- caves;
+- ruins;
+- bridges;
+- underground halls;
+- treasure rooms;
+- elite areas;
+- boss arena.
+
+Используй modular level design.
+
+Карта должна иметь:
+
+- несколько маршрутов;
+- открытые пространства;
+- узкие коридоры;
+- препятствия;
+- возвышенности;
+- тупики;
+- secret rooms;
+- loot areas;
+- точки интереса.
+
+Не создавай лабиринт, в котором игрок постоянно теряется.
+
+Игрок всегда должен примерно понимать, где находятся:
+
+- основная зона боя;
+- objectives;
+- boss;
+- extraction.
+
+==================================================
+5. ENEMY SWARM
+==================================================
+
+Главная механика игры — огромные волны врагов.
+
+Враги постоянно появляются из разных направлений.
+
+Не создавай всех врагов одним огромным spawn burst.
+
+Используй Enemy Manager.
+
+Он должен управлять:
+
+- spawn rate;
+- maximum enemies;
+- spawn locations;
+- enemy types;
+- difficulty scaling;
+- elite chance;
+- boss spawn;
+- despawn;
+- pooling.
+
+Используй Object Pooling.
+
+НЕ создавай и не уничтожай сотни NPC постоянно через Instance.new / Destroy.
+
+Enemy types:
+
+1. Basic melee
+2. Fast enemy
+3. Ranged enemy
+4. Tank
+5. Exploder
+6. Swarm enemy
+7. Elite
+8. Mini Boss
+9. Boss
+
+Каждый enemy должен иметь:
+
+- HP;
+- damage;
+- movement speed;
+- attack range;
+- attack cooldown;
+- XP reward;
+- gold reward;
+- target selection;
+- death VFX;
+- hit reaction.
+
+==================================================
+6. AI
+==================================================
+
+Не используй сложную дорогую AI систему для каждого моба.
+
+Для обычных врагов:
+
+Target player
+↓
+Move toward player
+↓
+Attack if in range
+↓
+Retarget if necessary
+
+Приоритет:
+
+1. ближайший игрок;
+2. игрок с высоким threat;
+3. игрок в зоне атаки.
+
+AI должен быть оптимизирован для большого количества врагов.
+
+Используй серверную авторитетность для:
+
+- damage;
+- HP;
+- rewards;
+- XP;
+- enemy spawning;
+- loot.
+
+==================================================
+7. AUTO COMBAT
+==================================================
+
+Основной combat loop — автоматический.
+
+Игрок в основном:
+
+- двигается;
+- уклоняется;
+- выбирает направление;
+- собирает XP;
+- выбирает upgrades.
+
+Оружие автоматически атакует ближайших/подходящих врагов.
+
+Каждое оружие имеет:
+
+- damage;
+- cooldown;
+- range;
+- projectile count;
+- projectile speed;
+- critical chance;
+- critical damage;
+- area;
+- knockback;
+- rarity;
+- level;
+- evolution.
 
 Пример:
 
-HOME LEVEL 1
-- Basic House
-- 3 Farm Plots
-- Small Storage
+Sword:
+- автоматически атакует ближайшего врага.
 
-HOME LEVEL 2
-- Expanded Storage
-- Workshop
+Bow:
+- стреляет в ближайшего врага.
 
-HOME LEVEL 3
-- Alchemy Station
-- Additional Farm Plots
+Magic Staff:
+- выпускает projectile.
 
-HOME LEVEL 4
-- Blacksmith
+Fire Orb:
+- создаёт area damage.
 
-HOME LEVEL 5
-- Trophy Hall
+Boomerang:
+- летит вперёд и возвращается.
 
-HOME LEVEL 6
-- Advanced Garden
-
-HOME LEVEL 7
-- Expanded Guest Area
-
-HOME LEVEL 8+
-- новые комнаты
-- дополнительные функции
-- косметические улучшения
-
-При повышении Home Level дом должен визуально изменяться.
-
-Не просто менять число в UI.
-
+Lightning:
+- выбирает случайных врагов.
 
 ==================================================
-5. HOME CUSTOMIZATION
+8. XP SYSTEM
 ==================================================
 
-В будущем архитектура должна поддерживать:
+Каждый убитый враг создаёт XP crystal.
 
-- мебель;
-- декоративные объекты;
-- растения;
-- освещение;
-- стены;
-- украшения;
-- трофеи;
-- статуи;
-- banners;
-- cosmetic house themes.
+Игрок может подобрать XP.
 
-Игрок должен постепенно превращать дом в собственное место.
+XP:
 
-Все размещение объектов контролируется сервером.
+Enemy
+↓
+XP Crystal
+↓
+Player collects
+↓
+XP Bar
+↓
+Level Up
 
-Клиент не может произвольно создавать объекты.
+При повышении уровня игра останавливает combat progression для конкретного игрока и показывает upgrade selection.
 
+Показывать 3–4 случайных предложения.
+
+Например:
+
++20% Sword Damage
++15% Attack Speed
++1 Projectile
++10% Movement Speed
 
 ==================================================
-6. STORAGE
+9. UPGRADE SYSTEM
 ==================================================
 
-Создать постоянное хранилище.
+Создай data-driven Upgrade System.
+
+Каждый upgrade должен быть ModuleScript / data object.
+
+Пример:
+
+UpgradeData:
+
+- Id
+- Name
+- Description
+- Icon
+- Type
+- MaxLevel
+- Rarity
+- ApplyFunction
 
 Категории:
 
-- Materials
-- Seeds
-- Consumables
-- Boss Materials
-- Souls
-- Crafting Items
-- Quest Items
+WEAPON
+PASSIVE
+STAT
+UTILITY
+
+Игрок не должен получать бесконечно одинаковые улучшения.
+
+Используй:
+
+- rarity;
+- weighted random;
+- prerequisites;
+- max levels;
+- evolution requirements.
+
+==================================================
+10. WEAPON SYSTEM
+==================================================
+
+Создай data-driven weapon framework.
+
+Weapon:
+
+- ID
+- Name
+- Icon
+- Description
+- Level
+- MaxLevel
+- Damage
+- Cooldown
+- Range
+- ProjectileCount
+- Area
+- Knockback
+- CriticalChance
+- EvolutionID
+
+Игрок может одновременно иметь несколько оружий.
+
+Например:
+
+Slot 1 Sword
+Slot 2 Bow
+Slot 3 Magic
+Slot 4 Lightning
+Slot 5 Bomb
+Slot 6 Special Weapon
+
+==================================================
+11. WEAPON EVOLUTION
+==================================================
+
+Добавь систему EVOLUTION.
+
+Пример:
+
+Weapon:
+Sword Lv. 8
+
++
+
+Required Passive:
+Whetstone Lv. 5
+
+=
+
+Evolved Weapon
+
+Bloodstorm
+
+или другие СОБСТВЕННЫЕ названия.
+
+Evolution должна:
+
+- менять внешний вид;
+- менять VFX;
+- менять behavior;
+- значительно увеличивать силу;
+- создавать ощущение большого power spike.
+
+Система должна поддерживать множество evolution recipes.
+
+EvolutionData:
+
+- BaseWeapon
+- RequiredPassive
+- RequiredWeaponLevel
+- RequiredPassiveLevel
+- ResultWeapon
+
+==================================================
+12. CLASSES / HEROES
+==================================================
+
+Создай несколько уникальных playable heroes.
+
+Начать с:
+
+1. Warrior
+2. Ranger
+3. Mage
+4. Rogue
+5. Engineer
+6. Healer
+
+Каждый герой должен иметь:
+
+- собственную модель;
+- собственную стартовую weapon;
+- passive;
+- stats;
+- ability;
+- progression.
+
+Пример:
+
+WARRIOR:
+high HP
+high melee damage
+low movement speed
+
+RANGER:
+high range
+high projectile count
+lower HP
+
+MAGE:
+high AoE
+low defense
+
+ROGUE:
+high crit
+high movement speed
+
+ENGINEER:
+turrets / gadgets
+
+HEALER:
+support / healing / buffs
+
+Не делай классы просто визуальными скинами.
+Они должны реально играться по-разному.
+
+==================================================
+13. ABILITIES
+==================================================
+
+У каждого героя есть 1 active ability.
+
+Ability имеет:
+
+- cooldown;
+- animation;
+- VFX;
+- sound;
+- damage/effect;
+- UI cooldown.
 
 Примеры:
 
-Bone
-Iron
-Crystal
-Beast Hide
-Ancient Fang
-Moonroot
-Bloodflower
-Shadow Mushroom
+Warrior:
+Whirlwind
 
-Storage имеет ограниченную вместимость.
+Ranger:
+Rain of Arrows
 
-Вместимость увеличивается через Home Upgrades.
+Mage:
+Meteor
 
+Rogue:
+Shadow Dash
 
-==================================================
-7. LOOT ECONOMY
-==================================================
+Engineer:
+Deploy Turret
 
-Не создавать большое количество бесполезного лута.
-
-Каждый важный ресурс должен иметь назначение.
-
-Bone:
-- Crafting
-- Alchemy
-- Selling
-
-Iron:
-- Weapon Upgrade
-- Crafting
-- Selling
-
-Crystal:
-- Magic Crafting
-- Alchemy
-- Rare Upgrades
-
-Boss Material:
-- Unique Crafting
-- Soul-related progression
-- Trophy
-
-Seeds:
-- Farming
-
-Редкие предметы могут иметь несколько вариантов использования.
-
+Healer:
+Healing Nova
 
 ==================================================
-8. FARM
+14. PASSIVE GEAR
 ==================================================
 
-Создать физическую ферму возле дома.
+Добавь постоянную экипировку.
 
-Начальный вариант:
+Категории:
 
-Farm
-├── Plot 1
-├── Plot 2
-└── Plot 3
+- Weapon
+- Armor
+- Accessory
+- Passive
+- Relic
 
-Позже количество участков увеличивается вместе с Home Level.
+Пример:
 
-Игрок может:
+Whetstone:
++10% Damage
 
-1. посадить семя;
-2. ждать роста;
-3. получить урожай;
-4. использовать урожай;
-5. продать урожай;
-6. использовать урожай в Crafting / Alchemy.
+Swift Boots:
++8% Movement Speed
 
+Mana Crystal:
++10% ability cooldown reduction
+
+Iron Heart:
++10% Max HP
+
+Gear имеет:
+
+- rarity;
+- level;
+- stats;
+- icon;
+- upgrade cost.
 
 ==================================================
-9. CROPS
+15. PET SYSTEM
 ==================================================
 
-Создать config-driven систему растений.
+Добавь Pets.
+
+Pet:
+
+- follows player;
+- has idle animation;
+- has rarity;
+- has passive bonus.
 
 Примеры:
 
-Moonroot
-→ Mana Potion
-→ Magic-related crafting
+Slime
+Wolf
+Fairy
+Baby Dragon
+Crystal Golem
 
-Bloodflower
-→ HP Potion
-→ Combat consumables
+Pet bonuses:
 
-Shadow Mushroom
-→ Defensive Potion
-→ Survival effects
+Damage
+Attack Speed
+Movement Speed
+XP Gain
+Gold Gain
+Critical Chance
 
-Sun Herb
-→ Stamina Potion
+Pets должны быть отдельной постоянной системой progression.
 
-Rare Crystal Flower
-→ Advanced Crafting
-→ Rare Alchemy
+==================================================
+16. WAVES
+==================================================
+
+Создай Wave Manager.
+
+Пример структуры:
+
+Wave 1
+5 enemies
+
+Wave 2
+10 enemies
+
+Wave 3
+15 enemies
+
+...
+
+Количество врагов и сложность масштабируются.
+
+Каждые несколько минут:
+
+- Elite wave
+- Special event
+- Mini boss
+- Treasure event
+
+Волны должны становиться визуально и механически сложнее.
+
+Не увеличивай только HP.
+
+Добавляй:
+
+- новые enemy types;
+- faster enemies;
+- ranged enemies;
+- elite modifiers;
+- mixed waves.
+
+==================================================
+17. ELITES
+==================================================
+
+Некоторые враги становятся Elite.
+
+Elite получает:
+
+- increased HP;
+- increased damage;
+- special modifier;
+- unique VFX;
+- increased XP;
+- increased reward.
+
+Modifiers:
+
+Burning
+Frozen
+Fast
+Armored
+Explosive
+Vampiric
+Regenerating
+
+==================================================
+18. BOSS
+==================================================
+
+В конце dungeon появляется большой Boss.
+
+Boss должен быть визуально значительно больше обычных врагов.
+
+Boss имеет:
+
+- multiple phases;
+- telegraphed attacks;
+- AoE attacks;
+- summons;
+- movement;
+- special abilities;
+- unique music;
+- unique VFX;
+- reward.
+
+Boss fight должен быть понятным и честным.
+
+Перед опасной атакой игрок должен видеть telegraph.
+
+==================================================
+19. FINAL / EXTRACTION
+==================================================
+
+После победы над Boss не заканчивай игру мгновенно.
+
+Создай Final Phase.
+
+Например:
+
+Boss defeated
+↓
+Dungeon destabilizes
+↓
+Enemy swarm increases
+↓
+Extraction Portal appears
+↓
+Players must reach portal
+↓
+Extraction
+↓
+Rewards
+
+Если игрок не успел попасть в портал, он может потерять часть временных rewards.
+
+==================================================
+20. REWARDS
+==================================================
+
+После run игрок получает:
+
+Gold
+XP / Account XP
+Essence
+Materials
+Gear
+Pet currency
+Unlock progress
+
+В rewards screen показать:
+
+- enemies defeated;
+- damage dealt;
+- level reached;
+- boss defeated;
+- gold earned;
+- essence earned;
+- items obtained;
+- total run time.
+
+==================================================
+21. PERMANENT PROGRESSION
+==================================================
+
+После возвращения в Hub временный run progression сбрасывается.
+
+Но постоянный progression остаётся.
+
+Permanent systems:
+
+- Hero unlocks
+- Weapons
+- Gear
+- Pets
+- Collection
+- Account level
+- Permanent upgrades
+- Dungeon unlocks
+
+Игрок должен постоянно чувствовать progression.
+
+==================================================
+22. INVENTORY
+==================================================
+
+Создай полноценный Inventory UI.
+
+Категории:
+
+Weapons
+Gear
+Pets
+Materials
+Consumables
+Collection
+
+Каждый предмет:
+
+- icon;
+- name;
+- rarity;
+- description;
+- stats;
+- equip button;
+- upgrade button;
+- favorite button.
+
+==================================================
+23. RARITY
+==================================================
+
+Используй:
+
+Common
+Uncommon
+Rare
+Epic
+Legendary
+Mythic
+
+Цвета rarity должны использоваться последовательно во всех UI.
+
+Не делай UI слишком перегруженным.
+
+==================================================
+24. UI
+==================================================
+
+Стиль UI:
+
+stylized fantasy RPG.
+
+Во время dungeon показывать:
+
+Top:
+timer
+
+Top-left:
+players
+
+Top-center:
+boss HP / event
+
+Bottom:
+HP
+XP
+ability
+
+Side:
+weapons
+
+Level Up:
+3–4 large upgrade cards
+
+После получения нового оружия:
+
+Weapon acquired
++ stats
++ animation
+
+UI должен быть хорошо читаемым даже при большом количестве enemies.
+
+==================================================
+25. CAMERA
+==================================================
+
+Используй third-person camera.
+
+Камера должна обеспечивать хороший обзор большой группы врагов.
+
+Не закрывать персонажа эффектами.
+
+При boss fight разрешается слегка менять camera distance.
+
+==================================================
+26. CO-OP
+==================================================
+
+Поддержка 1–4 игроков.
+
+Все игроки находятся в одном dungeon instance.
+
+Enemy scaling:
+
+1 player = base
+
+2 players = increased enemy count / HP
+
+3 players = increased difficulty
+
+4 players = maximum difficulty
+
+XP и rewards должны быть персональными.
+
+Не допускай stealing loot.
+
+==================================================
+27. PERFORMANCE
+==================================================
+
+Это КРИТИЧЕСКИ ВАЖНО.
+
+Игра должна поддерживать большое количество врагов.
+
+Использовать:
+
+- Object Pooling;
+- client-side VFX;
+- server authoritative damage;
+- optimized AI;
+- limited pathfinding;
+- distance-based updates;
+- LOD;
+- StreamingEnabled;
+- CollectionService;
+- reusable projectiles;
+- reusable XP crystals.
+
+Не создавать тысячи Parts.
+
+Не делать постоянные Heartbeat loops для каждого enemy.
+
+Использовать централизованные managers.
+
+==================================================
+28. SERVER ARCHITECTURE
+==================================================
+
+Создай чистую архитектуру.
+
+ReplicatedStorage:
+
+Shared
+ ├─ Config
+ ├─ Data
+ ├─ Weapons
+ ├─ Enemies
+ ├─ Heroes
+ ├─ Upgrades
+ ├─ Items
+ ├─ Pets
+ └─ Utilities
+
+ServerScriptService:
+
+Services
+ ├─ GameService
+ ├─ DungeonService
+ ├─ WaveService
+ ├─ EnemyService
+ ├─ CombatService
+ ├─ XPService
+ ├─ RewardService
+ ├─ InventoryService
+ ├─ DataService
+ ├─ PetService
+ ├─ GearService
+ └─ MatchService
+
+StarterPlayer:
+
+Client
+ ├─ Controllers
+ ├─ UI
+ ├─ Camera
+ ├─ Effects
+ └─ Input
+
+==================================================
+29. DATASTORE
+==================================================
+
+Сохранять:
+
+- coins;
+- essence;
+- unlocked heroes;
+- unlocked weapons;
+- gear;
+- pets;
+- upgrades;
+- inventory;
+- account level;
+- dungeon progress;
+- settings.
+
+Использовать безопасный DataStore pattern.
+
+Не сохранять данные каждый frame.
+
+Использовать autosave.
+
+Обязательно предусмотреть:
+
+- BindToClose;
+- retry;
+- session protection;
+- data validation.
+
+==================================================
+30. МОНИТОРИРОВАНИЕ
+==================================================
+
+Добавь debug system.
+
+Admin/debug commands должны позволять разработчику:
+
+/givegold
+/giveessence
+/giveweapon
+/givepet
+/spawnwave
+/spawnboss
+/setlevel
+/testevolution
+
+Debug должен быть отключаемым для production.
+
+==================================================
+31. СОЗДАНИЕ КАРТЫ
+==================================================
+
+Не делай карту одним огромным Model.
+
+Используй modular pieces.
+
+Создай:
+
+DungeonEntrance
+CentralHall
+SideRoom
+Cave
+Ruins
+Bridge
+TreasureRoom
+EliteRoom
+BossArena
+ExtractionRoom
+
+Каждый элемент должен быть переиспользуемым.
+
+Добавь:
+
+- torches;
+- banners;
+- crystals;
+- moss;
+- roots;
+- rocks;
+- broken stone;
+- wooden supports;
+- chains;
+- statues;
+- treasure;
+- magical lights.
+
+Основная палитра:
+
+dark stone
+warm torch light
+blue/purple magic
+green moss
+brown wood
+gold accents
+
+Не превращать игру в horror.
+
+==================================================
+32. VFX
+==================================================
+
+Создай stylized VFX:
+
+- sword slash;
+- hit impact;
+- critical hit;
+- magic projectile;
+- fire;
+- lightning;
+- ice;
+- explosion;
+- enemy death;
+- XP pickup;
+- level up;
+- evolution;
+- boss attack;
+- portal;
+- extraction.
+
+VFX должны быть яркими, но не закрывать gameplay.
+
+==================================================
+33. AUDIO
+==================================================
+
+Добавить:
+
+Hub music
+Dungeon music
+Combat music
+Boss music
+Victory
+Defeat
+Level Up
+Weapon Evolution
+Portal
+Enemy hit
+Enemy death
+UI sounds
+
+Музыка должна быть fantasy adventure, а не horror.
+
+==================================================
+34. MONETIZATION
+==================================================
+
+НЕ использовать Pay-to-Win.
+
+Можно продавать:
+
+- cosmetic skins;
+- hero skins;
+- weapon skins;
+- pet skins;
+- emotes;
+- effects;
+- titles;
+- hub cosmetics;
+- cosmetic trails.
+
+Не продавать прямую боевую силу.
+
+Game Pass:
+
+VIP cosmetics
+Extra cosmetic slots
+Special emotes
+Exclusive hub cosmetics
+
+Developer Products:
+
+cosmetic bundles
+event cosmetics
+optional convenience that does not affect combat balance.
+
+==================================================
+35. ИГРОВОЙ ЦИКЛ
+==================================================
+
+Финальный gameplay должен выглядеть так:
+
+PLAYER JOINS
+↓
+HUB
+↓
+SELECT HERO
+↓
+SELECT LOADOUT
+↓
+ENTER DUNGEON
+↓
+START RUN
+↓
+ENEMY WAVE
+↓
+KILL ENEMIES
+↓
+COLLECT XP
+↓
+LEVEL UP
+↓
+SELECT 1 OF 3 UPGRADES
+↓
+CONTINUE
+↓
+NEW ENEMY TYPES
+↓
+ELITE
+↓
+WEAPON EVOLUTION
+↓
+MINI BOSS
+↓
+MORE WAVES
+↓
+FINAL BOSS
+↓
+FINAL ENEMY SWARM
+↓
+EXTRACTION PORTAL
+↓
+REWARDS
+↓
+HUB
+↓
+PERMANENT PROGRESSION
+↓
+NEXT RUN
+
+==================================================
+36. DEVELOPMENT ORDER
+==================================================
+
+НЕ пытайся создать всё сразу.
+
+Работай строго по этапам.
+
+PHASE 1:
+Hub
+Player
+Dungeon
+Basic enemy
+Basic combat
+Wave system
+
+PHASE 2:
+XP
+Level up
+Upgrade cards
+Multiple weapons
+
+PHASE 3:
+Hero classes
+Abilities
+Enemy types
+Elite enemies
+
+PHASE 4:
+Weapon evolution
+Boss
+Extraction
+Rewards
+
+PHASE 5:
+Inventory
+Gear
+Pets
+Permanent progression
+
+PHASE 6:
+Co-op
+Matchmaking
+Party system
+Scaling
+
+PHASE 7:
+UI polish
+VFX
+Audio
+Optimization
+
+PHASE 8:
+Monetization
+Analytics
+Live events
+
+После каждого этапа:
+1. Проверь существующий проект.
+2. Найди ошибки.
+3. Проверь связи между системами.
+4. Проверь RemoteEvents/RemoteFunctions.
+5. Проверь client/server security.
+6. Проверь performance.
+7. Только после этого переходи дальше.
+
+==================================================
+37. КРИТИЧЕСКОЕ ПРАВИЛО
+==================================================
+
+НЕ создавай временные одноразовые системы, которые потом придётся полностью переписывать.
+
+Все основные системы должны быть:
+
+- modular;
+- data-driven;
+- scalable;
+- multiplayer-ready;
+- optimized;
+- легко расширяемыми.
+
+Если существующий проект уже содержит систему, сначала ПРОАНАЛИЗИРУЙ её и используй/расширь её вместо создания дубликата.
+
+Перед изменением проекта:
+
+- изучи существующие folders;
+- scripts;
+- ModuleScripts;
+- RemoteEvents;
+- RemoteFunctions;
+- UI;
+- assets;
+- existing systems.
+
+Ничего существующего не удаляй без необходимости.
+
+==================================================
+38. ФИНАЛЬНОЕ ТРЕБОВАНИЕ
+==================================================
+
+Цель проекта:
+
+Сделать polished Roblox CO-OP Stylized Fantasy Survivors game.
+
+Главная эмоция:
+
+"Я один против огромной армии монстров, становлюсь всё сильнее, собираю безумные комбинации оружия, эволюционирую билд, переживаю огромную волну и в конце с командой убиваю босса."
+
+Игра должна ощущаться:
+
+FAST
+JUICY
+REWARDING
+CO-OP
+STYLIZED
+FANTASY
+REPLAYABLE
+
+Не делай просто технический прототип.
+
+Каждая система должна быть подготовлена для дальнейшего расширения контента.
 
 
 ==================================================
-10. CROP CONFIG
+39. FARM / HOME SYSTEM
 ==================================================
 
-Каждое растение должно описываться конфигурацией.
+Добавь в HUB отдельную личную FARM / HOME ZONE игрока.
 
-CropConfig:
+Ферма является частью постоянной прогрессии аккаунта.
 
-- CropID
-- DisplayName
-- SeedItem
-- GrowthTime
-- GrowthStages
-- HarvestItem
-- HarvestAmount
-- Rarity
-- RequiredHomeLevel
+Главная идея:
 
-AI должен иметь возможность добавить новое растение изменением конфигурации.
+DUNGEON
+↓
+ENEMIES
+↓
+LOOT
+↓
+SEEDS / MATERIALS
+↓
+RETURN TO HUB
+↓
+PLANT
+↓
+GROW
+↓
+HARVEST
+↓
+CRAFT / UPGRADE / SELL / USE
+↓
+PREPARE FOR NEXT DUNGEON
+↓
+DUNGEON AGAIN
 
-Не переписывать основной Farm System.
-
+Ферма должна создавать дополнительную долгосрочную мотивацию играть новые забеги.
 
 ==================================================
-11. CROP GROWTH
+40. FARM PLOT
 ==================================================
 
-Стадии:
+Каждый игрок получает личную ферму.
+
+В начале доступно несколько участков.
+
+Например:
+
+4 starter plots
+
+По мере прогрессии можно открыть:
+
+8 plots
+12 plots
+16 plots
+20 plots
+
+Не делай ферму огромной.
+
+Она должна быть уютной stylized fantasy farm.
+
+Использовать:
+
+- wooden fences;
+- dirt plots;
+- small house;
+- barn;
+- well;
+- storage;
+- trees;
+- flowers;
+- decorations;
+- lanterns;
+- fantasy plants;
+- small pond;
+- crafting area.
+
+Ферма должна визуально соответствовать основному HUB и STYLIZED FANTASY стилю.
+
+==================================================
+41. SEEDS
+==================================================
+
+Во время dungeon runs игрок может получать SEEDS.
+
+Seeds должны выпадать дополнительно к обычным rewards.
+
+Примеры:
+
+Wheat Seed
+Carrot Seed
+Potato Seed
+Berry Seed
+Pumpkin Seed
+Magic Herb Seed
+Crystal Flower Seed
+Moonflower Seed
+Fireroot Seed
+Ancient Tree Seed
+
+Не все seeds должны быть доступны сразу.
+
+Редкие семена должны открываться:
+
+- на более высоких уровнях;
+- в определённых dungeon;
+- с elite enemies;
+- с bosses;
+- из treasure;
+- из специальных событий.
+
+==================================================
+42. SEED DROP SYSTEM
+==================================================
+
+Seeds могут выпадать из:
+
+Normal Enemy:
+очень низкий шанс
+
+Elite:
+повышенный шанс
+
+Mini Boss:
+гарантированный/высокий шанс
+
+Boss:
+несколько seeds / редкие seeds
+
+Treasure:
+случайные seeds
+
+Special Event:
+уникальные seeds
+
+Используй weighted loot tables.
+
+Пример:
+
+Common Seed:
+60%
+
+Uncommon:
+25%
+
+Rare:
+10%
+
+Epic:
+4%
+
+Legendary:
+1%
+
+Не выдавать слишком много seeds за один run.
+
+Игрок должен чувствовать:
+
+"О, мне выпало редкое семя. Нужно вернуться домой и посадить его."
+
+==================================================
+43. PLANTING
+==================================================
+
+Игрок подходит к свободному FARM PLOT.
+
+Нажимает Interact.
+
+Открывается:
+
+SEED INVENTORY
+
+Игрок выбирает семя.
+
+Seed превращается в растение.
+
+Растение имеет несколько стадий роста:
 
 Seed
+↓
+Sprout
+↓
+Small Plant
 ↓
 Growing
 ↓
 Mature
 ↓
-Harvestable
+Harvest Ready
 
-Рост должен сохраняться.
+Не использовать реальное время слишком долго.
 
-Если игрок вышел:
+Обычные растения:
 
-→ растение продолжает расти.
+1–5 минут
 
-При следующем входе:
+Rare:
 
-→ сервер рассчитывает состояние по серверному времени.
+5–15 минут
 
-Никогда не доверять времени клиента.
+Epic:
 
-Не использовать бесконечный цикл для каждого растения.
+15–30 минут
 
-Использовать timestamp-based system.
+Legendary:
 
+30–60 минут
+
+Позже можно добавить специальные растения с более длительным ростом.
 
 ==================================================
-12. CRAFTING
+44. FARM OFFLINE PROGRESSION
 ==================================================
 
-Добавить Crafting System.
+Растения должны продолжать расти, когда игрок находится вне игры.
+
+При входе:
+
+проверить plantedAt
+проверить growthDuration
+вычислить currentGrowth
+
+Если растение созрело:
+
+показать:
+
+HARVEST READY
+
+Не использовать постоянный server loop для каждого растения.
+
+==================================================
+45. HARVEST
+==================================================
+
+При сборе урожая игрок получает:
+
+- Crop;
+- Materials;
+- Chance for extra seed;
+- Chance for rare resource.
 
 Пример:
 
-3 Bone + 1 Iron
-→ Bone Reinforcement
+Wheat Seed
+→
+3–6 Wheat
 
-2 Moonroot + 1 Crystal
-→ Mana Potion
+Carrot Seed
+→
+2–5 Carrots
 
-Bloodflower + Bone
-→ Blood Elixir
+Magic Herb Seed
+→
+1–3 Magic Herbs
 
-Shadow Mushroom + Crystal
-→ Shadow Tonic
+Moonflower
+→
+Moonflower + chance for Moonflower Seed
 
-Рецепты должны быть config-driven.
-
-RecipeConfig:
-
-- RecipeID
-- RequiredItems
-- RequiredAmount
-- ResultItem
-- ResultAmount
-- RequiredStation
-- RequiredHomeLevel
-- OptionalCharacterRequirement
-
+Некоторые растения имеют шанс вернуть семя.
 
 ==================================================
-13. ALCHEMY
+46. FARM RESOURCES
 ==================================================
 
-Создать Alchemy Station.
-
-Использовать:
-
-- Farm resources
-- Dungeon resources
-- Rare materials
-
-для создания consumables.
-
-Алхимия должна помогать игроку, но не быть обязательной для каждого забега.
-
-
-==================================================
-14. BLACKSMITH
-==================================================
-
-Добавить Blacksmith.
-
-Функции:
-
-- Weapon Upgrade
-- Item Upgrade
-- Crafting
-- Material usage
-
-Сервер проверяет:
-
-- ownership;
-- item;
-- materials;
-- level;
-- requirements;
-- cost;
-- cooldown;
-- player state.
-
-Клиент никогда не сообщает серверу готовый результат.
-
-Сервер сам рассчитывает результат.
-
-
-==================================================
-15. BOSS TROPHIES
-==================================================
-
-После убийства босса игрок может получить:
-
-- Boss Soul
-- Boss Material
-- Boss Weapon
-- Boss Trophy
-
-Boss Trophy можно физически разместить в доме.
+Создай отдельную категорию FARM MATERIALS.
 
 Например:
 
-Fallen Knight
-↓
-Defeat
-↓
-Fallen Knight Trophy
-↓
-Place in Trophy Hall
+Wheat
+Carrot
+Potato
+Berry
+Pumpkin
+Herb
+Magic Herb
+Crystal Flower
+Moonflower
+Fireroot
+Ancient Wood
 
-Трофеи должны показывать достижения игрока.
+Каждый ресурс должен иметь:
 
+- ID;
+- Name;
+- Icon;
+- Rarity;
+- Description;
+- SellValue;
+- CraftingUses.
 
 ==================================================
-16. ACHIEVEMENTS
+47. CRAFTING
 ==================================================
 
-Добавить физическое отображение достижений.
+Ферма должна быть связана с CRAFTING.
 
-Примеры:
+Игрок может использовать урожай для создания полезных предметов.
 
-- First Boss
-- 10 Dungeons
-- Secret Boss
-- No Death Run
-- Legendary Soul
-- 100 Dungeon Runs
+Например:
 
-Некоторые достижения должны превращаться в:
+Wheat
++
+Berry
+=
+Healing Potion
 
-- trophies;
-- statues;
-- banners;
+Magic Herb
++
+Crystal Flower
+=
+Mana Potion
+
+Fireroot
++
+Magic Herb
+=
+Fire Resistance Potion
+
+Moonflower
++
+Crystal
+=
+Luck Potion
+
+Ancient Wood
++
+Crystal Flower
+=
+Dungeon Key
+
+Не делать зелья обязательным pay-to-win элементом.
+
+==================================================
+48. DUNGEON CONSUMABLES
+==================================================
+
+Некоторые ресурсы фермы можно превращать в consumables для следующего забега.
+
+Например:
+
+Healing Potion
+→ restores HP
+
+Mana Potion
+→ restores ability resource
+
+Speed Potion
+→ temporary movement speed
+
+Luck Potion
+→ temporary increased rare drop chance
+
+Fortune Food
+→ increased gold/XP
+
+Regeneration Food
+→ temporary regeneration
+
+Все consumables должны быть optional.
+
+Игрок должен иметь возможность пройти dungeon и без них.
+
+==================================================
+49. FARM UPGRADE
+==================================================
+
+Ферму можно постепенно улучшать.
+
+Upgrade levels:
+
+Farm Lv.1
+Farm Lv.2
+Farm Lv.3
+Farm Lv.4
+Farm Lv.5
+
+Каждый уровень открывает:
+
+- more plots;
+- new plants;
+- faster growth;
+- better harvest;
+- new crafting;
+- storage capacity;
 - decorations.
-
-
-==================================================
-17. NPC RECRUITMENT
-==================================================
-
-NPC можно находить в Dungeon.
-
-Примеры:
-
-- Blacksmith
-- Farmer
-- Alchemist
-- Merchant
-- Scholar
-- Hunter
-
-Игрок встречает NPC:
-
-Dungeon
-↓
-NPC
-↓
-Quest / Requirement
-↓
-Rescue / Recruit
-↓
-NPC appears at Home
-
-Исследование Dungeon должно влиять на развитие дома.
-
-
-==================================================
-18. NPC FUNCTIONS
-==================================================
-
-Blacksmith
-→ Weapon Upgrades
-
-Farmer
-→ Seeds / Farming
-
-Alchemist
-→ Potions
-
-Merchant
-→ Buy / Sell
-
-Scholar
-→ Soul / Lore
-
-Hunter
-→ Hunting Quests
-
-Не делать одного универсального NPC.
-
-
-==================================================
-19. SOCIAL HOME
-==================================================
-
-Игроки должны иметь возможность видеть дома друг друга.
 
 Пример:
 
-Player A
+Farm Lv.1:
+4 plots
+
+Farm Lv.2:
+6 plots
+
+Farm Lv.3:
+8 plots
+
+Farm Lv.4:
+12 plots
+
+Farm Lv.5:
+16 plots
+
+==================================================
+50. FARM BUILDINGS
+==================================================
+
+Постепенно открыть:
+
+Farmhouse
+Barn
+Storage
+Greenhouse
+Alchemy Station
+Cooking Station
+Seed Shop
+Crafting Station
+
+Каждое здание должно иметь gameplay purpose.
+
+Например:
+
+Barn:
+увеличивает storage.
+
+Greenhouse:
+растения растут быстрее.
+
+Alchemy Station:
+крафт зелий.
+
+Cooking Station:
+еда для dungeon.
+
+Seed Storage:
+увеличивает количество хранимых seeds.
+
+==================================================
+51. STORAGE
+==================================================
+
+Добавь отдельное Farm Storage.
+
+Категории:
+
+Seeds
+Crops
+Materials
+Food
+Potions
+
+Storage имеет capacity.
+
+Например:
+
+Starter:
+50 items
+
+Upgrades:
+100
+200
+400
+800
+
+Не ограничивать storage слишком агрессивно.
+
+==================================================
+52. FARMING + DUNGEON LOOP
+==================================================
+
+Главный мета-loop:
+
+PLAY DUNGEON
 ↓
-Invite Player B
+KILL ENEMIES
 ↓
-Player B accepts
+GET GOLD
 ↓
-Player B enters Home A
+GET GEAR
+↓
+GET PET ITEMS
+↓
+GET SEEDS
+↓
+GET FARM MATERIALS
+↓
+RETURN TO HUB
+↓
+VISIT FARM
+↓
+HARVEST
+↓
+PLANT NEW SEEDS
+↓
+CRAFT
+↓
+UPGRADE FARM
+↓
+UPGRADE CHARACTER
+↓
+ENTER DUNGEON AGAIN
 
-Гость реально находится в доме хозяина.
-
-Гость видит:
-
-- дом;
-- мебель;
-- ферму;
-- NPC;
-- трофеи;
-- украшения;
-- прогресс.
-
-
-==================================================
-20. HOME ACCESS
-==================================================
-
-Добавить режимы:
-
-PRIVATE
-→ только владелец
-
-FRIENDS
-→ друзья могут посещать
-
-PARTY
-→ игроки текущей группы могут посещать
-
-EVERYONE
-→ разрешить посещение другим игрокам
-
+Каждый dungeon должен давать несколько типов прогрессии одновременно.
 
 ==================================================
-21. HOME PERMISSIONS
+53. DIFFERENT DUNGEONS = DIFFERENT SEEDS
 ==================================================
 
-Добавить отдельные разрешения:
+Каждый dungeon имеет собственный loot table.
 
-- View Home
-- Use Farm
-- Use Crafting
-- Use Alchemy
-- Use Blacksmith
-- Trade
-- Place Objects
-- Interact With NPCs
+Например:
+
+FOREST DUNGEON:
+
+Wheat
+Berry
+Herb
+Ancient Seed
+
+CAVE DUNGEON:
+
+Crystal Flower
+Mushroom
+Crystal Seed
+
+VOLCANIC DUNGEON:
+
+Fireroot
+Ember Flower
+Flame Seed
+
+FROZEN DUNGEON:
+
+Frost Berry
+Ice Flower
+Frozen Seed
+
+ANCIENT RUINS:
+
+Moonflower
+Ancient Seed
+Magic Herb
+
+Таким образом игроку будет хотеться проходить разные dungeons.
+
+==================================================
+54. RARE FARM DROPS
+==================================================
+
+Добавь очень редкие seeds.
+
+Например:
+
+Dragonfruit Seed
+Starflower Seed
+Moon Tree Seed
+Crystal Tree Seed
+Ancient Tree Seed
+
+Они должны иметь уникальный внешний вид.
+
+Редкие растения могут давать:
+
+- редкие crafting materials;
+- cosmetics;
+- special food;
+- dungeon keys;
+- unique resources;
+- collection progress.
+
+==================================================
+55. FARM COLLECTION
+==================================================
+
+Создай FARM COLLECTION.
+
+Игрок может открыть:
+
+Plants
+Crops
+Rare Plants
+Trees
+Flowers
+
+Каждое открытие записывается в Collection.
+
+Например:
+
+Plants discovered: 18 / 50
+
+Это создаёт дополнительную completion motivation.
+
+==================================================
+56. FARM QUESTS
+==================================================
+
+Добавь NPC Farmer.
+
+Он выдаёт задания:
+
+Plant 5 crops
+Harvest 10 wheat
+Grow 3 rare plants
+Find Ancient Seed
+Craft 5 potions
+Harvest from 3 different dungeons
+
+Награды:
+
+Gold
+Essence
+Seeds
+Farm XP
+Cosmetics
+
+==================================================
+57. FARM XP
+==================================================
+
+У фермы есть отдельный FARM LEVEL.
+
+Игрок получает Farm XP за:
+
+Planting
+Harvesting
+Crafting
+Discovering plants
+Completing farm quests
+
+Farm Level открывает новые:
+
+- seeds;
+- plots;
+- buildings;
+- crafting recipes;
+- decorations.
+
+==================================================
+58. FARM DECORATION
+==================================================
+
+Добавь возможность украшать ферму.
+
+Cosmetic objects:
+
+- fences;
+- benches;
+- flowers;
+- statues;
+- fountains;
+- scarecrows;
+- lanterns;
+- paths;
+- trees;
+- banners;
+- small houses;
+- wells.
+
+Декорации НЕ должны давать боевые преимущества.
+
+Их можно получать:
+
+- gameplay;
+- quests;
+- events;
+- achievements;
+- optional monetization.
+
+==================================================
+59. CO-OP FARM
+==================================================
+
+По умолчанию ферма принадлежит одному игроку.
+
+Другие игроки могут получить доступ, если владелец разрешил.
+
+Permissions:
+
+VISIT
+INTERACT
+HARVEST
+CRAFT
 
 По умолчанию:
 
-View Home = разрешено приглашённым.
+VISIT ONLY
 
-Storage = запрещено.
+Никто не должен иметь возможность украсть урожай.
 
-Take Items = запрещено.
+Добавь:
 
-Modify Home = запрещено.
-
-Владелец может изменять permissions.
-
-
-==================================================
-22. FRIEND HOME VISIT
-==================================================
-
-Добавить:
-
+Farm Privacy
+Public
 Friends
-↓
-Select Friend
-↓
-Visit Home
-
-Если разрешение есть:
-
-→ войти в Home.
-
-Если запрещено:
-
-→ показать понятное сообщение.
-
+Private
 
 ==================================================
-23. HOME INSTANCE
+60. FARM REWARDS BALANCE
 ==================================================
 
-Продумать масштабируемую серверную архитектуру.
+Ферма НЕ должна превращать dungeon в бессмысленную часть игры.
 
-Не создавать постоянно работающий отдельный сервер для каждого дома без необходимости.
+Dungeon остаётся главным gameplay.
 
-Можно использовать:
+Farm является:
 
-- Home Instances
-- отдельные зоны
-- Teleport Routing
-- Shared Home Servers
-- другую оптимальную архитектуру
-
-Выбрать решение с учётом:
-
-- Roblox server limits;
-- memory;
-- multiplayer;
-- DataStore;
-- teleportation;
-- scalability;
-- mobile performance.
-
-
-==================================================
-24. CO-OP HOME
-==================================================
-
-Если игроки находятся в Party:
-
-они могут:
-
-- посещать дома;
-- ходить по дому;
-- взаимодействовать с разрешёнными объектами;
-- использовать crafting;
-- использовать farm;
-- торговать;
-- готовиться к dungeon.
-
-
-==================================================
-25. CO-OP INTERACTIONS
-==================================================
-
-Добавить специальные взаимодействия.
-
-TWO PLAYER SHRINE:
-
-Player A + Player B
-↓
-Activate Shrine
-↓
-Special Event / Reward
-
-TWO PLAYER DOOR:
-
-Player A
+META PROGRESSION
 +
-Player B
-↓
-Activate mechanisms
-↓
-Door opens
+CRAFTING
++
+COLLECTION
++
+LONG-TERM MOTIVATION
 
-В будущем архитектура должна поддерживать:
+Лучшие rewards должны всё равно требовать активной игры в dungeon.
 
-- совместный крафт;
-- специальные события;
-- мини-испытания;
-- секретные механизмы.
-
-Они не должны быть обязательными для основного прохождения.
-
+Ферма не должна позволять игроку получить бесконечный Gold или XP без игры.
 
 ==================================================
-26. TRADING
+61. FARM UI
 ==================================================
 
-Добавить безопасную систему торговли.
+Создай:
 
-Player A
-↓
-Select Items
+Farm UI
+Seed Inventory
+Crop Inventory
+Storage
+Crafting
+Farm Level
+Farm Quests
+Collection
 
-Player B
-↓
-Select Items
+При выборе растения показать:
 
-Both Confirm
-↓
-Server Validation
-↓
-Trade
-
-Если после подтверждения кто-то изменил предмет:
-
-→ оба Confirm сбрасываются.
-
-Сервер проверяет:
-
-- ownership;
-- item existence;
-- amount;
-- inventory capacity;
-- locked items;
-- player state;
-- trade state.
-
-
-==================================================
-27. GIFT SYSTEM
-==================================================
-
-Добавить возможность отправлять подарки.
+Name
+Rarity
+Growth Time
+Harvest
+Possible Bonus
+Seed Chance
 
 Например:
 
-Player A
-→ Gift
-→ Moonroot ×3
-→ Crystal ×1
-→ Player B
+MOONFLOWER
 
-Player B получает уведомление.
+Epic
 
-Все подарки проходят серверную проверку.
+Growth:
+20 minutes
 
+Harvest:
+1–3 Moonflower
 
-==================================================
-28. ECHO + HOME
-==================================================
+Chance to return Seed:
+15%
 
-Интегрировать существующую Echo System.
-
-После смерти персонажа:
-
-Echo может появиться в:
-
-- Dungeon;
-- специальных местах;
-- Home.
-
-В доме может появляться:
-
-Echo of Fallen Knight
-
-Игрок:
-
-[E] Remember
-
-→ запускается небольшая сцена / диалог / lore.
-
-
-==================================================
-29. LEGACY + HOME
-==================================================
-
-Legacy System должна быть связана с домом.
-
-Прошлые персонажи могут оставлять:
-
-- Souls;
-- Echo;
-- Trophies;
-- Lore;
-- Achievements;
-- special items.
-
-Дом становится физическим отображением истории аккаунта.
-
-
-==================================================
-30. ACCOUNT VS CHARACTER DATA
-==================================================
-
-Чётко разделить данные.
-
-ACCOUNT DATA:
-
-Home
-Farm
-Storage
-NPCs
-Trophies
-Achievements
-Legacy
-Home Level
-Home Upgrades
-
-CHARACTER DATA:
-
-Level
-XP
-Equipment
-Skills
-Soul
-Character Progress
-Character-specific data
-
-Не смешивать эти данные.
-
-
-==================================================
-31. DATASTORE
-==================================================
-
-Использовать versioned schema.
-
-PlayerData:
-
-├── Version
-├── Home
-│   ├── Level
-│   ├── Upgrades
-│   ├── Layout
-│   └── Decorations
-│
-├── Farm
-│   └── Plots
-│
-├── Storage
-├── NPCs
-├── Trophies
-├── Achievements
-├── Characters
-├── Souls
-├── Legacy
-└── Settings
-
-Добавить migration system.
-
-Изменение структуры данных не должно ломать старые сохранения.
-
-
-==================================================
-32. SERVER AUTHORITY
-==================================================
-
-Все важные действия должны быть SERVER-AUTHORITATIVE.
-
-Никогда не доверять клиенту:
-
-- Currency
-- Damage
-- XP
-- Items
-- Inventory
-- Crop Growth
-- Harvest
-- Crafting
-- Trading
-- Home Upgrade
-- Character Level
-- Soul Ownership
-- Dungeon Rewards
-- Boss Rewards
-- Teleport permissions
-
-
-==================================================
-33. REMOTE SECURITY
-==================================================
-
-Каждый RemoteEvent должен проверять:
-
-- Type
-- Rate Limit
-- State
-- Distance
-- Ownership
-- Cooldown
-- Permissions
-- Valid Target
-- Valid Item
-- Valid Amount
-
-Защиту создавать одновременно с первым RemoteEvent.
-
-Не оставлять security на потом.
-
-
-==================================================
-34. MOBILE PERFORMANCE
-==================================================
-
-Home должен работать на:
-
-- Low-end mobile
-- Mobile
-- PC
-- Console
-
-Добавить:
-
-LOW
-MEDIUM
-HIGH
-
-LOW:
-
-- Bloom OFF
-- DepthOfField OFF
-- SunRays OFF
-- reduced particles
-- reduced visual effects
-- optimized lighting
-
-Не создавать сотни постоянно работающих скриптов.
-
-
-==================================================
-35. HOME UI
-==================================================
-
-Создать UI:
-
-- Home
-- Farm
-- Storage
-- Crafting
-- Alchemy
-- Blacksmith
-- NPCs
-- Friends
-- Visit Home
-- Trade
-- Gift
-- Permissions
-
-UI должен использовать существующий визуальный стиль игры.
-
-
-==================================================
-36. SOCIAL UI
-==================================================
-
-При посещении чужого дома:
-
-Visiting:
-PlayerName
-
-[ Leave Home ]
-
-Владелец должен видеть:
-
-Guests:
-Player A
-Player B
-
-
-==================================================
-37. HOME CUSTOMIZATION
-==================================================
-
-В будущем добавить:
-
-- furniture;
-- decorations;
-- statues;
-- trophies;
-- banners;
-- plants;
-- lighting;
-- house themes;
-- garden themes;
-- cosmetic effects.
-
-Все предметы должны быть безопасными и серверно контролируемыми.
-
-
-==================================================
-38. MONETIZATION
-==================================================
-
-Home monetization должна быть COSMETIC ONLY.
-
-Разрешено:
-
-- furniture skins;
-- house themes;
-- decorations;
-- statues;
-- banners;
-- visual effects;
-- cosmetic farm decorations;
-- cosmetic garden themes.
-
-Не продавать:
-
-- combat power;
-- обязательные характеристики;
-- PvE damage advantage;
-- exclusive progression advantage;
-- pay-to-win resources.
-
-
-==================================================
-39. DEVELOPMENT PHASES
-==================================================
-
-Реализовывать строго по этапам.
-
-PHASE 1:
-Basic Home
-+ Home Spawn
-+ Persistent Ownership
-
-PHASE 2:
-Storage
-+ Inventory Integration
-
-PHASE 3:
-Farm
-+ Plots
-+ Seeds
-+ Growth
-+ Harvest
-
-PHASE 4:
+Used for:
+Alchemy
 Crafting
-+ Recipes
-+ Stations
-
-PHASE 5:
-Home Level
-+ Upgrades
-+ Visual Changes
-
-PHASE 6:
-NPC Recruitment
-+ Farmer
-+ Blacksmith
-+ Alchemist
-+ Merchant
-
-PHASE 7:
-Trophies
-+ Achievements
-+ Echo
-+ Legacy
-
-PHASE 8:
-Friend Home Visits
-
-PHASE 9:
-Permissions
-
-PHASE 10:
-Trading
-
-PHASE 11:
-Gifts
-
-PHASE 12:
-Co-op Home Interactions
-
-PHASE 13:
-Home Customization
-
-PHASE 14:
-Optimization
-+ Mobile
-+ Security
-+ Exploit Testing
-
+Dungeon Items
 
 ==================================================
-40. DEVELOPMENT METHOD
+62. FARM VISUAL STYLE
 ==================================================
 
-Перед каждой Phase:
+Ферма должна полностью соответствовать:
 
-ANALYZE
-↓
-PLAN
-↓
-IMPLEMENT
-↓
-TEST
-↓
-FIX
-↓
-VERIFY
-↓
-DOCUMENT
-↓
-NEXT
+STYLIZED FANTASY
 
-Перед написанием кода:
+Использовать:
 
-1. Прочитать существующие системы.
-2. Найти существующие модули.
-3. Проверить существующие RemoteEvents.
-4. Проверить DataStore.
-5. Проверить Inventory.
-6. Проверить Multiplayer.
-7. Не создавать дубликаты.
+- chunky geometry;
+- stylized foliage;
+- medieval fantasy buildings;
+- warm lighting;
+- colorful plants;
+- magical crops;
+- fantasy particles.
 
-После реализации:
+Не делать реалистичную ферму.
 
-1. Проверить Output.
-2. Проверить ошибки.
-3. Проверить multiplayer.
-4. Проверить DataStore.
-5. Проверить mobile.
-6. Проверить security.
-7. Проверить exploit resistance.
-8. Проверить совместимость с Combat/Dungeon/Soul/Legacy.
-
+Это должна быть часть одного fantasy world.
 
 ==================================================
-41. FINAL EXPERIENCE
+63. FARM PERFORMANCE
 ==================================================
 
-Игрок должен ощущать:
+Не создавать отдельный Script loop для каждого растения.
 
-"Я создаю своего персонажа."
+Использовать централизованный FarmService.
 
-"Я отправляюсь в dungeon."
+FarmService отвечает за:
 
-"Я рискую ради лута."
+- planting;
+- growth;
+- harvesting;
+- storage;
+- offline calculation;
+- crop state.
 
-"Я возвращаюсь домой."
+Растение должно быть lightweight.
 
-"Я использую добытые ресурсы."
+==================================================
+64. DATASTORE
+==================================================
 
-"Я выращиваю растения."
+Сохранять:
 
-"Я создаю предметы."
+FarmLevel
+UnlockedPlots
+Plants
+PlantStartTime
+PlantType
+SeedInventory
+CropInventory
+FarmStorage
+CraftingRecipes
+FarmXP
+FarmQuests
+FarmDecorations
+FarmPermissions
 
-"Я развиваю дом."
+Использовать безопасную DataStore architecture.
 
-"Я нахожу NPC."
+==================================================
+65. FINAL META LOOP
+==================================================
 
-"Я выставляю трофеи."
+Итоговый gameplay loop должен быть:
 
-"Я вижу историю своих прошлых персонажей."
+HUB
+↓
+FARM
+↓
+PREPARE
+↓
+DUNGEON
+↓
+FIGHT WAVES
+↓
+LEVEL UP
+↓
+UPGRADES
+↓
+ELITES
+↓
+BOSS
+↓
+EXTRACTION
+↓
+REWARDS
+↓
+SEEDS
+↓
+MATERIALS
+↓
+RETURN TO HUB
+↓
+HARVEST FARM
+↓
+PLANT
+↓
+CRAFT
+↓
+UPGRADE FARM
+↓
+UPGRADE HERO
+↓
+OPEN NEW DUNGEON
+↓
+RETURN TO DUNGEON
 
-"Я приглашаю друга."
+Главная идея:
 
-"Мы посещаем дома друг друга."
+Каждый забег должен давать игроку несколько причин радоваться возвращению домой.
 
-"Мы готовимся вместе."
+Игрок должен думать:
 
-"Мы отправляемся в dungeon."
+"Мне выпал новый seed."
+"Я наконец-то получил редкое растение."
+"Теперь я могу сделать новое зелье."
+"Мне хватает ресурсов на улучшение фермы."
+"Открылся новый dungeon."
+"В следующем забеге я смогу сделать новый билд."
 
-HOME — это не меню.
-
-HOME — это постоянное физическое место игрока и центральная часть мета-прогрессии.
-
-END OF HOME + FARM + SOCIAL SYSTEM
+Это должно создавать сильный постоянный gameplay loop без необходимости заставлять игрока платить.
