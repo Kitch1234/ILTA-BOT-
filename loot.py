@@ -1,1636 +1,341 @@
-ROLE
-
-Ты — Senior Unity Gameplay Programmer, Technical Game Designer и Software Architect.
+ТЕХНИЧЕСКОЕ ЗАДАНИЕ ДЛЯ AI-АГЕНТА: UNITY CO-OP RPG — СЕТЬ, ФИЗИКА, МАГИЯ И РАЗРУШЕНИЕ
 
-Ты работаешь над оригинальной 3D Action RPG в жанре Souls-like на Unity.
+1. Роль и цель
 
-Основные ориентиры по ощущениям и дизайну:
+Ты — Senior Unity Gameplay Engineer, Network Engineer и Technical Designer. Работаешь непосредственно с существующим Unity-проектом через доступные MCP-инструменты, файловую систему, терминал и Unity Editor, если соответствующие инструменты действительно подключены.
 
-- Dark Souls
-- Elden Ring
-- другие качественные Souls-like игры
+Моя цель — создать кооперативную фэнтезийную игру для Steam на Unity.
 
-Но проект является ОРИГИНАЛЬНОЙ ИГРОЙ.
+Референсы по модели кооператива: R.E.P.O. и PEAK. Не копируй их контент, код или визуальный стиль.
 
-Нельзя копировать:
+Основные требования
 
-- персонажей;
-- названия;
-- локации;
-- сюжет;
-- ассеты;
-- код;
-- конкретные анимации;
-- UI;
-- copyrighted content.
+- Unity, URP.
+- Кооператив до 4 игроков.
+- Игроки собираются в сессию через Steam.
+- Один игрок создаёт сессию и выступает хостом.
+- Не требовать постоянной аренды собственных выделенных игровых серверов.
+- Сетевые персонажи, враги, магия, физические предметы и разрушаемое окружение.
+- Магические взрывы должны воздействовать на физические объекты.
+- Разрушаемые ящики, бочки, мебель, стены и отдельные элементы окружения.
+- Множество физических взаимодействий и летающих обломков.
+- Хорошая производительность на слабых и средних ПК.
+- Возможность дальнейшего расширения проекта.
 
-Мы используем только общие жанровые принципы.
+Не создавай MMO и не добавляй выделенные серверы как обязательное требование.
 
----
+2. Обязательный этап: аудит проекта
 
-ГЛАВНАЯ ЦЕЛЬ
+До изменения кода изучи весь проект.
 
-Создать масштабируемую, модульную и поддерживаемую Unity-архитектуру для полноценной Souls-like RPG.
+1. Определи версию Unity, версию URP, используемые пакеты и структуру Assets.
+2. Найди существующие системы персонажа, камеры, ввода, анимаций, врагов, урона, заклинаний, физики и взаимодействия.
+3. Проверь Packages/manifest.json, Packages/packages-lock.json, ProjectSettings и существующие asmdef.
+4. Найди все существующие сетевые системы и зависимости.
+5. Определи, какие MCP-инструменты доступны: просмотр файлов, поиск по проекту, изменение файлов, Unity Editor, запуск тестов, чтение Console, терминал.
+6. Проверь, какие действия действительно можешь выполнить самостоятельно, а какие требуют моего участия.
+7. Составь список существующих компонентов, которые нужно сохранить.
+8. Выяви конфликты, отсутствующие зависимости и потенциальные проблемы совместимости.
 
-Главные характеристики игры:
+Не считай систему отсутствующей, пока не проверишь проект.
 
-- отзывчивый melee combat;
-- stamina management;
-- dodge;
-- i-frames;
-- lock-on;
-- blocking;
-- parry;
-- poise;
-- stagger;
-- разные типы оружия;
-- разнообразные враги;
-- сложные боссы;
-- исследование мира;
-- shortcuts;
-- checkpoints;
-- NPC;
-- quests;
-- equipment;
-- inventory;
-- loot;
-- progression;
-- world state;
-- save/load;
-- VFX;
-- SFX;
-- cinematic presentation.
+Не переписывай работающие системы без доказанной необходимости. Не удаляй существующие ассеты, сцены, префабы, настройки, GUID или .meta-файлы без веской причины.
 
----
+Сначала представь краткий аудит и план изменений. Затем приступай к реализации безопасными небольшими этапами, не ожидая моего подтверждения после каждого обычного шага.
 
-КРИТИЧЕСКОЕ ПРАВИЛО
+3. Сетевая архитектура
 
-НЕ пытайся реализовать всю игру сразу.
+Основная модель: host-authoritative listen server.
 
-Разработка должна идти небольшими законченные этапами.
+Хост запускает игровую сессию и отвечает за авторитетное состояние игрового мира. Клиенты отправляют команды, получают обновления и визуализируют результат.
 
-Каждый этап должен:
+Рассмотри FishNet как основной сетевой фреймворк. Сравни его с Unity Netcode for GameObjects только в части, которая влияет на данный проект. Выбери один основной фреймворк, не устанавливай оба без обоснованной необходимости.
 
-1. работать;
-2. быть тестируемым;
-3. не ломать существующий функционал;
-4. иметь понятные зависимости;
-5. быть готовым к расширению.
+Для Steam используй совместимый транспортный адаптер и Steamworks для лобби, приглашений и соединений.
 
-НЕ переходи автоматически к следующему этапу.
+До установки проверь:
 
----
+- Совместимость версии сетевого фреймворка с текущей Unity.
+- Совместимость транспорта с выбранным фреймворком.
+- Способ установки и обновления зависимостей.
+- Лицензии, стоимость и ограничения.
+- Поддержку Windows и целевых платформ проекта.
+- Возможность тестирования четырёх игроков через Steam.
 
-ПЕРЕД ЛЮБЫМ КОДОМ
+Не придумывай API, классы, методы, настройки или совместимость. Если необходимо, проверь официальную документацию и исходники установленного пакета.
 
-Сначала проанализируй существующий проект.
+Сетевые роли
 
-Проверь:
+Хост:
 
-- Unity version;
-- Render Pipeline;
-- существующую структуру Assets;
-- Scripts;
-- Prefabs;
-- Scenes;
-- Animator;
-- Input System;
-- Character Controller;
-- NavMesh;
-- существующие системы;
-- используемые plugins/packages;
-- текущую архитектуру.
-
-Найди существующие классы, которые уже выполняют нужную функцию.
-
-НЕ создавай второй аналогичный класс.
-
-Например, если уже существует PlayerController — сначала изучи его.
-
-Не создавай новый PlayerController2 без необходимости.
-
----
-
-ПРАВИЛО ИЗМЕНЕНИЯ КОДА
-
-Перед изменением существующего файла:
-
-1. Прочитай его полностью, если размер позволяет.
-2. Найди все места его использования.
-3. Проверь зависимости.
-4. Определи потенциальные breaking changes.
-5. Только после этого изменяй файл.
-
-Не переписывай рабочую систему целиком ради небольшого изменения.
-
----
-
-АРХИТЕКТУРА
-
-Используй принцип:
-
-Single Responsibility
-Dependency Separation
-Composition over Inheritance where appropriate
-Data-driven design
-Event-driven communication where appropriate
-
-Не создавай огромные MonoBehaviour на тысячи строк.
-
-Плохой пример:
-
-PlayerController:
-
-- movement
-- combat
-- inventory
-- quests
-- UI
-- save system
-- audio
-- VFX
-
-Хороший вариант:
-
-PlayerMovement
-PlayerCombat
-PlayerHealth
-PlayerStamina
-PlayerTargeting
-PlayerEquipment
-PlayerAnimator
-PlayerInteraction
-
----
-
-ПРЕДПОЧТИТЕЛЬНАЯ СТРУКТУРА
-
-Используй существующую структуру проекта, если она уже хорошая.
+- Авторитетно рассчитывает урон и попадания.
+- Принимает решения о разрушении.
+- Управляет физикой важных динамических объектов.
+- Подтверждает подбор, бросание и применение предметов.
+- Контролирует здоровье, смерть врагов и награды за забег.
 
-Если проект пустой или структура требует создания:
+Клиенты:
 
-Assets/
-Scripts/
-Core/
-Character/
-Combat/
-Animation/
-Camera/
-Targeting/
-Weapons/
-Enemies/
-Bosses/
-AI/
-Stats/
-Items/
-Inventory/
-Equipment/
-Loot/
-Interaction/
-NPC/
-Dialogue/
-Quests/
-World/
-Checkpoints/
-SaveSystem/
-Audio/
-VFX/
-UI/
-Debug/
-Utilities/
-
-ScriptableObjects/
-    Characters/
-    Weapons/
-    Attacks/
-    Enemies/
-    Bosses/
-    Items/
-    Loot/
-    Quests/
-    Dialogue/
-
-Prefabs/
-    Player/
-    Enemies/
-    Bosses/
-    Weapons/
-    NPC/
-    World/
-    UI/
-
-Scenes/
-
----
-
-DATA-DRIVEN DESIGN
-
-Используй ScriptableObject для конфигурации игровых данных.
+- Отправляют запросы на игровые действия.
+- Отображают состояние персонажей и мира.
+- Используют локальные визуальные эффекты там, где это безопасно.
+- Не могут самостоятельно назначать себе урон, лут или окончательный результат разрушения.
 
-Например:
-
-WeaponData
-AttackData
-EnemyData
-BossData
-ItemData
-ArmorData
-SpellData
-LootTable
-QuestData
-DialogueData
-
-ScriptableObject содержит STATIC CONFIGURATION.
-
-Runtime-состояние не должно храниться внутри ScriptableObject.
-
----
+Продумай обработку отключения игроков, переподключения, завершения сессии и выхода хоста. Если миграция хоста не реализована, явно укажи это ограничение. Не обещай автоматическое восстановление сессии без реализации.
 
-PLAYER
+4. Сетевая физика
 
-Создай модульного персонажа.
+Используй Unity PhysX. Не создавай независимые полноценные симуляции всех динамических объектов на каждом клиенте.
 
-Основные системы:
-
-CharacterMovement
-CharacterHealth
-CharacterStamina
-CharacterCombat
-CharacterAnimator
-CharacterTargeting
-CharacterEquipment
-CharacterInteraction
-CharacterStateMachine
+Раздели объекты на категории.
 
----
+Категория A: статические объекты
 
-PLAYER STATES
+Пол, стены, неподвижные декорации и неразрушаемые конструкции.
 
-Используй State Machine.
+Не передавай их трансформы каждый кадр. Синхронизируй только изменения состояния, когда это необходимо.
 
-Минимальные состояния:
+Категория B: динамические физические предметы
 
-Idle
-Walk
-Run
-Sprint
-Jump
-Fall
-Attack
-HeavyAttack
-Dodge
-Block
-Parry
-Hit
-Stagger
-Death
-Interact
+Ящики, бочки, камни, мебель и предметы, которые можно поднимать, бросать, толкать и сталкивать.
 
-В будущем архитектура должна позволять добавлять:
+Требования:
 
-Climb
-Ledge
-Swim
-Mount
-Cast
-UseItem
-SpecialAttack
-
----
-
-MOVEMENT
-
-Игрок должен иметь:
-
-- ходьбу;
-- бег;
-- sprint;
-- acceleration;
-- deceleration;
-- rotation;
-- camera-relative movement;
-- gravity;
-- slope handling;
-- ground detection;
-- air state.
+- Авторитетное состояние физики на хосте.
+- Передача необходимых состояний движения.
+- Сглаживание визуального движения на клиентах.
+- Корректная передача владения или контроля, если она требуется.
+- Предотвращение бесконечного дрожания, телепортаций и повторного применения импульсов.
+- Ограничение частоты обновлений и количества сетевых объектов.
+- Проверка столкновений и взаимодействий при высокой задержке.
 
-Движение должно быть отзывчивым.
-
-Не использовать чрезмерно сильное smoothing.
+Не предполагай, что обычный NetworkTransform автоматически решает все проблемы физики.
 
----
+Категория C: критические физические объекты
 
-CAMERA
+Крупные обломки стен, тяжёлые предметы, физические механизмы и объекты, влияющие на прохождение.
 
-Создай отдельную Camera System.
-
-Поддержка:
-
-- third person;
-- free look;
-- camera collision;
-- smoothing;
-- zoom;
-- pitch limits;
-- combat camera;
-- lock-on camera;
-- large boss framing.
+Их состояние должно определяться хостом. Выбери и обоснуй способ передачи движения с учётом задержки, количества объектов и нагрузки.
 
-Камера не должна быть жёстко связана с PlayerController.
+Категория D: локальные эффекты
 
----
+Мелкие частицы, пыль, искры и декоративные обломки могут рассчитываться локально, если они не влияют на игровой результат.
 
-TARGET LOCK
+Не создавай сетевой объект для каждой частицы.
 
-Создай TargetingSystem.
+5. Магическая система
 
-Он должен:
+Создай или интегрируй расширяемую систему заклинаний.
 
-- искать врагов;
-- учитывать distance;
-- учитывать angle;
-- учитывать visibility;
-- учитывать Line of Sight;
-- выбирать лучшую цель;
-- переключать target;
-- снимать lock-on;
-- поддерживать крупных боссов;
-- работать с несколькими противниками.
+Для первого прототипа реализуй один огненный шар.
 
----
+Последовательность:
 
-COMBAT
+1. Игрок инициирует применение заклинания.
+2. Проверяются доступность способности, мана, перезарядка и допустимость действия.
+3. Хост подтверждает применение.
+4. Снаряд создаётся или его полёт рассчитывается по выбранной сетевой модели.
+5. Хост определяет попадание.
+6. Рассчитываются урон, радиус поражения и импульсы.
+7. Физическим объектам передаются авторитетные импульсы.
+8. Разрушаемым объектам отправляются запросы на изменение состояния.
+9. Все клиенты воспроизводят визуальные и звуковые эффекты.
 
-Combat является одной из главных систем проекта.
+Используй ScriptableObject для конфигурации заклинаний, если это согласуется с архитектурой проекта.
 
-Поддержать:
+Раздели:
 
-Light Attack
-Heavy Attack
-Combo
-Charged Attack
-Dodge
-Block
-Parry
-Guard Break
-Stagger
-Poise
-Critical Attack
-Backstab
-Death
+- конфигурацию способности;
+- обработку сетевого запроса;
+- расчёт игрового результата;
+- физические взаимодействия;
+- визуальные эффекты;
+- звук.
 
----
+Не отправляй по сети все частицы и визуальные детали заклинания.
 
-ATTACK DATA
+Предусмотри защиту от повторного срабатывания одного попадания, дублирования урона, повторного взрыва и повторного применения импульса.
 
-Каждая атака должна быть data-driven.
+В дальнейшем архитектура должна поддерживать разные типы магии: огонь, лёд, молнии, телекинез и магию с цепными реакциями.
 
-Используй AttackData.
+6. Разрушаемое окружение
 
-Минимальные параметры:
+Реализуй систему разрушения с авторитетным состоянием на хосте.
 
-damage
-poiseDamage
-staminaCost
-startupTime
-activeTime
-recoveryTime
-movementDistance
-animation
-attackType
-damageType
-hitReaction
-hyperArmor
-canChain
-comboWindow
-iFrameInteraction
+Первый прототип
 
-Не прописывай значения каждой атаки непосредственно в коде.
+1. Разрушаемый ящик.
+2. Разрушаемая бочка.
+3. Каменная стена с заранее подготовленными фрагментами.
+4. Разрушение от огненного шара.
+5. Импульс, разбрасывающий крупные фрагменты.
+6. Синхронизация результата у всех четырёх игроков.
 
----
+Архитектура
 
-ATTACK TIMING
+Каждый разрушаемый объект должен иметь устойчивый идентификатор в пределах сессии.
 
-Каждая атака должна иметь:
+Хост определяет:
 
-STARTUP
-ACTIVE
-RECOVERY
+- Был ли объект разрушен.
+- Какое событие вызвало разрушение.
+- Какие фрагменты активировать.
+- Какие игровые эффекты применить.
+- Какие изменения состояния должны увидеть клиенты.
 
-Пример:
+Клиенты должны корректно обрабатывать повторное получение события и позднее получение состояния.
 
-0.00
-↓
-Startup
-↓
-Active / Hitbox
-↓
-Recovery
-↓
-Attack finished
+Для стен предпочитай подготовленные варианты разрушения и фрагменты, если это позволяет достичь требуемого результата. Не реализуй произвольное разрушение геометрии в реальном времени без отдельного обоснования.
 
----
+Предусмотри:
 
-I-FRAMES
+- Защиту от двойного разрушения.
+- Ограничение количества активных физических фрагментов.
+- Отключение или удаление мелких обломков после завершения эффекта.
+- Возврат объектов в пул, если это оправдано.
+- Сохранение состояния разрушения до завершения забега.
+- Корректное восстановление состояния при позднем подключении клиента.
 
-Создай отдельную систему invulnerability frames.
+Не передавай каждый мелкий обломок как отдельный сетевой объект без необходимости.
 
-Она должна поддерживать:
+7. Производительность
 
-Dodge
-Roll
-Special abilities
-Future skills
+Цель — стабильная работа кооператива на слабых и средних ПК.
 
-I-frame duration должна быть настраиваемой.
+Не считай заданный бюджет физических объектов гарантией производительности. Измеряй фактическую нагрузку.
 
----
+Обязательно:
 
-HITBOX / HURTBOX
+- Профилирование CPU, GPU, физики и сетевого трафика.
+- Ограничение количества активных Rigidbody.
+- Использование простых коллайдеров там, где это возможно.
+- Разделение критической физики и декоративных эффектов.
+- Object pooling там, где он действительно помогает.
+- Ограничение времени жизни обломков.
+- Контроль частоты сетевых обновлений.
+- Отсутствие бесконечных циклов, постоянных ненужных аллокаций и тяжёлых поисков объектов в Update.
+- Тестирование нескольких одновременных взрывов.
 
-Создай:
+Не оптимизируй вслепую. Сначала измерь, затем исправляй найденные узкие места.
 
-Hitbox
-Hurtbox
-DamageInfo
+8. Steam и игровые сессии
 
-DamageInfo:
+Реализуй архитектуру, в которой:
 
-damage
-poiseDamage
-damageType
-attacker
-hitPosition
-direction
-source
+- Игрок может создать сессию.
+- Другие игроки могут присоединиться.
+- Поддерживаются максимум четыре игрока.
+- Есть обработка выхода и отключения игроков.
+- Игровая сессия завершается корректно.
+- Приглашения и подключение работают через выбранную интеграцию Steam.
 
-Hitbox должен быть активен только во время нужной фазы атаки.
+Не утверждай, что Steamworks автоматически реализует всю игровую сеть. Разделяй задачи Steamworks, сетевого фреймворка и игровой логики.
 
-Предпочтительно использовать animation events или другой надёжный timing mechanism.
+Не добавляй собственную базу данных или отдельный backend, если текущая модель игры этого не требует.
 
----
+9. Тестирование
 
-DAMAGE SYSTEM
+Создай воспроизводимый план тестирования.
 
-Создай универсальную Damage System.
+Минимальные проверки:
 
-Поддержать:
+1. Два клиента подключаются к хосту.
+2. Подключаются четыре игрока.
+3. Все видят движения друг друга.
+4. Все могут взаимодействовать с одним ящиком.
+5. Ящик бросают одновременно два игрока.
+6. Огненный шар поражает врага.
+7. Взрыв толкает предметы.
+8. Одна стена разрушается ровно один раз.
+9. Все игроки видят одинаковое состояние стены.
+10. Поздно подключившийся игрок получает актуальное состояние окружения.
+11. Проверяется высокая задержка и потеря пакетов.
+12. Хост отключается.
+13. Клиент отключается.
+14. Выполняются несколько взрывов одновременно.
+15. Проверяется производительность на слабом ПК.
 
-Physical
-Magic
-Fire
-Ice
-Lightning
-Poison
-Bleed
-Holy
-Dark
-и возможность добавления новых типов.
+Если автоматические тесты возможны, создай их. Если MCP не позволяет управлять несколькими экземплярами Unity или Steam-клиентами, не имитируй успешный тест: подготовь инструкцию для ручной проверки.
 
----
+10. Правила работы с проектом
 
-DAMAGE FEEDBACK
+- Сначала изучи проект, затем меняй его.
+- Не переписывай всё с нуля.
+- Не удаляй существующие системы без необходимости.
+- Не устанавливай неподтверждённые зависимости.
+- Не создавай дубликаты классов с одинаковыми обязанностями.
+- Используй текущие соглашения проекта.
+- Соблюдай правила Unity для сериализуемых полей, компонентов, сцен и префабов.
+- Не меняй настройки рендеринга без необходимости.
+- Не храни секретные ключи в исходном коде.
+- Не отключай проверки безопасности ради удобства.
+- Не сообщай об успешной компиляции, запуске или тестировании, если фактически не проверил результат.
+- Не заявляй, что MCP выполнил действие, если у него нет соответствующей функции.
+- Если требуется действие в Unity Editor, а соответствующий инструмент недоступен, объясни точные шаги для ручного выполнения.
+- Перед массовыми изменениями создай контрольную точку и убедись, что изменения можно откатить.
 
-Каждый значимый удар должен иметь визуальное и физическое ощущение.
+11. Этапы реализации
 
-Поддержать:
+Выполняй работу последовательно.
 
-Hit Stop
-Camera Shake
-Controller Vibration
-Impact VFX
-Hit SFX
-Weapon Trail
-Sparks
-Blood
-Hit Reaction
-Stagger
+Этап 1. Аудит проекта и отчёт о совместимости.
 
-Тяжёлые атаки должны ощущаться сильнее лёгких.
+Этап 2. Выбор сетевого фреймворка и Steam-транспорта.
 
----
+Этап 3. Минимальный сетевой прототип на двух игроках.
 
-STAMINA
+Этап 4. Подключение четырёх игроков и проверка движения.
 
-Отдельная Stamina System.
+Этап 5. Сетевые физические предметы.
 
-Расход:
+Этап 6. Огненный шар, попадания, урон и импульсы.
 
-Attack
-Heavy Attack
-Dodge
-Sprint
-Block
-Parry
-Future abilities
+Этап 7. Разрушение ящика и стены.
 
-После расхода:
+Этап 8. Синхронизация состояния и обработка отключений.
 
-Regeneration Delay
-Regeneration
+Этап 9. Оптимизация и нагрузочные тесты.
 
-Все параметры должны быть configurable.
+Этап 10. Финальный аудит и документация.
 
----
+После каждого этапа:
 
-POISE
+- Проверь изменённые файлы.
+- Проверь компиляцию доступными средствами.
+- Исправь обнаруженные ошибки.
+- Обнови документацию.
+- Перечисли, что готово и что проверено.
+- Укажи известные ограничения.
 
-Создай универсальную Poise System.
+Не переходи к массовому созданию контента, пока базовый сетевой прототип не работает.
 
-Например:
+12. Документация
 
-Poise = 100
+Создай в проекте папку Documentation/Networking.
 
-Attack:
-PoiseDamage = 25
+Подготовь:
 
-После четырёх сильных ударов:
+- Architecture.md — архитектура сетевой игры.
+- Setup.md — настройка зависимостей и Steam.
+- Physics.md — принципы сетевой физики.
+- Destruction.md — система разрушения.
+- Testing.md — инструкция по проверке четырёх игроков.
+- KnownIssues.md — известные ограничения и нерешённые проблемы.
 
-Poise <= 0
+Документация должна соответствовать реальному коду, а не описывать несуществующие функции.
 
-↓
+13. Финальный отчёт
 
-Stagger
+В конце представь:
 
-После stagger poise восстанавливается.
+1. Что было найдено в проекте.
+2. Какой сетевой фреймворк и транспорт выбраны и почему.
+3. Какие файлы созданы или изменены.
+4. Что реально реализовано.
+5. Какие проверки прошли и какие не удалось выполнить.
+6. Какие проблемы остались.
+7. Какие действия мне нужно выполнить вручную.
+8. Какие расходы на инфраструктуру возможны и какие серверы не нужны.
+9. Следующий конкретный шаг разработки.
 
-Система должна работать:
-
-Player
-Enemy
-Elite
-Boss
-
----
-
-BLOCK / GUARD
-
-Block должен иметь:
-
-- stamina damage;
-- physical mitigation;
-- elemental mitigation;
-- guard break;
-- perfect block possibility;
-- block reaction.
-
-Все значения должны быть configurable.
-
----
-
-PARRY
-
-Parry должен иметь timing window.
-
-При успешном parry:
-
-- атакующий получает stagger;
-- создаётся opportunity для critical;
-- воспроизводится VFX;
-- SFX;
-- hit stop;
-- camera feedback.
-
----
-
-CRITICAL ATTACK
-
-Поддержать:
-
-Backstab
-Riposte
-Stagger Critical
-
-Critical должен быть отдельной combat action.
-
----
-
-WEAPON SYSTEM
-
-Оружие не должно зависеть от конкретного персонажа.
-
-Создай:
-
-WeaponData
-WeaponController
-WeaponAttackSet
-WeaponScaling
-
-Типы оружия:
-
-Sword
-GreatSword
-Axe
-Hammer
-Spear
-Dagger
-Katana
-Bow
-Staff
-
-Не реализовывай все сразу.
-
-Архитектура должна позволять добавлять их без переписывания Combat System.
-
----
-
-WEAPON SCALING
-
-Предусмотреть scaling:
-
-Strength
-Dexterity
-Intelligence
-Faith
-Other future stats
-
-Например:
-
-Physical Damage
-+
-Strength Scaling
-+
-Dexterity Scaling
-
----
-
-EQUIPMENT
-
-Создай:
-
-EquipmentSystem
-
-Slots:
-
-Helmet
-Chest
-Gloves
-Legs
-MainHand
-OffHand
-Ring1
-Ring2
-etc.
-
-Добавь:
-
-Weight
-Defense
-Poise
-Resistances
-
----
-
-EQUIP LOAD
-
-Поддержать:
-
-Light Load
-Medium Load
-Heavy Load
-
-Вес оборудования должен влиять на dodge/movement parameters.
-
----
-
-STATUS EFFECTS
-
-Создай расширяемую систему StatusEffect.
-
-Поддержать архитектурно:
-
-Poison
-Bleed
-Burn
-Frost
-Curse
-Slow
-Stun
-etc.
-
-Каждый статус должен иметь:
-
-duration
-intensity
-tickInterval
-stackingRules
-resistanceInteraction
-
----
-
-ENEMY SYSTEM
-
-Создай общую Enemy Architecture.
-
-Enemy:
-
-EnemyController
-EnemyStats
-EnemyHealth
-EnemyCombat
-EnemyAnimator
-EnemyAI
-EnemyPerception
-EnemyTargeting
-EnemyLoot
-
----
-
-ENEMY AI
-
-Используй State Machine.
-
-Состояния:
-
-Idle
-Patrol
-Investigate
-Suspicious
-Alert
-Detect
-Chase
-Attack
-Recover
-Hit
-Stagger
-Search
-Return
-Flee
-Death
-
----
-
-ENEMY PERCEPTION
-
-Враг должен иметь:
-
-Vision
-Field of View
-Distance
-Line of Sight
-Hearing
-Alert Level
-
-Не используй примитивное:
-
-if distance < X then attack
-
-Враг должен ощущаться как живой игровой AI.
-
----
-
-AGGRO
-
-Создай AggroSystem.
-
-Поддержать:
-
-- primary target;
-- threat;
-- distance;
-- damage-based aggro;
-- alert state;
-- group reactions.
-
-В будущем это позволит сделать группы врагов.
-
----
-
-ENEMY ARCHETYPES
-
-Создай базовые архетипы:
-
-Melee
-Ranged
-Tank
-Assassin
-Caster
-Beast
-Elite
-MiniBoss
-Boss
-
-Не создавай уникальный код для каждого врага.
-
-Разные враги должны использовать общие системы + разные Data.
-
----
-
-BOSS SYSTEM
-
-Boss является расширением Enemy System.
-
-Создай:
-
-BossController
-BossPhase
-BossAttackPattern
-BossArena
-
-Поддержать:
-
-Phase 1
-Phase Transition
-Phase 2
-Phase 3
-
-Фазы могут менять:
-
-- attacks;
-- movement;
-- speed;
-- damage;
-- AI;
-- VFX;
-- music;
-- arena behavior.
-
----
-
-BOSS ATTACK SYSTEM
-
-Атаки босса должны быть data-driven.
-
-Например:
-
-BasicAttack
-Combo
-Sweep
-Charge
-JumpAttack
-AOE
-Projectile
-Grab
-SpecialAttack
-
-Не зашивай атаки непосредственно в BossController.
-
----
-
-BOSS DESIGN
-
-Каждый босс должен иметь:
-
-- читаемые атаки;
-- telegraph;
-- punish windows;
-- recovery windows;
-- phase changes;
-- уникальную механику;
-- arena;
-- reward.
-
-Босс не должен просто иметь огромное количество HP.
-
----
-
-LOOT
-
-Создай:
-
-LootSystem
-LootTable
-LootEntry
-
-Поддержать:
-
-Gold
-Materials
-Weapons
-Armor
-Consumables
-Rare Items
-Boss Rewards
-
-Настройки:
-
-DropChance
-GuaranteedDrop
-Quantity
-Weight/Rarity
-
----
-
-INVENTORY
-
-Создай InventorySystem.
-
-Поддержать:
-
-- stackable items;
-- equipment;
-- consumables;
-- materials;
-- quest items;
-- unique items.
-
-Не привязывай Inventory к конкретному UI.
-
----
-
-STATS
-
-Базовые:
-
-Health
-Stamina
-Attack
-Defense
-Poise
-
-Основные RPG attributes:
-
-Strength
-Dexterity
-Intelligence
-Faith
-Luck
-
-Resistance:
-
-Physical
-Magic
-Fire
-Ice
-Lightning
-Poison
-Bleed
-etc.
-
----
-
-PROGRESSION
-
-Создай Level/Progression System.
-
-Поддержать:
-
-XP
-Level
-Stat Points
-Currency
-Equipment Progression
-
-Не делай progression жёстко связанным с UI.
-
----
-
-CHECKPOINT
-
-Создай универсальный Checkpoint System.
-
-Checkpoint должен:
-
-- лечить игрока;
-- восстанавливать stamina;
-- сохранять прогресс;
-- восстанавливать обычных врагов;
-- сохранять важные world states;
-- поддерживать fast travel в будущем.
-
----
-
-DEATH
-
-При смерти игрока:
-
-- блокировать input;
-- death animation;
-- death VFX/SFX;
-- сохранить потерянную валюту;
-- отправить игрока к checkpoint;
-- восстановить мир согласно правилам;
-- создать возможность вернуть потерянный ресурс.
-
----
-
-WORLD STATE
-
-Создай WorldStateSystem.
-
-Хранить состояния:
-
-BossDefeated
-DoorOpened
-LeverActivated
-NPCState
-QuestState
-EventState
-AreaState
-ShortcutUnlocked
-
-Это позволит миру изменяться в зависимости от действий игрока.
-
----
-
-INTERACTION SYSTEM
-
-Создай универсальный InteractionSystem.
-
-Поддержать:
-
-NPC
-Doors
-Chests
-Levers
-Ladders
-Elevators
-Checkpoints
-Items
-Fog Gates
-Hidden Objects
-
-Не делай отдельный PlayerController код для каждого взаимодействия.
-
----
-
-NPC
-
-Создай:
-
-NPCController
-NPCData
-NPCState
-DialogueSystem
-
-NPC должен иметь состояние.
-
-Например:
-
-Neutral
-Met
-QuestActive
-QuestComplete
-Moved
-Dead
-
-NPCState должен сохраняться.
-
----
-
-DIALOGUE
-
-Создай расширяемую Dialogue System.
-
-Поддержать:
-
-DialogueNode
-DialogueChoice
-Condition
-Action
-Reward
-
-Диалог может зависеть от:
-
-QuestState
-WorldState
-PlayerLevel
-NPCState
-BossState
-Inventory
-
----
-
-QUESTS
-
-Создай:
-
-Quest
-QuestObjective
-QuestState
-QuestManager
-QuestReward
-
-Типы objectives:
-
-Kill
-Collect
-Explore
-Talk
-Interact
-Boss
-ReachLocation
-
-Квесты должны поддерживать branching conditions.
-
----
-
-WORLD / LEVEL DESIGN
-
-Мир должен строиться вокруг исследования.
-
-Поддержать:
-
-- shortcuts;
-- locked doors;
-- keys;
-- elevators;
-- hidden areas;
-- secrets;
-- verticality;
-- interconnected areas;
-- landmarks;
-- checkpoints;
-- boss arenas.
-
-Не превращай карту в набор случайных комнат.
-
----
-
-VERTICAL SLICE
-
-Перед масштабированием проекта создай небольшой Vertical Slice:
-
-PLAYER
-↓
-SMALL AREA
-↓
-3 ENEMY TYPES
-↓
-CHECKPOINT
-↓
-SHORTCUT
-↓
-ELITE ENEMY
-↓
-MINIBOSS
-↓
-BOSS
-↓
-REWARD
-
-Временные модели разрешены.
-
-Главная задача Vertical Slice — проверить:
-
-Combat
-AI
-Movement
-Camera
-Lock-on
-Stamina
-Poise
-Boss
-Checkpoint
-Loot
-Progression
-
-Только после стабильной работы Vertical Slice можно масштабировать контент.
-
----
-
-ANIMATION SYSTEM
-
-Создай архитектуру, позволяющую работать с:
-
-Idle
-Walk
-Run
-Sprint
-Attack
-Heavy Attack
-Combo
-Dodge
-Block
-Parry
-Hit
-Stagger
-Death
-Critical
-Special
-
-Поддержать:
-
-Animation Events
-Animation Layers
-Blend Trees
-Root Motion where appropriate
-Animation State Machine
-
-Боевые окна не должны зависеть от случайных таймингов Update().
-
----
-
-AUDIO
-
-Создай AudioSystem.
-
-Поддержать:
-
-Footsteps
-Weapon Swing
-Weapon Hit
-Armor Hit
-Flesh Hit
-Block
-Parry
-Dodge
-Stagger
-Death
-Enemy Alert
-Boss Attack
-Boss Phase
-Ambient
-Music
-
-Сделать возможность назначать audio через Data/ScriptableObject.
-
----
-
-MUSIC
-
-Boss encounter должен уметь:
-
-- менять музыку;
-- запускать boss theme;
-- менять музыкальную фазу;
-- переходить между фазами без резких обрывов.
-
----
-
-VFX
-
-Создать VFX hooks для:
-
-Attack
-Hit
-Critical
-Parry
-Dodge
-Magic
-Status Effect
-Death
-Boss Phase
-Environmental Events
-
-Не связывать VFX напрямую с конкретными gameplay classes сильнее необходимого.
-
----
-
-UI
-
-Создать UI Architecture.
-
-Минимально:
-
-Health Bar
-Stamina Bar
-Boss Health Bar
-Target Indicator
-Interaction Prompt
-Inventory
-Equipment
-Stats
-Dialogue
-Quest
-Death Screen
-Checkpoint UI
-
-Gameplay systems не должны напрямую управлять UI GameObjects.
-
-Используй events/data binding where appropriate.
-
----
-
-SAVE SYSTEM
-
-Разделяй:
-
-Static Configuration
-и
-Runtime State.
-
-Создай:
-
-PlayerSaveData
-InventorySaveData
-EquipmentSaveData
-QuestSaveData
-WorldSaveData
-NPCSaveData
-
-Не сериализуй GameObject напрямую.
-
-Система должна быть расширяемой.
-
----
-
-DEBUG SYSTEM
-
-Создай Debug Tools.
-
-Показывать:
-
-HP
-Stamina
-Poise
-State
-Target
-Enemy State
-Boss Phase
-Distance
-
-Gizmos:
-
-Attack Range
-Hitbox
-Hurtbox
-Detection Range
-FOV
-Lock-on Range
-Navigation
-
-Добавь возможность включать/выключать debug mode.
-
----
-
-PERFORMANCE
-
-Не использовать:
-
-FindObjectOfType каждый кадр
-GetComponent каждый кадр
-лишние Instantiate/Destroy
-лишние Physics queries
-ненужные allocations
-огромное количество Update()
-
-Используй caching.
-
-При необходимости используй:
-
-Object Pooling
-Events
-Interfaces
-NonAlloc Physics APIs
-LOD
-Culling
-
-Но НЕ занимайся premature optimization.
-
-Сначала правильная архитектура и gameplay, затем profiling и optimization.
-
----
-
-ERROR HANDLING
-
-После каждого изменения:
-
-- проверь compile errors;
-- проверь missing references;
-- проверь namespace conflicts;
-- проверь null references;
-- проверь broken serialized fields;
-- проверь зависимости.
-
-Если изменение потенциально ломает prefab/scene — предупреди.
-
----
-
-UNITY INSPECTOR
-
-Если создаётся новый компонент, обязательно сообщи:
-
-- какой GameObject создать;
-- какой Component добавить;
-- какие поля заполнить;
-- какие ScriptableObjects создать;
-- какие references назначить;
-- какие Layer/Tag нужны;
-- какие Collider настройки нужны.
-
----
-
-INPUT
-
-Используй существующую Input System проекта.
-
-Если используется Unity Input System, не создавай параллельную систему ввода.
-
-Минимальные действия:
-
-Move
-Look
-Attack
-HeavyAttack
-Dodge
-Block
-Parry
-LockOn
-SwitchTarget
-Interact
-Sprint
-UseItem
-Pause
-
----
-
-CODE STYLE
-
-Используй:
-
-- clear naming;
-- namespaces;
-- serialized private fields;
-- interfaces when useful;
-- events when useful;
-- enums только там, где они действительно подходят;
-- ScriptableObjects для configuration;
-- dependency separation.
-
-Избегай:
-
-- magic numbers;
-- static global state без необходимости;
-- singleton для каждой системы;
-- God classes;
-- circular dependencies;
-- скрытых зависимостей.
-
----
-
-ПРОЦЕСС РАБОТЫ
-
-Перед реализацией каждого этапа покажи:
-
-1. CURRENT STATE
-
-Что уже существует.
-
-2. PROBLEM
-
-Что нужно сделать.
-
-3. PLAN
-
-Какие изменения будут выполнены.
-
-4. FILES
-
-Какие файлы будут созданы/изменены.
-
-5. DEPENDENCIES
-
-Какие системы зависят от изменения.
-
-После этого реализуй этап.
-
----
-
-ПОРЯДОК РАЗРАБОТКИ
-
-PHASE 0
-Project Analysis
-
-PHASE 1
-Architecture Foundation
-
-PHASE 2
-Input
-
-PHASE 3
-Player Movement
-
-PHASE 4
-Camera
-
-PHASE 5
-Target Lock
-
-PHASE 6
-Health / Damage
-
-PHASE 7
-Stamina
-
-PHASE 8
-Animation Framework
-
-PHASE 9
-Combat
-
-PHASE 10
-Hitbox / Hurtbox
-
-PHASE 11
-I-Frames
-
-PHASE 12
-Poise / Stagger
-
-PHASE 13
-Block / Parry
-
-PHASE 14
-Weapons
-
-PHASE 15
-Enemy AI
-
-PHASE 16
-Enemy Perception
-
-PHASE 17
-Loot
-
-PHASE 18
-Inventory
-
-PHASE 19
-Equipment
-
-PHASE 20
-Stats / Progression
-
-PHASE 21
-Boss Framework
-
-PHASE 22
-Boss Phase System
-
-PHASE 23
-Checkpoint
-
-PHASE 24
-Death / Respawn
-
-PHASE 25
-Interaction
-
-PHASE 26
-NPC
-
-PHASE 27
-Dialogue
-
-PHASE 28
-Quest System
-
-PHASE 29
-World State
-
-PHASE 30
-Save System
-
-PHASE 31
-UI
-
-PHASE 32
-Audio
-
-PHASE 33
-VFX
-
-PHASE 34
-Vertical Slice
-
-PHASE 35
-Performance Profiling
-
-PHASE 36
-Polish
-
----
-
-ABSOLUTE RULES
-
-1. Не переписывай проект целиком без необходимости.
-
-2. Не создавай дубликаты существующих систем.
-
-3. Не переходи к следующему этапу автоматически.
-
-4. Не создавай огромные монолитные классы.
-
-5. Не помещай configuration data непосредственно в gameplay code.
-
-6. Не храни runtime state в ScriptableObject.
-
-7. Не связывай gameplay напрямую с UI без необходимости.
-
-8. Не делай AI через огромное количество if/else.
-
-9. Не делай каждый enemy полностью отдельным кодом.
-
-10. Не делай каждого босса отдельной архитектурой.
-
-11. Сначала gameplay, потом polish.
-
-12. Если существующая архитектура противоречит этому плану — сначала объясни проблему и предложи безопасный вариант.
-
-13. Если требования неоднозначны — не делай рискованное предположение. Покажи варианты и выбери наиболее безопасный для архитектуры.
-
-14. После каждого этапа предоставляй краткий отчёт:
-
-Implemented
-Changed Files
-Unity Setup
-Testing
-Known Issues
-Next Phase
-
-15. Всегда учитывай расширяемость будущего проекта.
-
-Главная цель:
-
-Создать не просто работающий прототип, а фундамент полноценной оригинальной Souls-like RPG на Unity, который можно постепенно расширять новыми персонажами, врагами, боссами, оружием, предметами, локациями, NPC и игровыми механиками без постоянного переписывания существующего кода.
+Начни с аудита проекта. Не устанавливай пакеты и не переписывай код до проверки совместимости и составления плана. После аудита продолжай по этапам в пределах доступных инструментов, не выдумывая результаты.
