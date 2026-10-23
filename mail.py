@@ -1,2298 +1,440 @@
-Ты работаешь над существующим проектом ILTA BOT.
-
-ЗАДАЧА:
-Полностью переработать пользовательский интерфейс SHOP,
-но НЕ переписывать существующую экономику и НЕ создавать
-новую систему магазина с нуля.
-
-Нужно взять существующую Shop/Pack/Chest/Inventory систему
-и превратить её в единый premium AAA RPG / collectible card game UI.
-
-============================================================
-ГЛАВНАЯ ЦЕЛЬ
-============================================================
-
-Сейчас магазин выглядит примерно так:
-
-🛒 Магазин
-
-Престижный набор · 5000 · pack_prestige
-Чемпионский набор · 10000 · pack_ultimate
-Набор Демасии · 900 · pack_demacia
-Набор Ноксуса · 900 · pack_noxus
-Набор Ионии · 900 · pack_ionia
-
-[Купить · ...]
-[Купить · ...]
-[Купить · ...]
-
-Это технический интерфейс.
-
-Нужно сделать:
-
-/menu
-↓
-🛒 SHOP
-↓
-категория
-↓
-выбор товара
-↓
-полноценная карточка товара
-↓
-просмотр изображения
-↓
-описание
-↓
-вероятности / содержимое
-↓
-цена
-↓
-подтверждение
-↓
-покупка
-↓
-добавление в Inventory
-↓
-опционально OPEN NOW
-
-============================================================
-КРИТИЧЕСКОЕ ПРАВИЛО
-============================================================
-
-НЕ УДАЛЯЙ существующую Shop систему.
+MISSION: Integrate the Complete Google Stitch UI System into an Existing Roblox Game
 
-НЕ СОЗДАВАЙ вторую независимую экономику.
+You are the senior Roblox UI engineer, Luau developer, UI technical artist, and QA engineer responsible for integrating a complete Google Stitch-designed UI system into an existing Roblox game.
 
-НЕ СОЗДАВАЙ вторую Inventory систему.
+Your task is to integrate the supplied design into the ACTUAL EXISTING PROJECT, preserve its art direction, connect it to real game systems, and verify the result.
 
-НЕ СОЗДАВАЙ второй Pack system.
+This is not a request to create a new game, redesign the supplied UI, generate a generic interface, or replace the project with a prototype.
 
-НЕ СОЗДАВАЙ второй Chest system.
+1. PROJECT CONTEXT
 
-Используй существующие:
+The project already exists. It has its own structure, hub, gameplay systems, scripts, and assets.
 
-- database;
-- shop logic;
-- item IDs;
-- prices;
-- currencies;
-- pack data;
-- chest data;
-- reward system;
-- inventory;
-- assets;
-- localization;
-- /menu.
+The Google Stitch export is located in a folder named "StitchExport" or another location you discover during the initial audit.
 
-Сначала изучи существующий код.
+The export may contain:
 
-Если какая-либо функция уже существует —
-используй её, а не создавай дубликат.
+- HTML files for individual screens.
+- Screenshots and visual references.
+- DESIGN.md and design tokens.
+- Images, icons, textures, and other exported resources.
+- Other generated project files.
 
-============================================================
-1. ПЕРЕД ИЗМЕНЕНИЯМИ ПРОАНАЛИЗИРУЙ SHOP
-============================================================
+The game is a fantasy Roblox experience with a hub, modular dungeon gameplay, dungeon seeds, collectible rewards, inventory, progression, and related systems. These are design-context hints, NOT permission to invent missing gameplay features. Inspect the actual project to determine what already exists.
 
-Найди:
+Primary design requirement: preserve the supplied visual identity. The UI must not be downgraded to generic Roblox menus or primitive placeholder artwork.
 
-- shop cog/module;
-- shop commands;
-- shop database queries;
-- item registry;
-- pack registry;
-- chest registry;
-- price system;
-- currency system;
-- purchase functions;
-- inventory insertion;
-- asset loading;
-- localization;
-- Discord Views;
-- Buttons;
-- SelectMenus;
-- Modals.
+2. NON-NEGOTIABLE RULES
 
-Построй цепочку:
+1. Inspect the complete existing project before modifying it.
+2. Inspect the complete Stitch export before implementing the interface.
+3. Read DESIGN.md if present. Treat it as a primary source of design rules.
+4. Preserve the existing game, working systems, assets, naming conventions, and architecture whenever possible.
+5. Do not delete existing UI, scripts, folders, or assets before tracing their dependencies and documenting a safe migration plan.
+6. Do not replace the existing project with a new template or rebuild unrelated systems.
+7. Do not invent asset IDs, game data, remotes, API methods, or existing systems.
+8. Never claim that an implementation or test succeeded without evidence.
+9. Do not stop after producing a plan. Continue into implementation unless a genuinely blocking issue requires user action.
+10. Do not ask the user to manually perform work that your available tools can safely complete.
+11. If an operation requires Roblox authentication, asset ownership, publishing permissions, or a manual Studio action unavailable to you, complete every independent step possible and provide exact instructions for the remaining action.
+12. Do not silently discard any screen or important design element from the Stitch export.
 
-/menu
-→ shop
-→ category
-→ item
-→ purchase
-→ transaction
-→ inventory
+3. INITIAL AUDIT — BEFORE EDITING
 
-Не меняй код до понимания существующей архитектуры.
+First, discover the actual project and available tools.
 
-============================================================
-2. СОХРАНИТЬ СУЩЕСТВУЮЩИЙ SHOP BANNER
-============================================================
+A. Identify:
 
-Текущий banner магазина уже существует
-и должен остаться.
+- Project root and file structure.
+- Whether the project uses Rojo, Roblox Studio-only files, or another workflow.
+- Existing project configuration and Rojo mappings, if present.
+- Existing UI hierarchy and all ScreenGui instances.
+- Existing LocalScripts, ModuleScripts, server scripts, RemoteEvents, and RemoteFunctions relevant to UI.
+- Current inventory, equipment, currency, health, mana, rewards, seed, dungeon, crafting, settings, party, and progression implementations, where present.
+- Existing asset folders, image references, shared modules, and UI controllers.
+- Existing test scripts, project instructions, AGENTS.md, and relevant installed agent skills.
+- Available Roblox MCP connections and their verified capabilities.
+- All files in the Stitch export, including nested directories and image assets.
 
-Он используется как визуальный header магазина.
+B. Read relevant OpenCode instructions and skills. Discover available Roblox-specific tools and skills instead of assuming a particular MCP server or command exists.
 
-Не заменяй его без необходимости.
+C. Consult official documentation:
 
-Но после banner больше НЕ должен отображаться
-длинный технический список товаров.
+- https://create.roblox.com/docs/ui
+- https://create.roblox.com/docs/ui/buttons
+- https://create.roblox.com/docs/ui/labels
+- https://create.roblox.com/docs/building-and-visuals/ui
+- https://create.roblox.com/docs/studio/testing-modes
+- https://create.roblox.com/docs/scripting/security/client-server-boundary
 
-============================================================
-3. ГЛАВНЫЙ ЭКРАН SHOP
-============================================================
+Use current documentation and verify APIs before implementation.
 
-Главный экран должен быть компактным.
+D. Inspect the Stitch HTML, screenshots, images, and DESIGN.md. Determine the actual screen list and visual relationships.
 
-Пример:
+Create an audit report containing:
 
-🛒 SHOP
+- Existing architecture and UI entry points.
+- Existing systems that can be reused.
+- Every discovered Stitch screen.
+- Available original images and icons.
+- Assets that must be extracted, converted, or uploaded.
+- Existing UI dependencies that could break if replaced.
+- Integration risks and a proposed implementation order.
 
-[ EXISTING SHOP BANNER ]
+Do not modify or delete anything during the initial audit.
 
-━━━━━━━━━━━━━━━━━━━━
+4. DESIGN FIDELITY — ABSOLUTE PRIORITY
 
-[ 🎁 PACKS ]
-[ 🏆 CHESTS ]
+The final in-game UI must preserve the supplied Stitch design as closely as Roblox allows.
 
-[ 🧩 MATERIALS ]
-[ ⚡ BOOSTERS ]
+The project must NOT end up looking like a generic Roblox simulator UI.
 
-[ 🎨 COSMETICS ]
+Strictly prohibit the following as final visual artwork:
 
-━━━━━━━━━━━━━━━━━━━━
+- Plain colored rectangles used as substitutes for designed panels.
+- Generic rounded cards replacing ornate fantasy panels.
+- Primitive circles replacing custom icons.
+- Emoji or Unicode symbols used as replacement artwork.
+- Default Roblox buttons presented as the final design.
+- Generic gradients used instead of supplied textures or illustrations.
+- Placeholder icons, empty image boxes, and fake inventory artwork.
+- Text-only approximations of illustrated assets.
+- Newly invented visual styles that conflict with the supplied design.
 
-🪙 Gold: XXXX
-💎 Crystals: XXXX
+Important distinction: invisible layout containers, transparent Frames, UIListLayout, UIGridLayout, UIPadding, constraints, and other functional Roblox GUI objects are allowed. They are structural tools, not replacement artwork.
 
-[ 🏠 HOME ]
+Use appropriate native Roblox GUI components with the original exported artwork layered on top.
 
-Использовать реальные валюты проекта.
+Preserve:
 
-НЕ хардкодить значения.
+- Fantasy visual identity.
+- Panel silhouettes and ornamental borders.
+- Original icon designs.
+- Text hierarchy and typography.
+- Colors, spacing, alignment, and proportions.
+- Background textures and decorative details.
+- Visual distinctions between primary actions, secondary actions, locked items, selected items, warnings, and rewards.
+- Hover, pressed, disabled, selected, loading, and confirmation states where appropriate.
 
-НЕ создавать новые валюты.
+Do not flatten an entire interactive screen into a single screenshot. Players must still be able to click buttons, select items, scroll lists, read changing values, and interact with individual controls.
 
-Если какие-то категории уже существуют —
-использовать их.
+Use screenshots as visual references and original image files as assets when available.
 
-============================================================
-4. КАТЕГОРИЯ PACKS
-============================================================
+5. STITCH EXPORT AND ASSET PIPELINE
 
-После нажатия:
+Determine which resources are actually present in the ZIP.
 
-🎁 PACKS
+For every screen:
 
-не показывать большой список:
+1. Locate its HTML and associated screenshot.
+2. Identify image URLs, inline image data, SVGs, icons, textures, and fonts.
+3. Extract locally available original assets where legally and technically appropriate.
+4. Preserve transparent backgrounds and original aspect ratios.
+5. Inspect SVG compatibility and convert to a suitable raster format only when necessary.
+6. Keep a manifest mapping source files to their intended UI components.
+7. Identify assets that require uploading to Roblox.
 
-pack_common
-pack_prestige
-pack_ultimate
-pack_demacia
+Do not assume that a URL in exported HTML points to a permanently accessible image. Do not assume that a screenshot contains separately usable image assets.
 
-и т.д.
+Create a structured asset manifest, for example:
 
-Внутренние IDs никогда не должны показываться пользователю.
+- Source file.
+- Target screen and component.
+- Asset type and dimensions.
+- Transparency and aspect ratio.
+- Current availability.
+- Roblox upload requirement.
+- Final Roblox asset ID, if verified.
+- Any remaining manual action.
 
-Вместо:
+Use Roblox-compatible asset references for production UI.
 
-pack_demacia
+Never put a local filesystem path, a temporary web URL, or a fabricated numeric ID into a Roblox Image property and claim the image is integrated.
 
-показывать:
+If image uploads cannot be performed through available tools:
 
-🏰 Demacia Pack
+- Finish preparing and organizing the assets.
+- Produce an upload manifest and clear upload instructions.
+- Provide a centralized asset configuration module with explicit unresolved entries.
+- Do not invent IDs.
+- Do not pretend the art is fully integrated.
+- Continue implementing all other independent parts of the UI.
 
-В русском:
+Where supported, use image slicing, suitable scaling modes, and other native techniques to preserve decorative borders when panels resize.
 
-🏰 Набор Демасии
+6. ROBLOX UI ARCHITECTURE
 
-В английском:
+Use the project's existing architecture if it is sound. Do not introduce a new framework without a concrete reason.
 
-🏰 Demacia Pack
+Implement maintainable, modular UI components and controllers.
 
-============================================================
-5. PACK ASSETS
-============================================================
+Possible organization, adapted to the existing project:
 
-ОБЯЗАТЕЛЬНО использовать существующие изображения паков.
+- Shared UI configuration and design tokens.
+- Asset manifest.
+- Root HUD.
+- Reusable illustrated panels.
+- Reusable image buttons.
+- Tooltip and item-detail components.
+- Inventory controller.
+- Dungeon book / seed selection controller.
+- Party and dungeon-entry controller.
+- Rewards and progression controller.
+- Settings controller.
+- Notifications and modal controller.
 
-Каждый pack должен иметь собственный asset.
+These are suggestions, not a requirement to create empty modules for systems the game does not have.
 
-Например логически:
+Use appropriate Roblox instances:
 
-pack_common
-→ assets/packs/...
+- ScreenGui for screen-space UI.
+- ImageLabel and ImageButton for supplied artwork and interactive images.
+- TextLabel and TextBox for dynamic text and input.
+- UIListLayout and UIGridLayout for repeated content.
+- UIScale, UIAspectRatioConstraint, and size constraints when appropriate.
+- TweenService for deliberate transitions.
+- ContextActionService or an existing input abstraction for keyboard/gamepad controls when needed.
 
-pack_demacia
-→ assets/packs/...
+Use "GuiButton.Activated" or an equivalent cross-platform interaction pattern for click/tap actions.
 
-pack_noxus
-→ assets/packs/...
+Avoid giant monolithic LocalScripts. Avoid duplicating the same UI logic across screens.
 
-pack_ionia
-→ assets/packs/...
+Keep layout, visual components, game-state integration, and server communication separated.
 
-pack_prestige
-→ assets/packs/...
+7. RESPONSIVE LAYOUT
 
-pack_ultimate
-→ assets/packs/...
+The interface must adapt to Roblox's actual supported display environments.
 
-НЕ придумывать новые пути.
+Support:
 
-Сначала найти реальные assets проекта.
+- Desktop at common aspect ratios.
+- Narrower screens.
+- Mobile touch input.
+- Gamepad navigation where the game supports it.
 
-Если существующий asset resolver уже есть —
-использовать его.
+Use scale-based sizing where appropriate, constraints, safe margins, and scrolling for content that cannot fit.
 
-============================================================
-6. ЕСЛИ PACK IMAGE НЕ ПОКАЗЫВАЕТСЯ
-============================================================
+Avoid hard-coded desktop-only layouts that overflow or overlap on mobile.
 
-Это отдельный критический баг.
+Do not shrink the entire interface until text becomes unreadable. Create deliberate responsive variants when the design requires them.
 
-Проверить:
+Test actual screen sizes in Studio or with available automation. Do not claim mobile support based solely on inspecting the code.
 
-- путь;
-- filename;
-- extension;
-- case sensitivity;
-- asset loader;
-- PIL;
-- discord.File;
-- attachment://;
-- Embed.set_image();
-- BytesIO;
-- temporary files;
-- followup;
-- edit_original_response.
+8. IMPLEMENT THE COMPLETE SCREEN SYSTEM
 
-Найти общую причину.
+Build every screen found in the Stitch export. Reconcile the export with actual gameplay systems before connecting it.
 
-НЕ делать workaround только для одного Pack.
+Possible screen categories include:
 
-Исправить общий image pipeline.
+A. Core gameplay HUD
 
-============================================================
-7. КАРТОЧКА PACK
-============================================================
+- Health, mana, or other existing resources.
+- Currency and run status.
+- Quick-access inventory or abilities.
+- Dungeon objective and progress.
+- Contextual interaction prompts.
+- Notifications and status effects.
 
-При выборе Pack пользователь должен увидеть
-полноценную карточку товара.
+Only show gameplay values that actually exist.
 
-Пример:
+B. Inventory and equipment
 
-🎁 PACK
+- Item grid and slots.
+- Item icons and rarity.
+- Item details and tooltips.
+- Equip, unequip, use, discard, or other actions only when supported by existing gameplay.
+- Empty, selected, locked, and unavailable states.
+- Scrolling, sorting, and filtering if designed and supported.
 
-[ PACK IMAGE ]
+C. Dungeon book, seeds, and modular dungeon selection
 
-🏰 Набор Демасии
+- Seed information and selection.
+- Dungeon cube information and connections.
+- Existing dungeon configuration and run state.
+- Entry confirmation and party information where supported.
+- Locked, available, selected, and unavailable states.
 
-🪙 900
+Do not create fake seed data or invent dungeon generation behavior to make a menu appear functional.
 
-━━━━━━━━━━━━━━━━
+D. Hub, crafting, merchants, and progression
 
-Cards:
-3
+Implement the exported screens for features that exist in the game. Reuse existing APIs and systems.
 
-━━━━━━━━━━━━━━━━
+For screens representing unimplemented gameplay:
 
-Possible Rarities:
+- Preserve the designed UI.
+- Identify the missing backend dependency.
+- Implement only a safe, clearly scoped integration.
+- Do not simulate permanent success or fake transactions.
 
-⚪ Common
-🟢 Rare
-🔵 Epic
-🟠 Legendary
-🔴 Mythic
-💎 Prestige
-⚡ Ultimate
+E. Rewards, results, and notifications
 
-━━━━━━━━━━━━━━━━
+Connect screens to actual rewards and server-confirmed results where applicable.
 
-[ 📖 CONTENT ]
-[ 🛒 BUY ]
+Prevent duplicate reward claims and repeated actions.
 
-[ ← BACK ]
+F. Settings, dialogs, and navigation
 
-Все данные брать из существующей системы.
+Implement real navigation, close/back behavior, confirmations, and supported settings.
 
-НЕ хардкодить цены.
+Ensure Escape or the platform-appropriate back action behaves consistently. Respect the game's existing input architecture.
 
-НЕ хардкодить вероятности.
+G. Every additional exported screen
 
-НЕ придумывать содержимое.
+Maintain a screen inventory and mark each screen as:
 
-============================================================
-8. ВЕРОЯТНОСТИ
-============================================================
+- Implemented and connected.
+- Implemented with an explicit missing dependency.
+- Blocked by a specific external requirement.
 
-Если Pack имеет систему вероятностей,
-показывать реальные значения.
+Do not silently omit exported screens.
 
-Например:
+9. CONNECT THE UI TO REAL GAME SYSTEMS
 
-Common       XX%
-Rare         XX%
-Epic         XX%
-Legendary    XX%
-Mythic       XX%
-Prestige     XX%
-Ultimate     XX%
+A beautiful interface that displays fake data is not a finished implementation.
 
-Значения получать из существующей конфигурации/
-database/reward system.
+Trace the existing data flow for each screen before connecting it.
 
-Если конкретный Pack использует другую систему —
-показывать её реальные данные.
+Use actual project modules and events wherever possible.
 
-НЕ менять probability system.
+Requirements:
 
-Только сделать её отображение красивым.
+- UI displays real player and game state.
+- Values update when the underlying state changes.
+- Buttons perform their intended action.
+- Selected inventory items correspond to actual items.
+- Dungeon and seed selections correspond to actual supported data.
+- Empty, loading, error, locked, and success states are handled appropriately.
+- Opening and closing panels does not create duplicate connections or duplicate instances.
+- Closing a screen disconnects unnecessary listeners where appropriate.
+- Navigation does not accidentally trigger unrelated gameplay actions.
 
-============================================================
-9. CONTENT
-============================================================
+Never trust the client to determine currency, inventory ownership, rewards, crafting success, or other security-sensitive state.
 
-Добавить кнопку:
+Where server validation is required, use the existing secure server-side system or implement the smallest compatible server integration.
 
-📖 CONTENT
+Validate remote requests on the server. Apply appropriate rate limits and reject invalid requests.
 
-Она показывает:
+Do not add a new RemoteEvent for every button without considering the existing architecture.
 
-- количество карт;
-- возможные rarity;
-- регион;
-- специальные награды;
-- реальные probabilities;
-- другие реальные rewards.
+Do not expose server-only data to the client.
 
-Если Pack региональный —
-показывать:
+10. REMOVE OLD UI SAFELY
 
-🌍 Region:
-Demacia
+The user wants the new design to replace the old visual interface, not coexist with duplicate HUDs forever.
 
-Если Pack специальный —
-показывать его реальные особенности.
+However, do not immediately delete the old interface.
 
-============================================================
-10. CHESTS
-============================================================
+First:
 
-Сделать полностью аналогичный интерфейс для сундуков.
+1. Map old screens and dependencies.
+2. Identify scripts that reference old instance names or paths.
+3. Identify existing game systems that depend on the old UI.
+4. Build and validate the replacement.
+5. Migrate references and verify functionality.
+6. Remove or disable superseded UI only after verification.
 
-Главный экран:
+Avoid duplicate health bars, duplicated menus, overlapping input handlers, and multiple active copies of the same controller.
 
-🏆 CHESTS
+Preserve unrelated UI and debug tools unless the project owner explicitly asks to remove them.
 
-выбор сундука
+11. IMPLEMENTATION ORDER
 
-↓
+Work in small, verifiable stages.
 
-[ CHEST IMAGE ]
+Stage 1 — Audit:
+Complete the inventory of the existing project and Stitch export. Report the intended implementation plan.
 
-Название
+Stage 2 — Foundation:
+Implement the design tokens, asset mapping, root UI architecture, shared components, and responsive layout foundation.
 
-Редкость
+Stage 3 — First vertical slice:
+Integrate one representative screen end-to-end. Prefer the main HUD if it is a central part of the exported design.
 
-Цена
+Verify its artwork, layout, real data, button interactions, and runtime behavior before expanding the implementation.
 
-Содержимое
+Stage 4 — Remaining screens:
+Implement and connect the other exported screens in dependency order.
 
-Вероятности
+Stage 5 — Migration:
+Replace obsolete screens only after the new screens and their dependencies have been verified.
 
-[ 📖 CONTENT ]
-[ 🛒 BUY ]
+Stage 6 — QA:
+Run available static checks, project validation, runtime tests, and multiplayer checks relevant to the changes.
 
-[ ← BACK ]
+After the first vertical slice succeeds, continue through the remaining stages without requiring the user to approve every minor decision.
 
-Использовать существующие Chest assets.
+If a blocker is external, document it and continue with independent tasks.
 
-============================================================
-11. PURCHASE CONFIRMATION
-============================================================
+12. TESTING AND VERIFICATION
 
-После BUY НЕ совершать покупку мгновенно.
+Use available project tools to validate the implementation.
 
-Открывать confirmation screen.
+Check:
 
-Пример:
+- Missing modules and broken requires.
+- Invalid Luau syntax.
+- Incorrect Roblox API usage.
+- Missing or unresolved image asset references.
+- Duplicate UI instances.
+- Incorrect screen visibility and navigation.
+- Broken button connections.
+- Layout overflow and clipping.
+- Incorrect ZIndex and layering.
+- Text readability and scaling.
+- Runtime errors and warnings.
+- Repeated event connections.
+- Server/client boundary violations.
+- Multiplayer state synchronization where relevant.
+- Performance issues from excessive UI instances or unnecessary updates.
 
-🛒 CONFIRM PURCHASE
+Use Roblox Studio's available testing modes when accessible. Test client/server behavior and multiple players when relevant.
 
-[ PACK IMAGE ]
+If you have no ability to launch Studio or inspect the rendered runtime, state that limitation explicitly. Do not substitute code inspection for a runtime test and then claim the game was tested.
 
-🏰 Набор Демасии
+Create a test report with:
 
-Цена:
+- Test performed.
+- Result.
+- Evidence or observed output.
+- Known limitations.
+- Remaining blockers.
 
-🪙 900
+13. ACCEPTANCE CRITERIA
 
-Ваш баланс:
+The task is complete only when the following have been addressed:
 
-🪙 4 850
+1. Every exported screen has been accounted for.
+2. The new UI uses the original Stitch visual assets wherever available.
+3. No primitive placeholders have replaced the intended final artwork.
+4. The core HUD is integrated into the actual existing game.
+5. Supported screens are connected to real game state and working actions.
+6. The old UI has been safely migrated or its remaining dependencies documented.
+7. Responsive behavior has been checked to the extent supported by available tools.
+8. No fabricated asset IDs or fake backend success states remain.
+9. Available validation and testing have been performed and documented.
+10. All blocked work is explicitly identified with precise next steps.
 
-После покупки:
+14. FINAL REPORT
 
-🪙 3 950
+At the end, provide:
 
-━━━━━━━━━━━━━━━━
+A. What was discovered in the project.
 
-Вы уверены?
+B. Which screens were implemented, with a status for each.
 
-[ ✅ CONFIRM ]
-[ ❌ CANCEL ]
+C. Which original Stitch assets were reused and which need uploading.
 
-============================================================
-12. CONFIRM PURCHASE SECURITY
-============================================================
+D. Files created, modified, and removed.
 
-При Confirm:
+E. Existing game systems reused and integration points.
 
-1. проверить user ID;
-2. проверить существование товара;
-3. получить АКТУАЛЬНУЮ цену;
-4. получить АКТУАЛЬНЫЙ баланс;
-5. проверить достаточность валюты;
-6. начать database transaction;
-7. списать валюту;
-8. добавить item в inventory;
-9. commit;
-10. показать результат.
+F. Tests performed and actual results.
 
-НЕ доверять цене,
-переданной из Discord button callback.
+G. Any remaining manual steps, including exact Roblox asset upload requirements and where verified IDs must be entered.
 
-НЕ доверять item ID,
-если его можно изменить пользователем.
+H. Known limitations and the next highest-priority tasks.
 
-Цена должна быть получена
-из серверной логики.
+Do not report the project as fully finished if essential images are missing, screens remain disconnected, or runtime tests could not be performed.
 
-============================================================
-13. DOUBLE CLICK PROTECTION
-============================================================
-
-Два быстрых нажатия:
-
-[ ✅ CONFIRM ]
-
-не должны привести к двойной покупке.
-
-Защититься через:
-
-- disabled button;
-- state check;
-- transaction;
-- idempotency;
-- ownership check.
-
-Использовать подход,
-который соответствует существующей архитектуре.
-
-============================================================
-14. PURCHASE RESULT
-============================================================
-
-После успешной покупки:
-
-✅ PURCHASE COMPLETE
-
-[ PACK IMAGE ]
-
-🏰 Набор Демасии ×1
-
-🪙 -900
-
-Баланс:
-
-🪙 3 950
-
-Кнопки:
-
-[ 🎁 OPEN NOW ]
-[ 🎒 INVENTORY ]
-[ 🛒 SHOP ]
-[ 🏠 HOME ]
-
-Если предмет нельзя открыть —
-не показывать OPEN NOW.
-
-============================================================
-15. OPEN NOW
-============================================================
-
-Если куплен Pack:
-
-[ 🎁 OPEN NOW ]
-
-должен передавать пользователя
-в существующую Pack Opening систему.
-
-НЕ создавать вторую систему открытия.
-
-Flow:
-
-SHOP
-→ PURCHASE
-→ INVENTORY ADD
-→ OPEN NOW
-→ EXISTING PACK OPENING
-
-============================================================
-16. INVENTORY COMPATIBILITY
-============================================================
-
-После покупки Pack обязательно проверить:
-
-Shop
-→ Database
-→ Inventory
-
-Если пользователь купил:
-
-pack_demacia ×1
-
-Inventory должен реально получить:
-
-pack_demacia ×1
-
-И Inventory должен использовать тот же asset:
-
-pack_demacia
-→ pack image
-
-НЕ создавать отдельный item representation.
-
-============================================================
-17. DISPLAY NAME SYSTEM
-============================================================
-
-Внутренние ID:
-
-pack_demacia
-pack_noxus
-pack_ultimate
-m_mithril_ore
-
-никогда не показывать пользователю.
-
-Нужна единая система:
-
-item_id
-→ display_name_ru
-→ display_name_en
-→ description_ru
-→ description_en
-→ asset
-→ rarity
-→ category
-
-Использовать существующую localization/data architecture.
-
-Если подобная система уже есть —
-расширить её.
-
-НЕ создавать десятки if/else.
-
-============================================================
-18. INTERNAL IDs
-============================================================
-
-Найти ВСЕ места Shop UI,
-где отображаются:
-
-pack_...
-chest_...
-m_...
-item_...
-skin_...
-card_...
-
-и заменить только UI presentation.
-
-Внутренние IDs должны остаться
-для database/business logic.
-
-============================================================
-19. MOBILE-FIRST
-============================================================
-
-Пользователь в основном использует Discord на телефоне.
-
-Поэтому:
-
-НЕ делать 10–20 больших кнопок.
-
-НЕ делать длинные списки.
-
-НЕ выводить десятки товаров одновременно.
-
-Использовать:
-
-- Select Menu;
-- Pagination;
-- Previous;
-- Next;
-- Back;
-- Category buttons.
-
-Оптимальная схема:
-
-1 banner
-+
-1 embed
-+
-1 image
-+
-2–4 buttons
-
-============================================================
-20. PAGINATION
-============================================================
-
-Если товаров много:
-
-[ ◀ ]
-[ PAGE 1 / X ]
-[ ▶ ]
-
-или Select Menu.
-
-При смене страницы:
-
-редактировать существующее сообщение.
-
-НЕ отправлять новое сообщение
-при каждом переходе.
-
-============================================================
-21. SHOP PRODUCT NAVIGATION
-============================================================
-
-Можно использовать:
-
-[ ◀ PREVIOUS ]
-[ NEXT ▶ ]
-
-для товаров категории.
-
-При переключении:
-
-- менять image;
-- менять название;
-- менять цену;
-- менять description;
-- менять rarity;
-- менять region;
-- менять probabilities.
-
-НЕ создавать новые сообщения.
-
-============================================================
-22. SHOP UI STRUCTURE
-============================================================
-
-Рекомендуемая структура:
-
-/menu
-
-↓
-
-🛒 SHOP
-
-↓
-
-[ 🎁 PACKS ]
-[ 🏆 CHESTS ]
-[ 🧩 MATERIALS ]
-[ ⚡ BOOSTERS ]
-[ 🎨 COSMETICS ]
-
-↓
-
-CATEGORY
-
-↓
-
-PRODUCT
-
-↓
-
-PRODUCT DETAILS
-
-↓
-
-CONFIRM PURCHASE
-
-↓
-
-RESULT
-
-Это должна быть единая навигационная система.
-
-============================================================
-23. DISCORD MESSAGE ARCHITECTURE
-============================================================
-
-Главный принцип:
-
-ОДИН ИГРОВОЙ ЭКРАН = ОДНО ОСНОВНОЕ СООБЩЕНИЕ.
-
-Навигация:
-
-message.edit()
-
-а не:
-
-send()
-send()
-send()
-send()
-
-Не создавать спам в канале.
-
-Исключения только там,
-где это необходимо для Discord attachments
-или существующей игровой механики.
-
-============================================================
-24. IMAGE ATTACHMENTS
-============================================================
-
-Для каждого товара:
-
-Shop image
-→ Discord attachment
-→ Embed image
-
-При смене товара проверить,
-что старое attachment корректно заменяется.
-
-Не использовать URL на локальный файл,
-если Discord не может его получить.
-
-Для локальных assets:
-
-использовать корректный discord.File
-и attachment://filename.png.
-
-Если используется BytesIO —
-корректно установить имя файла.
-
-============================================================
-25. IMAGE CACHE
-============================================================
-
-Если существующая архитектура позволяет:
-
-не загружать один и тот же asset
-заново без необходимости.
-
-Особенно:
-
-- shop banner;
-- pack images;
-- chest images;
-- item icons.
-
-Но не усложнять архитектуру
-ради незначительной оптимизации.
-
-============================================================
-26. LOCALIZATION
-============================================================
-
-Пользователь уже может выбрать:
-
-🇷🇺 Русский
-🇬🇧 English
-
-Shop полностью должен поддерживать оба языка.
-
-RU:
-
-🛒 Магазин
-🎁 Наборы
-🏆 Сундуки
-📖 Содержимое
-🛒 Купить
-✅ Подтвердить
-❌ Отмена
-💰 Цена
-💳 Баланс
-
-EN:
-
-🛒 Shop
-🎁 Packs
-🏆 Chests
-📖 Contents
-🛒 Buy
-✅ Confirm
-❌ Cancel
-💰 Price
-💳 Balance
-
-Не должно быть смешанного RU/EN UI.
-
-============================================================
-27. CURRENCIES
-============================================================
-
-Показывать реальные валюты проекта.
-
-Например:
-
-🪙 Gold
-💎 Crystals
-🧩 Card Shards
-
-Но НЕ добавлять новую валюту.
-
-Для каждого товара использовать
-ту валюту, которая реально задана
-в существующей Shop системе.
-
-============================================================
-28. ADMIN / USER SECURITY
-============================================================
-
-Пользователь не должен:
-
-- покупать чужой item;
-- изменять цену;
-- изменять currency;
-- изменять quantity;
-- нажимать чужой confirmation;
-- использовать старую кнопку после покупки;
-- повторно использовать старую кнопку.
-
-Все важные проверки выполнять
-на серверной стороне.
-
-============================================================
-29. ERROR HANDLING
-============================================================
-
-Если:
-
-- asset отсутствует;
-- недостаточно денег;
-- item не найден;
-- interaction expired;
-- purchase failed;
-- database transaction failed;
-
-не показывать traceback.
-
-Показывать понятное сообщение.
-
-Например:
-
-❌ Не удалось загрузить изображение товара.
-
-или:
-
-❌ Недостаточно Gold.
-
-Ошибку записывать в лог.
-
-============================================================
-30. APPLICATION DID NOT RESPOND
-============================================================
-
-Особенно проверить Shop callbacks.
-
-Каждая операция,
-которая может выполняться дольше Discord timeout,
-должна корректно использовать:
-
-defer()
-
-→ processing
-
-→ edit/followup
-
-Не допускать:
-
-Application did not respond
-
-============================================================
-31. НЕ МЕНЯТЬ ЭКОНОМИЧЕСКИЙ БАЛАНС
-============================================================
-
-Очень важно:
-
-НЕ менять:
-
-- цены;
-- probabilities;
-- rewards;
-- currencies;
-- drop rates;
-- pack contents;
-- chest contents.
-
-если это не требуется для исправления UI.
-
-UI должен только отображать
-существующие данные.
-
-============================================================
-32. НЕ МЕНЯТЬ КАРТОЧКИ
-============================================================
-
-Card generator и дизайн карт
-не переделывать в рамках этого задания.
-
-Нужно только обеспечить,
-что Shop корректно показывает
-Pack/Chest assets.
-
-Pack Opening должен продолжать
-использовать существующий Card Generator.
-
-============================================================
-33. FINAL SHOP FLOW
-============================================================
-
-После завершения должно работать:
-
-/menu
-↓
-SHOP
-↓
-PACKS
-↓
-DEMACIA PACK
-↓
-PACK IMAGE
-↓
-DESCRIPTION
-↓
-CONTENTS
-↓
-PROBABILITIES
-↓
-PRICE
-↓
-BUY
-↓
-CONFIRM
-↓
-DATABASE TRANSACTION
-↓
-INVENTORY
-↓
-OPEN NOW
-↓
-EXISTING PACK OPENING
-
-============================================================
-34. ПРОВЕРКА
-============================================================
-
-Обязательно протестировать:
-
-SHOP:
-
-✓ /menu → Shop
-✓ Shop banner
-✓ Categories
-✓ Packs
-✓ Chests
-✓ Materials
-✓ Boosters
-✓ Cosmetics
-
-PACK:
-
-✓ Pack image
-✓ Pack name
-✓ Pack description
-✓ Pack price
-✓ Pack probabilities
-✓ Pack contents
-✓ Previous
-✓ Next
-✓ Back
-
-PURCHASE:
-
-✓ Buy
-✓ Confirmation
-✓ Cancel
-✓ Confirm
-✓ Insufficient balance
-✓ Double click
-✓ Database transaction
-✓ Inventory update
-
-CHEST:
-
-✓ Image
-✓ Details
-✓ Contents
-✓ Probability
-✓ Purchase
-✓ Confirmation
-
-LOCALIZATION:
-
-✓ RU
-✓ EN
-✓ No mixed languages
-
-SECURITY:
-
-✓ User ownership
-✓ Price validation
-✓ Balance validation
-✓ Double purchase protection
-
-DISCORD:
-
-✓ No Application did not respond
-✓ No unnecessary message spam
-✓ Existing message is edited where possible
-
-============================================================
-35. ПОСЛЕ РАБОТЫ
-============================================================
-
-Покажи:
-
-# SHOP REWORK RESULT
-
-## Changed Files
-
-список файлов.
-
-## Shop Architecture
-
-что изменено.
-
-## Image Pipeline
-
-как теперь загружаются изображения.
-
-## Pack
-
-что исправлено.
-
-## Chest
-
-что исправлено.
-
-## Purchase
-
-что исправлено.
-
-## Inventory Integration
-
-что исправлено.
-
-## Localization
-
-что исправлено.
-
-## Security
-
-что исправлено.
-
-## Tests
-
-что проверено.
-
-## Remaining Issues
-
-что осталось.
-
-============================================================
-ФИНАЛЬНОЕ ПРАВИЛО
-============================================================
-
-НЕ ПЕРЕПИСЫВАЙ ВЕСЬ ПРОЕКТ.
-
-НЕ СОЗДАВАЙ ДУБЛИРУЮЩИЕ СИСТЕМЫ.
-
-НЕ УДАЛЯЙ СУЩЕСТВУЮЩУЮ ЛОГИКУ.
-
-НЕ МЕНЯЙ ЭКОНОМИКУ.
-
-НЕ МЕНЯЙ ЦЕНЫ.
-
-НЕ МЕНЯЙ DROP RATES.
-
-НЕ МЕНЯЙ CARD GENERATOR.
-
-НЕ МЕНЯЙ СУЩЕСТВУЮЩИЕ DATABASE TABLES
-БЕЗ НЕОБХОДИМОСТИ.
-
-Используй существующие данные и assets.
-
-Главная задача:
-
-Сделать SHOP визуально и функционально похожим
-на полноценный premium AAA RPG магазин,
-при этом сохранить существующую игровую логику.
-
-Сначала проанализируй существующий код,
-затем внеси изменения,
-после чего протестируй весь Shop flow.
-    Ты работаешь над существующим проектом ILTA BOT.
-
-ВАЖНО:
-Это НЕ запрос на переписывание проекта с нуля.
-
-Нужно аккуратно улучшить существующую реализацию, сохранив уже работающий функционал, базу данных, существующие assets и генератор карт.
-
-============================================================
-ГЛАВНАЯ ЦЕЛЬ
-============================================================
-
-Превратить текущий интерфейс ILTA из набора Discord-команд
-в единый игровой UI в стиле premium AAA RPG / collectible card game.
-
-Сейчас функционал работает, но UI выглядит технически:
-
-- слишком много отдельных команд;
-- технические ID вместо нормальных названий;
-- Inventory показывает raw item IDs;
-- Collection показывает внутренние IDs;
-- Pack / Chest UI не всегда показывает изображения;
-- generated cards иногда не отображаются;
-- встречается "Application did not respond";
-- русский и английский интерфейс смешаны;
-- слишком много сообщений вместо одного игрового интерфейса;
-- меню не ощущается как единая игра.
-
-Нужно исправить это.
-
-============================================================
-ПРАВИЛО №1 — НЕ ЛОМАТЬ СУЩЕСТВУЮЩУЮ СИСТЕМУ
-============================================================
-
-Перед изменениями:
-
-1. Исследуй существующую архитектуру.
-2. Найди существующие:
-   - /menu
-   - collection
-   - inventory
-   - shop
-   - packs
-   - chests
-   - card generator
-   - reward system
-   - database
-   - localization
-   - Discord Views / Buttons / Selects
-   - image sending pipeline.
-3. Используй существующие функции там, где это возможно.
-4. Не создавай второй параллельный Inventory.
-5. Не создавай второй Card Generator.
-6. Не создавай вторую систему Pack.
-7. Не дублируй database logic.
-8. Не удаляй старый код, пока не доказано, что он не используется.
-9. Не изменяй дизайн самих существующих карт без необходимости.
-
-============================================================
-1. СНАЧАЛА ПРОВЕРЬ IMAGE PIPELINE
-============================================================
-
-Это критический приоритет.
-
-Сейчас наблюдаются проблемы:
-
-- изображения паков иногда не показываются;
-- изображения сундуков иногда не показываются;
-- generated cards после открытия паков иногда не показываются;
-- некоторые изображения работают в одном месте и не работают в другом.
-
-Найди ОБЩУЮ причину.
-
-Построй реальную цепочку:
-
-Asset
-→ Path
-→ PIL / Image
-→ PNG
-→ discord.File
-→ attachment
-→ Embed
-→ Discord message
-
-Проверь ВСЕ места:
-
-- shop;
-- inventory;
-- pack opening;
-- chest opening;
-- collection;
-- card preview;
-- reward popup;
-- profile;
-- generated cards.
-
-Особенно проверь:
-
-discord.File
-Embed.set_image()
-attachment://
-BytesIO
-PIL.Image
-Image.save()
-Path
-temporary files
-followup.send()
-interaction.response.send_message()
-interaction.followup.send()
-edit_original_response()
-message.edit()
-
-НЕ делай отдельный workaround только для Pack.
-
-Создай/используй единый безопасный image helper,
-если это соответствует существующей архитектуре.
-
-Например логически:
-
-get_asset_path()
-load_image()
-create_discord_file()
-attach_image()
-send_image_embed()
-
-Но сначала проверь существующие helpers и не дублируй их.
-
-============================================================
-2. ИСПРАВИТЬ APPLICATION DID NOT RESPOND
-============================================================
-
-На некоторых действиях Discord показывает:
-
-Application did not respond
-
-Найди причину.
-
-Особенно проверить:
-
-- interaction timeout;
-- долгий PIL processing;
-- генерацию карт;
-- database queries;
-- последовательную генерацию нескольких изображений;
-- отсутствие defer();
-- повторный response;
-- InteractionResponded;
-- HTTPException;
-- View callbacks.
-
-Для долгих операций использовать правильную схему:
-
-interaction.response.defer()
-
-↓
-
-database / generation / processing
-
-↓
-
-interaction.edit_original_response()
-
-или корректный followup.
-
-Нельзя отправлять первый Discord response
-после длительной генерации.
-
-Проверь все Buttons / SelectMenus / Modals.
-
-============================================================
-3. PACK OPENING
-============================================================
-
-Сделать Pack Opening полноценным игровым интерфейсом.
-
-Цель:
-
-ОДНО СООБЩЕНИЕ
-+
-ОДНО ВЛОЖЕНИЕ / КАРТА
-+
-КНОПКИ НАВИГАЦИИ.
-
-Не отправлять несколько больших сообщений
-с картами без необходимости.
-
-Структура:
-
-🎁 PACK OPENED
-
-[ ONE LARGE CARD IMAGE ]
-
-1 / 3
-
-[ ◀ Previous ] [ Next ▶ ]
-
-[ 🎁 Reveal All ]
-
-[ 🏠 Close ]
-
-При переключении карточки:
-
-- редактировать существующее сообщение;
-- не создавать новое сообщение;
-- менять attachment/embed корректно;
-- старое изображение должно удаляться/заменяться.
-
-Reveal All:
-
-показать все награды компактно.
-
-Не ломать существующую механику rewards.
-
-============================================================
-4. CHEST OPENING
-============================================================
-
-Использовать ту же архитектуру, что и Pack Opening.
-
-Разница только в данных.
-
-Chest:
-
-- image;
-- rarity;
-- rewards;
-- reveal;
-- navigation;
-- close.
-
-Не создавать отдельную несовместимую систему.
-
-============================================================
-5. INVENTORY
-============================================================
-
-Текущий Inventory показывает примерно:
-
-pack_common ×1
-pack_piltoverzaun ×1
-m_mithril_ore ×2
-m_beast_hide ×1
-ultimate ×25
-prestige ×74
-...
-
-Это технический вывод.
-
-Нужно сделать полноценный игровой Inventory.
-
-Главный экран:
-
-🎒 INVENTORY
-
-[ 🃏 CARDS ]
-[ 🎁 PACKS ]
-[ 🏆 CHESTS ]
-
-[ 🧩 MATERIALS ]
-[ ⚡ BOOSTERS ]
-[ 🎨 COSMETICS ]
-
-Категории должны открываться кнопками/select menu.
-
-Не обязательно создавать реальные Discord-команды
-для каждой категории.
-
-============================================================
-6. INVENTORY ITEMS
-============================================================
-
-Каждый предмет должен иметь:
-
-- красивую иконку/asset;
-- human-readable name;
-- quantity;
-- description при открытии;
-- category.
-
-Пример:
-
-Вместо:
-
-m_mithril_ore ×2
-
-показывать:
-
-⛏ Мифриловая руда
-×2
-
-Вместо:
-
-pack_common ×1
-
-показывать:
-
-🎁 Common Pack
-×1
-
-Вместо:
-
-pack_piltoverzaun ×1
-
-показывать:
-
-🎁 Piltover & Zaun Pack
-×1
-
-НИКОГДА не показывать пользователю внутренний database ID,
-если для этого есть нормальное отображаемое имя.
-
-Использовать существующие assets.
-
-============================================================
-7. INVENTORY ITEM PREVIEW
-============================================================
-
-При выборе предмета:
-
-показывать:
-
-[ IMAGE ]
-
-Название
-
-Редкость
-
-Количество
-
-Описание
-
-Дополнительная информация
-
-[ USE ]
-[ OPEN ]
-[ SELL / DISMANTLE ]
-[ BACK ]
-
-Показывать только те действия,
-которые реально поддерживаются предметом.
-
-Не добавлять фиктивные кнопки.
-
-============================================================
-8. PACKS В INVENTORY
-============================================================
-
-Pack должен отображаться с реальным изображением.
-
-Например:
-
-┌─────────────────────┐
-│                     │
-│     PACK IMAGE      │
-│                     │
-└─────────────────────┘
-
-Common Pack
-×12
-
-[ OPEN ]
-
-Использовать существующий asset pack.
-
-Если asset отсутствует:
-
-не падать с ошибкой.
-
-Показать безопасный fallback
-и записать ошибку в лог.
-
-============================================================
-9. CHESTS В INVENTORY
-============================================================
-
-То же самое:
-
-Chest image
-+
-name
-+
-rarity
-+
-quantity
-+
-description.
-
-============================================================
-10. SHOP
-============================================================
-
-Shop должен использовать те же assets.
-
-При просмотре товара показывать:
-
-[ ITEM IMAGE ]
-
-Название
-
-Редкость
-
-Описание
-
-Цена
-
-Вероятности / содержимое, если применимо
-
-Количество
-
-[ BUY ]
-
-После BUY:
-
-НЕ покупать сразу.
-
-Сначала confirmation.
-
-============================================================
-11. PURCHASE CONFIRMATION
-============================================================
-
-Сделать:
-
-🛒 PURCHASE
-
-[ ITEM IMAGE ]
-
-Common Pack
-
-Цена:
-💰 500 Gold
-
-После покупки:
-вы получите:
-
-- 3 Cards
-- шанс Rare
-- шанс Epic
-- шанс Legendary
-- и т.д.
-
-Кнопки:
-
-[ ✅ CONFIRM ]
-[ ❌ CANCEL ]
-
-После Confirm:
-
-1. повторно проверить баланс;
-2. повторно проверить существование товара;
-3. повторно проверить цену;
-4. провести transaction;
-5. списать валюту;
-6. добавить item в inventory;
-7. показать результат.
-
-Защититься от double click.
-
-Два быстрых нажатия Confirm
-НЕ должны провести две покупки.
-
-============================================================
-12. COLLECTION
-============================================================
-
-Текущий вывод:
-
-cards_collection
-
-Атрокс — Механический Атрокс Aatrox_2
-
-...
-
-Это слишком технически.
-
-Убрать внутренние IDs:
-
-Aatrox_2
-Ahri_0
-Diana_77
-и т.д.
-
-Пользователю показывать:
-
-Атрокс — Механический Атрокс
-
-Ари — Базовый образ
-
-Данные для внутренней логики можно оставить.
-
-============================================================
-13. COLLECTION HOME
-============================================================
-
-Сделать:
-
-🃏 COLLECTION
-
-385 / 2099
-
-Unique Cards:
-385
-
-Duplicates:
-120
-
-Card Shards:
-29
-
-По редкости:
-
-Common
-Rare
-Epic
-Legendary
-Mythic
-Prestige
-Ultimate
-
-Кнопки:
-
-[ ALL CARDS ]
-[ REGIONS ]
-[ RARITY ]
-[ DUPLICATES ]
-[ SHARDS ]
-[ CODEX ]
-
-============================================================
-14. COLLECTION PAGINATION
-============================================================
-
-Использовать кнопки:
-
-[ ◀ ]
-[ ▶ ]
-
-или select menu.
-
-Не отправлять новое сообщение
-при каждой странице.
-
-Редактировать существующее сообщение.
-
-Показывать:
-
-1 / 74
-
-и список текущей страницы.
-
-============================================================
-15. CARD VIEW
-============================================================
-
-При открытии карты:
-
-показывать полное изображение карты.
-
-Ниже:
-
-Название
-
-Skin
-
-Rarity
-
-Region
-
-ATK
-DEF
-HP
-
-Lore
-
-Кнопки:
-
-[ ◀ PREVIOUS ]
-[ NEXT ▶ ]
-[ 🧩 DISMANTLE ]
-[ ❤️ FAVORITE ]
-[ ← BACK ]
-
-Не показывать внутренний card ID.
-
-============================================================
-16. CARD SHARDS
-============================================================
-
-Осколки являются отдельной важной системой.
-
-Показывать:
-
-🧩 CARD SHARDS
-29
-
-Используются для:
-
-- dismantle duplicates;
-- crafting;
-- future upgrades.
-
-Не ломать существующую систему duplicate conversion.
-
-============================================================
-17. DUPLICATES
-============================================================
-
-Сделать понятный экран:
-
-🃏 DUPLICATES
-
-Duplicate Cards:
-120
-
-Card Shards:
-29
-
-[ VIEW DUPLICATES ]
-
-[ ✨ DISMANTLE SELECTED ]
-
-[ ✨ DISMANTLE ALL ]
-
-Перед массовым распылением обязательно confirmation.
-
-Никогда не удалять карты без подтверждения.
-
-============================================================
-18. PITY
-============================================================
-
-Вместо простой кнопки:
-
-Pity
-
-показывать:
-
-✨ PITY
-
-Current Progress
-
-████████████░░░
-
-8 / 10
-
-Next guaranteed rarity:
-
-ULTIMATE
-
-Remaining:
-2
-
-Использовать реальные значения
-из существующей Pity системы.
-
-НЕ выдумывать новые значения.
-
-============================================================
-19. CODEX
-============================================================
-
-Использовать существующие:
-
-- champions;
-- regions;
-- skins;
-- lore.
-
-Главный экран:
-
-📖 CODEX
-
-[ DEMACIA ]
-[ NOXUS ]
-[ IONIA ]
-[ PILTOVER & ZAUN ]
-[ SHURIMA ]
-[ FRELJORD ]
-[ TARGON ]
-[ SHADOW ISLES ]
-
-и все остальные реальные регионы,
-которые уже существуют в проекте.
-
-Не хардкодить только 8 регионов,
-если в проекте есть полный список.
-
-============================================================
-20. LOCALE
-============================================================
-
-Пользователь должен выбирать:
-
-🇷🇺 Русский
-
-или
-
-🇬🇧 English
-
-Проверить весь UI.
-
-НЕ должно быть:
-
-NEW CARD
-+
-Новая карта
-+
-Craft
-+
-осколков
-
-в одном интерфейсе.
-
-В RU:
-
-🎁 НАБОР ОТКРЫТ
-
-⚡ НОВАЯ КАРТА
-
-[ ◀ НАЗАД ]
-[ ВПЕРЁД ▶ ]
-
-[ 🎁 ОТКРЫТЬ ВСЕ ]
-
-В EN:
-
-🎁 PACK OPENED
-
-⚡ NEW CARD
-
-[ ◀ PREVIOUS ]
-[ NEXT ▶ ]
-
-[ 🎁 REVEAL ALL ]
-
-Проверить ВСЕ строки.
-
-============================================================
-21. /MENU
-============================================================
-
-/menu должен быть главным входом в игру.
-
-Пользователь не обязан помнить
-20 разных команд.
-
-Главное меню:
-
-👤 PROFILE
-
-🃏 COLLECTION
-🎒 INVENTORY
-🛒 SHOP
-
-⚔️ BATTLE
-🏰 KINGDOM
-🧭 EXPLORE
-
-🏆 ACHIEVEMENTS
-📖 CODEX
-🎉 EVENTS
-
-⚙️ SETTINGS
-
-Использовать существующий banner,
-если он уже есть.
-
-Кнопки должны открывать существующие системы.
-
-НЕ создавать дубликаты функций.
-
-============================================================
-22. ONE MESSAGE UI
-============================================================
-
-Главный принцип:
-
-ОДИН ЭКРАН = ОДНО ОСНОВНОЕ СООБЩЕНИЕ.
-
-При навигации:
-
-message.edit()
-
-а не:
-
-send()
-send()
-send()
-send()
-
-Исключение:
-
-- отдельная выдача reward;
-- pack reveal, если архитектура требует;
-- системные сообщения.
-
-Но обычная навигация должна редактировать
-существующее игровое сообщение.
-
-============================================================
-23. BUTTON SECURITY
-============================================================
-
-Пользователь A не должен иметь возможность
-нажать кнопку интерфейса пользователя B.
-
-Каждая View должна проверять:
-
-interaction.user.id
-
-с владельцем интерфейса.
-
-Если это чужой пользователь:
-
-показать локализованное сообщение:
-
-"Это меню принадлежит другому игроку."
-
-Не раскрывать данные пользователя.
-
-============================================================
-24. BUTTON LIFETIME
-============================================================
-
-Проверить:
-
-timeout
-
-disabled buttons
-
-old Views
-
-expired interactions.
-
-После timeout:
-
-корректно отключить кнопки
-или удалить View.
-
-============================================================
-25. ASSET REGISTRY
-============================================================
-
-Если в проекте уже существует asset registry —
-использовать его.
-
-Если его нет и архитектура позволяет,
-создать единый resolver:
-
-item ID
-→ asset path
-→ display name
-→ localized name
-→ rarity
-→ category
-
-Например:
-
-pack_common
-→ assets/packs/common.png
-→ Common Pack
-→ Обычный набор
-→ Common
-→ Pack
-
-НЕ создавать отдельные if/else
-для каждого предмета в десятках файлов.
-
-============================================================
-26. LOGGING
-============================================================
-
-При ошибке asset:
-
-логировать:
-
-ASSET NOT FOUND
-item_id
-expected path
-actual path
-caller
-
-При ошибке card generation:
-
-логировать:
-
-CARD GENERATION FAILED
-card_id
-champion
-skin
-rarity
-error
-
-НЕ показывать пользователю traceback.
-
-============================================================
-27. PERFORMANCE
-============================================================
-
-Проверить:
-
-- повторную загрузку изображений;
-- повторную загрузку шрифтов;
-- повторную генерацию одинаковых карт;
-- повторные DB queries;
-- blocking PIL operations внутри async;
-- лишние API requests.
-
-Если карта уже сгенерирована
-и файл существует:
-
-не генерировать её повторно,
-если данные карты не изменились.
-
-============================================================
-28. CARD GENERATOR НЕ ПЕРЕПИСЫВАТЬ БЕЗ НЕОБХОДИМОСТИ
-============================================================
-
-Существующие карты уже имеют:
-
-- разные rarity frames;
-- champion art;
-- skin art;
-- ATK;
-- DEF;
-- HP;
-- lore;
-- region;
-- icons.
-
-НЕ менять визуальный дизайн карты,
-если это не требуется для исправления ошибки.
-
-Главная задача сейчас —
-корректно генерировать,
-сохранять
-и отправлять существующие карты.
-
-============================================================
-29. DATABASE SAFETY
-============================================================
-
-Покупки, rewards, dismantle и inventory operations
-должны быть атомарными.
-
-Особенно:
-
-Purchase:
-balance check
-→ transaction
-→ remove currency
-→ add inventory
-
-Dismantle:
-card check
-→ transaction
-→ remove duplicate
-→ add shards
-
-Reward:
-generate reward
-→ transaction
-→ save reward
-→ mark claimed
-
-Защититься от повторного выполнения
-одной операции.
-
-============================================================
-30. НЕ ДОБАВЛЯТЬ НОВЫЕ МЕХАНИКИ
-============================================================
-
-Сейчас НЕ нужно добавлять:
-
-- новую боёвку;
-- новые валюты;
-- новые карты;
-- новые регионы;
-- новые профессии;
-- новую экономику.
-
-Сначала привести существующий функционал
-к стабильному состоянию.
-
-============================================================
-31. ПОРЯДОК РАБОТЫ
-============================================================
-
-Работать в следующем порядке:
-
-P0:
-
-1. Image pipeline
-2. Application did not respond
-3. Pack images
-4. Chest images
-5. Generated card images
-6. Interaction errors
-
-P1:
-
-7. Inventory
-8. Shop purchase confirmation
-9. Collection
-10. Duplicate system UI
-11. Card Shards
-12. Pity
-
-P2:
-
-13. /menu
-14. Localization
-15. Codex
-16. UI consistency
-17. Performance
-
-============================================================
-32. ПОСЛЕ ИЗМЕНЕНИЙ
-============================================================
-
-Провести тестирование:
-
-1. /menu
-2. Profile
-3. Collection
-4. Open card
-5. Inventory
-6. Packs
-7. Chests
-8. Shop
-9. Purchase
-10. Purchase cancel
-11. Purchase double click
-12. Pack opening
-13. Reveal Next
-14. Reveal Previous
-15. Reveal All
-16. Close
-17. Duplicate dismantle
-18. Dismantle all confirmation
-19. Pity
-20. Codex
-21. Language RU
-22. Language EN
-
-============================================================
-33. ОБЯЗАТЕЛЬНО ПРОВЕРИТЬ КОНКРЕТНО
-============================================================
-
-После исправлений должно выполняться:
-
-✓ Pack image отображается
-✓ Chest image отображается
-✓ Generated card image отображается
-✓ Card navigation работает
-✓ Reveal All работает
-✓ Previous работает
-✓ Next работает
-✓ Close работает
-✓ Inventory images отображаются
-✓ Shop images отображаются
-✓ Purchase confirmation работает
-✓ Double purchase невозможна
-✓ Collection не показывает internal IDs
-✓ Inventory не показывает internal IDs
-✓ RU полностью русский
-✓ EN полностью английский
-✓ /menu открывает игровые разделы
-✓ старые кнопки не создают новые сообщения без необходимости
-✓ Application did not respond больше не возникает
-✓ ошибки asset не приводят к crash
-✓ существующие карты и база данных не повреждены
-
-============================================================
-34. ФИНАЛЬНЫЙ ОТЧЁТ
-============================================================
-
-После работы покажи:
-
-# ILTA UI REWORK RESULT
-
-## Fixed
-список исправлений
-
-## Image Pipeline
-что было сломано
-и что исправлено
-
-## Pack
-результат
-
-## Chest
-результат
-
-## Cards
-результат
-
-## Inventory
-результат
-
-## Shop
-результат
-
-## Collection
-результат
-
-## /menu
-результат
-
-## Localization
-результат
-
-## Performance
-результат
-
-## Security
-результат
-
-## Changed Files
-список изменённых файлов
-
-## Tests
-какие тесты/проверки выполнены
-
-## Remaining Problems
-что осталось
-
-============================================================
-КРИТИЧЕСКОЕ ПРАВИЛО
-============================================================
-
-Не переписывай проект целиком.
-
-Не создавай дублирующие системы.
-
-Не удаляй рабочий код без необходимости.
-
-Не меняй дизайн карт.
-
-Не ломай существующие database tables.
-
-Не меняй игровые значения без необходимости.
-
-Сначала используй существующую архитектуру.
-
-Цель:
-
-ILTA должен выглядеть и работать как единый
-premium AAA Discord RPG интерфейс,
-при этом существующий игровой функционал должен
-остаться совместимым.
-
-НАЧИНАЙ С АУДИТА СУЩЕСТВУЮЩЕГО КОДА,
-ЗАТЕМ ИСПРАВЛЯЙ ПО ПРИОРИТЕТАМ.
+BEGIN NOW: inspect the project and Stitch export, produce the audit, then proceed through implementation and verification. Preserve the supplied design. Do not replace it with generic primitive-based UI.
