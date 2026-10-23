@@ -1,341 +1,630 @@
-ТЕХНИЧЕСКОЕ ЗАДАНИЕ ДЛЯ AI-АГЕНТА: UNITY CO-OP RPG — СЕТЬ, ФИЗИКА, МАГИЯ И РАЗРУШЕНИЕ
+GOOGLE STITCH — COMPLETE FANTASY ROBLOX GAME UI SYSTEM
 
-1. Роль и цель
+PROJECT MISSION
 
-Ты — Senior Unity Gameplay Engineer, Network Engineer и Technical Designer. Работаешь непосредственно с существующим Unity-проектом через доступные MCP-инструменты, файловую систему, терминал и Unity Editor, если соответствующие инструменты действительно подключены.
+Design a complete, production-quality UI/UX system for an original stylized fantasy Roblox game.
 
-Моя цель — создать кооперативную фэнтезийную игру для Steam на Unity.
+This is a game interface design task, not a website, SaaS dashboard, mobile application, or generic admin panel.
 
-Референсы по модели кооператива: R.E.P.O. и PEAK. Не копируй их контент, код или визуальный стиль.
+Create a cohesive family of polished, illustrated fantasy game interfaces covering the complete player experience: exploration, dungeon runs, combat, inventory, equipment, rewards, progression, crafting, trading, settings, social interaction, and hub navigation.
 
-Основные требования
+The result must look like a distinctive, professionally art-directed game, not a collection of generic UI templates.
 
-- Unity, URP.
-- Кооператив до 4 игроков.
-- Игроки собираются в сессию через Steam.
-- Один игрок создаёт сессию и выступает хостом.
-- Не требовать постоянной аренды собственных выделенных игровых серверов.
-- Сетевые персонажи, враги, магия, физические предметы и разрушаемое окружение.
-- Магические взрывы должны воздействовать на физические объекты.
-- Разрушаемые ящики, бочки, мебель, стены и отдельные элементы окружения.
-- Множество физических взаимодействий и летающих обломков.
-- Хорошая производительность на слабых и средних ПК.
-- Возможность дальнейшего расширения проекта.
+1. GAME IDENTITY
 
-Не создавай MMO и не добавляй выделенные серверы как обязательное требование.
+Genre: Stylized fantasy dungeon exploration, procedural dungeons, loot, progression, crafting, and hub-based gameplay.
 
-2. Обязательный этап: аудит проекта
+Platform: Roblox.
 
-До изменения кода изучи весь проект.
+Art direction:
 
-1. Определи версию Unity, версию URP, используемые пакеты и структуру Assets.
-2. Найди существующие системы персонажа, камеры, ввода, анимаций, врагов, урона, заклинаний, физики и взаимодействия.
-3. Проверь Packages/manifest.json, Packages/packages-lock.json, ProjectSettings и существующие asmdef.
-4. Найди все существующие сетевые системы и зависимости.
-5. Определи, какие MCP-инструменты доступны: просмотр файлов, поиск по проекту, изменение файлов, Unity Editor, запуск тестов, чтение Console, терминал.
-6. Проверь, какие действия действительно можешь выполнить самостоятельно, а какие требуют моего участия.
-7. Составь список существующих компонентов, которые нужно сохранить.
-8. Выяви конфликты, отсутствующие зависимости и потенциальные проблемы совместимости.
+- Premium stylized fantasy RPG.
+- Colorful, mysterious, magical, adventurous.
+- Beautiful handcrafted visual details.
+- Readable at actual gameplay scale.
+- Strong visual identity and consistent art direction.
+- Suitable for Roblox players, not an overly realistic PC-only RPG.
+- High visual quality without excessive visual clutter.
 
-Не считай систему отсутствующей, пока не проверишь проект.
+The world should feel magical and inviting, but not childish, excessively cute, or overwhelmingly cheerful.
 
-Не переписывай работающие системы без доказанной необходимости. Не удаляй существующие ассеты, сцены, префабы, настройки, GUID или .meta-файлы без веской причины.
+Use a sophisticated palette of deep plum, midnight blue, muted violet, warm parchment, aged gold, turquoise magic, and restrained coral accents. Establish clear semantic colors for health, mana, rarity, danger, currency, and interaction states.
 
-Сначала представь краткий аудит и план изменений. Затем приступай к реализации безопасными небольшими этапами, не ожидая моего подтверждения после каждого обычного шага.
+Do not force every screen to use every color.
 
-3. Сетевая архитектура
+2. ABSOLUTE RULE: NO PRIMITIVE-BASED VISUAL DESIGN
 
-Основная модель: host-authoritative listen server.
+Do not build the visual identity out of plain geometric primitives.
 
-Хост запускает игровую сессию и отвечает за авторитетное состояние игрового мира. Клиенты отправляют команды, получают обновления и визуализируют результат.
+STRICTLY AVOID:
 
-Рассмотри FishNet как основной сетевой фреймворк. Сравни его с Unity Netcode for GameObjects только в части, которая влияет на данный проект. Выбери один основной фреймворк, не устанавливай оба без обоснованной необходимости.
+- Plain rectangles pretending to be fantasy panels.
+- Generic rounded cards with a colored background.
+- Circles used as substitutes for designed icons.
+- Generic outlined boxes.
+- Thin lines used as the primary decoration.
+- Default buttons.
+- Emoji used as final game icons.
+- Unicode symbols used as substitutes for illustrations.
+- Generic gradients as the main visual treatment.
+- Flat placeholder squares for item art.
+- Repeated generic card layouts across every screen.
+- Wireframes or low-fidelity placeholders as the final output.
 
-Для Steam используй совместимый транспортный адаптер и Steamworks для лобби, приглашений и соединений.
+The prohibition applies to the visual artwork and presentation, not to invisible layout containers needed by the eventual game implementation.
 
-До установки проверь:
+Every visible component must have an intentional design.
 
-- Совместимость версии сетевого фреймворка с текущей Unity.
-- Совместимость транспорта с выбранным фреймворком.
-- Способ установки и обновления зависимостей.
-- Лицензии, стоимость и ограничения.
-- Поддержку Windows и целевых платформ проекта.
-- Возможность тестирования четырёх игроков через Steam.
+Required visual assets
 
-Не придумывай API, классы, методы, настройки или совместимость. Если необходимо, проверь официальную документацию и исходники установленного пакета.
+Create or design around:
 
-Сетевые роли
+- Custom illustrated fantasy panel frames.
+- Ornamental borders and corner pieces.
+- Engraved metal, carved wood, aged parchment, leather, stone, and magical glass textures.
+- Original fantasy item icons.
+- Distinct weapon, armor, potion, artifact, seed, currency, and material illustrations.
+- Custom spell and ability icons.
+- Decorative inventory slot artwork.
+- Handcrafted health and mana meter frames.
+- Illustrated quest markers and reward badges.
+- Rarity borders and distinctive item-quality treatments.
+- Magical runes and restrained arcane ornamentation.
+- Custom buttons with normal, hover, pressed, selected, disabled, and unavailable states.
+- Distinctive tab headers and navigation elements.
+- Empty-state illustrations.
+- Loading and error-state artwork.
+- Confirmation and warning panels.
+- Reward reveal effects and visual progression indicators.
 
-Хост:
+Artwork must feel like one coherent asset family.
 
-- Авторитетно рассчитывает урон и попадания.
-- Принимает решения о разрушении.
-- Управляет физикой важных динамических объектов.
-- Подтверждает подбор, бросание и применение предметов.
-- Контролирует здоровье, смерть врагов и награды за забег.
+Do not reuse one generic icon for unrelated items. Do not use an unrelated stock image as a substitute for a specifically designed game asset.
 
-Клиенты:
+Where an image-generation capability is available, create or request original, clean, game-ready artwork. Where it is not available, design the component around clearly specified original assets and exportable image placeholders with explicit asset requirements.
 
-- Отправляют запросы на игровые действия.
-- Отображают состояние персонажей и мира.
-- Используют локальные визуальные эффекты там, где это безопасно.
-- Не могут самостоятельно назначать себе урон, лут или окончательный результат разрушения.
+Do not claim that artwork has been generated or exported if it has not.
 
-Продумай обработку отключения игроков, переподключения, завершения сессии и выхода хоста. Если миграция хоста не реализована, явно укажи это ограничение. Не обещай автоматическое восстановление сессии без реализации.
+3. FIRST CREATE A COMPLETE DESIGN SYSTEM
 
-4. Сетевая физика
+Before generating every screen independently, establish the shared visual language.
 
-Используй Unity PhysX. Не создавай независимые полноценные симуляции всех динамических объектов на каждом клиенте.
+Define:
 
-Раздели объекты на категории.
+- Primary and secondary color palettes.
+- Semantic colors.
+- Typography hierarchy.
+- Heading, body, item-name, numerical, and tooltip styles.
+- Ornamental frame families.
+- Button variants and interaction states.
+- Inventory slot states.
+- Rarity tiers.
+- Icon family and illustration style.
+- Texture and material rules.
+- Shadows, highlights, borders, and visual depth.
+- Spacing and alignment rules.
+- Panel hierarchy and layering.
+- Animation and transition direction.
+- Rules for responsive layouts.
 
-Категория A: статические объекты
+Use DESIGN.md if supported by the current Stitch workflow. Otherwise, create an equivalent design-system specification within the project.
 
-Пол, стены, неподвижные декорации и неразрушаемые конструкции.
+All subsequent screens must inherit this system rather than inventing unrelated styling.
 
-Не передавай их трансформы каждый кадр. Синхронизируй только изменения состояния, когда это необходимо.
+4. SCREEN A — MAIN GAMEPLAY HUD
 
-Категория B: динамические физические предметы
+Design the actual in-game HUD for active exploration.
 
-Ящики, бочки, камни, мебель и предметы, которые можно поднимать, бросать, толкать и сталкивать.
+Include:
 
-Требования:
+Player status
 
-- Авторитетное состояние физики на хосте.
-- Передача необходимых состояний движения.
-- Сглаживание визуального движения на клиентах.
-- Корректная передача владения или контроля, если она требуется.
-- Предотвращение бесконечного дрожания, телепортаций и повторного применения импульсов.
-- Ограничение частоты обновлений и количества сетевых объектов.
-- Проверка столкновений и взаимодействий при высокой задержке.
+- Health meter.
+- Mana or magic-energy meter.
+- Character level and progression.
+- Status effects and debuffs.
+- Optional stamina or other resource only if justified by the game design.
 
-Не предполагай, что обычный NetworkTransform автоматически решает все проблемы физики.
+Combat and abilities
 
-Категория C: критические физические объекты
+- Ability slots with distinctive illustrated icons.
+- Cooldown indicators.
+- Disabled and unavailable states.
+- Clear keybind labels.
+- Consumable quick-access slots.
+- Target or interaction feedback where appropriate.
 
-Крупные обломки стен, тяжёлые предметы, физические механизмы и объекты, влияющие на прохождение.
+Exploration information
 
-Их состояние должно определяться хостом. Выбери и обоснуй способ передачи движения с учётом задержки, количества объектов и нагрузки.
+- Dungeon name or area identity.
+- Current objective.
+- Artifact or mission progress where relevant.
+- Relevant run timer or danger indicator if the game requires it.
+- Contextual interaction prompts.
+- Important temporary notifications.
 
-Категория D: локальные эффекты
+Navigation
 
-Мелкие частицы, пыль, искры и декоративные обломки могут рассчитываться локально, если они не влияют на игровой результат.
+- Inventory access.
+- Quest or journal access.
+- Character and equipment access.
+- Map or dungeon information.
+- Social and party access.
+- Settings.
 
-Не создавай сетевой объект для каждой частицы.
+Do not fill the screen with permanent menus. Prioritize gameplay visibility and establish a clear information hierarchy.
 
-5. Магическая система
+Create a desktop HUD first, then adapt it for smaller screens.
 
-Создай или интегрируй расширяемую систему заклинаний.
+5. SCREEN B — CHARACTER AND EQUIPMENT
 
-Для первого прототипа реализуй один огненный шар.
+Design a detailed fantasy character interface.
 
-Последовательность:
+Include:
 
-1. Игрок инициирует применение заклинания.
-2. Проверяются доступность способности, мана, перезарядка и допустимость действия.
-3. Хост подтверждает применение.
-4. Снаряд создаётся или его полёт рассчитывается по выбранной сетевой модели.
-5. Хост определяет попадание.
-6. Рассчитываются урон, радиус поражения и импульсы.
-7. Физическим объектам передаются авторитетные импульсы.
-8. Разрушаемым объектам отправляются запросы на изменение состояния.
-9. Все клиенты воспроизводят визуальные и звуковые эффекты.
+- Character portrait or avatar presentation.
+- Character name and level.
+- Equipment slots for relevant gear.
+- Weapons, armor, accessories, and relics.
+- Equipment rarity and enhancement states.
+- Item statistics and comparisons.
+- Equip, unequip, replace, and inspect actions.
+- Empty equipment slots with illustrated frames.
+- Clear indication of equipped items.
 
-Используй ScriptableObject для конфигурации заклинаний, если это согласуется с архитектурой проекта.
+Equipment slots must look like designed fantasy objects or engraved inventory fixtures, not empty geometric boxes.
 
-Раздели:
+6. SCREEN C — INVENTORY
 
-- конфигурацию способности;
-- обработку сетевого запроса;
-- расчёт игрового результата;
-- физические взаимодействия;
-- визуальные эффекты;
-- звук.
+Create a polished, expandable inventory interface.
 
-Не отправляй по сети все частицы и визуальные детали заклинания.
+Include:
 
-Предусмотри защиту от повторного срабатывания одного попадания, дублирования урона, повторного взрыва и повторного применения импульса.
+- Item grid with custom illustrated icons.
+- Item rarity frames.
+- Stack quantities.
+- Sorting and filtering.
+- Search where appropriate.
+- Category navigation.
+- Selection and hover states.
+- Item details.
+- Equip, use, split, discard, or other relevant actions.
+- Capacity and weight only if the game design requires them.
+- Empty-state and full-inventory states.
+- Confirmation for destructive actions.
 
-В дальнейшем архитектура должна поддерживать разные типы магии: огонь, лёд, молнии, телекинез и магию с цепными реакциями.
+Use different icon artwork for weapons, armor, potions, seeds, artifacts, crafting materials, keys, and quest items.
 
-6. Разрушаемое окружение
+The inventory should remain readable at normal Roblox gameplay resolution.
 
-Реализуй систему разрушения с авторитетным состоянием на хосте.
+7. SCREEN D — ITEM TOOLTIP AND ITEM DETAILS
 
-Первый прототип
+Design a reusable item-information component.
 
-1. Разрушаемый ящик.
-2. Разрушаемая бочка.
-3. Каменная стена с заранее подготовленными фрагментами.
-4. Разрушение от огненного шара.
-5. Импульс, разбрасывающий крупные фрагменты.
-6. Синхронизация результата у всех четырёх игроков.
+Include:
 
-Архитектура
+- Item illustration.
+- Name and rarity.
+- Description and lore.
+- Relevant stats.
+- Level or usage requirements.
+- Stack quantity.
+- Comparison against equipped gear where applicable.
+- Item actions.
+- Clear visual differentiation between unavailable, locked, equipped, and usable states.
 
-Каждый разрушаемый объект должен иметь устойчивый идентификатор в пределах сессии.
+Create variants for ordinary items, rare loot, unique artifacts, consumables, and quest objects.
 
-Хост определяет:
+Do not invent numerical game statistics as if they were confirmed game rules. Use clearly identified sample content for visual demonstration.
 
-- Был ли объект разрушен.
-- Какое событие вызвало разрушение.
-- Какие фрагменты активировать.
-- Какие игровые эффекты применить.
-- Какие изменения состояния должны увидеть клиенты.
+8. SCREEN E — DUNGEON BOOK / EXPLORATION JOURNAL
 
-Клиенты должны корректно обрабатывать повторное получение события и позднее получение состояния.
+Design an original fantasy book interface that serves as the game's exploration and information hub.
 
-Для стен предпочитай подготовленные варианты разрушения и фрагменты, если это позволяет достичь требуемого результата. Не реализуй произвольное разрушение геометрии в реальном времени без отдельного обоснования.
+It should look like an illustrated magical tome, with a physical book-inspired visual identity.
 
-Предусмотри:
+Include:
 
-- Защиту от двойного разрушения.
-- Ограничение количества активных физических фрагментов.
-- Отключение или удаление мелких обломков после завершения эффекта.
-- Возврат объектов в пул, если это оправдано.
-- Сохранение состояния разрушения до завершения забега.
-- Корректное восстановление состояния при позднем подключении клиента.
+- Illustrated cover.
+- Open-book spread.
+- Page tabs and ornamental separators.
+- Dungeon records.
+- Discovered rooms.
+- Seed information.
+- Artifact records.
+- Bestiary or enemy records.
+- Objectives and discoveries.
+- Rewards and progression.
+- Locked entries and undiscovered content.
+- Clear navigation between sections.
 
-Не передавай каждый мелкий обломок как отдельный сетевой объект без необходимости.
+Use parchment, engraved details, ink illustrations, magical seals, and restrained arcane effects.
 
-7. Производительность
+The book should feel like a designed in-game object, not a website with a parchment background.
 
-Цель — стабильная работа кооператива на слабых и средних ПК.
+9. SCREEN F — SEEDS AND MODULAR DUNGEON CUBES
 
-Не считай заданный бюджет физических объектов гарантией производительности. Измеряй фактическую нагрузку.
+This is a signature system and requires a distinctive visual presentation.
 
-Обязательно:
+The game uses a modular dungeon concept in which one cube corresponds to one seed. Cubes may connect to create larger dungeon layouts.
 
-- Профилирование CPU, GPU, физики и сетевого трафика.
-- Ограничение количества активных Rigidbody.
-- Использование простых коллайдеров там, где это возможно.
-- Разделение критической физики и декоративных эффектов.
-- Object pooling там, где он действительно помогает.
-- Ограничение времени жизни обломков.
-- Контроль частоты сетевых обновлений.
-- Отсутствие бесконечных циклов, постоянных ненужных аллокаций и тяжёлых поисков объектов в Update.
-- Тестирование нескольких одновременных взрывов.
+Design a dedicated interface for managing and inspecting these elements.
 
-Не оптимизируй вслепую. Сначала измерь, затем исправляй найденные узкие места.
+Include:
 
-8. Steam и игровые сессии
+- Illustrated seed icons.
+- Seed rarity and identity.
+- Dungeon cube thumbnails.
+- Room or module identity.
+- Connection and compatibility indicators.
+- Available exits and entrances where relevant.
+- Generation preview.
+- Difficulty and reward information if supported by the game rules.
+- Seed collection and discovery.
+- Locked and unavailable modules.
+- Selection and inspection.
+- Clear separation between confirmed information and generated preview data.
 
-Реализуй архитектуру, в которой:
+Show the modular concept visually through authored dungeon artwork or meaningful illustrated diagrams.
 
-- Игрок может создать сессию.
-- Другие игроки могут присоединиться.
-- Поддерживаются максимум четыре игрока.
-- Есть обработка выхода и отключения игроков.
-- Игровая сессия завершается корректно.
-- Приглашения и подключение работают через выбранную интеграцию Steam.
+Do not use plain cubes or generic colored squares as the final visual representation.
 
-Не утверждай, что Steamworks автоматически реализует всю игровую сеть. Разделяй задачи Steamworks, сетевого фреймворка и игровой логики.
+Do not assume that the UI itself implements dungeon generation. It must communicate the system clearly and be suitable for later integration with the game's actual generation logic.
 
-Не добавляй собственную базу данных или отдельный backend, если текущая модель игры этого не требует.
+10. SCREEN G — DUNGEON ENTRY AND RUN PREPARATION
 
-9. Тестирование
+Create a preparation screen for entering a dungeon.
 
-Создай воспроизводимый план тестирования.
+Include:
 
-Минимальные проверки:
+- Dungeon or expedition identity.
+- Selected seed and dungeon module information.
+- Party members.
+- Equipment and consumables summary.
+- Objectives and possible rewards.
+- Difficulty and risk indicators where appropriate.
+- Entry confirmation.
+- Ready state for multiplayer.
+- Loading and unavailable states.
 
-1. Два клиента подключаются к хосту.
-2. Подключаются четыре игрока.
-3. Все видят движения друг друга.
-4. Все могут взаимодействовать с одним ящиком.
-5. Ящик бросают одновременно два игрока.
-6. Огненный шар поражает врага.
-7. Взрыв толкает предметы.
-8. Одна стена разрушается ровно один раз.
-9. Все игроки видят одинаковое состояние стены.
-10. Поздно подключившийся игрок получает актуальное состояние окружения.
-11. Проверяется высокая задержка и потеря пакетов.
-12. Хост отключается.
-13. Клиент отключается.
-14. Выполняются несколько взрывов одновременно.
-15. Проверяется производительность на слабом ПК.
+Avoid turning the screen into a generic lobby dashboard. Maintain the fantasy-book and artifact-collection aesthetic.
 
-Если автоматические тесты возможны, создай их. Если MCP не позволяет управлять несколькими экземплярами Unity или Steam-клиентами, не имитируй успешный тест: подготовь инструкцию для ручной проверки.
+11. SCREEN H — PARTY AND SOCIAL UI
 
-10. Правила работы с проектом
+Design the interface for a cooperative Roblox experience.
 
-- Сначала изучи проект, затем меняй его.
-- Не переписывай всё с нуля.
-- Не удаляй существующие системы без необходимости.
-- Не устанавливай неподтверждённые зависимости.
-- Не создавай дубликаты классов с одинаковыми обязанностями.
-- Используй текущие соглашения проекта.
-- Соблюдай правила Unity для сериализуемых полей, компонентов, сцен и префабов.
-- Не меняй настройки рендеринга без необходимости.
-- Не храни секретные ключи в исходном коде.
-- Не отключай проверки безопасности ради удобства.
-- Не сообщай об успешной компиляции, запуске или тестировании, если фактически не проверил результат.
-- Не заявляй, что MCP выполнил действие, если у него нет соответствующей функции.
-- Если требуется действие в Unity Editor, а соответствующий инструмент недоступен, объясни точные шаги для ручного выполнения.
-- Перед массовыми изменениями создай контрольную точку и убедись, что изменения можно откатить.
+Include:
 
-11. Этапы реализации
+- Party member portraits or avatars.
+- Health and status indicators when relevant.
+- Ready and not-ready states.
+- Invite and leave-party actions.
+- Connection or loading indicators.
+- Downed or unavailable teammate state if supported.
+- Compact in-game team information.
 
-Выполняй работу последовательно.
+The layout must remain unobtrusive during gameplay.
 
-Этап 1. Аудит проекта и отчёт о совместимости.
+12. SCREEN I — REWARDS AND LOOT REVEAL
 
-Этап 2. Выбор сетевого фреймворка и Steam-транспорта.
+Design a satisfying reward presentation.
 
-Этап 3. Минимальный сетевой прототип на двух игроках.
+Include:
 
-Этап 4. Подключение четырёх игроков и проверка движения.
+- Artifact reveal.
+- Item illustration.
+- Rarity-specific visual treatment.
+- Reward quantities.
+- Currency and material rewards.
+- New discovery notifications.
+- Progression updates.
+- Collect, equip, or continue actions where applicable.
 
-Этап 5. Сетевые физические предметы.
+Make valuable discoveries feel special through controlled illumination, layered frames, and restrained magical effects.
 
-Этап 6. Огненный шар, попадания, урон и импульсы.
+Do not make every ordinary reward look legendary. Rarity should be communicated consistently.
 
-Этап 7. Разрушение ящика и стены.
+13. SCREEN J — CRAFTING AND UPGRADE
 
-Этап 8. Синхронизация состояния и обработка отключений.
+Design crafting and equipment-upgrade interfaces.
 
-Этап 9. Оптимизация и нагрузочные тесты.
+Include:
 
-Этап 10. Финальный аудит и документация.
+- Selected recipe or item.
+- Required materials.
+- Owned and missing quantities.
+- Item result preview.
+- Upgrade path or enhancement information.
+- Craft, upgrade, and unavailable states.
+- Confirmation for important resource expenditure.
+- Success and failure feedback where appropriate.
 
-После каждого этапа:
+Use illustrated materials and distinct item artwork.
 
-- Проверь изменённые файлы.
-- Проверь компиляцию доступными средствами.
-- Исправь обнаруженные ошибки.
-- Обнови документацию.
-- Перечисли, что готово и что проверено.
-- Укажи известные ограничения.
+Do not create invented game rules for crafting costs or success chances. Use clearly labeled example data until the actual mechanics are confirmed.
 
-Не переходи к массовому созданию контента, пока базовый сетевой прототип не работает.
+14. SCREEN K — TRADING AND MERCHANT
 
-12. Документация
+Design a fantasy merchant interface.
 
-Создай в проекте папку Documentation/Networking.
+Include:
 
-Подготовь:
+- Merchant identity and portrait area.
+- Distinctive shop inventory.
+- Item prices.
+- Player currency.
+- Buy and sell modes where applicable.
+- Item details.
+- Purchase confirmation.
+- Insufficient currency and unavailable states.
+- Transaction feedback.
 
-- Architecture.md — архитектура сетевой игры.
-- Setup.md — настройка зависимостей и Steam.
-- Physics.md — принципы сетевой физики.
-- Destruction.md — система разрушения.
-- Testing.md — инструкция по проверке четырёх игроков.
-- KnownIssues.md — известные ограничения и нерешённые проблемы.
+The visual design should feel like an in-world merchant interaction rather than a generic ecommerce interface.
 
-Документация должна соответствовать реальному коду, а не описывать несуществующие функции.
+15. SCREEN L — QUESTS AND OBJECTIVES
 
-13. Финальный отчёт
+Design:
 
-В конце представь:
+- Quest journal.
+- Current objectives.
+- Completed and failed quests where applicable.
+- Rewards.
+- Quest details.
+- Progress indicators.
+- Objective notifications.
+- Contextual in-game objective display.
 
-1. Что было найдено в проекте.
-2. Какой сетевой фреймворк и транспорт выбраны и почему.
-3. Какие файлы созданы или изменены.
-4. Что реально реализовано.
-5. Какие проверки прошли и какие не удалось выполнить.
-6. Какие проблемы остались.
-7. Какие действия мне нужно выполнить вручную.
-8. Какие расходы на инфраструктуру возможны и какие серверы не нужны.
-9. Следующий конкретный шаг разработки.
+Distinguish active, completed, failed, and locked content clearly.
 
-Начни с аудита проекта. Не устанавливай пакеты и не переписывай код до проверки совместимости и составления плана. После аудита продолжай по этапам в пределах доступных инструментов, не выдумывая результаты.
+16. SCREEN M — CHARACTER PROGRESSION
+
+Design the progression interface.
+
+Include:
+
+- Level and experience.
+- Unlockable content.
+- Character attributes if the game uses them.
+- Skills or abilities.
+- Progression milestones.
+- Achievement or discovery records where relevant.
+- Reward previews.
+
+Do not invent a complex talent tree if the game does not use one. Design the actual systems and leave unsupported mechanics out.
+
+17. SCREEN N — SETTINGS AND ACCESSIBILITY
+
+Include:
+
+- Audio settings.
+- Graphics or effects settings where supported.
+- UI scale.
+- Camera or sensitivity settings if relevant.
+- Input information.
+- Language selection if supported.
+- Accessibility options.
+- Confirmation and reset states.
+
+Design for Roblox desktop, mobile, and gamepad navigation as appropriate.
+
+Settings must be clearly grouped and easy to understand.
+
+18. SCREEN O — NOTIFICATIONS AND DIALOGS
+
+Create reusable visual patterns for:
+
+- Quest updates.
+- Item acquisition.
+- Inventory full.
+- Insufficient resources.
+- Interaction prompts.
+- Confirmation dialogs.
+- Error and retry messages.
+- Dungeon entry and exit.
+- Connection problems.
+- Important multiplayer events.
+
+Use distinct visual priority levels. Critical alerts must be noticeable without covering important gameplay.
+
+19. SCREEN P — DEATH, FAILURE, ESCAPE, AND RUN SUMMARY
+
+Design screens for relevant end-of-run situations.
+
+Include:
+
+- Successful extraction or return.
+- Failed run.
+- Player downed or death state where appropriate.
+- Rewards gained.
+- Items lost or retained according to actual rules.
+- Run summary.
+- Return to hub.
+- Retry or continue actions where supported.
+
+Do not invent the rules governing loot loss, death, or extraction. Use placeholder example content only when clearly identified as illustrative.
+
+20. SCREEN Q — HUB AND MAIN MENU
+
+Design the main hub UI and navigation.
+
+Include:
+
+- Character and progression access.
+- Inventory and equipment.
+- Dungeon book.
+- Seeds and dungeon selection.
+- Crafting and merchant access.
+- Party management.
+- Quests and discoveries.
+- Settings.
+- Relevant currency and notifications.
+
+The UI must complement the existing 3D hub, not replace it with a giant full-screen dashboard.
+
+Allow the environment to remain visible when immersion benefits from it.
+
+21. SCREEN R — OPTIONAL SYSTEMS
+
+Only include additional screens when they fit the actual game:
+
+- Collections and bestiary.
+- Achievements.
+- Cosmetics.
+- Mail or rewards inbox.
+- Tutorial and onboarding.
+- Trading history.
+- Daily or recurring challenges.
+- Moderation and reporting interfaces when appropriate.
+
+Avoid feature creep. The design system should support future additions without forcing them into the initial release.
+
+22. INTERACTION AND STATE DESIGN
+
+For every major screen, design meaningful states.
+
+At minimum, consider:
+
+- Default.
+- Hover.
+- Pressed.
+- Selected.
+- Disabled.
+- Locked.
+- Loading.
+- Empty.
+- Error.
+- Success.
+- Confirmation.
+- Insufficient resources.
+
+Demonstrate navigation and interaction flow between the major interfaces.
+
+Buttons must communicate their intended action. Modal dialogs need a clear close or cancel path. Destructive or costly actions need appropriate confirmation.
+
+Do not create a static collection of unrelated mockups. Design a coherent interface system.
+
+23. RESPONSIVE ROBLOX DESIGN
+
+Follow the official Roblox Creator Hub guidance for adaptive interfaces:
+
+https://create.roblox.com/docs/production/publishing/adaptive-design
+
+https://create.roblox.com/docs/projects/cross-platform
+
+https://create.roblox.com/docs/ui
+
+Design for:
+
+- Desktop and laptop.
+- Small mobile screens.
+- Tablets.
+- Gamepad navigation where supported.
+
+Requirements:
+
+- Keep critical controls visible.
+- Respect Roblox top-bar and device safe areas.
+- Avoid important controls in mobile thumbstick and jump-button zones.
+- Scale and rearrange content rather than shrinking everything uniformly.
+- Collapse secondary panels on narrow screens.
+- Use touch-friendly action sizes.
+- Maintain readable text.
+- Provide appropriate input hints.
+- Avoid horizontal overflow and clipped dialogs.
+- Keep gameplay visibility as a priority.
+
+Generate and inspect at least one desktop layout and one narrow mobile layout for the main HUD and the most important menus.
+
+24. VISUAL QUALITY CONTROL
+
+After generating the initial screens, critique them as a senior game UI art director.
+
+Check:
+
+- Whether the UI looks like an actual fantasy game.
+- Whether the panels have convincing illustrated detail.
+- Whether icons are unique and meaningful.
+- Whether the interface looks generic or template-based.
+- Whether there are primitive-looking placeholders.
+- Whether the visual hierarchy works at gameplay scale.
+- Whether every screen belongs to the same design family.
+- Whether text and controls are readable.
+- Whether mobile layouts remain usable.
+- Whether rare items and important actions have appropriate emphasis.
+- Whether decorative elements interfere with usability.
+
+If the result looks like a generic dashboard, redesign it.
+
+If the result uses plain geometric boxes instead of designed fantasy panels, redesign it.
+
+If several screens look identical apart from their titles, give them distinct visual identities while preserving the shared design system.
+
+Do not stop after the first generation. Iterate until the result meets the art-direction requirements.
+
+25. STITCH PROJECT ORGANIZATION AND EXPORT
+
+Organize the design as a coherent project, using the current Stitch capabilities.
+
+Create:
+
+- A master HUD.
+- Reusable interface components.
+- The complete family of major screens.
+- Important interaction states.
+- Desktop and mobile variants.
+- A consistent design-system specification.
+- A clear inventory of required visual assets.
+- A mapping of each screen to the gameplay system it represents.
+
+Use Stitch's available export or handoff features where supported.
+
+If the workflow supports DESIGN.md, document design tokens, component rules, typography, colors, textures, and visual constraints in that format.
+
+If image assets can be exported, keep them individually identifiable and suitable for use as Roblox image assets.
+
+Do not claim that exported assets are automatically integrated into Roblox Studio. Actual Roblox implementation, image uploads, asset IDs, scripting, and gameplay integration are separate steps.
+
+26. FINAL DELIVERABLES
+
+The final design project should contain:
+
+1. Complete desktop gameplay HUD.
+2. Responsive mobile HUD.
+3. Character and equipment screen.
+4. Inventory and item details.
+5. Dungeon book and journal.
+6. Seeds and modular dungeon cube interface.
+7. Dungeon preparation and party screens.
+8. Loot and rewards.
+9. Crafting and upgrades.
+10. Merchant and trading.
+11. Quests and objectives.
+12. Progression.
+13. Settings and accessibility.
+14. Notifications and modal dialogs.
+15. End-of-run screens.
+16. Hub navigation.
+17. Reusable components and interaction states.
+18. Design-system documentation.
+19. Visual asset inventory and export guidance.
+
+Prioritize the core HUD, inventory, dungeon book, seeds, dungeon preparation, and rewards first. Build the remaining screens using the established system.
+
+Do not sacrifice quality just to produce every screen in one generation.
+
+FINAL DIRECTIVE
+
+Create a distinctive, illustrated, polished fantasy Roblox game interface system.
+
+Every visible UI component must have a clear purpose and intentional visual design.
+
+No generic dashboard aesthetic.
+No primitive-based final artwork.
+No emoji icons.
+No placeholder geometry masquerading as finished UI.
+No unrelated screen styles.
+No fake functionality claims.
+
+The result must be visually rich, readable during actual gameplay, consistent across the complete game, and realistically transferable into Roblox Studio using image assets and native UI components.
+
+Design the interface as a real game UI/UX production project, not as a collection of decorative mockups.
