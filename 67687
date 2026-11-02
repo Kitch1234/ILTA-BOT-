@@ -1,3 +1,4 @@
+
 MASTER PROMPT — ROBLOX DUNGEON FARM
 
 COMPLETE EXISTING PLACE OVERHAUL + OPEN-SOURCE RPG SYSTEM INTEGRATION
@@ -1322,3 +1323,18 @@ Test the actual game through Roblox Studio MCP.
 Take ownership of the complete implementation and continue until the project reaches the Definition of Done.
 
 Begin by inspecting the existing Place and creating the backup. Do not ask the user to manually rebuild anything that you can inspect or implement through the available tools.
+Эффекты погоды, окружения и взаимодействия с миром.
+5. Звуки и музыка
+Отдельные звуковые наборы для хаба, фермы, подземелий и боссов.
+Звуки оружия, магии, ударов, шагов, монстров, NPC и окружения.
+Звуки интерфейса, инвентаря, получения предметов, улучшений и наград.
+Фоновая музыка с плавными переходами между зонами.
+Пространственное 3D-аудио там, где оно необходимо.
+6. Полноценный UI/HUD
+Переработать весь интерфейс в едином фэнтезийном стиле.
+Добавить анимации интерфейса, эффекты наведения, открытия окон, получения наград.
+Продумать мобильную адаптацию.
+7. Проверка качества
+Не просто импортировать ассеты, а проверять их качество, совместимость, анимации, материалы и производительность.
+Проверять все анимации, эффекты и звуки непосредственно в Roblox Studio через MCP.
+Не оставлять временные заглушки вместо готового контента.
