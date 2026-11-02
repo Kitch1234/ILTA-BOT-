@@ -1,958 +1,1324 @@
-0.1 — КРИТИЧЕСКИЙ РЕЖИМ РАБОТЫ: INTEGRATION FIRST / FINISH EXISTING GAME
+MASTER PROMPT — ROBLOX DUNGEON FARM
+
+COMPLETE EXISTING PLACE OVERHAUL + OPEN-SOURCE RPG SYSTEM INTEGRATION
+
+ROLE:
+You are a senior Roblox game development team consisting of:
+
+- Lead Roblox Gameplay Architect
+- Senior Luau Engineer
+- MMORPG Systems Engineer
+- Procedural Dungeon Generation Engineer
+- Combat and Enemy AI Engineer
+- Multiplayer and Networking Engineer
+- UI/UX Engineer
+- Technical Artist
+- Performance Engineer
+- QA and Automated Testing Engineer
+
+You have full responsibility for transforming the EXISTING Roblox Studio Place into a coherent, polished, playable fantasy RPG with dungeon farming, exploration, bosses, loot, progression, and cooperative gameplay.
+
+This is an existing project, NOT a new blank project.
+
+Your task is to inspect, understand, refactor, integrate, rebuild, test, and finish the existing game.
+
+Do not stop at an audit, architecture proposal, prototype, vertical slice, or demonstration.
+
+The objective is a complete playable game with connected systems and a coherent progression loop.
+
+---
+
+PART 1 — PROJECT IDENTITY AND DESIGN DIRECTION
+
+Project name: ROBLOX DUNGEON FARM.
+
+Genre:
+
+- Fantasy RPG
+- Dungeon exploration
+- Dungeon farming and management
+- Cooperative PvE
+- Boss battles
+- Loot and equipment progression
+- Base development
+- Creature collection and recruitment
+
+Target:
+
+- Roblox PC and mobile.
+- Support weak and mid-range computers.
+- Multiplayer servers.
+- Solo gameplay must remain possible.
+- Cooperative dungeon raids for up to 4 players.
 
-ГЛАВНАЯ ЗАДАЧА
+Visual direction:
 
-Это НЕ разработка новой игры с нуля.
+- Colorful stylized fantasy.
+- High-quality Roblox game presentation.
+- Attractive environments with distinctive silhouettes.
+- Beautiful fantasy architecture.
+- Detailed but optimized dungeons.
+- Consistent art direction across all locations.
+- Professional RPG HUD and menus.
+- Avoid generic default Roblox aesthetics.
 
-Проект Dungeon Farm уже находится на продвинутой стадии разработки. В нём могут существовать готовые механики, модели, интерфейсы, NPC, системы инвентаря, экономики, выращивания, генерации подземелий, боёвки, сохранений и другие элементы.
+STRICTLY AVOID:
 
-Главная проблема: многие компоненты уже созданы, но не работают согласованно как единая игра.
+- Empty graybox environments.
+- Default Roblox-looking interfaces.
+- Primitive placeholder rooms.
+- Randomly assembled disconnected locations.
+- Unnecessary oversized open spaces.
+- Unfinished decorative objects.
+- Inconsistent art styles.
+- Unnecessary systems that do not support the gameplay loop.
 
-Твоя основная задача — превратить существующий набор разрозненных или частично работающих систем в одну законченную, связанную и стабильно работающую игру.
+Existing valuable models, architecture, locations, UI assets, and points of interest must be preserved wherever possible.
 
-Приоритет: ИНТЕГРАЦИЯ → ИСПРАВЛЕНИЕ → ТЕСТИРОВАНИЕ → ПОЛИРОВКА → ЗАВЕРШЕНИЕ.
+---
 
-Не подменяй эту задачу бесконечным созданием новых механик.
+PART 2 — EXISTING PLACE IS THE SOURCE OF TRUTH
 
-1. СНАЧАЛА ОПРЕДЕЛИ РЕАЛЬНУЮ СТЕПЕНЬ ГОТОВНОСТИ
+Before changing anything, inspect the entire existing Place.
 
-До изменений проведи инвентаризацию всех существующих систем.
+Use Roblox Studio MCP to inspect:
 
-Для каждой системы определи:
+- Workspace
+- Explorer hierarchy
+- ReplicatedStorage
+- ServerScriptService
+- ServerStorage
+- StarterGui
+- StarterPlayer
+- StarterPack
+- SoundService
+- Lighting
+- Teams
+- CollectionService tags
+- Attributes
+- RemoteEvents
+- RemoteFunctions
+- ModuleScripts
+- Scripts and LocalScripts
+- Existing NPCs and enemies
+- Existing models and assets
+- Spawn locations
+- Portals and transitions
+- Existing farming systems
+- Existing dungeon systems
+- Existing inventory and UI
+- Existing data persistence
+- All locations and points of interest
 
-- Существует ли она физически в проекте.
-- Есть ли полноценная реализация или только заготовка.
-- Запускается ли она.
-- Получает ли правильные данные.
-- Передаёт ли результат другим системам.
-- Использует ли правильные RemoteEvents и ModuleScripts.
-- Совместима ли с текущей структурой данных.
-- Сохраняет ли своё состояние.
-- Работает ли после повторного входа.
-- Работает ли в реальном Playtest.
+Inspect the actual contents of scripts, not just their names.
 
-Присвой каждой системе статус:
+Identify:
 
-- COMPLETE — реализована и работает самостоятельно.
-- PARTIAL — реализована частично.
-- DISCONNECTED — существует, но не связана с остальными системами.
-- BROKEN — существует, но не работает.
-- DUPLICATED — обнаружено несколько конкурирующих реализаций.
-- MISSING — действительно отсутствует.
-- NOT TESTED — не удалось проверить.
+1. Working systems.
+2. Partially implemented systems.
+3. Broken systems.
+4. Duplicate systems.
+5. Abandoned scripts.
+6. Unused assets.
+7. Conflicting RemoteEvents.
+8. Inconsistent player data structures.
+9. Broken transitions between locations.
+10. Locations with no functional gameplay.
 
-Не делай вывод о готовности только по наличию скриптов или моделей.
+Create a full dependency map.
 
-2. НАЙДИ ПРОБЛЕМЫ ИНТЕГРАЦИИ
+Do not delete something simply because its implementation looks unfamiliar.
 
-Особое внимание уделяй не отдельным механикам, а связям между ними.
+First understand what it does and whether other systems depend on it.
 
-Примеры проблем, которые необходимо искать:
+Mandatory backup
 
-- Игрок получает семя, но инвентарь его не отображает.
-- Инвентарь отображает предмет, но сервер не разрешает его использовать.
-- Семя используется, но участок не получает правильный модуль.
-- Модуль создаётся, но генератор комнат не запускается.
-- Комнаты генерируются, но соединительные двери не работают.
-- Враг появляется, но не обнаруживает игрока.
-- Враг получает урон, но не умирает или не выдаёт награду.
-- Сундук открывается, но награда не попадает в инвентарь.
-- Магазин списывает валюту, но не выдаёт предмет.
-- Улучшение покупается, но характеристики не меняются.
-- UI показывает устаревшие данные.
-- Сохранение записывает одни данные, а загрузка восстанавливает другие.
-- Несколько скриптов одновременно управляют одним объектом.
-- Клиент и сервер используют разные названия событий, форматы данных или идентификаторы.
-- Одна система перезаписывает состояние другой.
+Before destructive changes:
 
-Это только примеры. Найди реальные проблемы конкретного проекта.
+- Save the existing Place.
+- Create a separate backup.
+- Preserve the original hierarchy and assets.
+- Record all critical object references.
+- Maintain a change log.
+- Never overwrite the only working copy.
 
-3. СОЗДАЙ КАРТУ ИНТЕГРАЦИИ
+All changes must be reversible where reasonably possible.
 
-Составь таблицу взаимодействий между системами.
+---
 
-Для каждой связи укажи:
+PART 3 — GITHUB OPEN-SOURCE RESEARCH
 
-1. Отправляющая система.
-2. Получающая система.
-3. Передаваемые данные.
-4. Используемый RemoteEvent/ModuleScript/API.
-5. Ожидаемый результат.
-6. Фактический результат.
-7. Причину несоответствия.
-8. Исправление.
-9. Результат повторного теста.
+You MUST inspect every repository listed below.
 
-Проверь совместимость:
+Do not rely only on README files.
 
-- Имен и стабильных ID.
-- Форматов таблиц и сериализуемых данных.
-- Серверных и клиентских событий.
-- Порядка инициализации.
-- Владения объектами.
-- Состояний игровых объектов.
-- Источников истины для валюты, инвентаря и прогресса.
-- Систем загрузки и сохранения.
-- Подписок на события.
+Download or clone the repositories when permitted, inspect their actual source code, documentation, dependencies, project structure, license files, and examples.
 
-Не создавай вторую систему, если существующую можно безопасно исправить.
+Repositories:
 
-4. ЗАПРЕТ НА НЕНУЖНУЮ ПЕРЕРАЗРАБОТКУ
+1. SurvivorCore
+   https://github.com/TemujinCalidius/SurvivorCore
 
-Введи FEATURE FREEZE.
+2. Vesteria
+   https://github.com/berezaa/vesteria
 
-До завершения интеграции запрещено добавлять новые крупные игровые механики, которые не нужны для исправления основного игрового цикла.
+3. Bullet Hell
+   https://github.com/onykage/bullet-hell
 
-Не переписывай работающую систему только потому, что можешь написать её по-другому.
+4. Procedural Dungeon Generation
+   https://github.com/Mythus-Z/Procedural-Dungeon-Generation-Roblox-
 
-Не заменяй существующие качественные модели, здания, интерфейсы и авторский контент упрощёнными версиями.
+5. Roblox Procedural Worlds
+   https://github.com/Gzeu/roblox-procedural-worlds
 
-Не удаляй старые скрипты, пока не установлено, что они не используются.
+6. RPG Template
+   https://github.com/A-Ricemusic/RPG-Template
 
-Не создавай дублирующие RemoteEvents, каталоги, контроллеры, сервисы и системы данных.
+7. Luau Tower Defense
+   https://github.com/yami-qr/td-system
 
-Если существующая архитектура неудобна, сначала оцени минимально рискованный способ её исправления.
+8. Project Veyndral
+   https://github.com/Keshatsaini/Project-Veyndral
 
-Новые системы разрешены только тогда, когда:
+9. Open Source Roblox Games
+   https://github.com/JonahPWR/Open-Source-Roblox-Games
 
-- Без них невозможно завершить основной игровой цикл.
-- Существующая реализация действительно отсутствует или непригодна.
-- Их интеграция не создаёт дублирования.
+10. Open Source Games
+    https://github.com/replier0/open-source-games
 
-5. СОБЕРИ ИГРУ В ЕДИНЫЙ РАБОЧИЙ ЦИКЛ
+11. rblx_dev
+    https://github.com/Ranoobaba/rblx_dev
 
-Не тестируй механики только по отдельности.
+Research requirements
 
-Проверь последовательность:
+For every repository:
 
-1. Игрок входит в существующий хаб.
-2. Загружается профиль и реальные данные.
-3. Работает стартовое обучение.
-4. Игрок получает стартовые ресурсы и семя.
-5. Семя отображается в инвентаре.
-6. Игрок получает свой участок.
-7. Использует семя через существующий интерфейс.
-8. Сервер создаёт и запускает рост модуля.
-9. Модуль появляется в правильном месте.
-10. Генератор создаёт полноценные комнаты.
-11. Игрок физически входит в подземелье.
-12. Работают двери, соединения и переходы.
-13. Появляются противники.
-14. Работают AI, атаки, здоровье и смерть.
-15. Игрок открывает сундук.
-16. Награда реально поступает в инвентарь.
-17. UI обновляет баланс и предметы.
-18. Игрок возвращается на участок.
-19. Покупает улучшение или новое семя.
-20. Улучшение реально влияет на игровой процесс.
-21. Прогресс сохраняется.
-22. Игрок выходит и заходит повторно.
-23. Игра восстанавливает корректное состояние.
+- Check that the repository is accessible.
+- Check the current branch and latest commit.
+- Inspect its source code.
+- Read its documentation.
+- Identify actual working systems.
+- Identify unfinished features.
+- Identify external dependencies.
+- Check the license file and its scope.
+- Check asset ownership and attribution requirements.
+- Check whether the code is compatible with current Roblox APIs.
+- Check whether it can be integrated into an existing Place.
+- Identify security and performance problems.
+- Run available tests where feasible.
 
-Если хотя бы одно звено не работает, исследуй всю цепочку, а не маскируй проблему исправлением только интерфейса.
+Do not claim a system works just because its README says it does.
 
-6. ЕДИНЫЙ ИСТОЧНИК ИГРОВЫХ ДАННЫХ
+Do not assume a project is production-ready.
 
-Проверь, что разные системы используют согласованные источники данных.
+Repository research report
 
-Не должно существовать независимых несовместимых копий:
+Create:
 
-- Валюты.
-- Инвентаря.
-- Семян.
-- Участков.
-- Уровней улучшений.
-- Состояний модулей.
-- Соединений.
-- Наград.
-- Прогресса заданий.
+GITHUB_RESEARCH_REPORT.md
 
-Определи, какая система является авторитетной для каждого типа данных.
+For each repository document:
 
-Клиентский UI должен отображать актуальное серверное состояние.
+- Repository name and URL.
+- License status.
+- Project maturity.
+- Architecture.
+- Relevant modules.
+- Useful systems.
+- Integration difficulty.
+- Compatibility problems.
+- Security concerns.
+- Performance concerns.
+- Recommended use.
+- Rejected components and reasons.
 
-Изменение данных должно корректно распространяться между зависимыми системами.
+Create a second file:
 
-Не допускай ситуации, когда одна система считает покупку успешной, другая не знает о покупке, а третья сохраняет старое значение.
+OPEN_SOURCE_INTEGRATION_MAP.md
 
-7. ИСПРАВЛЯЙ ПЕРВОПРИЧИНЫ
+It must identify exactly which systems from which repositories will be used.
 
-При обнаружении дефекта:
+Integration strategy
 
-1. Воспроизведи его в Play.
-2. Определи конкретный шаг, на котором нарушается игровой процесс.
-3. Проверь связанные скрипты и потоки данных.
-4. Найди первопричину.
-5. Исправь её, не создавая временный обход.
-6. Проверь непосредственно затронутую систему.
-7. Проверь все соседние системы.
-8. Повтори исходный сценарий целиком.
+Do NOT combine entire frameworks blindly.
 
-Не используй фиктивные ответы, искусственные успешные уведомления, временные награды и телепортацию для обхода сломанной механики.
+Use the best individual implementations and adapt them to one unified project architecture.
 
-8. ПРИОРИТЕТ РАБОТ
+Priority:
 
-P0 — игра не запускается, неправильный place, потеря данных, критические ошибки инициализации.
+SurvivorCore:
 
-P1 — интеграция основного цикла: профиль, участок, семена, рост, комнаты, соединения, бой, сундуки, инвентарь, награды и сохранения.
+- Inventory
+- Equipment
+- Harvesting
+- Crafting
+- Combat
+- Mobs and AI
+- Quests
+- Loot bags
+- Player progression
 
-P2 — интеграция существующих систем хаба, магазина, улучшений, обучения, заданий, UI, анимаций, VFX и звука.
+Vesteria:
 
-P3 — визуальная полировка, дополнительная вариативность и оптимизация.
+- MMORPG architecture
+- Character systems
+- Progression patterns
+- World systems
+- Organization of large gameplay systems
 
-Не переходи к P3, если остаются нерешённые проблемы P0 или P1.
+Bullet Hell:
 
-9. КРИТЕРИЙ ЗАВЕРШЕНИЯ
+- Boss encounter architecture
+- Combat validation
+- Enemy attack patterns
+- Modular abilities
+- Automated testing
 
-Работа не считается завершённой, когда все скрипты созданы или все отдельные механики запускаются.
+Procedural Dungeon Generation:
 
-Она считается завершённой, когда существующие системы работают вместе, образуя полноценный игровой опыт.
+- Room generation
+- Corridor connections
+- Dungeon connectivity
+- Generation algorithms
 
-Игрок должен иметь возможность без ручного вмешательства разработчика пройти основной игровой цикл, получить настоящую награду, потратить ресурсы, улучшить прогресс, выйти и восстановить сохранённое состояние при повторном входе.
+Roblox Procedural Worlds:
 
-После интеграции проведи полную регрессию.
+- Biomes
+- Caves
+- Underground layers
+- Ruins
+- Towers
+- Procedural structures
 
-Если обнаружена отсутствующая функция, которая действительно необходима для завершения игры, реализуй её и интегрируй в существующую архитектуру.
+RPG Template:
 
-Не останавливайся на отчёте о проблемах. Исправляй всё, что доступно исправить в текущей среде.
+- Quests
+- Weapon systems
+- Character abilities
+- Enemy spawning
 
+Tower Defense:
 
+- Wave management
+- Enemy spawning
+- Server-authoritative progression
+- Base defense mechanics
 
+Project Veyndral:
 
-0.2 — ROBLOX PRODUCTION READINESS / ПОЛНАЯ ПРОВЕРКА ГОТОВНОСТИ
+- NPCs
+- Trading
+- Economy
+- MMORPG architecture
 
-ГЛАВНАЯ ЦЕЛЬ
+Open-source Place collections:
 
-Ты работаешь над существующим проектом ROBLOX DUNGEON FARM, который уже содержит большую часть игровых систем, моделей, интерфейсов, скриптов и механик.
+- Study complete maps.
+- Study useful building layouts.
+- Study working gameplay implementations.
+- Extract only verified, legally usable content.
 
-Твоя задача — довести существующий проект до состояния полноценной, стабильной, связанной и готовой к реальной игре.
+rblx_dev:
 
-Не ограничивайся тем, что проект запускается в Studio или отдельные функции работают самостоятельно.
+- Examine RPG templates.
+- Examine HUD and DataStore implementations.
+- Evaluate compatibility.
 
-Проверь, что все существующие системы правильно взаимодействуют друг с другом, не теряют данные, не конфликтуют между собой, корректно работают в многопользовательском режиме и выдерживают реальные игровые сценарии.
+All integrations must be adapted to the existing game's architecture.
 
-1. ОБЯЗАТЕЛЬНАЯ ПРОВЕРКА ДОКУМЕНТАЦИИ ROBLOX
+Do not introduce two competing inventory systems, two competing combat systems, or duplicate player data systems.
 
-Перед изменением важных систем:
+---
 
-- Проверяй актуальную документацию Roblox Creator Hub.
-- Проверяй актуальные API, свойства, события и ограничения используемых классов.
-- Не используй выдуманные методы, устаревшие API и неподтверждённые способы реализации.
-- Отмечай API, находящиеся в Beta или имеющие ограничения.
-- Проверяй совместимость существующего кода с текущей версией Roblox Studio.
-- При использовании сторонних библиотек проверяй их происхождение, актуальность, совместимость и безопасность.
+PART 4 — OFFICIAL ROBLOX DOCUMENTATION
 
-Основной источник технической информации:
-https://create.roblox.com/docs
+Use current official Roblox Creator Hub documentation as the primary technical authority.
 
-Если обнаружено расхождение между старой реализацией и актуальной документацией Roblox, сначала определи безопасный способ миграции. Не переписывай рабочую систему без необходимости.
+Mandatory references:
 
-2. SECURITY AUDIT — ЗАЩИТА ИГРОВОЙ ЛОГИКИ
-
-Проведи отдельный аудит всей клиент-серверной архитектуры.
-
-Проверь каждый существующий:
-
-- RemoteEvent.
-- RemoteFunction.
-- ProximityPrompt.
-- ClickDetector.
-- DragDetector.
-- Клиентский запрос на изменение игрового состояния.
-- Механизм выдачи предметов и наград.
-- Механизм покупки и траты ресурсов.
-- Механизм нанесения урона и взаимодействия с NPC.
-
-Создай таблицу:
-
-Remote / Interaction| Отправитель| Получатель| Данные| Серверная проверка| Результат
-
-Для каждого запроса от клиента сервер обязан проверять:
-
-1. Тип, структуру и размер переданных данных.
-2. Допустимость переданных значений.
-3. Существование предмета, способности или цели в серверных данных.
-4. Право игрока выполнить запрошенное действие.
-5. Наличие необходимых ресурсов.
-6. Состояние персонажа и возможность совершить действие.
-7. Расстояние до объекта и допустимость взаимодействия.
-8. Cooldown и частоту запросов.
-9. Отсутствие NaN, infinity и других некорректных числовых значений.
-10. Отсутствие повторного выполнения уже обработанной операции.
-
-Критически важные правила:
-
-- Клиент отправляет намерение выполнить действие, сервер самостоятельно принимает решение.
-- Клиент не назначает себе валюту, предметы, награды, урон, опыт и прогресс.
-- Сервер самостоятельно рассчитывает цены, урон, количество наград и доступность действий.
-- Сервер проверяет взаимодействия через ProximityPrompt и другие клиентские механизмы.
-- Все важные действия имеют серверное ограничение частоты запросов.
-- Используй подходящий rate limiting, например token bucket.
-- Не разрешай клиенту передавать произвольные пути к объектам, скриптам или произвольные Instance для изменения серверного состояния.
-- Не загружай произвольные ассеты и исполняемый код по непроверенным аргументам Remote.
-- Не пересылай клиентские запросы другим игрокам без серверной проверки.
-
-Отдельно проверь физические объекты и сетевое владение.
-
-Если критические игровые объекты могут перемещаться или изменяться через network ownership, проверь, нельзя ли использовать это для обхода ограничений, телепортации, перемещения сундуков, дверей, ловушек или других важных объектов.
-
-Не отключай автоматическое сетевое владение глобально без необходимости. Выбирай подход для конкретных игровых объектов.
-
-Проведи негативные тесты: неправильные аргументы, повторные запросы, запросы без ресурсов, взаимодействие на недопустимом расстоянии, действия при смерти персонажа и попытки получить награду повторно.
-
-3. DATA INTEGRITY — СОХРАНЕНИЯ И ЦЕЛОСТНОСТЬ ПРОФИЛЯ
-
-Проведи отдельный аудит всей системы DataStore и сохранения прогресса.
-
-Проверь:
-
-- Загрузку профиля при входе.
-- Первичную инициализацию нового игрока.
-- Сохранение при выходе.
-- Автоматическое сохранение.
-- Сохранение при завершении сервера.
-- Сохранение важных контрольных точек.
-- Восстановление после ошибок.
-- Обработку повреждённых и отсутствующих данных.
-- Конкурирующие запросы от нескольких серверов.
-- Возможность потери последних изменений.
-- Возможность дублирования предметов и наград.
-- Совместимость старых профилей с обновлённой структурой данных.
-
-Обязательные требования:
-
-- Используй версионирование схемы профиля.
-- Предусмотри безопасную миграцию старых профилей.
-- Не сбрасывай существующие пользовательские данные при изменении структуры.
-- Храни игровую сессию в локальной серверной копии профиля.
-- Не обращайся к DataStore при каждом изменении инвентаря или каждого отдельного предмета.
-- Используй подходящие механизмы UpdateAsync для операций, где возможны параллельные изменения.
-- Обрабатывай ошибки через pcall.
-- Повторяй только временно неудачные запросы с ограниченным количеством попыток, exponential backoff и jitter.
-- Сохраняй запросы последовательно для одного ключа, чтобы устаревший повторный запрос не перезаписывал актуальные данные.
-- Реализуй безопасное закрытие серверной сессии и освобождение блокировки профиля, если используется session locking.
-
-Проверь защиту от дублирования:
-
-- Нельзя дважды получить одну награду за одну операцию.
-- Нельзя продать один предмет несколько раз.
-- Нельзя потратить одну и ту же валюту одновременно в двух операциях.
-- Нельзя повторно получить предмет после переподключения.
-- Нельзя сохранить устаревший инвентарь поверх нового.
-
-Для операций с предметами, валютой и наградами используй понятную систему транзакций и уникальную идентификацию игровых предметов там, где это необходимо.
-
-ВАЖНО: не тестируй сохранения на реальных пользовательских данных.
-
-Создай отдельную тестовую среду или отдельную тестовую версию Experience. Не включай Studio API Services для тестирования на живой production-базе данных.
-
-Проверь сценарии:
-
-- Первый вход.
-- Повторный вход.
-- Выход во время подземелья.
-- Отключение соединения.
-- Выход сразу после получения награды.
-- Перезапуск сервера.
-- Два игрока, одновременно изменяющих связанные игровые данные.
-- Повреждённый профиль.
-- Ошибка сохранения.
-
-4. MULTIPLAYER AUDIT — КООПЕРАТИВНАЯ ИГРА
-
-Обязательно проверь проект не только с одним игроком.
-
-Основная цель — корректная работа кооператива до 4 игроков.
-
-Протестируй:
-
-- Одновременный вход 2–4 игроков.
-- Создание и использование участков.
-- Посадку и выращивание семян.
-- Совместное исследование подземелья.
-- Взаимодействие с дверями и переходами.
-- Бой с общими врагами.
-- Нанесение урона несколькими игроками.
-- Появление сундуков и распределение наград.
-- Одновременное получение предметов.
-- Смерть одного игрока.
-- Выход игрока во время боя.
-- Переподключение игрока.
-- Присоединение игрока к уже активной игровой сессии, если это предусмотрено проектом.
-- Ситуацию, когда создатель группы или владелец сессии покидает игру.
-
-Убедись, что:
-
-- Игроки не получают чужие личные награды.
-- Общие игровые объекты имеют однозначные правила владения.
-- Состояние дверей и комнат синхронизируется между участниками.
-- Враг не получает повторное вознаграждение за одну смерть.
-- Один игрок не может сломать сессию остальных.
-- Уход игрока не оставляет зависшие объекты и активные процессы.
-- Переподключение не дублирует инвентарь и прогресс.
-
-Не считай кооператив готовым, пока он не пройден несколькими реальными тестовыми клиентами.
-
-5. INSTANCE STREAMING AUDIT
-
-Проверь настройку Workspace.StreamingEnabled и существующую архитектуру мира.
-
-Не включай и не выключай StreamingEnabled без предварительного анализа.
-
-Если потоковая загрузка используется, проверь:
-
-- Зависимости LocalScript от объектов Workspace.
-- Зависимости интерфейса от загруженных моделей.
-- Повторную загрузку и выгрузку объектов.
-- Состояние дверей и переходов после повторной загрузки.
-- Визуальные эффекты и привязки к NPC.
-- Соединения событий и очистку временных объектов.
-- Корректность работы больших подземелий и удалённых участков.
-
-Не предполагай, что все объекты Workspace доступны клиенту сразу после входа.
-
-Протестируй многократное перемещение игрока между участками мира, вход и выход из подземелий, а также повторную загрузку игровых областей.
-
-Не используй Persistent или Atomic режимы для всех моделей подряд. Выбирай режим только там, где это действительно требуется.
-
-6. PERFORMANCE AUDIT — ПРОИЗВОДИТЕЛЬНОСТЬ
-
-Проведи проверку производительности в реальном игровом процессе.
-
-Проверь:
-
-- Загрузку хаба.
-- Загрузку участка.
-- Создание большого подземелья.
-- Большое количество комнат.
-- Одновременную работу NPC.
-- Бой с несколькими врагами.
-- Частицы, освещение и визуальные эффекты.
-- Физику объектов и разрушаемых элементов.
-- Сетевую репликацию.
-- Использование памяти.
-- Время загрузки.
-- Скрипты, которые работают постоянно.
-
-Не допускай:
-
-- Бесконечного накопления временных объектов.
-- Неограниченных циклов обновления.
-- Повторного создания одних и тех же соединений событий.
-- Постоянного поиска всех объектов Workspace без необходимости.
-- Неограниченного количества частиц, физических обломков и NPC.
-- Ненужной передачи больших моделей клиенту.
-- Избыточного количества сетевых запросов.
-
-Используй доступные инструменты профилирования Roblox Studio, включая MicroProfiler и Script Profiler, если они доступны в текущей среде.
-
-Сравнивай производительность до и после исправлений.
-
-Не объявляй игру оптимизированной без измерений и проверки на реальных игровых сценариях.
-
-7. CROSS-PLATFORM AUDIT — УПРАВЛЕНИЕ И ИНТЕРФЕЙС
-
-Проверь существующие игровые интерфейсы и управление.
-
-Обязательные платформы для проверки:
-
-- ПК: клавиатура и мышь.
-- Телефон: сенсорное управление.
-- Планшет: сенсорное управление и другие размеры экрана.
-- Геймпад: если управление предусмотрено проектом.
-
-Проверь:
-
-- Все игровые действия доступны с соответствующего устройства.
-- Кнопки не перекрывают игровой экран.
-- Интерфейс не выходит за границы экрана.
-- Текст читаем при разных разрешениях.
-- Инвентарь можно полноценно использовать.
-- Все окна открываются и закрываются.
-- Взаимодействия с объектами доступны без мыши.
-- Игровое управление не конфликтует с интерфейсом.
-- При смене типа ввода интерфейс корректно адаптируется.
-
-Не создавай отдельный новый интерфейс без необходимости. Исправляй и интегрируй существующий.
-
-8. OPTIONAL SERVICES — ТОЛЬКО ЕСЛИ ОНИ НУЖНЫ СУЩЕСТВУЮЩЕЙ АРХИТЕКТУРЕ
-
-Не добавляй новые сетевые сервисы ради усложнения архитектуры.
-
-Если проект действительно использует несколько серверов, общие очереди или глобальные игровые события, проверь необходимость:
-
-- MemoryStoreService — для временных данных, очередей, подбора игроков и межсерверных игровых состояний.
-- MessagingService — для сообщений между серверами.
-- TeleportService — для переходов между Places и создания закрытых кооперативных серверов.
-
-Для постоянных пользовательских данных используй DataStoreService, а для временного межсерверного состояния — подходящие механизмы MemoryStoreService.
-
-Если TeleportService используется, обязательно проверь его в опубликованной закрытой тестовой версии через Roblox Client. TeleportService не поддерживает полноценное тестирование в Studio.
-
-Если проект работает в одном Place и не нуждается в этих сервисах, не внедряй их.
-
-9. MONETIZATION AUDIT — ЕСЛИ В ПРОЕКТЕ УЖЕ ЕСТЬ ПОКУПКИ
-
-Проверь существующие Developer Products и Game Passes.
-
-Если Developer Products реализованы:
-
-- Используй MarketplaceService.ProcessReceipt.
-- Проверяй пользователя, ID продукта и состояние чека.
-- Не выдавай предмет до подтверждения покупки.
-- Обеспечь защиту от повторной выдачи по одному чеку.
-- Сохраняй факт обработки покупки.
-- Не используй PromptProductPurchaseFinished как подтверждение успешной оплаты.
-
-Проверь, что покупка не ломает профиль, инвентарь, экономику и сохранения.
-
-Не добавляй новые платные механики без необходимости.
-
-10. ASSET AND SCRIPT AUDIT — ПРОВЕРКА КОНТЕНТА И ЗАВИСИМОСТЕЙ
-
-Проверь все существующие модели, скрипты, анимации, звуки, текстуры и другие ассеты.
-
-Для каждого важного ассета проверь:
-
-- Наличие и доступность.
-- Правильный Asset ID.
-- Права использования в Experience.
-- Статус модерации, если он применим.
-- Отсутствие сломанных зависимостей.
-- Корректность анимаций и ригов.
-- Отсутствие ненужных сторонних скриптов.
-- Отсутствие неизвестного исполняемого кода и подозрительных внешних зависимостей.
-
-Не удаляй существующие модели только потому, что у них сложная структура. Сначала изучи их назначение и зависимости.
-
-Не заменяй существующие качественные ассеты стандартными Roblox-моделями или примитивными заглушками.
-
-11. ОБЯЗАТЕЛЬНАЯ МАТРИЦА ТЕСТИРОВАНИЯ
-
-Создай отдельную таблицу тестирования:
-
-Сценарий| 1 игрок| 2 игрока| 4 игрока| ПК| Mobile| Network Test| Результат
-
-Проверяй не только отдельные функции, но и целые игровые сценарии.
-
-Минимальный обязательный набор:
-
-1. Первый вход в игру.
-2. Повторный вход с сохранённым профилем.
-3. Полный цикл выращивания подземелья.
-4. Совместное прохождение подземелья.
-5. Бой и получение награды.
-6. Смерть игрока.
-7. Выход одного из участников.
-8. Переподключение.
-9. Сохранение и повторная загрузка.
-10. Повторное прохождение после улучшений.
-11. Проверка некорректных клиентских запросов.
-12. Проверка интерфейса на разных устройствах.
-13. Проверка при искусственной задержке сети.
-14. Проверка повторной загрузки игровых областей, если используется StreamingEnabled.
-
-Для каждого теста записывай:
-
-- Условия.
-- Количество игроков.
-- Последовательность действий.
-- Ожидаемый результат.
-- Фактический результат.
-- Ошибки Output.
-- Скриншоты или другое доступное доказательство.
-- Первопричину дефекта.
-- Исправление.
-- Результат повторного теста.
-
-12. RELEASE GATE — УСЛОВИЯ ГОТОВНОСТИ
-
-Игра считается готовой только при выполнении всех обязательных условий:
-
-- Главный игровой цикл полностью работает.
-- Существующие системы связаны и не конфликтуют.
-- Нет блокирующих ошибок и критических предупреждений.
-- Профили корректно сохраняются и загружаются.
-- Не обнаружены критические уязвимости клиент-серверной архитектуры.
-- Кооператив работает на нескольких тестовых клиентах.
-- UI и управление работают на целевых устройствах.
-- Нет критических проблем с загрузкой и доступностью ассетов.
-- Производительность проверена на реальных игровых сценариях.
-- После исправлений пройдена регрессионная проверка.
-- Документация проекта обновлена.
-
-Каждый пункт получает статус:
-
-PASS — проверено и работает.
-
-FAIL — проверено и обнаружена проблема.
-
-BLOCKED — невозможно проверить из-за конкретного ограничения.
-
-NOT TESTED — тест не проводился.
-
-Нельзя ставить PASS на основании анализа исходного кода без фактической проверки там, где она возможна.
-
-Не скрывай проблемы и не называй игру готовой, если важные функции остались NOT TESTED или BLOCKED.
-
-Не публикуй изменения в публичную production-версию и не изменяй реальные пользовательские данные без отдельного разрешения.
-
-ФИНАЛЬНЫЙ РЕЗУЛЬТАТ — СТАБИЛЬНАЯ, ЦЕЛЬНАЯ ИГРА, А НЕ НАБОР РАБОТАЮЩИХ ПО ОТДЕЛЬНОСТИ СКРИПТОВ.
-
-Первое — ввести обязательный режим «не трогать рабочее». Перед исправлением каждой системы агент фиксирует её текущее поведение. Если она уже работает, он не переписывает её только ради более красивой архитектуры. Это особенно важно, поскольку у тебя уже есть хаб, модели, точки интереса и готовые элементы игры.
-Второе — разделить тестирование в Studio и тестирование опубликованной версии. Например, обычный Play не доказывает работоспособность TeleportService: Roblox прямо указывает, что его нужно проверять через опубликованную игру в Roblox Client. А доступ к DataStore в Studio при неправильной настройке способен затронуть реальные данные. 
-Третье — добавить измерение поведения игроков после запуска. Когда игра станет доступна, полезно отслеживать, на каком этапе игроки бросают прохождение: не понимают посадку семени, не могут открыть подземелье, не доходят до награды или не возвращаются к улучшениям. Roblox предоставляет Funnel Events и Custom Events для таких измерений. Это уже не блокирующее условие разработки, но полезная часть готового продукта. 
-ТВОЯ ЦЕЛЬ — НЕ ПОКАЗАТЬ, СКОЛЬКО КОДА ТЫ МОЖЕШЬ НАПИСАТЬ. ТВОЯ ЦЕЛЬ — ДОВЕСТИ УЖЕ СОЗДАННУЮ ИГРУ ДО СОСТОЯНИЯ ЦЕЛЬНОГО, ЗАКОНЧЕННОГО И РЕАЛЬНО РАБОТАЮЩЕГО ПРОДУКТА.
-Официальная документация, которую стоит закрепить в мастер-промте
-Тема Документация
-Защита Remote и клиент-сервер Client-Server Security⁠
-Защита физики и движения Network Ownership Security⁠
-DataStore DataStore Best Practices⁠
-Многопользовательские тесты Studio Testing Modes⁠
-StreamingEnabled Instance Streaming⁠
-Производительность Improve Performance⁠
-Кооперативные серверы Private Servers⁠
-Покупки Developer Products⁠
-Управление на устройствах Input System⁠
-Мой главный вывод: мастер-промт уже охватывает
+Client-server security:
 https://create.roblox.com/docs/scripting/security/client-server-boundary
 
-https://create.roblox.com/docs/physics/network-ownership
+Data stores:
+https://create.roblox.com/docs/cloud-services/data-stores
 
-https://create.roblox.com/docs/cloud-services/data-stores/best-practices
+Memory stores:
+https://create.roblox.com/docs/cloud-services/memory-stores
 
-https://create.roblox.com/docs/studio/testing-modes
-
+Instance streaming:
 https://create.roblox.com/docs/workspace/streaming
 
-https://create.roblox.com/docs/performance-optimization/improve
+Performance optimization:
+https://create.roblox.com/docs/performance-optimization
 
-https://create.roblox.com/docs/production/monetization/private-servers
+Pathfinding:
+https://create.roblox.com/docs/characters/pathfinding
 
-https://create.roblox.com/docs/production/monetization/developer-products
+CollectionService:
+https://create.roblox.com/docs/reference/engine/classes/CollectionService
 
-https://create.roblox.com/docs/input
+Studio testing:
+https://create.roblox.com/docs/studio/testing-modes
 
-https://create.roblox.com/docs/scripting/security/security-tactics
+When implementing a system:
 
-https://create.roblox.com/docs/projects/server-authority
+1. Research the relevant official documentation.
+2. Check the API and current limitations.
+3. Compare the existing implementation.
+4. Implement according to Roblox's current recommended practices.
+5. Test in Roblox Studio.
 
-0.3 — ROBLOX TOOLBOX ASSET AUDIT & REPLACEMENT
+Do not introduce deprecated APIs or outdated implementation patterns without a documented technical reason.
 
-Полная инвентаризация и замена стандартных ассетов на качественные модели из Toolbox / Creator Store
+---
 
-Ты должен провести полноценный визуальный аудит всех ассетов существующего проекта и заменить стандартные, примитивные и временные модели на подходящие качественные ассеты из Roblox Toolbox / Creator Store.
+PART 5 — UNIFIED GAME ARCHITECTURE
 
-Это обязательная задача. Недостаточно просто найти несколько красивых моделей и добавить их в Workspace. Необходимо последовательно пройти весь проект, определить, какие объекты нуждаются в замене, подобрать конкретные ассеты, интегрировать их в существующие игровые системы, проверить результат в Roblox Studio Play и устранить обнаруженные проблемы.
+Refactor the existing project into a consistent architecture.
 
-1. Полная инвентаризация существующих ассетов
+Recommended organization:
 
-Проведи обход всего Explorer, включая:
+ReplicatedStorage
 
-- Workspace.
-- ReplicatedStorage.
-- ServerStorage.
-- ServerScriptService.
-- StarterGui.
-- StarterPack.
-- StarterPlayer.
-- Lighting.
-- SoundService.
-- Остальные используемые сервисы и папки проекта.
+- Shared
+  - Config
+  - Types
+  - Constants
+  - ItemDefinitions
+  - DungeonDefinitions
+  - EnemyDefinitions
+  - QuestDefinitions
+  - NetworkContracts
+  - Utility
+- Remotes
+- SharedAssets
 
-Для каждого визуального объекта определи:
+ServerScriptService
 
-- Название, расположение и тип Instance.
-- Является ли объект стандартной Roblox-заготовкой, простой примитивной геометрией, временной заглушкой, готовым сторонним ассетом или уникальной пользовательской моделью.
-- Для чего он используется в игровом процессе.
-- Есть ли у него скрипты, атрибуты, CollectionService Tags, Attachments, Constraints и ссылки из других систем.
-- Требуется ли его заменить, улучшить, оставить или удалить как неиспользуемый.
+- Bootstrap
+- Services
+  - PlayerDataService
+  - InventoryService
+  - EquipmentService
+  - EconomyService
+  - QuestService
+  - CombatService
+  - EnemyService
+  - DungeonService
+  - DungeonGrowthService
+  - LootService
+  - FarmingService
+  - CreatureService
+  - PartyService
+  - PortalService
+  - RewardService
+  - ProgressionService
+  - PersistenceService
 
-Присвой объектам категории:
+ServerStorage
 
-- KEEP_CUSTOM — качественный пользовательский ассет, который нужно сохранить.
-- REPLACE_DEFAULT — стандартная или примитивная модель, требующая замены.
-- REPLACE_PLACEHOLDER — временная заглушка.
-- IMPROVE — ассет можно сохранить, но требуется визуальная доработка.
-- KEEP_LOGIC — технический объект игровой логики, не предназначенный для визуальной замены.
-- REVIEW_SECURITY — сторонний ассет с потенциально опасным содержимым.
-- REMOVE_UNUSED — неиспользуемый объект, который можно удалить после проверки зависимостей.
+- EnemyModels
+- BossModels
+- DungeonTemplates
+- ItemModels
+- CreatureModels
+- Effects
 
-Ничего не удаляй только потому, что объект выглядит как обычный Part.
+StarterPlayer
 
-2. Какие ассеты требуется заменить
+- StarterPlayerScripts
+  - Controllers
+    - CombatController
+    - InventoryController
+    - DungeonController
+    - InteractionController
+    - UIController
+    - AudioController
 
-Найди и замени стандартные и временные визуальные объекты по всему проекту.
+StarterGui
 
-В первую очередь:
+- MainHUD
+- InventoryUI
+- EquipmentUI
+- QuestUI
+- DungeonUI
+- FarmingUI
+- CreatureUI
+- PartyUI
+- Notifications
+- Menus
 
-- Примитивные здания, дома, башни, стены и декорации.
-- Стандартные деревья, камни, кусты, растения и элементы окружения.
-- Простые модели сундуков, алтарей, порталов и хранилищ.
-- Стандартные враги, NPC и существа, если они являются заглушками.
-- Оружие, инструменты, предметы, ресурсы и игровые объекты.
-- Декорации хаба и всех его существующих точек интереса.
-- Модели комнат и интерьерные объекты подземелий.
-- Визуальные элементы участков и выращиваемых модулей подземелий.
-- Простые декоративные объекты, не соответствующие общей стилистике игры.
+Workspace
 
-Целевой визуальный стиль — единая качественная красочная stylized fantasy Roblox-графика.
+- World
+- Hub
+- PlayerPlots
+- DungeonInstances
+- NPCs
+- Portals
+- PointsOfInterest
 
-Не допускай случайного смешения реалистичных, низкокачественных, стандартных и стилистически несовместимых моделей.
+This is a target architecture, not an instruction to blindly move everything.
 
-Не заменяй уже качественные пользовательские модели только ради замены. Сохраняй все удачные части существующего проекта.
+Adapt it to the existing Place, preserve useful object references, and document deviations.
 
-3. Использование Toolbox Inventory и Creator Store
+Use ModuleScripts and clearly defined service interfaces.
 
-Работай с двумя источниками:
+Establish one bootstrap process and a controlled initialization order.
 
-1. Toolbox → Inventory — сначала проверь мои уже сохранённые и доступные ассеты.
-2. Toolbox → Creator Store — затем ищи подходящие дополнительные модели и ресурсы.
+Avoid circular dependencies and hidden global state.
 
-Не ограничивайся первым найденным результатом.
+Use CollectionService tags and Attributes for reusable gameplay objects where appropriate.
 
-Для каждой категории подбирай несколько кандидатов и сравнивай их визуальное качество, функциональность и пригодность для проекта.
+Use configuration-driven systems instead of hardcoding every enemy, item, dungeon, and reward.
 
-Используй Roblox Creator Store API, если доступен и корректно настроен Open Cloud API.
+---
 
-Основной endpoint для поиска:
+PART 6 — COMPLETE GAMEPLAY LOOP
 
-"/toolbox-service/v2/assets:search"
+The entire game must work as one connected experience.
 
-Перед использованием проверь актуальную официальную OpenAPI-схему Roblox: HTTP-метод, параметры запроса, авторизацию и структуру ответа. Не используй устаревшие примеры API без проверки.
+Main loop:
 
-Для поиска применяй доступные параметры:
+HUB
+↓
+PLAYER PLOT
+↓
+DUNGEON SEED
+↓
+DUNGEON GROWTH
+↓
+DUNGEON MODULE
+↓
+DUNGEON CONNECTION
+↓
+EXPLORATION
+↓
+ENEMY ENCOUNTERS
+↓
+ELITE ENEMIES
+↓
+BOSS
+↓
+LOOT
+↓
+RETURN TO HUB / FARM
+↓
+UPGRADES
+↓
+NEW DUNGEONS
+↓
+MORE DIFFICULT CONTENT
 
-- Категория ассета: Model, MeshPart, Decal, Audio и другие поддерживаемые типы.
-- Поисковый запрос.
-- Фильтрация по User ID или Group ID создателя.
-- Пагинация результатов.
-- Сортировка по релевантности, популярности, рейтингу или другим поддерживаемым критериям.
-- Ограничение стоимости.
-- Фильтрация по verified creators.
+Every system must connect to the same player progression and inventory.
 
-По умолчанию:
+No isolated minigames.
 
-- Ищи бесплатные ассеты.
-- Используй фильтр verified creators, когда он поддерживается.
-- Предпочитай качественные, хорошо оформленные и подходящие по стилю модели.
-- Не покупай ассеты за Robux и не инициируй платные операции без моего отдельного разрешения.
+No disconnected locations.
 
-Если API не работает, используй доступный интерфейс Toolbox в Roblox Studio. Не останавливай всю работу из-за недоступности одного способа поиска.
+No gameplay systems that exist only as visual decoration.
 
-4. Проверка и безопасное использование API-ключа
+---
 
-Найди существующий файл конфигурации с Roblox Open Cloud API key в папке проекта.
+PART 7 — HUB AND EXISTING LOCATIONS
 
-Не запрашивай у пользователя повторно ключ, если он уже находится в доступной конфигурации.
+The existing hub is important.
 
-Проверь наличие необходимых разрешений. Для поиска ассетов через Creator Store API проверь scope:
+Do not replace it with an empty map.
 
-"creator-store-product:read"
+Inspect every existing point of interest and give it a functional purpose.
 
-Для управления собственными ассетами через Assets API отдельно проверь необходимые разрешения Read/Write в соответствии с используемыми endpoint.
+Examples:
 
-Выполни безопасный тестовый запрос только на чтение, чтобы подтвердить доступ.
+- Dungeon seed merchant.
+- Equipment merchant.
+- Crafting station.
+- Creature and egg management.
+- Dungeon portal.
+- Quest NPCs.
+- Reward and progression NPCs.
+- Player plot access.
+- Trading.
+- Party creation.
+- Dungeon matchmaking.
+- Upgrade stations.
 
-СТРОГО ЗАПРЕЩЕНО:
+Existing locations must connect to the gameplay loop.
 
-- Выводить API key в терминал, Output, отчёты, скриншоты или чат.
-- Записывать ключ в документацию проекта.
-- Помещать ключ в Script, LocalScript, ModuleScript или ReplicatedStorage.
-- Публиковать ключ вместе с игрой.
-- Коммитить секретный файл в Git.
-- Копировать ключ в открытые конфигурационные файлы без необходимости.
+If a location is unnecessary, evaluate whether it should be redesigned, merged, or repurposed.
 
-Загружай ключ из локальной защищённой конфигурации или переменной окружения. Добавь секретные файлы в ".gitignore". Маскируй любые значения ключей в логах.
+Do not create many separate maps without a functional reason.
 
-Если нужного разрешения не хватает, сообщи точное имя scope или permission и продолжай работу доступными методами.
+Establish consistent travel and progression between the hub, player plots, and dungeons.
 
-5. Проверка каждого найденного ассета
+---
 
-До вставки в основной проект:
+PART 8 — DUNGEON FARM SYSTEM
 
-1. Проверь название, Asset ID и страницу ассета.
-2. Проверь создателя и доступность ассета.
-3. Посмотри описание и изображения предпросмотра.
-4. Проверь, соответствует ли модель стилю игры.
-5. Проверь наличие MeshPart, текстур, SurfaceAppearance и других зависимостей.
-6. Проверь размеры, масштаб, точку Pivot и ориентацию.
-7. Проверь геометрию, качество текстур и читаемость модели.
-8. Проверь количество деталей и предполагаемую нагрузку.
-9. Проверь коллизии и возможность использования в игровом мире.
-10. Проверь все вложенные Scripts, LocalScripts и ModuleScripts.
+This is one of the most important systems.
 
-Никогда не считай популярность ассета гарантией безопасности.
+A dungeon seed must represent a complete dungeon-generation opportunity.
 
-Не запускай неизвестные скрипты из скачанных моделей. Подозрительные, обфусцированные, зашифрованные или не имеющие понятного назначения скрипты должны быть отклонены либо безопасно удалены после проверки зависимостей.
+A seed is NOT a tiny plant, decorative object, or simple cube counter.
 
-Не допускай сторонних backdoor-механизмов, скрытых загрузчиков кода, неизвестных require, LoadString, несанкционированных сетевых запросов и доступа к DataStore.
+Dungeon growth
 
-При необходимости используй Sandbox и минимально необходимые Capabilities для сторонних моделей. Не выдавай ассетам доступ к Network, DataStore, AssetRequire, CapabilityControl или LoadString без доказанной необходимости.
+1. Player obtains a dungeon seed.
+2. Player places the seed on their plot.
+3. The seed begins growing.
+4. Growth has visible stages.
+5. The seed develops into a large dungeon module.
+6. The module contains an actual walkable dungeon.
+7. Player can enter and explore it.
+8. Modules can be expanded or connected through designated entrances and exits.
 
-Если у модели есть полезный визуальный контент, но небезопасные скрипты, сохрани только проверенную визуальную часть и реализуй необходимую логику собственными безопасными скриптами.
+Dungeon modules
 
-6. Временная зона импорта — Asset Staging
+Each module should have:
 
-Не вставляй все найденные модели сразу в основной игровой мир.
+- Entry room.
+- Connected rooms.
+- Corridors.
+- Enemy spawn points.
+- Treasure locations.
+- Special encounters.
+- Optional secret areas.
+- Exit or boss progression.
+- Clear navigation.
 
-Создай временную структуру для проверки, например:
+Generate dungeons using room templates, procedural layout algorithms, and modular geometry.
 
-"ServerStorage/_AssetStaging"
+The dungeon must feel like a coherent architectural space, not a collection of disconnected boxes.
 
-Раздели её на категории:
+Use a consistent dungeon theme.
 
-- Environment.
-- Buildings.
-- Dungeon.
-- Props.
-- Creatures.
-- NPC.
+Dungeon progression
+
+Create different dungeon tiers:
+
+- Basic
+- Uncommon
+- Rare
+- Epic
+- Legendary
+
+Difficulty affects:
+
+- Enemy strength.
+- Enemy composition.
+- Room complexity.
+- Elite spawns.
+- Boss mechanics.
+- Loot quality.
+- Rewards.
+
+Use configuration-driven balancing.
+
+Do not make rarity purely cosmetic.
+
+Dungeon expansion
+
+Allow the player to improve their dungeon:
+
+- New modules.
+- Additional rooms.
+- Stronger monsters.
+- Better rewards.
+- Special modifiers.
+- Secret chambers.
+- Boss rooms.
+
+Avoid uncontrolled growth that destroys performance.
+
+---
+
+PART 9 — FARMING, CREATURES AND DEFENSE
+
+The farm must be an integrated progression system, not a separate unrelated minigame.
+
+Implement:
+
+- Player-owned plot.
+- Seed management.
+- Dungeon growth.
+- Resource production.
+- Eggs.
+- Creature hatching.
+- Creature collection.
+- Creature upgrades.
+- Creature evolution.
+- Creature defense.
+- Plot upgrades.
+
+Creatures
+
+Creatures should have:
+
+- Unique models.
+- Rarity.
+- Stats.
+- Abilities.
+- Levels.
+- Upgrade paths.
+- Combat roles.
+
+Examples of roles:
+
+- Tank
+- Damage dealer
+- Support
+- Healer
+- Defender
+
+Eggs should produce creatures with meaningful differences.
+
+Use server-authoritative hatching and rewards.
+
+Creatures should help protect the player's plot and participate in relevant gameplay.
+
+---
+
+PART 10 — COMBAT SYSTEM
+
+Build one unified combat system.
+
+Support:
+
+- Melee weapons.
+- Ranged weapons where appropriate.
+- Skills.
+- Cooldowns.
+- Status effects.
+- Critical hits.
+- Damage types.
+- Enemy resistances.
+- Boss attacks.
+- Elite enemies.
+- Hit feedback.
+- Damage indicators.
+- Death and respawn.
+
+Combat must feel responsive.
+
+Client-side effects should provide immediate feedback, but the server decides damage and rewards.
+
+Implement proper server-side validation:
+
+- Weapon ownership.
+- Equipment state.
+- Attack cooldown.
+- Attack range.
+- Player state.
+- Enemy validity.
+- Target validation.
+- Resource costs.
+- Ability permissions.
+
+Do not allow clients to specify arbitrary damage or rewards.
+
+Use server-side rate limits for remote requests.
+
+---
+
+PART 11 — ENEMIES AND BOSS AI
+
+Create a unified enemy framework.
+
+Enemy categories:
+
+- Normal
+- Fast
+- Tank
+- Ranged
+- Elite
+- Mini-boss
+- Boss
+
+Enemies should support:
+
+- Detection.
+- Aggro.
+- Target selection.
+- Navigation.
+- Attack patterns.
+- Cooldowns.
+- Damage.
+- Death.
+- Loot.
+- Respawn or encounter reset.
+
+Use PathfindingService where appropriate.
+
+Do not make all enemies use identical behavior.
+
+Bosses
+
+Bosses must have actual mechanics:
+
+- Multiple phases.
+- Telegraphs.
+- Area attacks.
+- Special abilities.
+- Weak points where appropriate.
+- Enrage or escalation.
+- Defeat conditions.
+- Reward distribution.
+
+The boss must be a meaningful end point for dungeon progression.
+
+---
+
+PART 12 — INVENTORY, EQUIPMENT AND LOOT
+
+Build one authoritative inventory.
+
+Support:
+
+- Item stacks.
+- Item rarity.
+- Equipment slots.
 - Weapons.
-- Resources.
-- Decorations.
-- VFX.
-- Audio.
+- Armor.
+- Accessories.
+- Consumables.
+- Materials.
+- Dungeon seeds.
+- Eggs.
+- Quest items.
+- Storage.
 
-Временно помещай туда найденные модели, проверяй их и только после этого переноси в нужные места проекта.
+Loot system:
 
-Не оставляй тестовые ассеты и дубликаты в финальной структуре проекта.
+- Enemy drops.
+- Boss rewards.
+- Chests.
+- Rare encounters.
+- Dungeon completion rewards.
 
-7. Система безопасной замены старых моделей
+Loot tables must be configurable.
 
-Замена должна учитывать не только внешний вид, но и зависимости игрового проекта.
+Use server-generated rewards.
 
-Для каждой замены:
+Prevent item duplication and invalid trades.
 
-1. Сохрани исходный объект и его положение.
-2. Определи его роль в игре.
-3. Найди подходящий новый ассет.
-4. Импортируй и подготовь новую модель.
-5. Подгони масштаб, Pivot, положение и ориентацию.
-6. Настрой Anchored, CanCollide, CanTouch и CanQuery.
-7. Настрой необходимые Collision Groups.
-8. Перенеси необходимые Attributes, Tags, Attachments и связи.
-9. Сохрани все рабочие игровые скрипты и точки взаимодействия.
-10. Проверь зависимости других систем от старой модели.
-11. Проведи тестирование новой модели.
-12. Только после успешной проверки удали старый визуальный объект.
+All item transfers and equipment changes must be validated.
 
-Особое внимание:
+---
 
-НЕ УДАЛЯТЬ БЕЗ ПРОВЕРКИ:
+PART 13 — QUESTS AND PROGRESSION
 
-- Hitbox.
-- Trigger.
-- SpawnLocation.
-- Invisible collider.
-- InteractionPoint.
-- ProximityPrompt.
-- Attachments.
-- Constraints.
-- Зоны определения входа и выхода.
-- Навигационные маркеры.
-- Объекты, на которые ссылаются игровые скрипты.
+Implement connected quests.
 
-Если старая модель состоит из визуальной геометрии и технических объектов, раздели их. Заменяй только визуальную часть.
+Quest types:
 
-Не ломай существующие RemoteEvents, RemoteFunctions, игровые ссылки и структуру данных.
+- Defeat enemies.
+- Defeat bosses.
+- Explore dungeons.
+- Collect materials.
+- Grow dungeon modules.
+- Hatch creatures.
+- Upgrade equipment.
+- Complete dungeon challenges.
 
-8. Производительность и качество
+Progression:
 
-Все новые ассеты должны быть оптимизированы для Roblox и слабых устройств.
+- Player levels.
+- Experience.
+- Equipment progression.
+- Dungeon tier progression.
+- Farm progression.
+- Creature progression.
+- Unlockable content.
 
-Проверь:
+The player must always have a meaningful next goal.
 
-- Количество MeshPart и BasePart.
-- Размеры и разрешение текстур.
-- Сложность геометрии.
-- Коллизии и Collision Fidelity.
-- Количество одновременно видимых объектов.
-- Использование Anchored для статического окружения.
-- Избыточные физические взаимодействия.
-- StreamingEnabled и корректную работу при подгрузке окружения.
-- Повторяющиеся одинаковые модели.
-- Необходимость переиспользования и пакетирования ассетов.
+---
 
-Не превращай каждую декоративную деталь в отдельный физически активный объект.
+PART 14 — COOPERATIVE MULTIPLAYER
 
-Для статических декоративных моделей используй подходящие простые коллайдеры вместо тяжёлых сложных коллизий, когда это не портит игровой процесс.
+Support solo and cooperative gameplay.
 
-9. Обязательная карта замен
+Party size: up to 4 players.
 
-Для каждого выбранного ассета создай запись в "ASSET_REPLACEMENT_MAP.md":
+Implement:
 
-Старый объект| Новая модель| Asset ID| Источник| Назначение| Статус
+- Party creation.
+- Invitations.
+- Party membership.
+- Ready checks.
+- Dungeon entry.
+- Player synchronization.
+- Reward distribution.
+- Party disbanding.
+- Disconnect handling.
 
-Для всех ассетов дополнительно веди "ASSET_REGISTER.md":
+Avoid giving rewards multiple times.
 
-- Название.
-- Asset ID.
-- Тип.
-- Создатель.
-- Ссылка на страницу.
-- Источник: Inventory или Creator Store.
-- Стоимость.
-- Категория.
-- Где используется.
-- Проверка скриптов.
-- Проверка коллизий.
-- Результат тестирования.
+Define how party members enter and exit dungeons.
 
-Создай "ASSET_SECURITY_AUDIT.md" с результатами проверки сторонних моделей и их скриптов.
+Do not let one player's client control another player's progression.
 
-Создай "TOOLBOX_SEARCH_LOG.md" с поисковыми запросами, использованными фильтрами, выбранными кандидатами и причинами отклонения остальных.
+---
 
-10. Визуальная проверка через Roblox Studio Play
+PART 15 — PLAYER DATA AND SAVING
 
-Каждая большая группа замен должна быть проверена непосредственно в Roblox Studio.
+Implement a unified player data schema.
 
-Не ограничивайся просмотром Explorer или успешной вставкой модели.
+Save:
 
-Обязательно:
+- Currency.
+- Inventory.
+- Equipment.
+- Player progression.
+- Quests.
+- Dungeon seeds.
+- Player plot.
+- Dungeon growth.
+- Dungeon modules.
+- Creatures.
+- Eggs.
+- Upgrades.
+- Unlocks.
 
-- Запусти Play.
-- Пройди по хабу.
-- Проверь все существующие точки интереса.
-- Осмотри здания и окружение.
-- Проверь взаимодействия с заменёнными объектами.
-- Пройди по помещениям и подземельям.
-- Проверь коллизии и отсутствие проваливания сквозь геометрию.
-- Проверь двери, входы, выходы и переходы.
-- Убедись, что новые модели не блокируют проходы.
-- Проверь мобов, сундуки, предметы и другие заменённые игровые объекты.
-- Сделай скриншоты до и после важных замен.
-- Проверь Output на ошибки.
+Use DataStoreService for persistent data.
 
-После каждого этапа исправляй проблемы и повторяй тестирование.
+Use UpdateAsync where concurrent updates require it.
 
-Не отмечай замену как PASS только потому, что модель появилась в Explorer.
+Implement:
 
-11. Критерии завершения
+- pcall error handling.
+- Retry with exponential backoff.
+- Data validation.
+- Schema versioning.
+- Migration.
+- Session conflict protection.
+- Safe player loading.
+- Safe player leaving.
+- BindToClose handling.
+- Autosaving with controlled intervals.
 
-Задача считается выполненной, когда:
+Do not overwrite valid saved data with default data when loading fails.
 
-- Проведена инвентаризация всех основных сервисов проекта.
-- Все обнаруженные стандартные и временные визуальные заглушки классифицированы.
-- Все подходящие объекты заменены качественными ассетами либо имеют обоснованный статус KEEP/ BLOCKED.
-- Не испорчены существующие пользовательские модели.
-- Не сломана игровая логика.
-- Все сторонние модели прошли проверку безопасности.
-- Новые ассеты зарегистрированы.
-- Проверены коллизии, масштаб, Pivot и производительность.
-- Заменённые объекты проверены через Play.
-- Отсутствуют критические ошибки после интеграции.
+Studio tests must use a separate test environment.
 
-Для каждого результата используй статусы:
+Never risk existing production player data during testing.
 
-PASS — реально проверено и работает.
+---
 
-FAIL — проверка выявила проблему.
+PART 16 — UI/UX
 
-BLOCKED — выполнение заблокировано отсутствующим разрешением, недоступным ассетом или ограничением инструмента.
+Audit all existing UI before replacing anything.
 
-NOT TESTED — тест фактически не проводился.
+Preserve useful existing assets.
 
-Не скрывай неудачные замены. Не объявляй работу завершённой, пока в отчёте остаются критические FAIL.
+Create a consistent fantasy RPG interface.
 
-Главный принцип: не создавать новую игру вместо существующей. Улучшить визуальное качество текущего проекта, заменить стандартный контент подходящими ассетами и сохранить все работающие игровые системы.
+Required UI:
+
+- Main HUD.
+- Health and resource bars.
+- Player level and XP.
+- Hotbar.
+- Inventory.
+- Equipment.
+- Character information.
+- Quest tracker.
+- Dungeon information.
+- Dungeon growth interface.
+- Creature collection.
+- Egg hatching.
+- Farming management.
+- Party interface.
+- Merchant interface.
+- Notifications.
+- Boss health bar.
+- Loot rewards.
+- Settings.
+
+UI requirements:
+
+- Consistent typography.
+- Clear hierarchy.
+- Strong visual identity.
+- Good spacing.
+- Proper scaling.
+- Responsive layouts.
+- Mobile support.
+- No overlapping elements.
+- No inaccessible buttons.
+- Clear interaction feedback.
+
+Do not replace the UI with generic default Roblox menus.
+
+Use existing custom assets where appropriate.
+
+---
+
+PART 17 — ART, ENVIRONMENT AND WORLD QUALITY
+
+Inspect existing geometry and models.
+
+Preserve quality assets.
+
+Replace only assets that are genuinely unsuitable.
+
+Use a coherent style guide.
+
+Dungeons must have:
+
+- Proper room proportions.
+- Interesting silhouettes.
+- Architectural variation.
+- Lighting variation.
+- Clear navigation.
+- Environmental storytelling.
+- Decoration with gameplay purpose.
+- Appropriate encounter spaces.
+
+Avoid huge empty rooms and oversized open areas.
+
+Create believable transitions between rooms.
+
+Do not use randomly assembled primitive Parts as final visual content.
+
+If procedural geometry is required, use modular authored templates, MeshParts, and optimized combinations.
+
+Do not sacrifice performance for excessive decoration.
+
+---
+
+PART 18 — PERFORMANCE AND SCALABILITY
+
+The game must support weak computers and mobile devices.
+
+Audit:
+
+- Part count.
+- Mesh complexity.
+- Texture memory.
+- Physics.
+- Network replication.
+- Remote traffic.
+- AI update frequency.
+- Pathfinding frequency.
+- Memory usage.
+- UI rendering.
+- Effects.
+- Dungeon generation.
+
+Use:
+
+- Instance Streaming where appropriate.
+- Object pooling.
+- Controlled NPC update rates.
+- Efficient enemy management.
+- Spatial organization.
+- Event-driven systems.
+- Cleanup of temporary instances.
+- Optimized effects.
+- Reasonable replication frequency.
+
+Avoid unnecessary RunService loops.
+
+Avoid excessive RemoteEvent traffic.
+
+Avoid generating the entire universe in one frame.
+
+Dungeon generation must be measured on realistic device conditions.
+
+Set performance budgets and record actual measurements.
+
+---
+
+PART 19 — DOCUMENTATION AND DEVELOPMENT CONTROL
+
+Create and continuously update:
+
+PROJECT_AUDIT.md
+IMPLEMENTATION_PLAN.md
+GITHUB_RESEARCH_REPORT.md
+OPEN_SOURCE_INTEGRATION_MAP.md
+ARCHITECTURE.md
+GAMEPLAY_SYSTEMS.md
+DATA_SCHEMA.md
+NETWORK_CONTRACT.md
+PLAYTEST_REPORT.md
+PERFORMANCE_REPORT.md
+KNOWN_ISSUES.md
+CHANGELOG.md
+
+Every system must have documented:
+
+- Purpose.
+- Dependencies.
+- Server/client responsibility.
+- Inputs and outputs.
+- Data structures.
+- Remote contracts.
+- Failure behavior.
+- Test cases.
+
+Maintain a single source of truth for system architecture.
+
+Do not let different agents create competing implementations.
+
+If multiple AI agents work on the project:
+
+- Assign separate modules.
+- Define file ownership.
+- Define interfaces first.
+- Avoid simultaneous edits to the same files.
+- Integrate through controlled reviews.
+
+Maintain progress notes so another AI can continue without repeating the audit.
+
+---
+
+PART 20 — TESTING REQUIREMENTS
+
+You MUST use Roblox Studio MCP to test the actual Place.
+
+Do not consider a successful code write to be a successful implementation.
+
+Testing must include:
+
+1. Start the game.
+2. Inspect Output.
+3. Check server errors.
+4. Check client errors.
+5. Check character spawning.
+6. Check hub navigation.
+7. Check all existing points of interest.
+8. Check interactions.
+9. Check inventory.
+10. Check equipment.
+11. Check saving and loading.
+12. Check dungeon seed placement.
+13. Check dungeon growth.
+14. Check dungeon generation.
+15. Check room connectivity.
+16. Check enemy spawning.
+17. Check enemy AI.
+18. Check combat.
+19. Check boss encounters.
+20. Check loot.
+21. Check creature systems.
+22. Check quests.
+23. Check portals and transitions.
+24. Check party systems.
+25. Check UI interactions.
+26. Check mobile layouts.
+27. Check performance.
+
+Multiplayer testing
+
+Use Roblox Studio Server & Clients mode.
+
+Test with multiple clients.
+
+Verify:
+
+- Shared state synchronization.
+- Party membership.
+- Dungeon access.
+- Combat replication.
+- Reward distribution.
+- Disconnect handling.
+- Data isolation.
+- No duplicated rewards.
+
+Use Studio device simulation and network simulation where appropriate.
+
+Capture screenshots of important stages.
+
+Read Output after each significant test.
+
+Fix discovered problems and repeat testing.
+
+Do not mark a feature complete until it has been tested.
+
+---
+
+PART 21 — IMPLEMENTATION ORDER
+
+Work autonomously through these stages.
+
+STAGE 1 — FULL AUDIT
+
+- Inspect the existing Place.
+- Create backup.
+- Map all locations and systems.
+- Identify broken and duplicate systems.
+- Document current functionality.
+
+STAGE 2 — OPEN-SOURCE RESEARCH
+
+- Inspect all repositories.
+- Read source code and documentation.
+- Check licenses.
+- Select compatible modules.
+- Create integration map.
+
+STAGE 3 — ARCHITECTURE REFACTOR
+
+- Establish unified data model.
+- Establish service architecture.
+- Establish networking contracts.
+- Resolve duplicate systems.
+- Preserve existing assets and locations.
+
+STAGE 4 — CORE GAMEPLAY
+
+- Inventory.
+- Equipment.
+- Player progression.
+- Economy.
+- Quests.
+- Combat.
+- Enemies.
+- Loot.
+- Persistence.
+
+STAGE 5 — DUNGEON SYSTEM
+
+- Dungeon seeds.
+- Growth.
+- Module generation.
+- Room connectivity.
+- Enemy encounters.
+- Boss encounters.
+- Dungeon rewards.
+
+STAGE 6 — FARM AND CREATURES
+
+- Player plots.
+- Farming.
+- Eggs.
+- Creatures.
+- Creature progression.
+- Plot defense.
+
+STAGE 7 — WORLD INTEGRATION
+
+- Functional hub.
+- Existing points of interest.
+- NPC interactions.
+- Portals.
+- Location transitions.
+- Full gameplay loop.
+
+STAGE 8 — UI AND PRESENTATION
+
+- Complete HUD.
+- Inventory and menus.
+- Dungeon interfaces.
+- Creature interfaces.
+- Combat feedback.
+- Visual consistency.
+
+STAGE 9 — TESTING AND OPTIMIZATION
+
+- Single-player tests.
+- Multiplayer tests.
+- Mobile tests.
+- Performance tests.
+- Bug fixing.
+- Regression testing.
+
+STAGE 10 — FINAL VALIDATION
+
+- Complete progression loop.
+- Verify every required system.
+- Verify all important interactions.
+- Verify saving.
+- Verify multiplayer.
+- Verify performance.
+- Update all documentation.
+
+These stages are not permission to stop after each stage.
+
+Continue working until the full implementation is complete or a genuine external blocker prevents progress.
+
+---
+
+PART 22 — STRICT RULES
+
+1. Do not create a new blank Place instead of improving the existing one.
+2. Do not delete the existing hub.
+3. Do not discard existing points of interest without inspection.
+4. Do not replace working systems unnecessarily.
+5. Do not blindly copy entire GitHub projects.
+6. Do not introduce duplicate frameworks.
+7. Do not use unlicensed assets.
+8. Do not use decompiled or questionable assets without verified rights.
+9. Do not invent completed features.
+10. Do not leave broken interactions.
+11. Do not use fake UI functionality.
+12. Do not stop after producing documentation.
+13. Do not stop after creating a prototype.
+14. Do not create isolated gameplay systems.
+15. Do not ignore Output errors.
+16. Do not test only through static code inspection.
+17. Do not risk production player data.
+18. Do not introduce unnecessary complexity.
+19. Do not replace custom visuals with primitive placeholders.
+20. Do not report success without actual Studio testing.
+
+When a dependency, MCP capability, API, or repository is unavailable, document the limitation and continue with the best verified alternative.
+
+Never pretend to have downloaded, inspected, executed, or tested something you could not access.
+
+---
+
+PART 23 — DEFINITION OF DONE
+
+The project is complete only when:
+
+- The existing Place has been successfully refactored.
+- The hub is functional.
+- Existing useful locations are integrated.
+- Player data is unified.
+- Inventory works.
+- Equipment works.
+- Combat works.
+- Enemies work.
+- Bosses work.
+- Loot works.
+- Quests work.
+- Dungeon seeds work.
+- Dungeon growth works.
+- Dungeon modules are explorable.
+- Rooms connect correctly.
+- Farm systems work.
+- Creatures work.
+- Progression works.
+- Multiplayer works.
+- Saving and loading work.
+- UI works.
+- The full gameplay loop is playable.
+- Major errors have been fixed.
+- Performance has been measured.
+- Studio tests have been performed.
+- Documentation has been updated.
+
+Deliver a finished, integrated game, not a collection of disconnected features.
+
+FINAL MISSION
+
+Transform the existing ROBLOX DUNGEON FARM Place into a coherent, polished, fully playable fantasy RPG by combining the best verified ideas and legally usable implementations from the researched open-source Roblox projects.
+
+Preserve the existing work.
+
+Reuse proven solutions.
+
+Follow official Roblox documentation.
+
+Build one consistent architecture.
+
+Make every system work together.
+
+Test the actual game through Roblox Studio MCP.
+
+Take ownership of the complete implementation and continue until the project reaches the Definition of Done.
+
+Begin by inspecting the existing Place and creating the backup. Do not ask the user to manually rebuild anything that you can inspect or implement through the available tools.
