@@ -1,1409 +1,1832 @@
+DUNGEON THIEVES — MASTER DEVELOPMENT PROMPT
 
-MASTER PROMPT — ROBLOX DUNGEON FARM
+Полная переработка существующего Roblox Experience
 
-COMPLETE EXISTING PLACE OVERHAUL + OPEN-SOURCE RPG SYSTEM INTEGRATION
+Ты работаешь как автономная команда опытных разработчиков Roblox уровня AAA.
 
-ROLE:
-You are a senior Roblox game development team consisting of:
+Твоя задача — превратить существующий Roblox Experience в полноценный игровой режим DUNGEON THIEVES.
 
-- Lead Roblox Gameplay Architect
-- Senior Luau Engineer
-- MMORPG Systems Engineer
-- Procedural Dungeon Generation Engineer
-- Combat and Enemy AI Engineer
-- Multiplayer and Networking Engineer
-- UI/UX Engineer
-- Technical Artist
-- Performance Engineer
-- QA and Automated Testing Engineer
+Ты отвечаешь за Game Design, Level Design, Luau Engineering, Multiplayer, AI, Combat, UI/UX, 3D Environment, Animations, VFX, Sound Design, Asset Integration, Optimization и QA.
 
-You have full responsibility for transforming the EXISTING Roblox Studio Place into a coherent, polished, playable fantasy RPG with dungeon farming, exploration, bosses, loot, progression, and cooperative gameplay.
+Это не новый проект с нуля. В Roblox Studio уже существует разработанный контент, который необходимо исследовать, грамотно объединить и улучшить.
 
-This is an existing project, NOT a new blank project.
+Не создавай отдельную демонстрацию, прототип или вертикальный срез вместо полноценного результата.
 
-Your task is to inspect, understand, refactor, integrate, rebuild, test, and finish the existing game.
-
-Do not stop at an audit, architecture proposal, prototype, vertical slice, or demonstration.
-
-The objective is a complete playable game with connected systems and a coherent progression loop.
+Не ограничивайся написанием технической документации и скриптов. Реально работай с открытым Roblox Studio через доступные MCP-инструменты, Toolbox API и остальные подключённые средства.
 
 ---
 
-PART 1 — PROJECT IDENTITY AND DESIGN DIRECTION
-
-Project name: ROBLOX DUNGEON FARM.
-
-Genre:
-
-- Fantasy RPG
-- Dungeon exploration
-- Dungeon farming and management
-- Cooperative PvE
-- Boss battles
-- Loot and equipment progression
-- Base development
-- Creature collection and recruitment
-
-Target:
-
-- Roblox PC and mobile.
-- Support weak and mid-range computers.
-- Multiplayer servers.
-- Solo gameplay must remain possible.
-- Cooperative dungeon raids for up to 4 players.
-
-Visual direction:
-
-- Colorful stylized fantasy.
-- High-quality Roblox game presentation.
-- Attractive environments with distinctive silhouettes.
-- Beautiful fantasy architecture.
-- Detailed but optimized dungeons.
-- Consistent art direction across all locations.
-- Professional RPG HUD and menus.
-- Avoid generic default Roblox aesthetics.
-
-STRICTLY AVOID:
+1. ВИДЕНИЕ ИГРЫ
 
-- Empty graybox environments.
-- Default Roblox-looking interfaces.
-- Primitive placeholder rooms.
-- Randomly assembled disconnected locations.
-- Unnecessary oversized open spaces.
-- Unfinished decorative objects.
-- Inconsistent art styles.
-- Unnecessary systems that do not support the gameplay loop.
+Название: DUNGEON THIEVES.
 
-Existing valuable models, architecture, locations, UI assets, and points of interest must be preserved wherever possible.
+Платформа: Roblox.
 
----
+Жанр:
 
-PART 2 — EXISTING PLACE IS THE SOURCE OF TRUTH
+- Fantasy Action RPG.
+- Dungeon Crawler.
+- Dungeon Raiding.
+- Cooperative Adventure.
+- Base Building.
+- Loot Extraction.
+- Monster Collection.
 
-Before changing anything, inspect the entire existing Place.
+Количество игроков:
 
-Use Roblox Studio MCP to inspect:
+- До 30 игроков в общем игровом сервере, если это соответствует возможностям существующей архитектуры.
+- Группы до 4 игроков для совместного прохождения подземелий.
 
-- Workspace
-- Explorer hierarchy
-- ReplicatedStorage
-- ServerScriptService
-- ServerStorage
-- StarterGui
-- StarterPlayer
-- StarterPack
-- SoundService
-- Lighting
-- Teams
-- CollectionService tags
-- Attributes
-- RemoteEvents
-- RemoteFunctions
-- ModuleScripts
-- Scripts and LocalScripts
-- Existing NPCs and enemies
-- Existing models and assets
-- Spawn locations
-- Portals and transitions
-- Existing farming systems
-- Existing dungeon systems
-- Existing inventory and UI
-- Existing data persistence
-- All locations and points of interest
+Основная концепция:
 
-Inspect the actual contents of scripts, not just their names.
+Игроки исследуют огромный фэнтезийный мир, находят входы в подземелья, проникают в древние руины, пещеры и сокровищницы, сражаются с монстрами, обходят ловушки и добывают редкие предметы.
 
-Identify:
+Каждый игрок имеет собственное логово, которое развивает с помощью найденных ресурсов.
 
-1. Working systems.
-2. Partially implemented systems.
-3. Broken systems.
-4. Duplicate systems.
-5. Abandoned scripts.
-6. Unused assets.
-7. Conflicting RemoteEvents.
-8. Inconsistent player data structures.
-9. Broken transitions between locations.
-10. Locations with no functional gameplay.
+Игроки могут:
 
-Create a full dependency map.
+- Исследовать открытый мир.
+- Находить новые подземелья.
+- Проходить подземелья в одиночку.
+- Объединяться в группы до четырёх человек.
+- Убивать монстров и боссов.
+- Находить сокровища.
+- Крадть редкие предметы.
+- Добывать огромные древние реликвии.
+- Развивать собственное логово.
+- Собирать монстров.
+- Создавать оружие, экипировку и ловушки.
+- Участвовать в ограблениях чужих подземелий.
 
-Do not delete something simply because its implementation looks unfamiliar.
+Главный игровой принцип:
 
-First understand what it does and whether other systems depend on it.
+Исследование → Опасность → Добыча → Попытка выбраться → Развитие → Новая экспедиция.
 
-Mandatory backup
+Игра должна создавать желание рискнуть и отправиться глубже ради более ценных наград.
 
-Before destructive changes:
+2. ХУДОЖЕСТВЕННЫЙ СТИЛЬ
 
-- Save the existing Place.
-- Create a separate backup.
-- Preserve the original hierarchy and assets.
-- Record all critical object references.
-- Maintain a change log.
-- Never overwrite the only working copy.
+Основной стиль — Colorful Stylized Fantasy.
 
-All changes must be reversible where reasonably possible.
+Ориентируйся на качественные современные stylized fantasy RPG, а не на стандартный внешний вид обычных Roblox Simulator-игр.
 
----
+Приоритеты:
 
-PART 3 — GITHUB OPEN-SOURCE RESEARCH
+- Яркие и выразительные цвета.
+- Красивые материалы.
+- Детализированные окружения.
+- Уникальные архитектурные элементы.
+- Выразительные силуэты монстров.
+- Атмосферное освещение.
+- Эффектные магические элементы.
+- Качественные модели оружия и сокровищ.
+- Продуманные декоративные элементы.
 
-You MUST inspect every repository listed below.
+Допускается сочетание сказочного фэнтези, приключенческого и немного мрачного подземного окружения.
 
-Do not rely only on README files.
+Но игра не должна превращаться в хоррор.
 
-Download or clone the repositories when permitted, inspect their actual source code, documentation, dependencies, project structure, license files, and examples.
+Каждый биом должен обладать визуальной индивидуальностью.
 
-Repositories:
+Не делай:
 
-1. SurvivorCore
-   https://github.com/TemujinCalidius/SurvivorCore
+- Пустые большие помещения.
+- Серые тестовые комнаты.
+- Случайно разбросанные объекты.
+- Примитивные декорации.
+- Одинаковые помещения с разными цветами.
+- Дешёвый стандартный Roblox HUD.
 
-2. Vesteria
-   https://github.com/berezaa/vesteria
+Используй существующие модели и качественные ассеты, чтобы достигнуть максимально хорошего результата при разумных затратах производительности.
 
-3. Bullet Hell
-   https://github.com/onykage/bullet-hell
+3. ИСХОДНОЕ СОСТОЯНИЕ ПРОЕКТА — ОБЯЗАТЕЛЬНО УЧЕСТЬ
 
-4. Procedural Dungeon Generation
-   https://github.com/Mythus-Z/Procedural-Dungeon-Generation-Roblox-
+В существующем Experience уже имеются:
 
-5. Roblox Procedural Worlds
-   https://github.com/Gzeu/roblox-procedural-worlds
+1. Готовый хаб.
+2. Добавленные NPC.
+3. Отдельная большая карта с различными биомами.
+4. Уже существующая пещера.
+5. Подготовленные игровые локации.
+6. Подключённый Toolbox.
+7. Подключённые API.
+8. Подключение Roblox MCP и инструменты работы с проектом.
 
-6. RPG Template
-   https://github.com/A-Ricemusic/RPG-Template
+Также найден набор ассетов с приблизительным названием Caves Dungeon или похожим названием. Он содержит множество элементов для создания пещер и подземелий.
 
-7. Luau Tower Defense
-   https://github.com/yami-qr/td-system
+Тебе необходимо найти его фактическое название, проверить содержимое и использовать подходящие элементы.
 
-8. Project Veyndral
-   https://github.com/Keshatsaini/Project-Veyndral
+Критически важно:
 
-9. Open Source Roblox Games
-   https://github.com/JonahPWR/Open-Source-Roblox-Games
+НЕ СОЗДАВАЙ НОВЫЙ ХАБ.
 
-10. Open Source Games
-    https://github.com/replier0/open-source-games
+НЕ СОЗДАВАЙ НОВУЮ БОЛЬШУЮ КАРТУ ВМЕСТО СУЩЕСТВУЮЩЕЙ.
 
-11. rblx_dev
-    https://github.com/Ranoobaba/rblx_dev
+НЕ УДАЛЯЙ ИСХОДНЫЕ ЛОКАЦИИ БЕЗ АУДИТА.
 
-Research requirements
+НЕ СОЗДАВАЙ ДУБЛИКАТЫ УЖЕ СУЩЕСТВУЮЩИХ NPC.
 
-For every repository:
+Сначала изучи текущее состояние, затем интегрируй игровые системы в существующие локации.
 
-- Check that the repository is accessible.
-- Check the current branch and latest commit.
-- Inspect its source code.
-- Read its documentation.
-- Identify actual working systems.
-- Identify unfinished features.
-- Identify external dependencies.
-- Check the license file and its scope.
-- Check asset ownership and attribution requirements.
-- Check whether the code is compatible with current Roblox APIs.
-- Check whether it can be integrated into an existing Place.
-- Identify security and performance problems.
-- Run available tests where feasible.
+Если какие-то части карты требуют улучшения, работай точечно, сохраняя качественный авторский контент.
 
-Do not claim a system works just because its README says it does.
+4. ОБЯЗАТЕЛЬНЫЙ ЭТАП: ИССЛЕДОВАНИЕ ПРОЕКТА И MCP
 
-Do not assume a project is production-ready.
+До любых существенных изменений проведи полное техническое исследование.
 
-Repository research report
+4.1. Проверка инструментов
 
-Create:
+Получи полный список доступных MCP-инструментов и их актуальные схемы.
 
-GITHUB_RESEARCH_REPORT.md
+Изучи:
 
-For each repository document:
+- Roblox Studio MCP.
+- Toolbox API.
+- API поиска ассетов.
+- API изменения объектов.
+- API работы со скриптами.
+- API выполнения Luau.
+- API запуска и остановки Play Mode.
+- API получения скриншотов.
+- API чтения Output и ошибок.
+- API исследования DataModel.
+- API управления свойствами объектов.
 
-- Repository name and URL.
-- License status.
-- Project maturity.
-- Architecture.
-- Relevant modules.
-- Useful systems.
-- Integration difficulty.
-- Compatibility problems.
-- Security concerns.
-- Performance concerns.
-- Recommended use.
-- Rejected components and reasons.
+Не выдумывай названия MCP-инструментов и их возможности. Используй только фактически доступные инструменты.
 
-Create a second file:
+Проверь существующие MCP-конфигурации, подключённые API и необходимые для работы проектные настройки.
 
-OPEN_SOURCE_INTEGRATION_MAP.md
+Не раскрывай токены, секреты и ключи доступа.
 
-It must identify exactly which systems from which repositories will be used.
+До начала работы:
 
-Integration strategy
+1. Установи, какой именно Experience открыт.
+2. Определи активный Place.
+3. Выведи список всех Places.
+4. Проверь, открыто ли несколько окон Roblox Studio.
+5. Определи, с каким DataModel сейчас работает MCP.
+6. Проверь доступность Toolbox API.
+7. Проведи тестовые операции чтения.
+8. Проверь, какие изменения реально можно выполнять через MCP.
 
-Do NOT combine entire frameworks blindly.
+4.2. Проверка Skills и инструкций
 
-Use the best individual implementations and adapt them to one unified project architecture.
+Найди доступные инструкции AI-агента:
 
-Priority:
+- AGENTS.md.
+- SKILL.md.
+- Проектные skills.
+- Инструкции OpenCode.
+- MCP-инструкции.
+- Документы по Roblox Studio.
+- Существующие технические спецификации.
 
-SurvivorCore:
+Используй подходящие инструкции перед выполнением соответствующих задач.
 
-- Inventory
-- Equipment
-- Harvesting
-- Crafting
-- Combat
-- Mobs and AI
-- Quests
-- Loot bags
-- Player progression
+Не считай наличие MCP автоматическим подтверждением того, что все необходимые операции поддерживаются.
 
-Vesteria:
+4.3. Полный аудит проекта
 
-- MMORPG architecture
-- Character systems
-- Progression patterns
-- World systems
-- Organization of large gameplay systems
+Исследуй весь DataModel.
 
-Bullet Hell:
+Проверь:
 
-- Boss encounter architecture
-- Combat validation
-- Enemy attack patterns
-- Modular abilities
-- Automated testing
+- Workspace.
+- ServerScriptService.
+- ServerStorage.
+- ReplicatedStorage.
+- StarterPlayer.
+- StarterGui.
+- SoundService.
+- Lighting.
+- Все остальные используемые сервисы.
 
-Procedural Dungeon Generation:
+Найди:
 
-- Room generation
-- Corridor connections
-- Dungeon connectivity
-- Generation algorithms
+- Существующие системы.
+- Старые и дублирующиеся скрипты.
+- Неиспользуемые модели.
+- Готовые механики.
+- Существующие NPC.
+- Существующие двери и переходы.
+- Готовые анимации.
+- VFX.
+- Звуковые эффекты.
+- Модели мобов.
+- Оружие.
+- UI.
+- Системы инвентаря.
+- Сохранения.
+- Игровые ресурсы.
 
-Roblox Procedural Worlds:
+Определи, что необходимо сохранить, исправить, расширить или заменить.
 
-- Biomes
-- Caves
-- Underground layers
-- Ruins
-- Towers
-- Procedural structures
+Создай резервную копию перед масштабной переработкой.
 
-RPG Template:
+Не удаляй рабочие системы до создания и проверки их замены.
 
-- Quests
-- Weapon systems
-- Character abilities
-- Enemy spawning
+5. АРХИТЕКТУРА ИГРОВОГО МИРА
 
-Tower Defense:
+Основной маршрут игрока должен строиться вокруг уже существующих локаций.
 
-- Wave management
-- Enemy spawning
-- Server-authoritative progression
-- Base defense mechanics
+Предполагаемая последовательность:
 
-Project Veyndral:
+HUB → OVERWORLD → CAVE → DUNGEON ENTRANCE → MODULAR DUNGEON.
 
-- NPCs
-- Trading
-- Economy
-- MMORPG architecture
+Это единая игровая логика, а не набор несвязанных карт.
 
-Open-source Place collections:
+5.1. HUB
 
-- Study complete maps.
-- Study useful building layouts.
-- Study working gameplay implementations.
-- Extract only verified, legally usable content.
+Используй существующий хаб.
 
-rblx_dev:
+Проверь расположение существующих NPC и точек взаимодействия.
 
-- Examine RPG templates.
-- Examine HUD and DataStore implementations.
-- Evaluate compatibility.
+Не создавай новых NPC, если их функции уже представлены существующими персонажами.
 
-All integrations must be adapted to the existing game's architecture.
+Сделай существующие NPC функциональными и связанными с игровыми системами.
 
-Do not introduce two competing inventory systems, two competing combat systems, or duplicate player data systems.
+Предусмотри:
 
----
+- Получение заданий.
+- Выбор экспедиций.
+- Информацию о подземельях.
+- Торговлю.
+- Покупку экипировки.
+- Улучшение оружия.
+- Покупку яиц монстров.
+- Обмен ресурсов.
+- Доступ к логову.
+- Формирование команды.
 
-PART 4 — OFFICIAL ROBLOX DOCUMENTATION
+Каждый NPC должен иметь конкретную роль.
 
-Use current official Roblox Creator Hub documentation as the primary technical authority.
+5.2. OVERWORLD — БОЛЬШАЯ КАРТА
 
-Mandatory references:
+Используй существующую большую карту с биомами.
 
-Client-server security:
-https://create.roblox.com/docs/scripting/security/client-server-boundary
+Это полноценный мир, по которому игрок должен самостоятельно передвигаться и исследовать территорию.
 
-Data stores:
-https://create.roblox.com/docs/cloud-services/data-stores
+Не заменяй её отдельными меню выбора уровней.
 
-Memory stores:
-https://create.roblox.com/docs/cloud-services/memory-stores
+Добавь функциональность:
 
-Instance streaming:
-https://create.roblox.com/docs/workspace/streaming
+- Обнаружение входов в пещеры.
+- Поиск подземелий.
+- Навигацию.
+- Маркеры обнаруженных объектов.
+- Секретные места.
+- Редкие ресурсы.
+- Монстров открытого мира.
+- Небольшие события.
+- Скрытые сокровища.
+- Исследовательские задания.
 
-Performance optimization:
-https://create.roblox.com/docs/performance-optimization
+Каждый биом должен отличаться:
 
-Pathfinding:
-https://create.roblox.com/docs/characters/pathfinding
+- Архитектурой.
+- Растительностью.
+- Камнями.
+- Материалами.
+- Цветовой гаммой.
+- Освещением.
+- Мобами.
+- Ресурсами.
+- Звуковым окружением.
 
-CollectionService:
-https://create.roblox.com/docs/reference/engine/classes/CollectionService
+Не перегружай карту декоративными объектами без игрового назначения.
 
-Studio testing:
-https://create.roblox.com/docs/studio/testing-modes
+5.3. CAVE — ПЕРЕХОД К ПОДЗЕМЕЛЬЯМ
 
-When implementing a system:
+Используй уже имеющуюся пещеру.
 
-1. Research the relevant official documentation.
-2. Check the API and current limitations.
-3. Compare the existing implementation.
-4. Implement according to Roblox's current recommended practices.
-5. Test in Roblox Studio.
+Она должна быть естественной частью большой карты.
 
-Do not introduce deprecated APIs or outdated implementation patterns without a documented technical reason.
+Игрок должен физически находить вход и заходить внутрь.
 
----
+Продумай:
 
-PART 5 — UNIFIED GAME ARCHITECTURE
+- Хорошо заметный, но органичный вход.
+- Правильный переход между открытым пространством и пещерой.
+- Атмосферное освещение.
+- Звуки пещеры.
+- Разные высоты потолков.
+- Каменные образования.
+- Кристаллы.
+- Водные участки.
+- Небольшие боковые проходы.
+- Секреты.
+- Мелкие ресурсы.
+- Визуальные ориентиры.
 
-Refactor the existing project into a consistent architecture.
+Используй найденный Caves Dungeon asset pack, если его содержимое подходит.
 
-Recommended organization:
+Пещера не должна выглядеть как пустой длинный коридор.
 
-ReplicatedStorage
+Она должна создавать ощущение настоящей подземной территории.
 
-- Shared
-  - Config
-  - Types
-  - Constants
-  - ItemDefinitions
-  - DungeonDefinitions
-  - EnemyDefinitions
-  - QuestDefinitions
-  - NetworkContracts
-  - Utility
-- Remotes
-- SharedAssets
+5.4. ПОИСК ПОДЗЕМЕЛЬЯ НА КАРТЕ
 
-ServerScriptService
+Подземелья не должны появляться исключительно из меню.
 
-- Bootstrap
-- Services
-  - PlayerDataService
-  - InventoryService
-  - EquipmentService
-  - EconomyService
-  - QuestService
-  - CombatService
-  - EnemyService
-  - DungeonService
-  - DungeonGrowthService
-  - LootService
-  - FarmingService
-  - CreatureService
-  - PartyService
-  - PortalService
-  - RewardService
-  - ProgressionService
-  - PersistenceService
+Игрок должен находить реальные входы на большой карте.
 
-ServerStorage
+Реализуй систему Discovery:
 
-- EnemyModels
-- BossModels
-- DungeonTemplates
-- ItemModels
-- CreatureModels
-- Effects
+- Некоторые входы известны изначально.
+- Другие открываются через задания.
+- Некоторые необходимо обнаружить самостоятельно.
+- Часть подземелий может быть скрыта.
+- Разные биомы имеют разные типы входов.
 
-StarterPlayer
+Добавь полноценную карту мира.
 
-- StarterPlayerScripts
-  - Controllers
-    - CombatController
-    - InventoryController
-    - DungeonController
-    - InteractionController
-    - UIController
-    - AudioController
+На карте должны отображаться:
 
-StarterGui
+- Исследованные территории.
+- Обнаруженные пещеры.
+- Входы в подземелья.
+- Известные точки интереса.
+- Активные задания.
+- Маршрут к выбранной цели.
 
-- MainHUD
-- InventoryUI
-- EquipmentUI
-- QuestUI
-- DungeonUI
-- FarmingUI
-- CreatureUI
-- PartyUI
-- Notifications
-- Menus
+Новые входы должны открываться в зависимости от прогрессии.
 
-Workspace
+Визуальное обнаружение подземелья должно сопровождаться соответствующим звуковым и визуальным событием.
 
-- World
-- Hub
-- PlayerPlots
-- DungeonInstances
-- NPCs
-- Portals
-- PointsOfInterest
+5.5. ВХОД В МОДУЛЬНОЕ ПОДЗЕМЕЛЬЕ
 
-This is a target architecture, not an instruction to blindly move everything.
+В уже существующей пещере должен находиться реальный вход в подземелье.
 
-Adapt it to the existing Place, preserve useful object references, and document deviations.
+Организуй естественную последовательность:
 
-Use ModuleScripts and clearly defined service interfaces.
+Игрок входит в пещеру → исследует её → находит древние двери или проход → взаимодействует с входом → начинается экспедиция.
 
-Establish one bootstrap process and a controlled initialization order.
+По возможности сохраняй физическую непрерывность перехода внутри одного Place.
 
-Avoid circular dependencies and hidden global state.
+Если существующая архитектура требует отдельного Place или отдельного сервера для подземелья, используй корректный переход с экраном загрузки и сохранением контекста группы.
 
-Use CollectionService tags and Attributes for reusable gameplay objects where appropriate.
+Не имитируй непрерывный мир, если технически осуществляется переход между Places.
 
-Use configuration-driven systems instead of hardcoding every enemy, item, dungeon, and reward.
+Проанализируй текущую структуру Experience и выбери архитектуру по результатам аудита.
 
----
+6. СИСТЕМА MODULAR DUNGEON
 
-PART 6 — COMPLETE GAMEPLAY LOOP
+Это центральная система режима.
 
-The entire game must work as one connected experience.
+Подземелья должны создаваться из качественных готовых модульных элементов.
 
-Main loop:
+6.1. Caves Dungeon Asset Pack
 
-HUB
-↓
-PLAYER PLOT
-↓
-DUNGEON SEED
-↓
-DUNGEON GROWTH
-↓
-DUNGEON MODULE
-↓
-DUNGEON CONNECTION
-↓
-EXPLORATION
-↓
-ENEMY ENCOUNTERS
-↓
-ELITE ENEMIES
-↓
-BOSS
-↓
-LOOT
-↓
-RETURN TO HUB / FARM
-↓
-UPGRADES
-↓
-NEW DUNGEONS
-↓
-MORE DIFFICULT CONTENT
+Найди точный набор, который уже доступен в проекте или Toolbox.
 
-Every system must connect to the same player progression and inventory.
+Проверь варианты названия:
 
-No isolated minigames.
+- Caves Dungeon.
+- Cave Dungeon.
+- Caves & Dungeons.
+- Dungeon Cave.
+- Cave Environment.
+- Другие совпадающие наборы.
 
-No disconnected locations.
+Используй подключённый Toolbox API для поиска.
 
-No gameplay systems that exist only as visual decoration.
+Проверь:
 
----
+- Asset ID.
+- Название.
+- Автора.
+- Состав.
+- Количество элементов.
+- Модели.
+- MeshPart.
+- Материалы.
+- Текстуры.
+- Скрипты.
+- Вложенные объекты.
+- Возможность использования.
+- Лицензионные ограничения.
 
-PART 7 — HUB AND EXISTING LOCATIONS
+Составь каталог всех пригодных элементов.
 
-The existing hub is important.
+Используй найденный набор как основную геометрическую библиотеку для создания пещерных и подземных пространств, если качество элементов соответствует задаче.
 
-Do not replace it with an empty map.
+Не ограничивайся простым размещением всех моделей.
 
-Inspect every existing point of interest and give it a functional purpose.
+Изучи их конструкцию и создай из них согласованную библиотеку компонентов.
 
-Examples:
+6.2. Типы комнат
 
-- Dungeon seed merchant.
-- Equipment merchant.
-- Crafting station.
-- Creature and egg management.
-- Dungeon portal.
-- Quest NPCs.
-- Reward and progression NPCs.
-- Player plot access.
-- Trading.
-- Party creation.
-- Dungeon matchmaking.
-- Upgrade stations.
+Создай разнообразные модули:
 
-Existing locations must connect to the gameplay loop.
+- Starting Room.
+- Corridor.
+- Corridor Intersection.
+- Large Chamber.
+- Treasure Room.
+- Monster Room.
+- Boss Arena.
+- Trap Room.
+- Secret Room.
+- Puzzle Room.
+- Shrine.
+- Storage Room.
+- Mini Boss Room.
+- Extraction Room.
+- Exit Room.
 
-If a location is unnecessary, evaluate whether it should be redesigned, merged, or repurposed.
+У каждой комнаты должна быть конкретная игровая функция.
 
-Do not create many separate maps without a functional reason.
+6.3. Техническое соединение модулей
 
-Establish consistent travel and progression between the hub, player plots, and dungeons.
+У каждой комнаты должна быть система точек соединения.
 
----
+Используй подходящие Attachment, специальные Parts или аналогичную систему.
 
-PART 8 — DUNGEON FARM SYSTEM
+Для каждого модуля предусматривай:
 
-This is one of the most important systems.
+- Connection Points.
+- Door Sockets.
+- Bounds.
+- Room Type.
+- Room Size.
+- Biome Compatibility.
+- Spawn Locations.
+- Enemy Spawn Points.
+- Loot Spawn Points.
+- Trap Locations.
+- Navigation Information.
 
-A dungeon seed must represent a complete dungeon-generation opportunity.
+Создай систему проверки соединений.
 
-A seed is NOT a tiny plant, decorative object, or simple cube counter.
+Убедись, что:
 
-Dungeon growth
+- Двери совпадают.
+- Проходы не перекрываются.
+- Комнаты не пересекаются.
+- Стены не создают дыр.
+- Геометрия не заходит друг в друга.
+- Игрок может пройти через все необходимые соединения.
+- NPC могут использовать маршруты.
+- Камера не проваливается через геометрию.
 
-1. Player obtains a dungeon seed.
-2. Player places the seed on their plot.
-3. The seed begins growing.
-4. Growth has visible stages.
-5. The seed develops into a large dungeon module.
-6. The module contains an actual walkable dungeon.
-7. Player can enter and explore it.
-8. Modules can be expanded or connected through designated entrances and exits.
+Используй проверку габаритов, пространственных пересечений и навигации.
 
-Dungeon modules
+6.4. Генерация
 
-Each module should have:
+Создай контролируемую систему процедурной сборки подземелий.
 
-- Entry room.
-- Connected rooms.
-- Corridors.
-- Enemy spawn points.
-- Treasure locations.
-- Special encounters.
-- Optional secret areas.
-- Exit or boss progression.
-- Clear navigation.
+Она должна обеспечивать:
 
-Generate dungeons using room templates, procedural layout algorithms, and modular geometry.
+- Разные планировки.
+- Разные комбинации комнат.
+- Разное расположение секретов.
+- Разное размещение монстров.
+- Разные типы ловушек.
+- Разные сокровищницы.
+- Разные маршруты.
 
-The dungeon must feel like a coherent architectural space, not a collection of disconnected boxes.
+Используй веса появления комнат.
 
-Use a consistent dungeon theme.
+Обязательные условия:
 
-Dungeon progression
+- Всегда существует проходимый маршрут от входа к основной цели.
+- Есть корректный путь к выходу.
+- Дополнительные комнаты не блокируют основной маршрут.
+- Секретные комнаты не обязательны для прохождения.
+- Босс не появляется в неподходящем помещении.
+- Реликвия не генерируется в недоступной позиции.
 
-Create different dungeon tiers:
+Используй Seed для воспроизводимости планировки.
 
-- Basic
-- Uncommon
-- Rare
-- Epic
-- Legendary
+Добавь проверку сгенерированного плана до физического размещения комнат.
 
-Difficulty affects:
+При невозможности разместить модуль используй повторный выбор подходящей комнаты или безопасный fallback.
 
-- Enemy strength.
-- Enemy composition.
-- Room complexity.
-- Elite spawns.
-- Boss mechanics.
-- Loot quality.
-- Rewards.
+Никаких бесконечных циклов генерации.
 
-Use configuration-driven balancing.
+Не используй случайное размещение комнат без контроля соединений и коллизий.
 
-Do not make rarity purely cosmetic.
+6.5. Атмосфера
 
-Dungeon expansion
+Все подземелья должны быть визуально завершёнными.
 
-Allow the player to improve their dungeon:
+Добавляй:
 
-- New modules.
-- Additional rooms.
-- Stronger monsters.
-- Better rewards.
-- Special modifiers.
-- Secret chambers.
-- Boss rooms.
+- Архитектурные элементы.
+- Каменные стены.
+- Сталактиты.
+- Сталагмиты.
+- Колонны.
+- Кристаллы.
+- Руины.
+- Свечи.
+- Факелы.
+- Магические источники света.
+- Сундуки.
+- Останки древних сооружений.
+- Декоративные объекты.
+- Тематическое окружение.
 
-Avoid uncontrolled growth that destroys performance.
+Используй разные композиции для разных типов комнат.
 
----
+Не допускай визуально пустых пространств.
 
-PART 9 — FARMING, CREATURES AND DEFENSE
+7. РЕДКАЯ РЕЛИКВИЯ — ГЛАВНАЯ УНИКАЛЬНАЯ МЕХАНИКА
 
-The farm must be an integrated progression system, not a separate unrelated minigame.
+Это одна из главных игровых механик DUNGEON THIEVES.
 
-Implement:
+Реализуй систему очень редких, чрезвычайно ценных и физических предметов, которые нельзя просто автоматически добавить в обычный инвентарь.
 
-- Player-owned plot.
-- Seed management.
-- Dungeon growth.
-- Resource production.
-- Eggs.
-- Creature hatching.
-- Creature collection.
-- Creature upgrades.
-- Creature evolution.
-- Creature defense.
-- Plot upgrades.
+Рабочее название: ANCIENT RELIC.
 
-Creatures
+7.1. Общая концепция
 
-Creatures should have:
+В глубоких частях подземелий игроки могут обнаружить древнюю сокровищницу.
 
-- Unique models.
-- Rarity.
-- Stats.
-- Abilities.
-- Levels.
-- Upgrade paths.
-- Combat roles.
+В ней с очень небольшой вероятностью появляется большая древняя реликвия.
 
-Examples of roles:
+Это не обычный предмет.
 
-- Tank
-- Damage dealer
-- Support
-- Healer
-- Defender
+Она должна иметь:
 
-Eggs should produce creatures with meaningful differences.
+- Большую модель.
+- Уникальную форму.
+- Выразительный силуэт.
+- Дорогой визуальный вид.
+- Редкие материалы.
+- Светящиеся детали.
+- Частицы.
+- Особый звук.
+- Уникальную анимацию появления.
 
-Use server-authoritative hatching and rewards.
+Реликвия должна визуально выглядеть настолько ценной, чтобы игрок понимал: ради неё стоит рискнуть.
 
-Creatures should help protect the player's plot and participate in relevant gameplay.
+Это не обычный предмет для автоматического поднятия.
 
----
+7.2. Редкость
 
-PART 10 — COMBAT SYSTEM
+Реликвия должна действительно оставаться редкой.
 
-Build one unified combat system.
+Не размещай её в каждом подземелье.
 
-Support:
+Она может появляться:
 
-- Melee weapons.
-- Ranged weapons where appropriate.
-- Skills.
-- Cooldowns.
-- Status effects.
-- Critical hits.
-- Damage types.
-- Enemy resistances.
-- Boss attacks.
-- Elite enemies.
-- Hit feedback.
-- Damage indicators.
-- Death and respawn.
+- В редких сокровищницах.
+- В особо глубоких комнатах.
+- После сложных боссов.
+- В специальных подземельях высокого уровня.
+- Во время редких игровых событий.
 
-Combat must feel responsive.
+Создай отдельную систему генерации реликвий.
 
-Client-side effects should provide immediate feedback, but the server decides damage and rewards.
+Параметры появления должны настраиваться через конфигурацию.
 
-Implement proper server-side validation:
+Начальная гипотеза для балансировки: примерно 0,5–1% на подходящую сокровищницу высокого уровня. Это не окончательное значение. Проведи моделирование экономики и настрой вероятность по результатам тестов.
 
-- Weapon ownership.
-- Equipment state.
-- Attack cooldown.
-- Attack range.
-- Player state.
-- Enemy validity.
-- Target validation.
-- Resource costs.
-- Ability permissions.
+Можно предусмотреть скрытую защиту от чрезмерно неудачных серий получения награды, но не превращай реликвию в гарантированную обычную награду.
 
-Do not allow clients to specify arbitrary damage or rewards.
+В одном прохождении должна быть максимум одна основная реликвия, если конкретный тип события не предусматривает иного.
 
-Use server-side rate limits for remote requests.
+Не допускай повторного фарма одного и того же объекта без ограничений.
 
----
+7.3. Физическое ношение
 
-PART 11 — ENEMIES AND BOSS AI
+Реликвия должна быть большой и тяжёлой.
 
-Create a unified enemy framework.
+Игрок поднимает её и физически несёт в руках.
 
-Enemy categories:
+Создай специальные анимации:
 
-- Normal
-- Fast
-- Tank
-- Ranged
-- Elite
-- Mini-boss
-- Boss
+- Подход к реликвии.
+- Поднятие.
+- Тяжёлая переноска.
+- Медленная ходьба.
+- Остановка.
+- Установка на землю.
+- Повторное поднятие.
+- Потеря равновесия или повреждение при падении.
+- Доставка в хранилище.
 
-Enemies should support:
+Модель должна быть правильно закреплена относительно рук и тела персонажа.
 
-- Detection.
-- Aggro.
-- Target selection.
-- Navigation.
-- Attack patterns.
-- Cooldowns.
-- Damage.
+Предусмотри правильное положение для R15 и совместимость с текущим аватаром.
+
+Не допускай проваливания реликвии в пол, чрезмерного смещения от рук, дрожания и нарушения коллизий.
+
+При переноске реликвия должна быть видна другим игрокам.
+
+Её визуальное состояние должно синхронизироваться между участниками.
+
+7.4. Ограничения при переноске
+
+Когда игрок несёт реликвию, он не может сражаться.
+
+Запрети:
+
+- Обычные атаки.
+- Атаки оружием.
+- Использование магии.
+- Использование боевых способностей.
+- Блокирование.
+- Уклонения.
+- Спринт.
+- Применение другого оружия.
+- Другие боевые взаимодействия.
+
+Скорость передвижения должна уменьшаться.
+
+В качестве начальной настройки протестируй скорость около 65–75% от обычной.
+
+Прыжки и преодоление препятствий должны быть ограничены так, чтобы нельзя было использовать переноску для обхода уровня.
+
+Все ограничения должны проверяться сервером, а не только LocalScript или визуальным интерфейсом.
+
+7.5. Опасность переноски
+
+Перенос реликвии должен создавать дополнительное напряжение.
+
+Возможные механики:
+
+- Реликвия привлекает внимание ближайших монстров.
+- Некоторые монстры начинают преследовать носителя.
+- Особые ловушки становятся опаснее.
+- В некоторых местах необходимо выбирать безопасный маршрут.
+- Переноска ограничивает боевые возможности.
+
+Не превращай это в искусственную волну бесконечно появляющихся монстров.
+
+Опасность должна быть продуманной и соответствовать уровню подземелья.
+
+7.6. Одиночное прохождение
+
+Механика обязательно должна работать в SOLO.
+
+Игрок должен иметь возможность самостоятельно добыть реликвию.
+
+Он может:
+
+1. Исследовать сокровищницу.
+2. Зачистить противников.
+3. Подготовить путь к выходу.
+4. Поднять реликвию.
+5. Медленно пройти безопасный маршрут.
+6. При необходимости положить реликвию.
+7. Сразиться с появившейся угрозой.
+8. Повторно поднять её.
+9. Продолжить путь к выходу.
+
+Положенную реликвию нельзя автоматически уничтожать.
+
+При этом её нельзя использовать для бесконечного обхода игровых ограничений.
+
+Предусмотри подходящие правила восстановления боя и переноски.
+
+Соло-прохождение должно быть сложнее и дольше группового, но не должно быть искусственно невозможным.
+
+7.7. Кооперативное прохождение
+
+В группе до четырёх игроков эта система должна создавать естественную необходимость сотрудничества.
+
+Пример:
+
+- Игрок 1 поднимает реликвию.
+- Игроки 2–3 охраняют его.
+- Игрок 4 контролирует монстров или помогает открывать проходы.
+- Команда вместе возвращается к выходу.
+
+Роль носителя должна быть визуально понятна всей группе.
+
+Показывай состояние реликвии и носителя в командном UI.
+
+Продумай возможность передачи реликвии другому игроку через специальное безопасное взаимодействие.
+
+Не допускай передачи предмета через эксплойт или простую подмену клиента.
+
+7.8. Потеря реликвии
+
+При смерти игрока реликвия должна корректно выпадать на землю.
+
+Другие участники команды могут её подобрать.
+
+При отключении игрока также обработай состояние предмета.
+
+Если вся группа погибает или покидает прохождение, заблокированная реликвия должна корректно обрабатываться по правилам завершения сессии.
+
+Не допускай:
+
+- Дублирования реликвии.
+- Получения предмета двумя игроками.
+- Телепортации предмета в произвольное место.
+- Бесконечного подбора через удалённый вызов.
+- Потери предмета из-за ошибки сохранения.
+
+7.9. Награда
+
+Реликвия должна иметь большую ценность.
+
+После успешного извлечения она может:
+
+- Стать редким материалом для крафта.
+- Открывать уникальные улучшения.
+- Улучшать логово.
+- Создавать уникальные артефакты.
+- Открывать редкие помещения.
+- Использоваться для создания легендарного оружия.
+- Давать доступ к особым игровым системам.
+
+Продумай правила распределения одной реликвии в группе до реализации.
+
+Не отдавай её автоматически тому, кто первым нажал кнопку, если группа участвовала совместно.
+
+Интерфейс должен заранее объяснять правила распределения награды.
+
+Для предотвращения дублирования реализуй серверную идемпотентную обработку успешного извлечения с уникальным RunId и RelicId.
+
+Реликвия должна ощущаться как событие, а не как очередной предмет из сундука.
+
+8. ОГРАБЛЕНИЕ ЧУЖИХ ПОДЗЕМЕЛИЙ
+
+Реализуй самостоятельную систему Dungeon Raiding.
+
+Игроки должны иметь возможность проникать в подземелья других пользователей.
+
+Механика:
+
+1. Поиск доступных подземелий.
+2. Просмотр сложности.
+3. Информация о владельце.
+4. Формирование команды.
+5. Начало рейда.
+6. Проникновение.
+7. Прохождение комнат.
+8. Преодоление ловушек.
+9. Борьба с защитниками.
+10. Поиск хранилища.
+11. Получение добычи.
+12. Возвращение к выходу.
+
+Владелец должен иметь систему защиты:
+
+- Монстры.
+- Ловушки.
+- Охранные комнаты.
+- Защитные двери.
+- Сокровищница.
+- Особые эффекты защиты.
+
+Не допускай постоянной потери основного прогресса владельца.
+
+Разделяй:
+
+- Защищённые ресурсы.
+- Рейдовую добычу.
+- Временные предметы.
+- Особые реликвии.
+
+Продумай защиту от повторных нападений, фарма слабых игроков и злоупотреблений.
+
+9. ЛОГОВО И РАЗВИТИЕ БАЗЫ
+
+Каждый пользователь имеет собственное логово.
+
+Это не обычная ферма.
+
+Это полноценная база вора, которая развивается вместе с персонажем.
+
+Помещения:
+
+- Treasure Vault.
+- Monster Nursery.
+- Monster Training Room.
+- Workshop.
+- Trap Workshop.
+- Artifact Chamber.
+- Resource Storage.
+- Armory.
+- Portal Chamber.
+- Trophy Room.
+
+Игрок может:
+
+- Улучшать помещения.
+- Открывать новые комнаты.
+- Размещать монстров.
+- Назначать защитников.
+- Устанавливать ловушки.
+- Хранить ресурсы.
+- Создавать экипировку.
+- Демонстрировать редкие трофеи.
+- Устанавливать найденные реликвии.
+
+Используй систему модульного расширения.
+
+Сохранение состояния базы должно происходить через серверную систему.
+
+10. МОБЫ, NPC И БОССЫ
+
+Создай разнообразные семейства противников.
+
+Варианты:
+
+- Goblins.
+- Skeletons.
+- Cave Spiders.
+- Slimes.
+- Dark Knights.
+- Elemental Creatures.
+- Stone Golems.
+- Cave Beasts.
+- Treasure Guardians.
+- Ancient Guardians.
+
+У каждого биома и типа подземелья должны быть характерные враги.
+
+10.1. AI
+
+Реализуй состояния:
+
+- Idle.
+- Patrol.
+- Investigate.
+- Chase.
+- Attack.
+- Special Attack.
+- Stagger.
+- Return.
+- Dead.
+
+Обязательны:
+
+- Рабочий Pathfinding.
+- Реакция на игроков.
+- Телеграфирование атак.
+- Умение преследовать игрока.
+- Корректное возвращение в зону охраны.
+- Анимации.
+- Звуки.
+- Реакции на получение урона.
+
+Не создавай врагов, которые просто стоят и ждут получения урона.
+
+10.2. Боссы
+
+Каждое крупное подземелье должно иметь уникального босса.
+
+Предусмотри:
+
+- Несколько боевых фаз.
+- Разные типы атак.
+- Опасные зоны.
+- Специальные способности.
+- Изменение поведения.
+- Уникальные анимации.
+- VFX.
+- Звуковое сопровождение.
+- Ценные награды.
+
+Босс должен быть полноценным игровым событием.
+
+11. БОЕВАЯ СИСТЕМА
+
+Реализуй полноценную Action Combat.
+
+Оружие:
+
+- Swords.
+- Daggers.
+- Axes.
+- Hammers.
+- Staves.
+- Bows.
+- Magic Weapons.
+
+Механики:
+
+- Комбо.
+- Лёгкие атаки.
+- Тяжёлые атаки.
+- Уклонение.
+- Блокирование.
+- Боевые способности.
+- Перезарядка умений.
+- Критические удары.
+- Устойчивость противников.
+- Отбрасывание.
+- Эффекты попаданий.
+
+Обязательно использовать качественные анимации.
+
+Hit Detection и расчёт урона должны быть серверно проверяемыми.
+
+Клиентские эффекты не должны определять фактический урон.
+
+Сделай управление удобным для ПК и мобильных устройств.
+
+12. РЕСУРСЫ, ПРЕДМЕТЫ И АРТЕФАКТЫ
+
+Создай полноценную систему добычи.
+
+Обычные ресурсы:
+
+- Камни.
+- Металлы.
+- Кристаллы.
+- Древесина.
+- Магические компоненты.
+- Части монстров.
+- Редкие материалы биомов.
+
+Особые ресурсы:
+
+- Boss Cores.
+- Ancient Fragments.
+- Relic Shards.
+- Rare Essences.
+- Dungeon Keys.
+- Ancient Relics.
+
+Артефакты:
+
+- Боевые.
+- Защитные.
+- Магические.
+- Исследовательские.
+- Экономические.
+- Уникальные для отдельных подземелий.
+
+Каждый предмет должен иметь:
+
+- ID.
+- Название.
+- Описание.
+- Редкость.
+- Иконку.
+- Тип.
+- Характеристики.
+- Назначение.
+- Источник получения.
+
+Редкость:
+
+- Common.
+- Uncommon.
+- Rare.
+- Epic.
+- Legendary.
+- Mythic.
+- Unique Relic.
+
+У предметов должна быть визуальная идентичность.
+
+Не создавай систему из сотен одинаковых предметов, отличающихся только названием и цифрами.
+
+13. LOOT И EXTRACTION
+
+Главная цель прохождения — не просто убить босса, а успешно вынести добычу.
+
+Создай полноценную систему:
+
+- Сундуки.
+- Обычная добыча.
+- Редкие комнаты.
+- Боссовые награды.
+- Скрытые сокровища.
+- Древние реликвии.
+- Точки извлечения.
+- Сохранение добычи после успешного возвращения.
+
+Игрок должен понимать разницу между:
+
+- Найденным предметом.
+- Временной добычей текущей экспедиции.
+- Предметом, успешно вынесенным из подземелья.
+- Предметом, записанным в постоянный инвентарь.
+
+Учитывай смерть, выход из игры, отключение сервера и сетевые ошибки.
+
+Не выдавай награды на клиенте.
+
+14. ПРОГРЕССИЯ
+
+Реализуй:
+
+- Уровень персонажа.
+- Опыт.
+- Золото.
+- Ресурсы.
+- Инвентарь.
+- Экипировку.
+- Прокачку оружия.
+- Артефакты.
+- Улучшение логова.
+- Коллекцию монстров.
+- Новые биомы.
+- Новые подземелья.
+- Достижения.
+- Задания.
+
+Прогрессия должна мотивировать возвращаться в игру.
+
+Не создавай искусственные ограничения, которые заставляют игрока бесконечно выполнять одну скучную активность.
+
+15. АНИМАЦИИ — ОБЯЗАТЕЛЬНО
+
+Не оставляй анимации на потом.
+
+Изучи все доступные Animation Assets в проекте и Toolbox.
+
+Составь список необходимых анимаций.
+
+Персонаж:
+
+- Idle.
+- Walk.
+- Run.
+- Jump.
+- Dodge.
+- Attack.
+- Heavy Attack.
+- Block.
+- Hit Reaction.
 - Death.
-- Loot.
-- Respawn or encounter reset.
+- Interact.
+- Pick Up.
+- Carry Heavy Object.
+- Carry Walk.
+- Carry Idle.
+- Carry Drop.
+- Relic Delivery.
 
-Use PathfindingService where appropriate.
+Монстры:
 
-Do not make all enemies use identical behavior.
+- Idle.
+- Walk.
+- Run.
+- Attack.
+- Special Attack.
+- Hit.
+- Stagger.
+- Death.
+- Spawn.
+- Boss Phase Transitions.
 
-Bosses
+Окружение:
 
-Bosses must have actual mechanics:
+- Двери.
+- Сундуки.
+- Ловушки.
+- Движущиеся элементы.
+- Механизмы.
+- Реликвии.
 
-- Multiple phases.
-- Telegraphs.
-- Area attacks.
-- Special abilities.
-- Weak points where appropriate.
-- Enrage or escalation.
-- Defeat conditions.
-- Reward distribution.
+Проверь права использования Animation Assets и корректность их загрузки.
 
-The boss must be a meaningful end point for dungeon progression.
+Не придумывай Animation ID.
 
----
+Если подходящей анимации нет:
 
-PART 12 — INVENTORY, EQUIPMENT AND LOOT
+1. Найди подходящий готовый ассет.
+2. Проверь совместимость.
+3. Используй инструменты создания анимаций, если они доступны.
+4. Если создание невозможно, зафиксируй конкретную проблему.
 
-Build one authoritative inventory.
+Проверь анимации в реальном Play Mode.
 
-Support:
+16. VFX И ВИЗУАЛЬНЫЕ ЭФФЕКТЫ
 
-- Item stacks.
-- Item rarity.
-- Equipment slots.
-- Weapons.
-- Armor.
-- Accessories.
-- Consumables.
-- Materials.
-- Dungeon seeds.
-- Eggs.
-- Quest items.
-- Storage.
+Создай единую библиотеку эффектов.
 
-Loot system:
+Обязательно:
 
-- Enemy drops.
-- Boss rewards.
-- Chests.
-- Rare encounters.
-- Dungeon completion rewards.
+- Удары оружием.
+- Попадания.
+- Критические удары.
+- Магические способности.
+- Смерть монстров.
+- Появление боссов.
+- Открытие сундуков.
+- Редкие предметы.
+- Получение артефактов.
+- Появление реликвии.
+- Поднятие реликвии.
+- Перенос реликвии.
+- Доставка реликвии.
+- Ловушки.
+- Разрушение объектов.
+- Атмосферные частицы.
 
-Loot tables must be configurable.
+Для редких предметов VFX должны быть особенно выразительными.
 
-Use server-generated rewards.
+Не перегружай экран частицами.
 
-Prevent item duplication and invalid trades.
+Используй клиентское создание чисто визуальных эффектов там, где это безопасно и оправдано.
 
-All item transfers and equipment changes must be validated.
+17. ЗВУК И МУЗЫКА
 
----
+Создай полноценную звуковую систему.
 
-PART 13 — QUESTS AND PROGRESSION
+Обязательные категории:
 
-Implement connected quests.
+- Hub Ambience.
+- Overworld Ambience.
+- Cave Ambience.
+- Dungeon Ambience.
+- Combat.
+- Boss Combat.
+- Weapon Sounds.
+- Monster Sounds.
+- Trap Sounds.
+- Door Sounds.
+- Chest Sounds.
+- Loot Sounds.
+- Rare Item Sounds.
+- Relic Discovery.
+- Relic Pickup.
+- Heavy Carry.
+- Relic Delivery.
+- UI Sounds.
 
-Quest types:
+У каждого биома должно быть собственное звуковое окружение.
 
-- Defeat enemies.
-- Defeat bosses.
-- Explore dungeons.
-- Collect materials.
-- Grow dungeon modules.
-- Hatch creatures.
-- Upgrade equipment.
-- Complete dungeon challenges.
+У редкой реликвии должен быть уникальный звук обнаружения и взаимодействия.
 
-Progression:
+Используй подходящие бесплатные аудиоассеты и проверяй возможность использования в Experience.
 
-- Player levels.
-- Experience.
-- Equipment progression.
-- Dungeon tier progression.
-- Farm progression.
-- Creature progression.
-- Unlockable content.
+18. UI/UX
 
-The player must always have a meaningful next goal.
+Создай полноценный RPG HUD.
 
----
+Стиль:
 
-PART 14 — COOPERATIVE MULTIPLAYER
+- Premium Fantasy.
+- Детализированные рамки.
+- Качественные иконки.
+- Тематические текстуры.
+- Единая цветовая система.
+- Хорошая типографика.
+- Чёткая визуальная иерархия.
 
-Support solo and cooperative gameplay.
+Не используй только стандартные Roblox Frames и кнопки.
 
-Party size: up to 4 players.
-
-Implement:
-
-- Party creation.
-- Invitations.
-- Party membership.
-- Ready checks.
-- Dungeon entry.
-- Player synchronization.
-- Reward distribution.
-- Party disbanding.
-- Disconnect handling.
-
-Avoid giving rewards multiple times.
-
-Define how party members enter and exit dungeons.
-
-Do not let one player's client control another player's progression.
-
----
-
-PART 15 — PLAYER DATA AND SAVING
-
-Implement a unified player data schema.
-
-Save:
-
-- Currency.
-- Inventory.
-- Equipment.
-- Player progression.
-- Quests.
-- Dungeon seeds.
-- Player plot.
-- Dungeon growth.
-- Dungeon modules.
-- Creatures.
-- Eggs.
-- Upgrades.
-- Unlocks.
-
-Use DataStoreService for persistent data.
-
-Use UpdateAsync where concurrent updates require it.
-
-Implement:
-
-- pcall error handling.
-- Retry with exponential backoff.
-- Data validation.
-- Schema versioning.
-- Migration.
-- Session conflict protection.
-- Safe player loading.
-- Safe player leaving.
-- BindToClose handling.
-- Autosaving with controlled intervals.
-
-Do not overwrite valid saved data with default data when loading fails.
-
-Studio tests must use a separate test environment.
-
-Never risk existing production player data during testing.
-
----
-
-PART 16 — UI/UX
-
-Audit all existing UI before replacing anything.
-
-Preserve useful existing assets.
-
-Create a consistent fantasy RPG interface.
-
-Required UI:
+Интерфейсы:
 
 - Main HUD.
-- Health and resource bars.
-- Player level and XP.
-- Hotbar.
+- World Map.
+- Dungeon Discovery.
+- Dungeon Selection.
+- Party Interface.
 - Inventory.
 - Equipment.
-- Character information.
-- Quest tracker.
-- Dungeon information.
-- Dungeon growth interface.
-- Creature collection.
-- Egg hatching.
-- Farming management.
-- Party interface.
-- Merchant interface.
-- Notifications.
-- Boss health bar.
-- Loot rewards.
+- Character.
+- Skills.
+- Quest Journal.
+- Monster Collection.
+- Loot Window.
+- Extraction Progress.
+- Relic Carry Status.
+- Base Management.
+- Crafting.
+- Trading.
 - Settings.
 
-UI requirements:
+Во время переноски реликвии HUD должен показывать:
 
-- Consistent typography.
-- Clear hierarchy.
-- Strong visual identity.
-- Good spacing.
-- Proper scaling.
-- Responsive layouts.
-- Mobile support.
-- No overlapping elements.
-- No inaccessible buttons.
-- Clear interaction feedback.
+- Кто несёт реликвию.
+- Статус переноса.
+- Расстояние до выхода, если оно известно системе.
+- Текущую опасность.
+- Состояние группы.
 
-Do not replace the UI with generic default Roblox menus.
+UI должен отображать реальные данные.
 
-Use existing custom assets where appropriate.
+Предусмотри адаптацию для мобильных устройств.
+
+19. CO-OP И MULTIPLAYER
+
+Максимум четыре участника в одной экспедиции.
+
+Реализуй:
+
+- Создание группы.
+- Приглашения.
+- Принятие приглашения.
+- Отображение состава команды.
+- Начало экспедиции.
+- Синхронизацию комнат.
+- Синхронизацию босса.
+- Синхронизацию добычи.
+- Совместное извлечение.
+- Обработку выхода игрока.
+
+Балансируй сложность по количеству игроков.
+
+Соло не должно быть невозможным.
+
+Группа должна получать преимущества в бою, исследовании и переноске реликвии.
+
+Не допускай, чтобы один игрок мог испортить прохождение всей группе без возможности восстановления.
+
+20. ТЕХНИЧЕСКАЯ АРХИТЕКТУРА ROBLOX
+
+Изучи актуальную документацию Roblox Creator Hub:
+
+https://create.roblox.com/docs
+
+Проверь актуальные возможности:
+
+- DataStoreService.
+- MemoryStoreService.
+- TeleportService.
+- MessagingService.
+- RemoteEvents.
+- RemoteFunctions.
+- PathfindingService.
+- CollectionService.
+- ProximityPromptService.
+- AnimationController.
+- Animator.
+- TweenService.
+- MarketplaceService.
+- StreamingEnabled.
+- И другие необходимые сервисы.
+
+Не внедряй технологии без необходимости.
+
+20.1. Разделение ответственности
+
+Сервер:
+
+- Инвентарь.
+- Экономика.
+- Урон.
+- Награды.
+- Прогрессия.
+- Монстры.
+- Подземелья.
+- Реликвии.
+- Ограбления.
+- Сохранения.
+- Покупки.
+- Проверка доступа.
+
+Клиент:
+
+- HUD.
+- Камера.
+- Управление.
+- Локальные VFX.
+- Звуковое оформление.
+- UI-анимации.
+- Визуальная часть взаимодействий.
+
+20.2. Защита
+
+Обязательно:
+
+- Валидация RemoteEvents.
+- Проверка дистанции взаимодействия.
+- Проверка состояния персонажа.
+- Проверка прав доступа.
+- Rate Limiting.
+- Проверка параметров.
+- Защита от дублирования наград.
+- Защита от подделки добычи.
+- Серверная проверка действий с реликвией.
+- Контроль сетевого владения физическими объектами.
+- Проверка всех ProximityPrompt.
+
+Никогда не доверяй клиенту при выдаче наград, изменении инвентаря и управлении ценными предметами.
+
+20.3. Переноска реликвии и физика
+
+Предпочитай безопасную архитектуру, где:
+
+- Сервер хранит фактическое состояние реликвии.
+- Сервер определяет носителя.
+- Сервер проверяет расстояния и право поднятия.
+- Сервер выполняет регистрацию выпадения и извлечения.
+- Клиентская визуальная модель используется исключительно для отображения, если это необходимо для плавной переноски.
+- Физика визуальной модели не определяет награду или право владения.
+
+Не делай критически важный объект полностью зависимым от клиентского Network Ownership.
+
+Проверь корректную синхронизацию модели у всех игроков.
+
+20.4. DataStore
+
+Сделай надёжную систему сохранений.
+
+Учитывай:
+
+- Несколько Places.
+- Несколько серверов.
+- Одновременные сессии.
+- Сетевые ошибки.
+- Повторные запросы.
+- Восстановление прогресса.
+- Версионирование профиля.
+- Атомарное изменение критических данных.
+- Сохранение после успешного извлечения.
+
+Используй актуальные рекомендации Roblox по DataStore и UpdateAsync.
+
+Не записывай DataStore после каждого незначительного действия.
+
+Не допускай потери ценной реликвии после успешного извлечения из-за повторного запроса или отключения сервера.
+
+21. ИСПОЛЬЗОВАНИЕ TOOLBOX И ГОТОВЫХ АССЕТОВ
+
+Активно используй подключённый Toolbox API.
+
+Не создавай вручную то, что уже существует в качественных готовых наборах.
+
+Ищи:
+
+- Caves Dungeon.
+- Cave Environment.
+- Fantasy Dungeon.
+- Dungeon Props.
+- Fantasy Weapons.
+- Monster Packs.
+- Creature Animations.
+- Combat Animations.
+- Magic VFX.
+- Particles.
+- Treasure Chests.
+- Treasure Props.
+- Fantasy UI.
+- Audio Effects.
+- Ambient Sounds.
+- Trap Models.
+- Door Systems.
+- Dungeon Modules.
+
+В первую очередь исследуй уже импортированные ассеты.
+
+Не заменяй найденный Caves Dungeon набор другими случайными моделями, пока не проверишь его пригодность.
+
+Каждый сторонний Model должен проходить проверку.
+
+Проверяй:
+
+- Script.
+- LocalScript.
+- ModuleScript.
+- Вложенные скрипты.
+- require() с внешними ID.
+- Неожиданные удалённые загрузки.
+- Обфускацию.
+- Подозрительные RemoteEvents.
+- Необоснованные права администратора.
+- Неожиданные изменения DataModel.
+
+Не доверяй модели только потому, что она бесплатная и имеет высокий рейтинг.
+
+Сторонние модели сначала анализируй в изолированной копии.
+
+По возможности используй чистую геометрию и собственную игровую логику.
+
+Не подключай неизвестные сторонние скрипты без необходимости и проверки.
+
+Веди ASSET_REGISTER.md.
+
+Для каждого значимого ассета указывай:
+
+- Название.
+- Asset ID.
+- Источник.
+- Автор.
+- Назначение.
+- Лицензию или условия использования.
+- Результат проверки.
+- Где применяется.
+
+22. ПРОИЗВОДИТЕЛЬНОСТЬ
+
+Ориентируйся на слабые ПК и мобильные устройства.
+
+Не жертвуй качеством мира, но правильно управляй нагрузкой.
+
+Используй:
+
+- Instance Streaming.
+- Разумное количество NPC.
+- Оптимизированный AI.
+- Ограничение частиц.
+- Пулы объектов.
+- Оптимизацию анимаций.
+- Рациональные коллизии.
+- Streaming-aware скрипты.
+- Контроль памяти.
+- Ограничение сетевого трафика.
+
+Не запускай сотни бесконечных циклов.
+
+Не создавай лишние серверные Tween обновления для визуальных эффектов.
+
+Не храни все тяжёлые ассеты в ReplicatedStorage, если они не нужны клиенту постоянно.
+
+Проверяй MicroProfiler и доступные средства диагностики.
+
+23. ЖИВАЯ РАЗРАБОТКА ЧЕРЕЗ MCP
+
+Это обязательное требование.
+
+Ты должен не только анализировать код, но и работать непосредственно с Roblox Studio.
+
+Используй доступные MCP-инструменты для:
+
+- Поиска объектов.
+- Инспекции DataModel.
+- Изменения свойств.
+- Создания моделей.
+- Перемещения объектов.
+- Создания папок.
+- Добавления компонентов.
+- Создания и изменения скриптов.
+- Запуска Luau.
+- Проверки объектов.
+- Получения скриншотов.
+- Запуска Play.
+- Остановки Play.
+- Чтения ошибок Output.
+
+После каждого существенного изменения:
+
+1. Проверь изменённые объекты.
+2. Проверь скрипты.
+3. Запусти соответствующий игровой сценарий.
+4. Получи скриншот.
+5. Проверь Output.
+6. Исправь ошибки.
+7. Повтори тест.
+
+Не считай изменение выполненным только по успешному ответу инструмента. Проверь результат непосредственно в Studio.
+
+Если MCP позволяет получить скриншот текущей сцены, используй его для визуального контроля.
+
+Если MCP позволяет запускать многопользовательские тесты, используй их.
+
+Не выдумывай результаты проверок.
+
+24. ПОРЯДОК РЕАЛИЗАЦИИ
+
+Работай по следующей последовательности.
+
+Этап A — Аудит и подготовка
+
+- Проверить MCP.
+- Проверить Skills.
+- Проверить все Places.
+- Изучить DataModel.
+- Изучить текущие локации.
+- Найти Caves Dungeon.
+- Исследовать Toolbox.
+- Проверить скрипты.
+- Сделать резервную копию.
+- Составить архитектуру.
+
+Этап B — Объединение игрового мира
+
+- Сохранить существующий хаб.
+- Проверить существующих NPC.
+- Интегрировать большую карту.
+- Интегрировать существующую пещеру.
+- Сделать связанный маршрут.
+- Добавить обнаружение подземелий.
+- Добавить точки входа.
+- Проверить физические переходы.
+
+Этап C — Подземелья
+
+- Исследовать Caves Dungeon.
+- Создать каталог модулей.
+- Создать контракты комнат.
+- Создать систему соединения.
+- Создать генерацию.
+- Добавить типы комнат.
+- Добавить ловушки.
+- Добавить сокровища.
+- Добавить боссов.
+- Добавить маршруты извлечения.
+
+Этап D — Основной игровой цикл
+
+- Создать систему экспедиций.
+- Создать систему добычи.
+- Создать систему боя.
+- Создать AI монстров.
+- Создать инвентарь.
+- Создать систему ресурсов.
+- Реализовать редкую реликвию.
+- Реализовать переноску.
+- Реализовать извлечение.
+
+Этап E — Развитие и кооператив
+
+- Создать логово.
+- Создать экономику.
+- Создать прокачку.
+- Создать монстров и питомцев.
+- Создать систему групп.
+- Реализовать ограбления.
+- Настроить сохранения.
+
+Этап F — Визуальное качество
+
+- Доработать окружение.
+- Подключить анимации.
+- Подключить VFX.
+- Подключить звуки.
+- Создать полноценный HUD.
+- Создать карту мира.
+- Создать интерфейсы предметов.
+- Улучшить освещение.
+
+Этап G — Тестирование и оптимизация
+
+- Проверить весь игровой цикл.
+- Исправить ошибки.
+- Проверить кооператив.
+- Проверить соло.
+- Проверить редкую реликвию.
+- Проверить DataStore.
+- Проверить производительность.
+- Проверить мобильное управление.
+- Проверить все важные игровые состояния.
+
+Не останавливай работу после отдельного этапа. Последовательность необходима для организации полной разработки, а не для завершения на стадии прототипа.
+
+25. ОБЯЗАТЕЛЬНЫЕ СЦЕНАРИИ ТЕСТИРОВАНИЯ
+
+Проверяй реальные сценарии.
+
+Тест 1 — Начало игры
+
+- Игрок заходит.
+- Появляется в существующем хабе.
+- Может взаимодействовать с существующими NPC.
+- Получает задание.
+- Видит доступные направления.
+
+Тест 2 — Исследование мира
+
+- Игрок выходит на большую карту.
+- Перемещается между биомами.
+- Обнаруживает вход в пещеру.
+- Находит вход в подземелье.
+- Может открыть карту мира и построить маршрут.
+
+Тест 3 — Подземелье
+
+- Игрок начинает экспедицию.
+- Комнаты правильно соединены.
+- Двери работают.
+- Нет пересечений.
+- Нет заблокированных маршрутов.
+- Монстры появляются в правильных комнатах.
+- Игрок может пройти до босса.
+- Игрок может найти выход.
+
+Тест 4 — Добыча
+
+- Сундуки работают.
+- Награды корректны.
+- Редкие предметы выдаются сервером.
+- Инвентарь обновляется.
+- Извлечение работает.
+
+Тест 5 — Реликвия
+
+- Реликвия действительно редкая.
+- Она появляется в допустимых местах.
+- Её можно поднять.
+- Анимация корректная.
+- Боевая система блокируется.
+- Скорость передвижения уменьшается.
+- Остальные игроки видят предмет.
+- Реликвию можно положить.
+- Её можно повторно поднять.
+- При смерти предмет выпадает.
+- Другой игрок может подобрать его.
+- Нельзя получить дубликат.
+- Извлечение выдаёт правильную награду.
+
+Тест 6 — Solo
+
+Проверь весь игровой цикл с одним игроком.
+
+Убедись, что реликвию можно вынести самостоятельно.
+
+Тест 7 — Co-op
+
+Проверь команду из 2 и 4 игроков.
+
+Проверь:
+
+- Синхронизацию.
+- Бой.
+- Добычу.
+- Переноску реликвии.
+- Охрану носителя.
+- Общий выход.
+- Распределение наград.
+
+Тест 8 — Ошибки и эксплойты
+
+Проверь:
+
+- Повторные вызовы RemoteEvent.
+- Подделку дистанции.
+- Повторный подбор.
+- Несанкционированную передачу.
+- Дублирование наград.
+- Выход носителя.
+- Смерть носителя.
+- Повторное подключение.
+- Сетевые ошибки.
+
+Тест 9 — Производительность
+
+Проверь:
+
+- Большую карту.
+- Пещеру.
+- Подземелье.
+- Четырёх игроков.
+- Большое количество монстров.
+- VFX.
+- Звуки.
+- Загрузку моделей.
+
+26. PLAY MODE И РЕАЛЬНЫЕ ПРОВЕРКИ
+
+Используй Roblox Studio Play Mode.
+
+Выполняй:
+
+- Play Solo.
+- Start Server.
+- Несколько Clients.
+- Многопользовательские проверки.
+- Повторные игровые запуски.
+
+Если какая-то механика требует опубликованного Experience, не заявляй, что Studio Play её проверил.
+
+Для TeleportService и реальных межсерверных переходов используй отдельную опубликованную тестовую среду и Roblox Client. Не изменяй рабочую опубликованную версию без разрешения.
+
+Не включай тестовый доступ к production DataStore так, чтобы существующие пользовательские сохранения могли случайно перезаписаться.
+
+27. ДОКУМЕНТАЦИЯ
+
+Создай и поддерживай следующие документы в проекте:
+
+PROJECT_AUDIT.md — аудит существующего проекта.
+
+GAME_DESIGN_DOCUMENT.md — полноценная концепция режима.
+
+WORLD_ARCHITECTURE.md — карта игрового мира и переходы.
+
+DUNGEON_GENERATION.md — архитектура модульных подземелий.
+
+RELIC_SYSTEM.md — механика реликвии, переноски и наград.
+
+ARCHITECTURE.md — техническая архитектура.
+
+ASSET_REGISTER.md — каталог ассетов и лицензий.
+
+ANIMATION_CATALOG.md — перечень анимаций.
+
+VFX_CATALOG.md — перечень визуальных эффектов.
+
+AUDIO_CATALOG.md — перечень звуков и музыки.
+
+IMPLEMENTATION_PLAN.md — план разработки.
+
+PLAYTEST_REPORT.md — тестирование.
+
+KNOWN_ISSUES.md — известные проблемы.
+
+CHANGELOG_AI.md — журнал изменений AI-агентов.
+
+Документация должна соответствовать реальному состоянию проекта.
+
+28. КООРДИНАЦИЯ AI-АГЕНТОВ
+
+При наличии возможности разделяй работу между специализированными агентами.
+
+Роли:
+
+- Lead Developer.
+- World Designer.
+- Dungeon Designer.
+- Combat Developer.
+- AI Developer.
+- UI/UX Designer.
+- Animation/VFX Specialist.
+- Audio Specialist.
+- QA Engineer.
+
+У каждого агента должны быть конкретные задачи и границы ответственности.
+
+Не допускай одновременного редактирования одного скрипта несколькими агентами без координации.
+
+Веди общий журнал прогресса.
+
+Все агенты должны работать с одной архитектурой и не создавать несовместимые игровые системы.
+
+29. КРИТЕРИИ ФИНАЛЬНОЙ ГОТОВНОСТИ
+
+DUNGEON THIEVES считается готовым, когда:
+
+1. Существующий хаб используется и функционален.
+2. Существующие NPC интегрированы.
+3. Большая карта с биомами работает.
+4. Пещера встроена в игровой маршрут.
+5. Входы в подземелья обнаруживаются.
+6. Модульные подземелья генерируются корректно.
+7. Комнаты имеют качественный визуальный дизайн.
+8. Монстры и боссы работают.
+9. Боевая система работает.
+10. Инвентарь и ресурсы работают.
+11. Редкая реликвия реализована полностью.
+12. Переноска реликвии работает в Solo и Co-op.
+13. Система извлечения работает.
+14. Логово развивается.
+15. Ограбления работают.
+16. Экономика и прогрессия работают.
+17. Анимации подключены.
+18. VFX подключены.
+19. Звуки подключены.
+20. UI связан с реальными механиками.
+21. Сохранения работают.
+22. Пройдены многопользовательские тесты.
+23. Нет критических ошибок.
+24. Производительность проверена.
+25. Документация актуальна.
+
+Каждый пункт должен иметь один из статусов:
+
+PASS — проверено и работает.
+
+FAIL — проверено, но обнаружена ошибка.
+
+BLOCKED — реализация невозможна из-за конкретного препятствия.
+
+NOT TESTED — ещё не проверено.
+
+Не выдавай BLOCKED и NOT TESTED за готовую функциональность.
 
 ---
 
-PART 17 — ART, ENVIRONMENT AND WORLD QUALITY
+30. ПЕРВОЕ ЗАДАНИЕ — НАЧНИ СЕЙЧАС
 
-Inspect existing geometry and models.
+Начни с исследования открытого Roblox Studio.
 
-Preserve quality assets.
+Твои первые действия:
 
-Replace only assets that are genuinely unsuitable.
+1. Перечисли доступные MCP-инструменты.
+2. Проверь подключения.
+3. Изучи доступные Skills и инструкции.
+4. Определи активный Experience и Place.
+5. Найди остальные Places.
+6. Изучи все имеющиеся локации.
+7. Изучи существующий хаб и NPC.
+8. Изучи большую карту и её биомы.
+9. Найди существующую пещеру.
+10. Найди Caves Dungeon asset pack через подключённый Toolbox API.
+11. Исследуй имеющиеся анимации, VFX, звуки, оружие, мобов и ресурсы.
+12. Проверь существующие игровые системы и скрипты.
+13. Сделай резервную копию.
+14. Создай документацию аудита.
+15. Разработай точную архитектуру DUNGEON THIEVES с учётом реального состояния проекта.
 
-Use a coherent style guide.
+После аудита не останавливайся.
 
-Dungeons must have:
+Переходи к непосредственной реализации, используя реальные MCP-инструменты, Roblox Studio, Toolbox API и проверку в Play Mode.
 
-- Proper room proportions.
-- Interesting silhouettes.
-- Architectural variation.
-- Lighting variation.
-- Clear navigation.
-- Environmental storytelling.
-- Decoration with gameplay purpose.
-- Appropriate encounter spaces.
+Принимай самостоятельные технические решения, но не разрушай существующий качественный контент.
 
-Avoid huge empty rooms and oversized open areas.
+Если что-то не получается, исследуй причину, ищи другой технический способ и фиксируй конкретные ограничения.
 
-Create believable transitions between rooms.
+Не спрашивай меня о каждом небольшом решении.
 
-Do not use randomly assembled primitive Parts as final visual content.
+Не создавай дополнительные пустые карты, пустые комнаты или фиктивные механики.
 
-If procedural geometry is required, use modular authored templates, MeshParts, and optimized combinations.
+Не заменяй реальные игровые системы демонстрационными заглушками.
 
-Do not sacrifice performance for excessive decoration.
+ГЛАВНАЯ ЦЕЛЬ
 
----
+Создать полноценный Roblox-режим DUNGEON THIEVES, в котором игроки исследуют большой фэнтезийный мир, находят настоящие подземелья, сражаются с монстрами, добывают сокровища и рискуют всем ради редких древних реликвий, которые нужно физически вынести из опасного подземелья.
 
-PART 18 — PERFORMANCE AND SCALABILITY
+Игрок должен постоянно видеть смысл исследовать мир глубже.
 
-The game must support weak computers and mobile devices.
+Обычная добыча должна радовать.
 
-Audit:
+Редкие предметы должны удивлять.
 
-- Part count.
-- Mesh complexity.
-- Texture memory.
-- Physics.
-- Network replication.
-- Remote traffic.
-- AI update frequency.
-- Pathfinding frequency.
-- Memory usage.
-- UI rendering.
-- Effects.
-- Dungeon generation.
+Древняя реликвия должна создавать настоящее событие для всей команды.
 
-Use:
+Кооператив должен давать ощутимое преимущество, но одиночное прохождение должно оставаться полноценным и увлекательным.
 
-- Instance Streaming where appropriate.
-- Object pooling.
-- Controlled NPC update rates.
-- Efficient enemy management.
-- Spatial organization.
-- Event-driven systems.
-- Cleanup of temporary instances.
-- Optimized effects.
-- Reasonable replication frequency.
-
-Avoid unnecessary RunService loops.
-
-Avoid excessive RemoteEvent traffic.
-
-Avoid generating the entire universe in one frame.
-
-Dungeon generation must be measured on realistic device conditions.
-
-Set performance budgets and record actual measurements.
-
----
-
-PART 19 — DOCUMENTATION AND DEVELOPMENT CONTROL
-
-Create and continuously update:
-
-PROJECT_AUDIT.md
-IMPLEMENTATION_PLAN.md
-GITHUB_RESEARCH_REPORT.md
-OPEN_SOURCE_INTEGRATION_MAP.md
-ARCHITECTURE.md
-GAMEPLAY_SYSTEMS.md
-DATA_SCHEMA.md
-NETWORK_CONTRACT.md
-PLAYTEST_REPORT.md
-PERFORMANCE_REPORT.md
-KNOWN_ISSUES.md
-CHANGELOG.md
-
-Every system must have documented:
-
-- Purpose.
-- Dependencies.
-- Server/client responsibility.
-- Inputs and outputs.
-- Data structures.
-- Remote contracts.
-- Failure behavior.
-- Test cases.
-
-Maintain a single source of truth for system architecture.
-
-Do not let different agents create competing implementations.
-
-If multiple AI agents work on the project:
-
-- Assign separate modules.
-- Define file ownership.
-- Define interfaces first.
-- Avoid simultaneous edits to the same files.
-- Integrate through controlled reviews.
-
-Maintain progress notes so another AI can continue without repeating the audit.
-
----
-
-PART 20 — TESTING REQUIREMENTS
-
-You MUST use Roblox Studio MCP to test the actual Place.
-
-Do not consider a successful code write to be a successful implementation.
-
-Testing must include:
-
-1. Start the game.
-2. Inspect Output.
-3. Check server errors.
-4. Check client errors.
-5. Check character spawning.
-6. Check hub navigation.
-7. Check all existing points of interest.
-8. Check interactions.
-9. Check inventory.
-10. Check equipment.
-11. Check saving and loading.
-12. Check dungeon seed placement.
-13. Check dungeon growth.
-14. Check dungeon generation.
-15. Check room connectivity.
-16. Check enemy spawning.
-17. Check enemy AI.
-18. Check combat.
-19. Check boss encounters.
-20. Check loot.
-21. Check creature systems.
-22. Check quests.
-23. Check portals and transitions.
-24. Check party systems.
-25. Check UI interactions.
-26. Check mobile layouts.
-27. Check performance.
-
-Multiplayer testing
-
-Use Roblox Studio Server & Clients mode.
-
-Test with multiple clients.
-
-Verify:
-
-- Shared state synchronization.
-- Party membership.
-- Dungeon access.
-- Combat replication.
-- Reward distribution.
-- Disconnect handling.
-- Data isolation.
-- No duplicated rewards.
-
-Use Studio device simulation and network simulation where appropriate.
-
-Capture screenshots of important stages.
-
-Read Output after each significant test.
-
-Fix discovered problems and repeat testing.
-
-Do not mark a feature complete until it has been tested.
-
----
-
-PART 21 — IMPLEMENTATION ORDER
-
-Work autonomously through these stages.
-
-STAGE 1 — FULL AUDIT
-
-- Inspect the existing Place.
-- Create backup.
-- Map all locations and systems.
-- Identify broken and duplicate systems.
-- Document current functionality.
-
-STAGE 2 — OPEN-SOURCE RESEARCH
-
-- Inspect all repositories.
-- Read source code and documentation.
-- Check licenses.
-- Select compatible modules.
-- Create integration map.
-
-STAGE 3 — ARCHITECTURE REFACTOR
-
-- Establish unified data model.
-- Establish service architecture.
-- Establish networking contracts.
-- Resolve duplicate systems.
-- Preserve existing assets and locations.
-
-STAGE 4 — CORE GAMEPLAY
-
-- Inventory.
-- Equipment.
-- Player progression.
-- Economy.
-- Quests.
-- Combat.
-- Enemies.
-- Loot.
-- Persistence.
-
-STAGE 5 — DUNGEON SYSTEM
-
-- Dungeon seeds.
-- Growth.
-- Module generation.
-- Room connectivity.
-- Enemy encounters.
-- Boss encounters.
-- Dungeon rewards.
-
-STAGE 6 — FARM AND CREATURES
-
-- Player plots.
-- Farming.
-- Eggs.
-- Creatures.
-- Creature progression.
-- Plot defense.
-
-STAGE 7 — WORLD INTEGRATION
-
-- Functional hub.
-- Existing points of interest.
-- NPC interactions.
-- Portals.
-- Location transitions.
-- Full gameplay loop.
-
-STAGE 8 — UI AND PRESENTATION
-
-- Complete HUD.
-- Inventory and menus.
-- Dungeon interfaces.
-- Creature interfaces.
-- Combat feedback.
-- Visual consistency.
-
-STAGE 9 — TESTING AND OPTIMIZATION
-
-- Single-player tests.
-- Multiplayer tests.
-- Mobile tests.
-- Performance tests.
-- Bug fixing.
-- Regression testing.
-
-STAGE 10 — FINAL VALIDATION
-
-- Complete progression loop.
-- Verify every required system.
-- Verify all important interactions.
-- Verify saving.
-- Verify multiplayer.
-- Verify performance.
-- Update all documentation.
-
-These stages are not permission to stop after each stage.
-
-Continue working until the full implementation is complete or a genuine external blocker prevents progress.
-
----
-
-PART 22 — STRICT RULES
-
-1. Do not create a new blank Place instead of improving the existing one.
-2. Do not delete the existing hub.
-3. Do not discard existing points of interest without inspection.
-4. Do not replace working systems unnecessarily.
-5. Do not blindly copy entire GitHub projects.
-6. Do not introduce duplicate frameworks.
-7. Do not use unlicensed assets.
-8. Do not use decompiled or questionable assets without verified rights.
-9. Do not invent completed features.
-10. Do not leave broken interactions.
-11. Do not use fake UI functionality.
-12. Do not stop after producing documentation.
-13. Do not stop after creating a prototype.
-14. Do not create isolated gameplay systems.
-15. Do not ignore Output errors.
-16. Do not test only through static code inspection.
-17. Do not risk production player data.
-18. Do not introduce unnecessary complexity.
-19. Do not replace custom visuals with primitive placeholders.
-20. Do not report success without actual Studio testing.
-
-When a dependency, MCP capability, API, or repository is unavailable, document the limitation and continue with the best verified alternative.
-
-Never pretend to have downloaded, inspected, executed, or tested something you could not access.
-
----
-
-PART 23 — DEFINITION OF DONE
-
-The project is complete only when:
-
-- The existing Place has been successfully refactored.
-- The hub is functional.
-- Existing useful locations are integrated.
-- Player data is unified.
-- Inventory works.
-- Equipment works.
-- Combat works.
-- Enemies work.
-- Bosses work.
-- Loot works.
-- Quests work.
-- Dungeon seeds work.
-- Dungeon growth works.
-- Dungeon modules are explorable.
-- Rooms connect correctly.
-- Farm systems work.
-- Creatures work.
-- Progression works.
-- Multiplayer works.
-- Saving and loading work.
-- UI works.
-- The full gameplay loop is playable.
-- Major errors have been fixed.
-- Performance has been measured.
-- Studio tests have been performed.
-- Documentation has been updated.
-
-Deliver a finished, integrated game, not a collection of disconnected features.
-
-FINAL MISSION
-
-Transform the existing ROBLOX DUNGEON FARM Place into a coherent, polished, fully playable fantasy RPG by combining the best verified ideas and legally usable implementations from the researched open-source Roblox projects.
-
-Preserve the existing work.
-
-Reuse proven solutions.
-
-Follow official Roblox documentation.
-
-Build one consistent architecture.
-
-Make every system work together.
-
-Test the actual game through Roblox Studio MCP.
-
-Take ownership of the complete implementation and continue until the project reaches the Definition of Done.
-
-Begin by inspecting the existing Place and creating the backup. Do not ask the user to manually rebuild anything that you can inspect or implement through the available tools.
-Эффекты погоды, окружения и взаимодействия с миром.
-5. Звуки и музыка
-Отдельные звуковые наборы для хаба, фермы, подземелий и боссов.
-Звуки оружия, магии, ударов, шагов, монстров, NPC и окружения.
-Звуки интерфейса, инвентаря, получения предметов, улучшений и наград.
-Фоновая музыка с плавными переходами между зонами.
-Пространственное 3D-аудио там, где оно необходимо.
-6. Полноценный UI/HUD
-Переработать весь интерфейс в едином фэнтезийном стиле.
-Добавить анимации интерфейса, эффекты наведения, открытия окон, получения наград.
-Продумать мобильную адаптацию.
-7. Проверка качества
-Не просто импортировать ассеты, а проверять их качество, совместимость, анимации, материалы и производительность.
-Проверять все анимации, эффекты и звуки непосредственно в Roblox Studio через MCP.
-Не оставлять временные заглушки вместо готового контента.
-Я бы добавил ещё несколько важных разделов. Они помогут избежать ситуации, когда AI сделает красивые локации, но игра останется несвязной, пустой или однообразной.
-1. Полноценный игровой мир
-Разные биомы: зачарованный лес, руины, проклятые земли, ледяные пещеры, вулканические подземелья.
-Уникальная архитектура, освещение, растительность и атмосфера каждого биома.
-Секретные комнаты, скрытые проходы, ловушки, вертикальные маршруты.
-Разрушаемые объекты и интерактивное окружение.
-Динамические события: вторжения, редкие боссы, появление сокровищ.
-
-Каждый босс, биом и важный NPC должны иметь собственную визуальную идентичность.
-Проверять качество не только отдельных объектов, но и всей сцены целиком.
-8. Производительность и техническое качество
-LOD и оптимизация моделей.
-StreamingEnabled и грамотная загрузка больших локаций.
-Ограничение количества частиц и одновременных звуков.
-Оптимизация анимаций и скриптов.
-Проверка на слабых ПК и мобильных устройствах.
-Отсутствие утечек памяти и лишних циклов.
-9. Полноценное тестирование
-AI должен проверять не только скрипты, но и саму игру:
-Проходить игровой цикл от начала до конца.
-Проверять все NPC, двери, порталы, магазины и интерактивные объекты.
-Проверять все анимации, VFX и звуки.
-Проверять одиночную игру и кооператив до 4 игроков.
-Делать скриншоты каждой локации и сравнивать визуальное качество.
-Исправлять обнаруженные проблемы и повторять тестирование.
-Динамические события: вторжения, редкие боссы, появление сокровищ.
-2. Живой мир и NPC
-NPC с собственными распорядками и анимациями.
-Диалоги, торговля, задания и реакции на действия игрока.
-Патрулирующие монстры, спящие существа, охотящиеся стаи.
-Интерактивные животные и существа.
-Случайные встречи и события в локациях.
-3. Боевая система
-Разные типы атак, комбо, уклонения, блокирование.
-Различные боевые стили и способности.
-Реакции врагов на попадания, оглушение и отбрасывание.
-Уникальные механики каждого босса, несколько фаз.
-Эффекты попаданий, камеры, звука и визуальная обратная связь.
-4. Предметы и экипировка
-Редкость предметов и уникальный внешний вид.
-Оружие, броня, аксессуары, артефакты.
-Визуальное отображение экипировки на персонаже.
-Эффекты редких предметов.
-Система выпадения лута и наград за достижения.
-5. Атмосфера и окружение
-5. Атмосфера и окружение
-День и ночь, погода, туман, дождь.
-Объёмное освещение, красивые тени и цветокоррекция.
-Движущаяся растительность, водопады, реки, светящиеся грибы.
-Частицы пыли, магические светлячки, эмбиентные звуки.
-Разные атмосферные настройки для каждой локации.
-6. Анимации и эффекты интерфейса
-Плавные переходы между меню.
-Анимированные иконки, рамки, кнопки и индикаторы.
-Всплывающие уведомления о редком луте.
-Эффекты получения уровня и новых способностей.
-Анимации экипировки, инвентаря и карточек предметов.
-7. Система качества контента
-Это особенно важно добавить в мастер-промт:
-Не использовать один и тот же набор моделей во всех локациях.
-Не повторять одинаковые комнаты, декорации и эффекты без необходимости.
-Проверять масштаб объектов и пропорции.
-Не допускать пустых открытых пространств без игрового назначения.
-Все локации должны иметь визуальные ориентиры и интересные маршруты.
-Каждый босс, биом и важный NPC должны иметь собственную визуальную идентичность.
-Проверять качество не только отдельных объектов, но и всей сцены целиком.
-8. Производительность и техническое качество
-LOD и оптимизация моделей.
-StreamingEnabled и грамотная загрузка больших локаций.
+Игра должна быть цельной, красивой, функциональной, технически устойчивой и готовой к дальнейшему развитию.
