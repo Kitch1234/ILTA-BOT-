@@ -1,362 +1,190 @@
-MASTER PROMPT — COMPLETE STUD UI CLEAN INTEGRATION INTO EXISTING ROBLOX PROJECT
+ROBLOX R15 — COMPLETE ANIMATION SYSTEM REPAIR & REBUILD
 
 MISSION
 
-Полностью скопировать и интегрировать готовую UI-систему из GitHub-репозитория:
+You are a senior Roblox animation engineer specializing in R15 character animation, combat systems, mining simulators and multiplayer gameplay.
 
-https://github.com/TemporaryLooker22/Stud-UI-Clean-Roblox
+Your mission is to audit, diagnose, repair and rebuild the existing game's animation system.
 
-В мой УЖЕ СУЩЕСТВУЮЩИЙ Roblox Studio проект.
+The current project has a critical problem:
 
-Главное требование: мне нравится оригинальный дизайн Stud UI Clean. НЕ ПЕРЕДЕЛЫВАЙ ЕГО, НЕ УЛУЧШАЙ ПО СВОЕМУ ВКУСУ И НЕ ПРИДУМЫВАЙ ДРУГОЙ СТИЛЬ.
+- Mining VFX and effects work.
+- Mining damage may be applied.
+- Characters do not properly swing their pickaxes.
+- Attack animations are missing or malfunctioning.
+- Overall character actions lack proper animations.
 
-Я хочу получить интерфейс из репозитория практически в оригинальном виде, со всеми доступными компонентами, функциями, анимациями, иконками, примерами и вспомогательными файлами.
+This is NOT a request to add visual effects to compensate for missing animations.
 
-Твоя задача — не написать инструкцию, а самостоятельно выполнить всю работу в проекте.
+The character must physically perform the correct actions.
 
----
+PHASE 1 — PROJECT AUDIT
 
-ЭТАП 1. ИЗУЧЕНИЕ ПРОЕКТА И РЕПОЗИТОРИЯ
+Inspect the entire Roblox Experience.
 
-До внесения изменений:
+Identify:
 
-1. Проверь, какое окно Roblox Studio сейчас открыто.
-2. Определи активный Place и Experience.
-3. Изучи текущую структуру DataModel.
-4. Найди все существующие интерфейсы:
-   - ScreenGui;
-   - HUD;
-   - меню;
-   - окна;
-   - панели;
-   - кнопки;
-   - инвентарь;
-   - магазины;
-   - интерфейсы питомцев;
-   - локальные UI-скрипты.
-5. Найди все скрипты, которые управляют существующим интерфейсом.
-6. Определи зависимости между UI и игровой логикой.
+- All animation-related scripts.
+- All Animation objects and AnimationIds.
+- Humanoid and Animator configurations.
+- Default Animate scripts.
+- Existing animation priorities.
+- Tool activation scripts.
+- Mining and combat controllers.
+- Conflicting animation systems.
+- Invalid or inaccessible animation assets.
+- R6/R15 compatibility problems.
 
-Затем полностью изучи GitHub-репозиторий.
+Do not modify anything before documenting the existing architecture.
 
-Обязательно:
+Create:
 
-- Склонируй репозиторий или скачай полный ZIP.
-- Изучи все папки и файлы.
-- Изучи README и документацию.
-- Найди все Luau-модули.
-- Изучи систему компонентов.
-- Изучи анимации.
-- Изучи каталог иконок.
-- Изучи Design Tokens.
-- Изучи все демонстрационные интерфейсы.
-- Проверь зависимости и требования к установке.
+- ANIMATION_AUDIT.md
+- ANIMATION_IMPLEMENTATION_PLAN.md
 
-Не ограничивайся README. Нужно исследовать весь репозиторий.
+PHASE 2 — ANIMATION INFRASTRUCTURE
 
-ЭТАП 2. РЕЗЕРВНАЯ КОПИЯ
+Implement one centralized animation management architecture.
 
-До изменений:
+Requirements:
 
-1. Создай резервную копию текущего проекта.
-2. Зафиксируй текущую структуру интерфейсов.
-3. Сохрани оригинальные скрипты, которые могут потребоваться для восстановления.
-4. Создай документ UI_MIGRATION_BACKUP.md.
+- One Animator per character Humanoid.
+- Centralized animation configuration.
+- Animation loading and caching.
+- Track lifecycle management.
+- Priority management.
+- Controlled transitions and blending.
+- Cancellation when actions are interrupted.
+- Death and respawn handling.
+- Tool equip and unequip handling.
+- No duplicate animation playback.
+- No conflicting controllers.
 
-Ничего необратимого не удаляй без проверки зависимостей.
+Preserve and correctly integrate the existing Roblox default movement animation system.
 
-ЭТАП 3. ПОЛНЫЙ ПЕРЕНОС STUD UI CLEAN
+Do not unnecessarily replace the default Animate script.
 
-Перенеси в мой проект ВСЁ, что предусмотрено репозиторием и необходимо для его полноценной работы.
+PHASE 3 — CHARACTER MOVEMENT
 
-Не делай выборочный перенос только нескольких кнопок.
+Implement and test:
 
-Обязательно перенеси:
+- Idle.
+- Walk.
+- Run.
+- Jump.
+- Fall.
+- Land.
 
-- Основную UI-библиотеку.
-- Все вспомогательные модули.
-- Систему анимаций.
-- Все доступные иконки.
-- Каталог иконок.
-- Design Tokens.
-- Все готовые компоненты.
-- Все примеры интерфейсов.
-- Все необходимые вспомогательные ресурсы.
-- Документацию.
-- Демонстрационные элементы, если они нужны для проверки.
+Ensure smooth transitions between movement states.
 
-Сохраняй оригинальные названия, структуру, API и поведение компонентов, насколько это совместимо с Roblox Studio.
+PHASE 4 — MINING ANIMATION SYSTEM
 
-Не переписывай библиотеку без необходимости.
+Mining is a critical gameplay mechanic.
 
-Не заменяй оригинальные функции самодельными аналогами.
+Implement genuine R15 pickaxe animations:
 
-Если какой-либо ресурс невозможно автоматически перенести, зафиксируй это и найди корректный способ установки.
+1. Pickaxe preparation.
+2. Character wind-up.
+3. Physical pickaxe swing.
+4. Impact moment.
+5. Recovery.
+6. Return to idle.
 
-ЭТАП 4. ОРГАНИЗАЦИЯ В ROBLOX STUDIO
+Requirements:
 
-Размести систему в правильных сервисах Roblox.
+- Arms and upper body must visibly move.
+- Pickaxe must follow the character's hand.
+- Grip and attachment positioning must be correct.
+- Mining VFX must synchronize with the actual impact frame.
+- Sound must synchronize with impact.
+- Repeated mining must work without animation overlap.
+- Moving, jumping, tool switching and interruptions must be handled correctly.
 
-Ориентировочная структура (адаптируй к реальной архитектуре репозитория):
+Never trigger the mining impact effect as a substitute for a real animation.
 
-ReplicatedStorage
+PHASE 5 — COMBAT ANIMATIONS
 
-- StudUI
-  - Core
-  - Components
-  - Icons
-  - Themes
-  - Modules
-  - Animations
+Implement:
 
-StarterGui
+- Light attack.
+- Heavy attack.
+- Attack combinations.
+- Hit reactions.
+- Blocking.
+- Dodge.
+- Death.
 
-- GameUI
-  - HUD
-  - Windows
-  - Notifications
-  - Components
+Ensure combat animations have correct priorities and do not break locomotion.
 
-StarterPlayer
+PHASE 6 — ANIMATION ASSET CREATION
 
-- StarterPlayerScripts
-  - UIController
+Audit whether suitable animation assets already exist.
 
-Это пример организации, а не требование насильно создавать несуществующие модули.
+If assets are missing:
 
-Правильно раздели:
+- Identify the missing animation clips.
+- Create them using available animation authoring tools.
+- Alternatively, import properly authored R15 animations.
+- Publish assets under the correct Experience or group ownership.
+- Verify every AnimationId in Roblox Studio.
 
-- общие модули;
-- клиентские скрипты;
-- серверные скрипты, если они действительно требуются;
-- демонстрационные интерфейсы;
-- игровые интерфейсы.
+Do not invent AnimationIds or claim an animation works without testing it.
 
-Не размещай клиентскую логику в ServerScriptService.
+If an animation cannot be created or published with the available tools, document the exact blocker.
 
-Не дублируй одни и те же библиотеки в разных местах без необходимости.
+PHASE 7 — MULTIPLAYER
 
-ЭТАП 5. ПЕРЕНЕСТИ ГОТОВЫЕ ИНТЕРФЕЙСЫ
+Verify:
 
-Используй оригинальные демонстрационные интерфейсы из репозитория.
+- Animation visibility for other players.
+- Correct Animator replication.
+- Server-side validation of gameplay actions.
+- No duplicate damage events.
+- No animation desynchronization.
+- No exploitable client-authoritative damage.
 
-Мне нужны готовые окна, а не просто библиотека с возможностью когда-нибудь их создать.
+PHASE 8 — PLAYTEST
 
-Найди и перенеси все доступные примеры.
+Use Roblox Studio Play Mode.
 
-В первую очередь проверь наличие:
+Test:
 
-1. Главного HUD.
-2. Магазина.
-3. Инвентаря.
-4. Карточек предметов.
-5. Карточек питомцев.
-6. Daily Rewards.
-7. Rebirth.
-8. Season Pass.
-9. Уведомлений.
-10. Всплывающих окон.
-11. Кнопок и переключателей.
-12. Панелей с валютой.
-13. Слотов и элементов коллекции.
+- Mining repeatedly.
+- Mining while moving.
+- Switching tools during an animation.
+- Jumping and landing.
+- Combat combinations.
+- Taking damage.
+- Death and respawn.
+- Multiple players performing actions simultaneously.
 
-Если интерфейс присутствует в репозитории, переноси его оригинальную реализацию, а не создавай свою.
+Capture screenshots or recordings where possible.
 
-Если в репозитории есть только отдельный компонент, не выдавай его за готовое игровое окно.
+PHASE 9 — FINAL REPORT
 
-ЭТАП 6. ПОДКЛЮЧЕНИЕ К МОЕЙ ИГРЕ
+Create:
 
-Мой проект — Fantasy RPG в Roblox.
+- ANIMATION_TEST_REPORT.md
+- ANIMATION_ASSET_REGISTER.md
+- ANIMATION_KNOWN_ISSUES.md
+- ANIMATION_CHANGELOG.md
 
-Необходимо интегрировать UI так, чтобы он не оставался отдельной демонстрацией.
+Every feature must have one status:
+PASS / FAIL / BLOCKED / NOT TESTED.
 
-Подключи существующие игровые данные там, где для этого уже есть готовые системы:
+STRICT RULES
 
-- Уровень игрока.
-- Опыт.
-- Здоровье.
-- Валюта.
-- Инвентарь.
-- Предметы.
-- Питомцы.
-- Редкость предметов.
-- Награды.
-- Прогресс.
+- Do not create a new empty project.
+- Do not delete existing gameplay systems without justification.
+- Do not replace functional mining or combat logic unnecessarily.
+- Do not use fake animation effects.
+- Do not use placeholder AnimationIds.
+- Do not claim success without Play Mode verification.
+- Preserve existing maps, assets, tools and gameplay progression.
+- Work autonomously using available Roblox Studio MCP tools.
+- Verify actual tool availability before relying on them.
+- Do not ask the user to manually perform routine implementation steps.
 
-ВАЖНО:
+FINAL OBJECTIVE:
 
-Не придумывай несуществующие игровые механики.
-
-Сначала найди реальные системы и их API в проекте.
-
-Если нужная система ещё не реализована, оставь компонент интерфейса рабочим визуально, но не симулируй настоящие покупки, награды или сохранения.
-
-Не ломай:
-
-- DataStore;
-- RemoteEvents;
-- RemoteFunctions;
-- существующую систему инвентаря;
-- боевую систему;
-- систему питомцев;
-- игровые сохранения;
-- серверную авторизацию.
-
-Покупки, награды, валюта и инвентарь должны оставаться под контролем сервера.
-
-ЭТАП 7. СОХРАНЕНИЕ ОРИГИНАЛЬНОГО ДИЗАЙНА
-
-Это критически важный пункт.
-
-Я хочу получить оригинальный Stud UI Clean.
-
-Запрещено:
-
-- Придумывать новый визуальный стиль.
-- Заменять оформление на стандартный Roblox UI.
-- Убирать декоративные элементы.
-- Упрощать карточки.
-- Удалять анимации.
-- Заменять оригинальные иконки эмодзи.
-- Делать временные серые панели.
-- Создавать примитивные заглушки вместо готовых компонентов.
-- Самостоятельно менять цветовую систему без технической необходимости.
-
-Сохрани оригинальные:
-
-- цвета;
-- шрифты;
-- размеры;
-- скругления;
-- обводки;
-- тени;
-- градиенты;
-- эффекты;
-- анимации;
-- иконки;
-- пропорции;
-- визуальную иерархию.
-
-Если для адаптации под мою игру необходимо изменить только источник данных или подключение компонентов — делай это без изменения внешнего вида.
-
-ЭТАП 8. ИНТЕГРАЦИЯ С СУЩЕСТВУЮЩИМ HUD
-
-Изучи текущий HUD.
-
-Определи, какие элементы можно заменить готовыми компонентами Stud UI Clean.
-
-Не оставляй два конкурирующих HUD одновременно.
-
-Сохрани необходимые игровые функции существующего HUD, но используй оригинальные визуальные компоненты Stud UI Clean там, где они подходят.
-
-Если существующий элемент нельзя безопасно заменить, сохрани его до отдельной проверки.
-
-Не удаляй работающую игровую логику вместе с визуальными элементами.
-
-ЭТАП 9. ТЕСТИРОВАНИЕ
-
-Обязательно запусти Roblox Studio Play Mode.
-
-Проверь:
-
-- Отсутствие ошибок в Output.
-- Загрузку всех модулей.
-- Корректную работу компонентов.
-- Работу анимаций.
-- Отображение иконок.
-- Открытие и закрытие окон.
-- Работу кнопок.
-- Отсутствие перекрытий.
-- Правильное масштабирование.
-- Корректную работу при изменении разрешения.
-- Совместимость с мобильными экранами.
-- Отсутствие конфликтов со старым UI.
-
-Проверь также, что интерфейс не исчезает после респавна персонажа.
-
-Если что-то не работает — исправь самостоятельно и повтори тестирование.
-
-Не отмечай функцию как работающую, если она не была проверена.
-
-ЭТАП 10. ДОКУМЕНТАЦИЯ
-
-Создай:
-
-1. STUD_UI_INTEGRATION.md
-   
-   - Что было перенесено.
-   - Куда установлено.
-   - Как устроена система.
-   - Какие компоненты доступны.
-
-2. UI_COMPONENT_CATALOG.md
-   
-   - Полный перечень перенесённых компонентов.
-   - Назначение каждого компонента.
-   - Примеры использования.
-
-3. UI_MIGRATION_REPORT.md
-   
-   - Что заменено.
-   - Что сохранено.
-   - Что подключено к игровым данным.
-   - Что осталось неподключённым.
-
-4. UI_TEST_REPORT.md
-   
-   - Проверенные окна.
-   - Результаты тестирования.
-   - Найденные и исправленные ошибки.
-   - Оставшиеся проблемы.
-
-ПРАВИЛА АВТОНОМНОЙ РАБОТЫ
-
-Работай самостоятельно.
-
-Используй доступные инструменты:
-
-- Roblox Studio MCP;
-- файловую систему;
-- Git;
-- терминал;
-- Roblox Studio API;
-- другие доступные средства автоматизации.
-
-Если один способ установки не работает, найди альтернативный.
-
-Не останавливайся после анализа или создания плана.
-
-Не проси меня вручную переносить файлы, создавать папки, нажимать кнопки или вставлять скрипты, если доступные инструменты позволяют выполнить это самостоятельно.
-
-Не говори, что работа завершена, пока изменения действительно не внесены в открытый проект.
-
-Если возникло техническое ограничение, объясни конкретно, что именно заблокировано, и выполни остальные доступные задачи.
-
----
-
-КРИТЕРИЙ ЗАВЕРШЕНИЯ
-
-Работа считается завершённой, когда:
-
-- [ ] Репозиторий полностью изучен.
-- [ ] Все необходимые файлы Stud UI Clean перенесены.
-- [ ] Все доступные компоненты установлены.
-- [ ] Все доступные демонстрационные интерфейсы перенесены.
-- [ ] Оригинальные анимации работают.
-- [ ] Иконки доступны.
-- [ ] UI встроен в существующий проект.
-- [ ] Старый HUD не конфликтует с новым.
-- [ ] Существующая игровая логика сохранена.
-- [ ] Play Mode проверен.
-- [ ] Ошибки исправлены.
-- [ ] Документация создана.
-
-В конце предоставь отчёт с тремя статусами:
-
-PASS — проверено и работает.
-
-NOT TESTED — установлено, но не проверено.
-
-BLOCKED — невозможно выполнить из-за конкретного технического ограничения.
-
-Главная цель: получить в моём Roblox-проекте полноценную установленную UI-систему Stud UI Clean с оригинальным оформлением и всеми доступными компонентами, а не очередной самодельный интерфейс или демонстрационный прототип.
+A fully functional R15 animation system where mining, combat, movement and tool usage produce genuine, visible character animations synchronized with gameplay.
