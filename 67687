@@ -1179,3 +1179,924 @@ PHASE 8 — RELEASE REPORT
 Мы должны получить не просто проект без ошибок в Output, а полноценную, стабильную и понятную игрокам игру, которую безопасно выпустить, начать собирать статистику и продолжать развивать регулярными обновлениями.
 
 Работай как над реальным коммерческим Roblox Experience, а не как над учебным проектом.
+
+
+ROBLOX VEHICLE SYSTEM — A-CHASSIS + ZENSPAWNER + ROBUX VEHICLE SHOP
+
+MISSION
+
+Integrate a complete, production-ready vehicle system into the EXISTING Roblox Experience using:
+
+1. A-Chassis — vehicle physics and driving framework.
+2. ZenSpawner — vehicle loading and spawning system.
+3. Roblox MarketplaceService — permanent vehicle purchases using Game Passes.
+4. Developer Products — optional temporary vehicle rentals.
+
+This is a full integration task, not a demonstration or prototype.
+
+The result must be a functional vehicle system that supports free vehicles, premium vehicles, a vehicle selection interface, spawning, despawning, ownership verification, and multiplayer gameplay.
+
+Do not create an unrelated test place. Work inside the currently opened Roblox Experience and preserve its existing content.
+
+---
+
+1. OFFICIAL SOURCES
+
+Study the actual source code, releases, installation instructions, and licenses before implementation.
+
+A-CHASSIS:
+https://github.com/lisphm/A-Chassis
+
+ZENSPAWNER:
+https://github.com/PGC-Interactive/ZenSpawner
+
+ZenSpawner installation instructions:
+
+- Download the official RBXM release.
+- Inspect the complete hierarchy and scripts.
+- Install its StarterGui components into StarterGui.
+- Install its server components into ServerScriptService.
+- Install its shared components into ReplicatedStorage.
+- Inspect CarDatabase and follow its actual data format.
+- Check for duplicated Icon ModuleScripts.
+- Understand ShouldDeleteCache before modifying it.
+
+Do not invent APIs, hierarchy structures, configuration fields, or installation methods.
+
+Use the latest compatible official versions available at implementation time.
+
+Compatibility requirements
+
+ZenSpawner is designed specifically for A-Chassis.
+
+Verify:
+
+- A-Chassis version compatibility.
+- DriveSeat requirements.
+- PrimaryPart requirements.
+- Vehicle model hierarchy.
+- Vehicle asset loading permissions.
+- Network ownership and multiplayer behavior.
+
+ZenSpawner requires vehicle assets to be accessible to the Experience creator (user or group).
+
+Check that every vehicle Asset ID is actually accessible before adding it to CarDatabase.
+
+---
+
+2. PROJECT AUDIT AND BACKUP
+
+Before changing anything:
+
+1. Inspect the entire existing Experience.
+2. Identify the active Place and other Places.
+3. Inspect Workspace, ReplicatedStorage, ServerScriptService, StarterGui and StarterPlayer.
+4. Search for existing vehicle models, scripts, RemoteEvents and garage systems.
+5. Identify existing UI conventions and visual style.
+6. Check for scripts that could conflict with A-Chassis or ZenSpawner.
+7. Identify the current player-data and DataStore architecture.
+
+Create a backup before modifications.
+
+Do not:
+
+- Delete existing maps or buildings.
+- Replace the existing game environment.
+- Delete unrelated scripts.
+- Duplicate existing systems.
+- Replace functioning UI without a reason.
+- Install unverified Toolbox scripts.
+
+Preserve all unrelated functionality.
+
+If another vehicle system already exists, evaluate whether it can safely coexist or should be replaced. Document the decision.
+
+---
+
+3. INSTALL A-CHASSIS
+
+Integrate A-Chassis as the standard vehicle physics framework.
+
+Requirements:
+
+- Functional acceleration and braking.
+- Steering and turning.
+- Reverse movement.
+- Suspension.
+- Collision behavior.
+- Stable driving on existing terrain.
+- Multiplayer support.
+- Proper vehicle network ownership.
+- No uncontrolled physics explosions.
+- No excessive server physics workload.
+
+Configure the initial vehicle using the actual A-Chassis documentation.
+
+Create one fully functioning test vehicle first.
+
+Verify:
+
+- It loads correctly.
+- The player can enter DriveSeat.
+- The vehicle responds to controls.
+- The camera behaves correctly.
+- The player can exit safely.
+- The vehicle does not fall apart or become stuck.
+- Multiple players can use vehicles simultaneously.
+
+Do not assume that an ordinary Roblox car model is automatically compatible with A-Chassis.
+
+---
+
+4. INSTALL ZENSPAWNER
+
+Integrate ZenSpawner without unnecessarily rewriting its original architecture.
+
+Requirements:
+
+- Correct folder placement.
+- Correct ModuleScript dependencies.
+- No duplicate Icon modules.
+- Correct CarDatabase entries.
+- Asset ID validation.
+- Correct vehicle model loading.
+- Reliable spawn and despawn behavior.
+
+Add an organized vehicle configuration system.
+
+Every vehicle should have a unique configuration containing:
+
+- VehicleKey
+- DisplayName
+- AssetId
+- VehicleCategory
+- Thumbnail
+- Price
+- CurrencyType
+- GamePassId
+- IsFree
+- IsPremium
+- Enabled
+
+Follow the actual ZenSpawner database format. Do not assume that the example configuration above is its native schema.
+
+Only allow vehicles registered in the server's trusted database.
+
+Do not let clients send arbitrary Asset IDs to spawn.
+
+---
+
+5. VEHICLE GARAGE AND UI
+
+Create or integrate a complete vehicle selection interface.
+
+Use the current game's UI design language.
+
+If the project already has a suitable interface, extend it instead of creating a competing system.
+
+The garage must display:
+
+- Vehicle image.
+- Vehicle name.
+- Category.
+- Purchase status.
+- Robux price for premium vehicles.
+- Spawn button.
+- Return/Despawn button.
+
+Vehicle states:
+
+1. FREE — available without payment.
+2. OWNED — already unlocked.
+3. LOCKED — requires purchase.
+4. SPAWNED — currently active.
+5. UNAVAILABLE — temporarily disabled or unavailable.
+
+Add functional category filtering if the number of vehicles warrants it.
+
+The interface must work on desktop, mobile and supported gamepad input.
+
+Do not use fake thumbnails or nonexistent vehicles.
+
+---
+
+6. ROBUX MONETIZATION — GAME PASSES
+
+Implement permanent premium vehicle ownership using Roblox Game Passes.
+
+Recommended business model:
+
+- Free starter vehicles.
+- Standard vehicles purchasable with existing in-game currency, if available.
+- Premium vehicles purchased with Robux.
+- Exclusive vehicles with separate Game Passes.
+- Optional premium bundles using additional Game Passes.
+
+Each premium vehicle should have a configurable GamePassId.
+
+IMPORTANT:
+
+Game Pass creation must happen through Creator Hub. Never invent Pass IDs.
+
+Prepare a central configuration where I can enter the actual IDs later.
+
+Example logical configuration:
+
+Vehicle:
+
+- VehicleKey: SportsCar01
+- IsPremium: true
+- GamePassId: [ENTER REAL ID]
+- IsEnabled: false until configured
+
+When GamePassId is missing or invalid:
+
+- Do not attempt to purchase.
+- Do not accidentally unlock the vehicle.
+- Show an appropriate unavailable status.
+
+Purchase flow
+
+1. Player opens the garage.
+2. Player selects a premium vehicle.
+3. The game checks ownership.
+4. If not owned, show the Robux purchase button.
+5. Use MarketplaceService:PromptGamePassPurchase().
+6. Verify the result using server-side ownership checks.
+7. Unlock access only after successful verification.
+8. Allow spawning after verification.
+
+Use current Roblox documentation and APIs, including GetPassOwnershipAsync where appropriate.
+
+Important:
+
+- PromptGamePassPurchaseFinished alone is not sufficient proof of permanent ownership.
+- Roblox Game Pass free trials may trigger purchase-related events.
+- For permanent ownership, verify the Owned field.
+- Active trial access, if supported, must remain temporary.
+- Never save a temporary trial as permanent ownership.
+- Do not trust LocalScripts to grant paid vehicles.
+- Recheck ownership on the server when access matters.
+
+Do not store Game Pass ownership as the sole source of truth in DataStore.
+
+---
+
+7. OPTIONAL DEVELOPER PRODUCT RENTALS
+
+Prepare an architecture that can optionally support temporary vehicle rentals.
+
+Example:
+
+- Rent a vehicle for 10 minutes.
+- Premium vehicle rental.
+- Temporary vehicle access.
+
+Use Developer Products only where repeatable purchases make sense.
+
+If rentals are implemented:
+
+- Use MarketplaceService.ProcessReceipt.
+- Validate the receipt.
+- Prevent duplicate reward processing.
+- Persist receipt processing safely.
+- Grant the correct rental duration.
+- Handle player disconnects and server restarts.
+- Never grant purchases based only on PromptProductPurchaseFinished.
+
+Do not implement rentals unless the architecture and current project make them useful.
+
+---
+
+8. SERVER SECURITY
+
+All critical vehicle operations must be server-authoritative.
+
+Implement:
+
+- Server-side vehicle access verification.
+- Server-side ownership checks.
+- Allowed vehicle IDs.
+- Spawn request validation.
+- Spawn request cooldown.
+- Protection against repeated spawning.
+- Maximum active vehicles per player.
+- Safe spawn positioning.
+- Collision checks.
+- Cleanup when a player leaves.
+- Cleanup of abandoned vehicles.
+- Protection against unauthorized vehicle spawning.
+
+Default policy:
+One active personal vehicle per player.
+
+When the player spawns another vehicle, safely remove their previous vehicle first.
+
+Prevent players from spawning vehicles on top of other players or inside buildings.
+
+Inspect A-Chassis network ownership behavior and configure it safely.
+
+Never expose server-only configuration or purchase authorization to clients.
+
+---
+
+9. DATA AND PERSISTENCE
+
+Integrate with the existing player-data architecture.
+
+Preserve:
+
+- Existing player data.
+- Existing currencies.
+- Existing progression.
+- Existing inventory systems.
+
+For vehicles bought with in-game currency, save ownership using the existing DataStore architecture.
+
+For Game Pass vehicles, derive permanent access from Roblox ownership verification rather than trusting a saved client flag.
+
+Allow players to select their preferred vehicle and optionally remember their last selected vehicle.
+
+Do not create competing DataStore systems unnecessarily.
+
+---
+
+10. PERFORMANCE AND MULTIPLAYER
+
+ZenSpawner may be rate-limited when multiple players load vehicles simultaneously.
+
+Test:
+
+- Concurrent vehicle spawning.
+- Multiple active vehicles.
+- Despawning.
+- Repeated spawn requests.
+- Player disconnects.
+- Server cleanup.
+- Vehicle loading failures.
+
+ZenSpawner's author recommends keeping server size below 20 players.
+
+Do not silently change the Experience's MaxPlayers setting.
+
+Instead:
+
+- Inspect the current server capacity.
+- Measure actual spawn behavior.
+- Document the recommended server size.
+- Report any scalability limitations.
+- Optimize asset loading and unnecessary vehicle instances.
+
+---
+
+11. LICENSING AND THIRD-PARTY CODE
+
+Inspect the actual license files for both projects and all imported assets.
+
+ZenSpawner declares GPL-3.0.
+
+Preserve its license and required attribution. Review the obligations before distributing modified components as part of a commercial Experience.
+
+Do not remove author credits or license notices.
+
+Verify A-Chassis licensing and the permissions of every imported car model rather than assuming that free availability automatically grants unrestricted commercial rights.
+
+Document any unresolved licensing questions.
+
+---
+
+12. PLAYTESTING
+
+Perform actual Roblox Studio Play tests.
+
+Do not mark a feature PASS just because its script exists.
+
+Test:
+
+A. Vehicle loading
+
+- A-Chassis installation.
+- ZenSpawner installation.
+- Database configuration.
+- Asset ID loading.
+
+B. Driving
+
+- Entering and exiting.
+- Steering.
+- Acceleration.
+- Braking.
+- Reverse.
+- Collision.
+- Terrain interaction.
+
+C. Garage
+
+- Opening and closing.
+- Selecting a vehicle.
+- Spawning.
+- Despawning.
+- Switching vehicles.
+- Unavailable vehicle states.
+
+D. Monetization
+
+- Free vehicle access.
+- Unconfigured Game Pass.
+- Configured Game Pass.
+- Purchase prompt.
+- Server-side ownership verification.
+- Rejoining after purchase.
+
+E. Multiplayer
+
+- Two or more players.
+- Simultaneous spawning.
+- Ownership isolation.
+- Cleanup after leaving.
+- RemoteEvent security.
+
+Use multiple Studio clients where possible.
+
+Test purchases using actual configured passes in an appropriate published test environment. Never claim a real Robux transaction was verified if it was not.
+
+Inspect Output for errors and warnings.
+
+---
+
+13. DOCUMENTATION
+
+Create or update:
+
+- VEHICLE_SYSTEM_AUDIT.md
+- VEHICLE_SYSTEM_ARCHITECTURE.md
+- VEHICLE_SETUP.md
+- VEHICLE_CATALOG.md
+- VEHICLE_MONETIZATION_SETUP.md
+- VEHICLE_PLAYTEST_REPORT.md
+- CHANGELOG_AI.md
+
+Document:
+
+- Installed components and versions.
+- Vehicle Asset IDs.
+- CarDatabase structure.
+- How to add another A-Chassis vehicle.
+- How to create a Game Pass.
+- Where to enter GamePassId.
+- How vehicle purchases work.
+- Known compatibility limitations.
+- Performance considerations.
+
+Include a clear list of Game Passes that I must manually create in Creator Hub.
+
+---
+
+14. FINAL ACCEPTANCE CRITERIA
+
+The task is complete only when:
+
+- A-Chassis is successfully integrated.
+- ZenSpawner is successfully integrated.
+- At least one real vehicle loads.
+- The vehicle can be driven.
+- The vehicle can be despawned.
+- The garage interface works.
+- Free vehicles work.
+- Premium vehicle configuration is ready.
+- Server-side ownership checks are implemented.
+- Existing project functionality remains intact.
+- Multiplayer behavior has been tested.
+- Documentation is complete.
+
+Use these statuses for every requirement:
+
+PASS — successfully implemented and tested.
+FAIL — implementation does not work.
+BLOCKED — requires missing permissions, IDs, assets or external action.
+NOT TESTED — implemented but not verified.
+
+Do not fake screenshots, test results, vehicle IDs or purchase confirmations.
+
+Do not stop after creating a plan. Implement the actual system, test it, fix problems and produce the finished result.
+
+If external permissions or a manual Creator Hub operation prevent completion, complete everything else and give me the exact remaining steps.
+
+FINAL GOAL:
+
+A working Roblox vehicle ecosystem with realistic A-Chassis driving, ZenSpawner-based vehicle loading, an organized garage, free and premium vehicle access, and a secure Robux monetization system.
+
+
+
+
+
+
+
+
+
+
+rojo build -o "PetSim.rbxlx"
+MASTER PROMPT — ROBLOX PET SYSTEM INTEGRATION
+
+Reference: CoinsHatcher / Pet Simulator
+
+Mission: Integrate a Complete Pet Simulator System Into the Existing Roblox Experience
+
+Ты работаешь как Senior Roblox Engineer, Gameplay Programmer, Technical Designer и QA Engineer.
+
+Твоя задача — изучить открытый GitHub-проект:
+
+https://github.com/zqh7y/CoinsHatcher
+
+И на основе его архитектуры, игровых механик и технических решений интегрировать полноценную систему питомцев в МОЙ СУЩЕСТВУЮЩИЙ ROBLOX EXPERIENCE.
+
+ВАЖНО: CoinsHatcher является техническим референсом. Не копируй его целиком и не переноси код без проверки лицензии. Реализуй собственную совместимую систему, адаптированную к архитектуре моего проекта.
+
+---
+
+PHASE 1. COMPLETE PROJECT AUDIT
+
+До любых изменений:
+
+1. Подключись к Roblox Studio через доступные MCP-инструменты.
+2. Изучи весь открытый Experience и активный Place.
+3. Проверь все существующие скрипты, ModuleScripts, LocalScripts и RemoteEvents.
+4. Найди существующие системы:
+   - питомцев;
+   - инвентаря;
+   - валюты;
+   - сохранений;
+   - магазинов;
+   - коллекций;
+   - NPC;
+   - интерфейса;
+   - взаимодействия с объектами.
+5. Определи, какие системы можно расширить, а какие необходимо заменить.
+6. Проверь существующие модели питомцев и другие доступные ассеты.
+7. Проверь наличие конфликтующих скриптов и дублирующих механик.
+
+Создай документы:
+
+- PET_SYSTEM_AUDIT.md
+- PET_SYSTEM_ARCHITECTURE.md
+- PET_SYSTEM_IMPLEMENTATION_PLAN.md
+- PET_SYSTEM_CHANGELOG.md
+
+Не удаляй существующие рабочие системы до завершения аудита.
+
+PHASE 2. PET FOLLOWING SYSTEM
+
+Реализуй полноценную систему следования питомцев.
+
+Основные требования:
+
+- Питомцы физически находятся в игровом мире.
+- Следуют за своим владельцем.
+- Автоматически выстраиваются в несколько рядов.
+- При увеличении количества питомцев строй динамически расширяется.
+- Используют плавное перемещение.
+- Не телепортируются при обычном движении.
+- Не сталкиваются с игроком и друг с другом.
+- Не проваливаются под землю.
+- Корректно перемещаются по неровной поверхности.
+- Поворачиваются в направлении движения.
+- Имеют анимации ожидания и движения.
+- При остановке игрока питомцы постепенно занимают свои позиции.
+- При быстром перемещении корректно догоняют игрока.
+
+Предусмотри:
+
+- максимальную дистанцию от владельца;
+- восстановление позиции после застревания;
+- корректную работу при прыжках;
+- оптимизацию большого количества питомцев;
+- поддержку нескольких игроков одновременно.
+
+Не используй постоянные тяжёлые циклы для каждого питомца. Выбери производительную архитектуру.
+
+PHASE 3. PET COLLECTION SYSTEM
+
+Создай полноценную коллекцию питомцев.
+
+Каждый питомец должен иметь:
+
+- уникальный ID;
+- название;
+- модель;
+- редкость;
+- базовую силу;
+- уровень;
+- опыт;
+- характеристики;
+- возможность экипировки;
+- возможность снятия с экипировки.
+
+Редкости:
+
+- Common
+- Uncommon
+- Rare
+- Epic
+- Legendary
+- Mythical
+- Secret
+
+Предусмотри возможность добавления новых редкостей через конфигурацию.
+
+Реализуй:
+
+- получение питомцев;
+- хранение в коллекции;
+- экипировку;
+- снятие с экипировки;
+- автоматическую экипировку лучших питомцев;
+- сортировку;
+- фильтрацию;
+- избранное;
+- блокировку от случайного удаления;
+- объединение одинаковых питомцев в интерфейсе с отображением количества, если это совместимо с уникальными характеристиками экземпляров.
+
+Один питомец не может одновременно принадлежать двум игрокам.
+
+PHASE 4. PET EGGS AND HATCHING
+
+Создай систему яиц.
+
+Каждое яйцо должно иметь:
+
+- уникальное название;
+- стоимость;
+- валюту покупки;
+- список возможных питомцев;
+- вероятность получения каждого питомца;
+- визуальную модель;
+- анимацию открытия.
+
+Реализуй:
+
+- покупку одного яйца;
+- открытие нескольких яиц;
+- автоматическое открытие;
+- проверку валюты;
+- отображение шансов выпадения;
+- анимацию получения питомца;
+- защиту от повторного списания валюты;
+- серверную проверку всех операций.
+
+Все вероятности должны настраиваться через Config.
+
+PHASE 5. PET INTERACTION AND AUTO ATTACK
+
+Одна из важнейших систем.
+
+Питомцы должны уметь взаимодействовать с игровыми объектами.
+
+Пример:
+
+1. Игрок выбирает объект.
+2. Питомцы получают команду атаковать.
+3. Питомцы перемещаются к объекту.
+4. Распределяются вокруг него.
+5. Начинают атаковать.
+6. Над объектом появляется индикатор здоровья.
+7. После уничтожения объект выдаёт награду.
+8. Питомцы возвращаются к владельцу или получают следующую цель.
+
+Требования:
+
+- у каждого питомца своя сила;
+- урон зависит от характеристик;
+- визуальные эффекты атаки;
+- анимации;
+- звуковые эффекты;
+- отображение наносимого урона;
+- корректная обработка уничтожения объекта;
+- отсутствие дублирования наград;
+- возможность остановить атаку и вернуть питомцев.
+
+Сервер является авторитетным для расчёта урона и выдачи наград.
+
+Не допускай ситуации, когда клиент самостоятельно назначает себе награды.
+
+PHASE 6. PET PROGRESSION
+
+Добавь развитие питомцев:
+
+- получение опыта;
+- повышение уровня;
+- увеличение характеристик;
+- улучшение редкости, если предусмотрено балансом;
+- слияние одинаковых питомцев;
+- специальные мутации;
+- Shiny;
+- Rainbow;
+- Galaxy.
+
+Мутации должны иметь отдельные визуальные эффекты и настраиваемые множители характеристик.
+
+Не делай все улучшения обязательными для MVP системы.
+
+PHASE 7. ECONOMY AND UPGRADES
+
+Изучи существующую экономику игры.
+
+Не создавай вторую конкурирующую валюту без необходимости.
+
+Подключи систему питомцев к уже существующей экономике.
+
+Предусмотри:
+
+- покупку яиц;
+- улучшение питомцев;
+- расширение количества слотов;
+- увеличение максимального количества экипированных питомцев;
+- бонусы от питомцев;
+- награды за игровые действия.
+
+Все цены и множители должны находиться в конфигурационных файлах.
+
+PHASE 8. PET UI
+
+Создай современный интерфейс в стиле качественных Roblox Simulator / Pet Simulator игр.
+
+Не используй стандартные некрасивые Roblox-окна.
+
+Нужны:
+
+1. PET INVENTORY
+   
+   - карточки питомцев;
+   - иконки;
+   - редкость;
+   - уровень;
+   - характеристики;
+   - кнопка Equip;
+   - кнопка Unequip;
+   - Equip Best;
+   - сортировка;
+   - фильтрация;
+   - поиск.
+
+2. EGG SHOP
+   
+   - модели яиц;
+   - стоимость;
+   - вероятность получения;
+   - кнопки открытия;
+   - анимация вылупления.
+
+3. PET DETAILS
+   
+   - большая модель питомца;
+   - характеристики;
+   - редкость;
+   - уровень;
+   - опыт;
+   - улучшения.
+
+4. PET COLLECTION
+   
+   - собранные существа;
+   - неизвестные существа;
+   - прогресс коллекции.
+
+Интерфейс должен адаптироваться под ПК, мобильные устройства и планшеты.
+
+Проверь существующий UI и сохрани его визуальную совместимость с игрой.
+
+PHASE 9. PET MODELS AND ASSETS
+
+Используй существующие модели питомцев, если они подходят.
+
+Если моделей недостаточно:
+
+- изучи доступные Toolbox-ассеты;
+- ищи качественные бесплатные модели;
+- проверяй происхождение и лицензии;
+- проверяй модели на подозрительные скрипты;
+- не добавляй неизвестные исполняемые скрипты из Toolbox.
+
+Не используй примитивные цветные сферы вместо полноценных питомцев.
+
+Каждый питомец должен иметь:
+
+- качественную модель;
+- понятный силуэт;
+- собственную анимацию;
+- визуальное отличие редкости;
+- оптимизированное количество деталей.
+
+PHASE 10. DATA SAVING
+
+Реализуй надёжное сохранение:
+
+- коллекции питомцев;
+- экипированных питомцев;
+- уровней;
+- опыта;
+- мутаций;
+- открытых яиц;
+- улучшений;
+- валюты.
+
+Используй существующую систему сохранений, если она уже работает.
+
+Обязательно:
+
+- серверное управление данными;
+- обработка ошибок DataStore;
+- повторные попытки сохранения;
+- защита от потери данных;
+- версионирование структуры данных;
+- безопасная миграция старых сохранений.
+
+Не сбрасывай существующий прогресс игроков.
+
+PHASE 11. PERFORMANCE AND MULTIPLAYER
+
+Проверь работу системы:
+
+- с одним игроком;
+- с несколькими игроками;
+- с максимальным количеством экипированных питомцев;
+- при большом количестве моделей;
+- при одновременной атаке нескольких объектов.
+
+Оптимизируй:
+
+- количество обновлений;
+- сетевой трафик;
+- анимации;
+- физику;
+- клиентские и серверные вычисления.
+
+Не допускай чрезмерного количества RemoteEvents и постоянной передачи координат каждого питомца.
+
+PHASE 12. TESTING
+
+После реализации проведи полноценные Play-тесты.
+
+Проверь:
+
+1. Получение питомца.
+2. Открытие яйца.
+3. Покупку нескольких яиц.
+4. Экипировку.
+5. Снятие с экипировки.
+6. Следование за игроком.
+7. Построение нескольких рядов.
+8. Перемещение по карте.
+9. Атаку объектов.
+10. Получение наград.
+11. Сохранение.
+12. Повторное подключение.
+13. Одновременную работу нескольких игроков.
+14. Мобильный интерфейс.
+15. Производительность.
+
+Создай PET_SYSTEM_PLAYTEST_REPORT.md.
+
+Каждому тесту присвой статус:
+
+- PASS
+- FAIL
+- BLOCKED
+- NOT TESTED
+
+Исправляй найденные ошибки и повторяй тесты.
+
+---
+
+IMPORTANT DEVELOPMENT RULES
+
+1. Не создавай новый пустой Experience.
+2. Не удаляй существующие карты, хабы, здания, NPC и игровые зоны.
+3. Не ломай существующую экономику и сохранения.
+4. Не создавай дублирующие системы.
+5. Не оставляй временные заглушки.
+6. Не ограничивайся демонстрацией одного питомца.
+7. Не прекращай работу после создания базовой механики следования.
+8. Не заявляй о прохождении тестов без фактического Play-тестирования.
+9. Используй MCP-инструменты, доступные в текущей среде, предварительно проверив их возможности.
+10. Все изменения должны быть документированы.
+
+FINAL OBJECTIVE
+
+В результате мой существующий Roblox Experience должен получить законченную, расширяемую систему питомцев уровня качественного Pet Simulator:
+
+- полноценная коллекция;
+- яйца;
+- редкости;
+- экипировка;
+- следование;
+- атака объектов;
+- прогрессия;
+- мутации;
+- сохранение;
+- интерфейс;
+- оптимизация;
+- мультиплеер.
+
+Главный приоритет — не количество созданных скриптов, а реально работающая игровая система, интегрированная в существующий проект.
+
+Работай автономно до завершения всех реализуемых задач. Если обнаружишь блокирующую проблему, задокументируй её, не разрушая существующие рабочие механики.
