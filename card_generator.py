@@ -165,3 +165,87 @@ https://create.roblox.com/store/asset/6433272094/Dune-Buggy?pageNumber=0&pagePos
 https://create.roblox.com/store/asset/11641270452/2026-Colt-RIOLU-Standard?pageNumber=0&pagePosition=3
 
 https://create.roblox.com/store/asset/6433323089/Sports-Car?pageNumber=0&pagePosition=5
+
+
+ADDITIONAL REQUIREMENTS — ROBLOX ENGLISH-ONLY ENFORCEMENT
+
+These requirements extend and override any conflicting localization instructions above.
+
+1. Creator Dashboard configuration
+
+Inspect and configure the actual Experience localization settings:
+
+- Set Source Language to English.
+- Remove Russian from Supported Languages, if present.
+- Remove obsolete Russian translations from the Cloud Localization Table after verifying dependencies.
+- Disable Use Translated Content if no other language translations are intended.
+- Remove unnecessary language-selection functionality from the game.
+- Keep English as the only developer-provided language.
+
+Do not modify settings without verifying the current state and available permissions.
+
+2. Disable unwanted automatic localization
+
+Inspect the following objects and their properties:
+
+- ScreenGui
+- BillboardGui
+- SurfaceGui
+- Other applicable GuiBase2d objects
+- ProximityPrompt
+
+For developer-authored English-only UI:
+
+- Set AutoLocalize = false on appropriate GUI roots.
+- Check descendants and inherited localization behavior.
+- Remove unnecessary RootLocalizationTable references where safe.
+- Set ProximityPrompt.AutoLocalize = false for English-only prompts.
+- Ensure that dynamically created GUI objects also follow these rules.
+
+Do not use deprecated localization properties.
+
+Do not disable unrelated game functionality.
+
+3. Roblox account-level translation limitation
+
+Roblox may automatically translate game names, descriptions and in-game text based on individual player account settings.
+
+This behavior cannot be universally overridden by the developer.
+
+Therefore:
+
+- Do not claim complete control over platform-level automatic translation.
+- Disable developer-controlled translations wherever possible.
+- Keep all developer-authored content in English.
+- Test with multiple client locale settings.
+- Clearly document platform-controlled translations that cannot be prevented.
+
+4. Additional text verification
+
+Inspect every ProximityPrompt:
+
+- ActionText
+- ObjectText
+- AutoLocalize
+- RootLocalizationTable
+
+Inspect every GUI root and all dynamically generated GUI components.
+
+Inspect all text-bearing assets and distinguish embedded image text from ordinary text properties.
+
+5. Final verification
+
+Produce a separate report containing:
+
+- English source language verification.
+- Supported language configuration.
+- Russian translation table audit.
+- AutoLocalize audit.
+- ProximityPrompt audit.
+- Embedded image text audit.
+- Automatic translation limitations.
+- Remaining unresolved Russian content.
+
+The final report must distinguish between developer-controlled content and Roblox platform-controlled translations.
+
+Never report ZERO RUSSIAN unless the actual project scan supports that conclusion.
